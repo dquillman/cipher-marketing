@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "lastUpdatedBy": "claude",
+    "lastUpdatedAt": "2026-05-11T14:00:00Z",
+    "schemaVersion": 1,
+    "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
+  },
+  "campaign": {
+    "start": "2026-05-18",
+    "tier1": ["PMP", "Security+", "SHRM-CP"],
+    "paidSpendCap": 2,
+    "activationGate": 25,
+    "activationTarget4wk": 55
+  },
+  "metrics": {
+    "activatedUsersTotal": 0,
+    "trialSignupsTotal": 0,
+    "paidSpendThisWeek": 0,
+    "perCluster": {
+      "PMP":       { "signups": 0, "activated": 0, "target": 30 },
+      "Security+": { "signups": 0, "activated": 0, "target": 15 },
+      "SHRM-CP":   { "signups": 0, "activated": 0, "target": 10 }
+    }
+  },
+  "blockers": [
+    { "id": "lps-deployed",       "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",          "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "conversion-events",  "label": "GA4 / Meta / LinkedIn conversion events wired",            "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "testimonial-prompt", "label": "In-app testimonial prompt at 10th-question milestone",    "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "resend-sequence",    "label": "Resend 7-day onboarding with exam merge tags",            "owner": "Engineering + Marketing", "status": "pending", "due": "2026-05-17" }
+  ],
+  "decisions": [
+    { "date": "2026-05-11", "what": "Tier 1 = PMP / Security+ / SHRM-CP",                       "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority" },
+    { "date": "2026-05-11", "what": "$2/day paid cap; gate at 25 activated users",              "why": "Dave's actual budget constraint" },
+    { "date": "2026-05-11", "what": "4-week target 55 activated users (was 100)",               "why": "Original target assumed paid acquisition at $45/day" },
+    { "date": "2026-05-11", "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)", "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text" }
+  ],
+  "dailyLog": [
+    { "date": "2026-05-11", "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18." }
+  ]
+}

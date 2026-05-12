@@ -1,0 +1,2742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CipherExam Campaign — Full Rollup</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/shared.css">
+<!--INLINE-ASSETS-->
+<style>
+/* CipherExam campaign site — shared styles */
+
+/* ---- Status colour scale (red/yellow/green health indicators) ---- */
+/* Applied via JS to KPI values, progress bars, task rows, checklist items.
+   --bad / --warn / --good are defined in :root below. */
+.status-good { color: var(--good); }
+.status-warn { color: var(--warn); }
+.status-bad  { color: var(--bad); }
+
+/* KPI cards: tint the left border so the colour is visible without overwhelming */
+.kpi-card.status-good { border-left: 3px solid var(--good); }
+.kpi-card.status-warn { border-left: 3px solid var(--warn); }
+.kpi-card.status-bad  { border-left: 3px solid var(--bad); }
+.kpi-card .value.status-good { color: var(--good); }
+.kpi-card .value.status-warn { color: var(--warn); }
+.kpi-card .value.status-bad  { color: var(--bad); }
+
+/* Progress-bar fill colour overrides the default cyan */
+.progress-bar .fill.status-good { background: var(--good); }
+.progress-bar .fill.status-warn { background: var(--warn); }
+.progress-bar .fill.status-bad  { background: var(--bad); }
+
+/* Task rows + checklist items: subtle tint on the left border */
+.task-row.status-good,
+.checklist-item.status-good { border-left: 3px solid var(--good); padding-left: 9px; }
+.task-row.status-warn,
+.checklist-item.status-warn { border-left: 3px solid var(--warn); padding-left: 9px; }
+.task-row.status-bad,
+.checklist-item.status-bad  { border-left: 3px solid var(--bad);  padding-left: 9px; }
+.task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
+
+
+/* ---- Route sections (class-driven tabs — used by app.html) ----
+   Today starts with the .active class; clicking a nav button calls
+   cipherShow() which toggles .active across sections. */
+.route-section { display: none; }
+.route-section.active { display: block; }
+/* Nav buttons must look like the original nav-link anchors. */
+button.nav-link {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  /* color/padding/etc come from .nav-link rules above */
+}
+
+
+/* ---- Scratchpad / daily log / blockers (added with JSON state layer) ---- */
+textarea {
+  width: 100%;
+  background: var(--bg-elev, var(--surface));
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: "General Sans", system-ui, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+}
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+button {
+  background: var(--accent);
+  color: #001423;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-family: "Satoshi", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: filter 0.15s;
+}
+button:hover { filter: brightness(1.08); }
+button:focus { outline: 2px solid var(--purple); outline-offset: 2px; }
+#copy-status.good { color: var(--good); font-weight: 600; }
+#copy-status.bad  { color: var(--bad); font-weight: 600; }
+.log-entry {
+  background: var(--bg-elev, var(--surface));
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+.log-entry .log-date {
+  font-family: "Satoshi", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--purple);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.log-entry .log-body { color: var(--fg); font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
+.blocker-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.blocker-row:last-child { border-bottom: 0; }
+.blocker-label { color: var(--fg); font-size: 0.95rem; }
+.blocker-meta { color: var(--muted); font-size: 0.82rem; font-style: italic; }
+@media (max-width: 700px) {
+  .blocker-row { grid-template-columns: auto 1fr; }
+  .blocker-meta { grid-column: 1 / -1; margin-top: -4px; padding-left: 56px; }
+}
+
+:root {
+  --bg: #020617;
+  --surface: #0b1226;
+  --surface-2: #11193a;
+  --border: #1d2748;
+  --text: #e6edf3;
+  --dim: #9da7b3;
+  --muted: #6e7681;
+  --cyan: #7dd3fc;
+  --purple: #a78bfa;
+  --good: #4ade80;
+  --warn: #fbbf24;
+  --bad: #f87171;
+  --max: 940px;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'General Sans', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 0.6em;
+  color: var(--text);
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.45rem; margin-top: 1.6em; }
+h3 { font-size: 1.15rem; font-weight: 700; margin-top: 1.4em; }
+h4 { font-size: 1rem; font-weight: 700; color: var(--cyan); margin-top: 1.2em; }
+
+p { margin: 0 0 1em; }
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(125,211,252,0.4);
+}
+a:hover { border-bottom-color: var(--cyan); }
+a:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+code, pre, .mono {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.92em;
+}
+code { background: var(--surface-2); padding: 1px 5px; border-radius: 4px; color: var(--cyan); }
+pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+blockquote {
+  margin: 1em 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--purple);
+  background: var(--surface);
+  color: var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+blockquote.warn {
+  border-left-color: var(--warn);
+  background: rgba(251,191,36,0.06);
+  color: var(--text);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+}
+
+ul, ol { padding-left: 1.4em; margin: 0 0 1em; }
+li { margin-bottom: 0.3em; }
+
+/* Layout */
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 24px 22px 80px;
+}
+
+/* Top nav */
+.nav {
+  background: rgba(11,18,38,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.nav-brand {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+  border: none;
+  white-space: nowrap;
+}
+.nav-brand:hover { color: var(--cyan); }
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
+  overflow-x: auto;
+}
+.nav-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--dim);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--text); background: var(--surface-2); }
+.nav-link.current {
+  color: var(--cyan);
+  background: rgba(125,211,252,0.1);
+}
+.nav-rollup {
+  font-size: 0.82rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.card.tier-1 { border-color: rgba(125,211,252,0.4); }
+.card.warn {
+  border-color: rgba(251,191,36,0.5);
+  background: rgba(251,191,36,0.04);
+}
+.card h3, .card h4 { margin-top: 0; }
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.tier-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(125,211,252,0.15);
+  color: var(--cyan);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+.score-badge {
+  display: inline-block;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--purple);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+/* KPI cards */
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.kpi-card .label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.kpi-card .value {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--cyan);
+  margin: 4px 0 2px;
+}
+.kpi-card .sub { font-size: 0.82rem; color: var(--dim); }
+
+/* Hero */
+.hero {
+  padding: 14px 0 6px;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: 2.1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--text), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero .sub {
+  font-size: 1.05rem;
+  color: var(--dim);
+  max-width: 700px;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.92rem;
+}
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+th {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--cyan);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+tr:hover td { background: rgba(17,25,58,0.4); }
+
+/* Today page */
+.stage-banner {
+  background: linear-gradient(90deg, rgba(125,211,252,0.12), rgba(167,139,250,0.08));
+  border: 1px solid rgba(125,211,252,0.3);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+.stage-banner .stage {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--cyan);
+}
+.stage-banner .date { font-size: 0.9rem; color: var(--dim); margin-top: 2px; }
+
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.15s;
+}
+.task-row:hover { border-color: rgba(125,211,252,0.3); }
+.task-row input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cyan);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.task-row label {
+  flex: 1;
+  cursor: pointer;
+  line-height: 1.45;
+}
+.task-row.done label { color: var(--muted); text-decoration: line-through; }
+.task-row.readonly input { opacity: 0.5; pointer-events: none; }
+.task-row.readonly { opacity: 0.78; }
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input { margin-top: 4px; accent-color: var(--cyan); cursor: pointer; }
+.checklist-item label { cursor: pointer; flex: 1; }
+.checklist-item.done label { color: var(--muted); text-decoration: line-through; }
+
+/* Collapsible */
+details {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 12px;
+}
+details[open] { padding-bottom: 16px; }
+summary {
+  cursor: pointer;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--text);
+  padding: 6px 0;
+  list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: '▸';
+  color: var(--cyan);
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.15s;
+  font-size: 0.85em;
+}
+details[open] summary::before { transform: rotate(90deg); }
+
+/* Week strip */
+.week-strip {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 20px;
+}
+.week-strip .day {
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.week-strip .day.today {
+  background: rgba(125,211,252,0.1);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.week-strip .day.today .label { color: var(--cyan); font-weight: 700; }
+.week-strip .day.weekend { opacity: 0.45; }
+.week-strip .label {
+  display: block;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: width 0.3s;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin: 6px 0 4px;
+}
+
+/* Sub-nav within content page */
+.subnav {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.subnav a {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--dim);
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.subnav a:hover { color: var(--text); }
+.subnav a.current { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* Status pills */
+.pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pill.good { background: rgba(74,222,128,0.15); color: var(--good); }
+.pill.warn { background: rgba(251,191,36,0.15); color: var(--warn); }
+.pill.bad { background: rgba(248,113,113,0.15); color: var(--bad); }
+.pill.dim { background: var(--surface-2); color: var(--muted); }
+
+/* Quick-link grid */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.quick-grid a {
+  display: block;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.quick-grid a:hover { border-color: var(--cyan); color: var(--cyan); }
+.quick-grid a .qlabel {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+.quick-grid a .qdesc { font-size: 0.82rem; color: var(--dim); }
+
+/* Copy-able card (social posts) */
+.copy-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  position: relative;
+}
+.copy-card .meta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--purple);
+  margin-bottom: 8px;
+}
+.copy-card .body {
+  white-space: pre-wrap;
+  font-size: 0.94rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .wrap { padding: 18px 14px 60px; }
+  h1 { font-size: 1.6rem; }
+  .hero h1 { font-size: 1.7rem; }
+  h2 { font-size: 1.25rem; }
+  .nav-inner { padding: 10px 14px; gap: 10px; }
+  .nav-links { gap: 2px; }
+  .nav-link { font-size: 0.8rem; padding: 4px 7px; }
+  .nav-rollup { display: none; }
+  table { font-size: 0.82rem; }
+  th, td { padding: 6px 7px; }
+  .week-strip .day { padding: 8px 2px; font-size: 0.7rem; }
+}
+
+/* Print */
+@media print {
+  body { background: white; color: black; }
+  .nav, .nav-rollup, details summary::before { display: none; }
+  details { border: 1px solid #ccc; }
+  details > *:not(summary) { display: block !important; }
+  .card, .kpi-card, .copy-card { border: 1px solid #ccc; background: white; color: black; }
+  a { color: black; border-bottom: none; }
+  .hero h1 { color: black; -webkit-text-fill-color: black; background: none; }
+}
+
+</style>
+<!--/INLINE-ASSETS-->
+<style>
+  .rollup-section { scroll-margin-top: 80px; padding-top: 12px; }
+  .rollup-section-head { margin: 0 0 24px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  .rollup-eyebrow { font-family: 'Satoshi', system-ui, sans-serif; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--purple); margin-bottom: 4px; }
+  .rollup-title { font-family: 'Satoshi', system-ui, sans-serif; font-size: 2rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+  .rollup-divider { border: none; border-top: 1px solid var(--border); margin: 56px 0 36px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top">CipherExam Campaign — Full Rollup</a>
+    <div class="nav-links">
+      <a class="nav-link" href="#today">Today</a>
+      <a class="nav-link" href="#dashboard">Dashboard</a>
+      <a class="nav-link" href="#strategy">Strategy</a>
+      <a class="nav-link" href="#content">Content</a>
+      <a class="nav-link" href="#landing">Landing</a>
+      <a class="nav-link" href="#engineering">Engineering</a>
+      <a class="nav-link" href="#voice">Voice</a>
+    </div>
+    <a class="nav-rollup" href="app.html">Tabbed view ↗</a>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+<section id="today" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Today</h2>
+  </header>
+
+
+  <!-- 1. Stage banner -->
+  <div class="stage-banner" id="stage-banner">Loading…</div>
+
+  <!-- 5. Week strip -->
+  <div class="week-strip" id="week-strip"></div>
+
+  <!-- 2. Today's tasks -->
+  <h2 style="margin-top:0;">Today's tasks</h2>
+  <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Tasks pulled from 00-campaign-brief.md §3 (active weeks) or 06-engineering-handoff.md §7 (pre-launch).</p>
+  <div id="today-tasks"></div>
+
+  <!-- 6. KPI snapshot from state -->
+  <h2>KPI snapshot — by cluster</h2>
+  <div class="card-grid" id="kpi-snapshot">Loading…</div>
+  <p id="state-source" style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:8px;">Loading state…</p>
+  <p style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:4px;">Numbers come from <code>data/campaign-state.json</code>. Tell Claude what to update via the scratchpad below, or have engineering wire GA4 → state once <code>signup_complete</code> / <code>activated_user</code> events are live (see <a href="#engineering">engineering §2</a>).</p>
+
+  <!-- Today's recommended creative -->
+  <h2>Today's creative</h2>
+  <p style="color:var(--dim);font-size:0.92rem;">Which video to attach to today's scheduled post. Mapped from the 4-week calendar to the rendered Remotion videos in <code>videos/out/</code>.</p>
+  <div id="today-creative" class="card">Loading…</div>
+
+  <!-- Scratchpad + copy-for-Claude -->
+  <h2>Today's scratchpad</h2>
+  <p style="color:var(--dim);font-size:0.92rem;">Jot anything that happened today — completed posts, signups, useful Reddit comments, friction with the product. Persists locally. When ready, click the button — it formats your notes + checked tasks as a structured update you paste into Claude Code. Claude updates <code>campaign-state.json</code>, the page refreshes with the new state.</p>
+  <textarea id="scratchpad" rows="6" placeholder="e.g.&#10;- Posted on r/pmp at 9am, 4 upvotes, one DM asking about EMV support&#10;- Sent 12 LinkedIn warm DMs to PMP candidates&#10;- 2 signups today, 1 activated (chose PMP, finished 12 questions)&#10;- Bug: someone reported the diagnostic stuck on Q3 — flagged to Dave"></textarea>
+  <div style="margin-top:10px;display:flex;align-items:center;gap:14px;">
+    <button id="copy-update-btn" type="button">Copy update for Claude</button>
+    <span id="copy-status" style="font-size:0.9rem;"></span>
+  </div>
+  <textarea id="copy-fallback" rows="10" style="display:none;width:100%;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85rem;"></textarea>
+
+  <!-- Daily log -->
+  <h2>Daily log (last 7 entries)</h2>
+  <p style="color:var(--dim);font-size:0.92rem;">Rolling history of what's actually happened. Claude appends here when you copy an update.</p>
+  <div id="daily-log">Loading…</div>
+
+  <!-- 3. Yesterday recap -->
+  <h2>Recap & preview</h2>
+  <details>
+    <summary id="yesterday-summary">Yesterday recap</summary>
+    <p style="color:var(--dim);font-size:0.88rem;">Same checkbox state — toggle here too if anything slipped.</p>
+    <div id="yesterday-tasks"></div>
+  </details>
+
+  <!-- 4. Tomorrow preview -->
+  <details>
+    <summary id="tomorrow-summary">Tomorrow preview</summary>
+    <p style="color:var(--dim);font-size:0.88rem;">Read-only. Set up anything that needs prep tonight.</p>
+    <div id="tomorrow-tasks"></div>
+  </details>
+
+  <!-- 7. Paid-spend gate -->
+  <h2>Paid-spend gate</h2>
+  <div class="card warn">
+    <p style="margin-top:0;"><strong>$2/day retargeting unlocks at 25 cumulative activated users.</strong> Until then, $0 paid. Source: <a href="#strategy">strategy §3</a>.</p>
+    <div id="gate-progress"></div>
+    <p id="gate-note" style="margin:10px 0 0;font-size:0.92rem;"></p>
+  </div>
+
+
+</section>
+
+<hr class="rollup-divider">
+
+<section id="dashboard" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Dashboard</h2>
+  </header>
+
+
+  <div class="hero">
+    <h1>CipherExam Multi-Exam Acquisition Campaign</h1>
+    <p class="sub"><strong>Tier 1:</strong> PMP · Security+ · SHRM-CP. $2/day paid cap. 4-week target: 55 activated users.</p>
+  </div>
+
+  <!-- Today widget -->
+  <div class="card tier-1" style="margin-bottom:24px;">
+    <h3 style="margin-bottom:8px;">Today</h3>
+    <div id="index-today-widget">Loading…</div>
+  </div>
+
+  <!-- KPI summary -->
+  <h2 style="margin-top:0;">KPI summary</h2>
+  <div class="card-grid">
+    <div class="kpi-card">
+      <div class="label">Trial signups target (4wk)</div>
+      <div class="value">55</div>
+      <div class="sub">PMP 30 / Sec+ 15 / SHRM-CP 10</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Activation rate gate</div>
+      <div class="value">≥ 30%</div>
+      <div class="sub">Hard gate per cluster. Below = fix onboarding before more traffic.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Paid-spend cap</div>
+      <div class="value">$2 / day</div>
+      <div class="sub">Locked until 25 activated users hit organically.</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Trial → paid target</div>
+      <div class="value">10%</div>
+      <div class="sub">Working baseline across all 3 clusters. Recalibrate against real data.</div>
+    </div>
+  </div>
+
+  <!-- Tier-1 cards -->
+  <h2>Tier 1 clusters</h2>
+  <div class="card-grid">
+    <div class="card tier-1">
+      <span class="tier-tag">Tier 1 #1</span>
+      <h3>PMP <span class="score-badge">Composite 25</span></h3>
+      <p><strong>Wedge:</strong> Exam Lens + EMV math support + 180-question / 230-minute Full Mock — the only live exam where every CipherExam differentiator compounds at once.</p>
+      <p style="margin:0;"><a href="#landing">PMP landing page →</a></p>
+    </div>
+    <div class="card tier-1">
+      <span class="tier-tag">Tier 1 #2</span>
+      <h3>CompTIA Security+ <span class="score-badge">Composite 25</span></h3>
+      <p><strong>Wedge:</strong> Native PBQ simulation (drag-drop, topology, CLI) + Exam Lens — closes the gap question banks can't reach.</p>
+      <p style="margin:0;"><a href="#landing">Security+ landing page →</a></p>
+    </div>
+    <div class="card tier-1">
+      <span class="tier-tag">Tier 1 #3</span>
+      <h3>SHRM-CP <span class="score-badge">Composite 23</span></h3>
+      <p><strong>Wedge:</strong> Exam Lens names the competency on every situational-judgment item — highest wedge-fit per CAC dollar.</p>
+      <p style="margin:0;"><a href="#landing">SHRM-CP landing page →</a></p>
+    </div>
+  </div>
+
+  <!-- Week-at-a-glance -->
+  <h2>Week-at-a-glance</h2>
+  <table>
+    <thead><tr><th>Week</th><th>Focus</th><th>Key beats</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>Prep + cornerstone</td><td>Cornerstone blog Mon · 3 LPs live Tue–Thu · LI PMP post Fri</td></tr>
+      <tr><td><strong>2</strong></td><td>Sec+ + Reddit value</td><td>LI Sec+ Mon · r/pmp Tue · r/CompTIA Wed · LI SHRM-CP Thu · channel read Fri</td></tr>
+      <tr><td><strong>3</strong></td><td>X/Twitter + warm DMs</td><td>r/humanresources Mon · X PMP Tue · X Sec+ Wed · 10–15 LI warm DMs Thu · LI PMP #2 Fri</td></tr>
+      <tr><td><strong>4</strong></td><td>Retro + paid-gate call</td><td>LI Sec+ #2 Mon · LI SHRM-CP #2 Tue · X SHRM-CP Wed · Retro Thu · Paid-gate decision Fri</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Live state from data/campaign-state.json -->
+  <h2>Activated users — vs. 4-week target</h2>
+  <div class="card">
+    <p style="margin-top:0;font-size:1.1rem;"><strong id="index-activated-total">0 / 55</strong> · gate at <strong>25</strong> users unlocks $2/day retargeting.</p>
+    <div id="index-gate-progress"></div>
+  </div>
+
+  <!-- Pre-launch blockers (state-driven) -->
+  <h2>Pre-launch engineering blockers</h2>
+  <p style="color:var(--dim);">Source: <code>data/campaign-state.json</code>. Tell Claude when an item moves to <code>in-progress</code> or <code>done</code>.</p>
+  <div class="card">
+    <div id="index-blockers">Loading…</div>
+  </div>
+
+  <!-- Daily log -->
+  <h2>Recent campaign log</h2>
+  <p style="color:var(--dim);">Latest 3 entries. Full history on the <a href="#today">today page</a>. Last state update: <code id="index-state-updated">—</code>.</p>
+  <div id="index-daily-log">Loading…</div>
+
+  <!-- Quick links -->
+  <h2>Quick links</h2>
+  <div class="quick-grid">
+    <a href="#today"><span class="qlabel">Today</span><span class="qdesc">Daily todo with checkboxes</span></a>
+    <a href="#strategy"><span class="qlabel">Strategy</span><span class="qdesc">Tier matrix · KPIs · $2/day budget · calendar</span></a>
+    <a href="#content"><span class="qlabel">Content</span><span class="qdesc">Cornerstone · 12 social posts · 7-day email</span></a>
+    <a href="#landing"><span class="qlabel">Landing pages</span><span class="qdesc">3 LP drafts (PMP / Sec+ / SHRM-CP)</span></a>
+    <a href="#engineering"><span class="qlabel">Engineering</span><span class="qdesc">Handoff + pre-launch checklist</span></a>
+    <a href="#voice"><span class="qlabel">Voice</span><span class="qdesc">Brand voice review</span></a>
+  </div>
+
+
+</section>
+
+<hr class="rollup-divider">
+
+<section id="strategy" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Strategy</h2>
+  </header>
+
+
+  <div class="hero">
+    <h1>Strategy</h1>
+    <p class="sub">Tier matrix, per-exam scoring, budget anchor, KPIs, and scaling triggers. Source: 00-campaign-brief.md §1, §3, §4, §5.</p>
+  </div>
+
+  <h2 id="tier-matrix" style="margin-top:0;">Per-exam scoring matrix</h2>
+  <p>Scores 1–5 per axis. <strong>Search competition is inverted</strong> — higher = less competition = better for us. All TAM numbers locked as working figures (confirmed by Dave 2026-05-11); revisit only if a cluster underperforms its forecast in flight.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Exam</th><th>TAM</th><th>WTP</th><th>Comp</th><th>Wedge</th><th>Access</th><th>Adj</th><th>Composite</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:rgba(125,211,252,0.05);"><td><strong>PMP</strong></td><td>5</td><td>5</td><td>1</td><td>5</td><td>4</td><td>5</td><td><strong>25</strong></td></tr>
+      <tr style="background:rgba(125,211,252,0.05);"><td><strong>CompTIA Security+</strong></td><td>5</td><td>4</td><td>1</td><td>5</td><td>5</td><td>5</td><td><strong>25</strong></td></tr>
+      <tr style="background:rgba(125,211,252,0.05);"><td><strong>SHRM-CP</strong></td><td>4</td><td>4</td><td>3</td><td>5</td><td>4</td><td>3</td><td><strong>23</strong></td></tr>
+      <tr><td>CompTIA Network+</td><td>3</td><td>3</td><td>2</td><td>5</td><td>5</td><td>5</td><td>23</td></tr>
+      <tr><td>PgMP</td><td>1</td><td>5</td><td>5</td><td>5</td><td>2</td><td>5</td><td>23</td></tr>
+      <tr><td>CompTIA A+ Core 2</td><td>4</td><td>2</td><td>1</td><td>4</td><td>5</td><td>4</td><td>20</td></tr>
+      <tr><td>CIA Part 1</td><td>2</td><td>4</td><td>4</td><td>4</td><td>3</td><td>3</td><td>20</td></tr>
+      <tr><td>CPP</td><td>2</td><td>4</td><td>4</td><td>5</td><td>3</td><td>2</td><td>20</td></tr>
+      <tr><td>Six Sigma GB</td><td>3</td><td>3</td><td>3</td><td>4</td><td>3</td><td>3</td><td>19</td></tr>
+      <tr><td>CSM</td><td>4</td><td>2</td><td>3</td><td>2</td><td>4</td><td>4</td><td>19</td></tr>
+      <tr><td>ITIL 4 Foundation</td><td>4</td><td>2</td><td>3</td><td>3</td><td>4</td><td>3</td><td>19</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Tier rationale</h2>
+  <div class="card-grid">
+    <div class="card tier-1">
+      <span class="tier-tag">Tier 1 — anchor</span>
+      <h3>PMP / Security+ / SHRM-CP</h3>
+      <p><strong>PMP:</strong> agrees with MARKETING-PLAN.md §4.4 — largest TAM × highest WTP × strongest wedge. <strong>Security+ promoted from "later expansion"</strong> because CISSP and AWS SAA aren't live yet; PBQ-native simulation is a real moat. <strong>SHRM-CP</strong> is the non-obvious pick — Bloom's-evaluate dominant exam, Competency Lens maps 1:1 to scoring.</p>
+    </div>
+    <div class="card">
+      <span class="tier-tag" style="background:rgba(167,139,250,0.15);color:var(--purple);">Tier 2 — expand</span>
+      <h3>Network+ / Six Sigma GB / CSM</h3>
+      <p>Trigger to roll out: any Tier 1 cluster hits 4-week target AND activation ≥ 30%. Network+ rides the Sec+ halo. CSM is SEO + retargeting from PMP — not a paid target.</p>
+    </div>
+    <div class="card">
+      <span class="tier-tag" style="background:var(--surface-2);color:var(--muted);">Tier 3 — organic only</span>
+      <h3>A+ Core 2 / ITIL 4 / CIA Part 1 / CPP / PgMP</h3>
+      <p>SEO long-tail only. PgMP bundled as a PMP upsell — tiny TAM but zero serious competition. CPP gets one cornerstone for "{state} payroll compliance" long-tails.</p>
+    </div>
+  </div>
+
+  <h2 id="budget">Budget anchor</h2>
+  <blockquote class="warn">
+    <strong>Paid spend cap: $2/day TOTAL.</strong> Overrides MARKETING-PLAN.md §5 ($30–$50/day Google Search). At $2/day, paid is symbolic for cold acquisition — only viable as <strong>retargeting</strong> of LP visitors.
+    <br><br>
+    <strong>Paid-spend gate:</strong> $0 paid until <strong>25 cumulative activated users</strong> are produced organically across the three clusters. Then $2/day retargeting unlocks.
+    <br><br>
+    <strong>Best channels at $2/day:</strong> Reddit Promoted Posts in r/pmp / r/CompTIA / r/humanresources, or Google Search retargeting of LP visitors. <strong>Not LinkedIn</strong> (min $10/day), <strong>not Meta cold</strong> (can't exit learning phase at this budget).
+  </blockquote>
+
+  <p><strong>Organic carries weeks 1–4 entirely:</strong> founder LinkedIn posts (Dave's voice), Reddit value-only posts in r/pmp + r/CompTIA + r/humanresources, LinkedIn warm DMs (10–15/day max per plan §3.3), and SEO from the cornerstone blog.</p>
+
+  <h2 id="calendar">4-week calendar</h2>
+  <table>
+    <thead><tr><th>Week</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong> (prep)</td>
+        <td>Publish cornerstone blog</td>
+        <td>PMP LP live</td>
+        <td>Sec+ LP live</td>
+        <td>SHRM-CP LP live</td>
+        <td>LI founder post: PMP</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>LI founder: Sec+ PBQ</td>
+        <td>r/pmp value</td>
+        <td>r/CompTIA value</td>
+        <td>LI founder: SHRM-CP</td>
+        <td>Mid-campaign channel read</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>r/humanresources value</td>
+        <td>X PMP thread</td>
+        <td>X Sec+ hook</td>
+        <td>LI warm-outreach (10–15 DMs)</td>
+        <td>LI founder #2: PMP</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>LI founder #2: Sec+</td>
+        <td>LI founder #2: SHRM-CP</td>
+        <td>X SHRM-CP</td>
+        <td>4-week retro by cluster</td>
+        <td>Paid-gate decision</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="kpis">KPIs (per cluster)</h2>
+  <p>Primary metric per cluster: <strong>activated users for that exam</strong> (signup + chose THAT exam + answered 10 questions).</p>
+  <table>
+    <thead>
+      <tr><th>Metric</th><th>PMP (4wk)</th><th>Sec+ (4wk)</th><th>SHRM-CP (4wk)</th><th>Quality gate</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Trial signups (<code>signup_complete</code>)</td><td>30</td><td>15</td><td>10</td><td>—</td></tr>
+      <tr><td>% who chose intended exam</td><td>≥ 70%</td><td>≥ 70%</td><td>≥ 70%</td><td>&lt; 60% → audit LP messaging</td></tr>
+      <tr><td>% activated (≥ 10 Qs)</td><td>≥ 30%</td><td>≥ 30%</td><td>≥ 30%</td><td><strong>HARD GATE</strong> — fix onboarding before adding traffic</td></tr>
+      <tr><td><code>explanation_viewed</code> per activated</td><td>≥ 5</td><td>≥ 5</td><td>≥ 5</td><td>&lt; 3 → content positioning is wrong</td></tr>
+      <tr><td>Trial → paid (day 7)</td><td>10%</td><td>10%</td><td>10%</td><td>Working target; recalibrate on real data</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Total 4-week target: 55 activated users</strong>, split <strong>30 / 15 / 10</strong> across PMP / Sec+ / SHRM-CP. The 100-activated-user threshold from MARKETING-PLAN.md §3 is now the <strong>6-month</strong> goal.</p>
+  <p style="color:var(--dim);font-size:0.92rem;">Reporting cadence: <strong>weekly</strong>, by cluster, in a single one-screen table — no slide decks.</p>
+
+  <h2 id="scaling">Scaling addendum</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h4 style="margin-top:0;color:var(--good);">Trigger to expand to Tier 2</h4>
+      <p style="margin:0;">Any single Tier 1 cluster hits its 4-week target <strong>AND</strong> activation rate ≥ 30%.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0;color:var(--bad);">Trigger to kill a Tier 1 cluster</h4>
+      <p style="margin:0;">Activation rate &lt; 30% after 4 weeks <strong>AND</strong> fixing onboarding doesn't recover it within 2 more weeks. Move budget to the winning cluster.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0;">Tier 2 rollout pattern</h4>
+      <p style="margin:0;">Copy the cluster template. New LP, new ad group, new subreddit. Reuse the onboarding email sequence (merge-tagged — no rewrite). One new founder LI worked-question post per cluster.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0;">When to revisit this brief</h4>
+      <p style="margin:0;">When CISSP or AWS SAA goes live in the product. Both were the plan's top picks and both would re-shuffle Tier 1.</p>
+    </div>
+  </div>
+
+  <h2>Anti-patterns to avoid</h2>
+  <ul>
+    <li>Don't write copy that depends on a "lifetime tier" / "first 500 users" / "founding member" mechanic. None exist.</li>
+    <li>Don't lean on the "decode/cipher" pun more than once per asset.</li>
+    <li>Don't name competitors in paid ads (plan's "clear, not clever" rule).</li>
+    <li>Don't write "guaranteed pass" anywhere. Ever.</li>
+    <li>Don't generate a fifth cornerstone blog about Bloom's — three already exist on <code>/blog</code>. Reference them; don't compete.</li>
+    <li>Don't lock budget on a cluster before week-1 LP CVR is in.</li>
+  </ul>
+
+
+</section>
+
+<hr class="rollup-divider">
+
+<section id="content" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Content</h2>
+  </header>
+
+
+  <div class="hero">
+    <h1>Content</h1>
+    <p class="sub">Cornerstone blog · 12 social posts across 3 clusters · 7-day onboarding email sequence. Each social post is in its own card — easy to copy out.</p>
+  </div>
+
+  <nav class="subnav" id="content-subnav">
+    <a href="#cornerstone" data-target="cornerstone">Cornerstone</a>
+    <a href="#social" data-target="social">Social</a>
+    <a href="#email" data-target="email">Email</a>
+  </nav>
+
+  <!-- ====== CORNERSTONE ====== -->
+  <section class="section" id="cornerstone">
+    <h2 style="margin-top:0;">Cornerstone blog</h2>
+    <p style="color:var(--dim);"><strong>Slug:</strong> <code>/blog/how-certification-exams-think</code> · <strong>Reading time:</strong> 4–5 min (~750 words) · <strong>Voice:</strong> founder ("I, Dave") · <strong>Status:</strong> DRAFT — Dave's final pass before publishing. References (not rewrites) <code>/blog/study-by-blooms-level</code>, <code>/blog/cognitive-heatmap-...</code>, <code>/blog/recall-only-prep-fails-...</code>.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0;">How Certification Exams Actually Think (And Why Your Prep Tools Don't Match)</h3>
+      <p style="color:var(--dim);font-style:italic;margin-bottom:1em;">By Dave, founder of CipherExam</p>
+
+      <p>I've spent the last two years building a tool that prepares people for certification exams. The thing nobody warned me about: most prep tools are solving the wrong problem.</p>
+      <p>They drill you on facts. The exams don't test facts. Not really.</p>
+      <p>Take a project manager studying for the PMP. She memorizes the 49 processes, the ITTOs, the formulas. She runs flashcards until they're rote. Then she sits the exam and the first question is: "A team member tells you in a 1-on-1 that another team member is taking credit for her work. What do you do?"</p>
+      <p>None of the answer choices are wrong, exactly. They all sound reasonable. One of them is what PMI wants you to do.</p>
+      <p>That last sentence is the whole game.</p>
+
+      <h4>Exams test a <em>frame</em>, not a fact</h4>
+      <p>When the PMI writes a question, they aren't asking what you remember. They're asking <em>whether you think like a PMI-certified professional would think.</em> That's a totally different cognitive task. You can know every fact in the PMBOK and still fail because you keep picking the answer that's <em>practically</em> right instead of the one that's <em>PMI-doctrinally</em> right.</p>
+      <p>This isn't unique to PMP. Every major certification I've studied has the same structure:</p>
+      <ul>
+        <li><strong>CompTIA Security+</strong> isn't asking you to recite firewall rules. It's asking which principle of the CIA triad (confidentiality, integrity, availability) is being protected by a given control, and what attack vector breaks it. The reasoning frame is <em>Security Triad thinking.</em></li>
+        <li><strong>SHRM-CP</strong> isn't asking what HR best practice says — it's asking what a SHRM-certified HR business partner <em>would do</em> against the SHRM Body of Applied Skills and Knowledge, with all nine behavioral competencies in play. The reasoning frame is <em>SHRM Competency thinking.</em></li>
+        <li><strong>PMP</strong> asks what PMI would have you do. The reasoning frame is <em>Exam Lens thinking.</em></li>
+      </ul>
+      <p>Each certifying body has a worldview. The exam grades you on how well you've absorbed <em>that worldview</em>, not on how well you've memorized <em>that body of knowledge</em>. Those are different things, and the practice gap between them is where almost everyone fails.</p>
+
+      <h4>Why flashcards can't bridge it</h4>
+      <p>I'll be blunt: I think most question banks are stuck at the bottom rung of Bloom's Taxonomy. They drill <em>remember</em> and <em>understand.</em> They almost never drill <em>evaluate.</em> But the certifying bodies write nearly every high-stakes question at the <em>apply / analyze / evaluate</em> level. If your prep is at level 2 and the exam is at level 5, no amount of more flashcards closes the gap. You'll just have a deeper bench of facts you can't apply.</p>
+      <p>I wrote about this in detail in <a href="https://cipherexam.com/blog/study-by-blooms-level" target="_blank" rel="noopener">Study by Bloom's Level</a> — if you only read one post on this site, read that one. And <a href="https://cipherexam.com/blog/recall-only-prep-fails" target="_blank" rel="noopener">Why Recall-Only Prep Fails</a> has the cognitive-science backing.</p>
+
+      <h4>What we built instead</h4>
+      <p>Three things, basically.</p>
+      <ol>
+        <li><strong>Every question is classified by Bloom's level.</strong> When you practice, you can see whether you're answering an "evaluate"-level scenario question correctly, or just nailing the easy "remember" stuff. The <a href="https://cipherexam.com/blog/cognitive-heatmap" target="_blank" rel="noopener">Cognitive Heatmap</a> makes this visible.</li>
+        <li><strong>Every explanation walks you through the exam's reasoning frame.</strong> For PMP, that's the Exam Lens — <em>what would PMI want you to do?</em> For Security+, it's the Security Triad — <em>which leg of the CIA triad is this question protecting?</em> For SHRM-CP, it's the Competency Lens — <em>which SHRM behavioral competency is being tested?</em> The framework is built into how the AI explains every answer. You don't just learn the answer; you learn the lens you're supposed to read the question through.</li>
+        <li><strong>The system tracks your thinking traps.</strong> Not which topics you're weak on — most prep tools do that — but which <em>kinds of reasoning errors</em> you keep making. The patterns are surprisingly consistent per person.</li>
+      </ol>
+
+      <h4>The shift</h4>
+      <p>The first time someone tells me "the exam stopped feeling like a trick" — usually around their second or third week — it's always the same realization. They stop hunting for the right <em>fact</em> in the answer choices and start asking <em>which choice fits the lens</em>. The exam writers were never trying to fool them. They were testing whether the candidate had internalized the frame.</p>
+      <p>That's what certification exams actually test. And once you can see the frame, you can read the question the way the people who wrote it did.</p>
+      <p>If any of this sounds like the prep loop you're stuck in, <strong><a href="https://cipherexam.com/pricing" target="_blank" rel="noopener">start a free 7-day trial</a>.</strong> No credit card. Pick your exam, answer ten questions, and you'll see what I mean.</p>
+      <p>— Dave</p>
+
+      <blockquote>
+        <strong>Try CipherExam for 7 days, free.</strong> No credit card. Cancel anytime.<br>
+        <strong>[Start Free Trial →]</strong>
+      </blockquote>
+    </div>
+
+    <h3>SEO metadata</h3>
+    <table>
+      <tbody>
+        <tr><th>Title tag</th><td>How Certification Exams Actually Think — CipherExam</td></tr>
+        <tr><th>Meta description</th><td>Most prep tools drill facts. The exams test reasoning frames — Exam Lens, Security Triad, SHRM Competency. Here's the gap, and how to close it.</td></tr>
+        <tr><th>Primary keyword</th><td>certification exam strategy</td></tr>
+        <tr><th>Secondary keywords</th><td>how certification exams work, certification exam reasoning, why I failed my certification exam, certification exam thinking patterns</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====== SOCIAL ====== -->
+  <section class="section hidden" id="social">
+    <h2 style="margin-top:0;">Social — 3 clusters × 4 posts each + warm-outreach template</h2>
+    <p style="color:var(--dim);"><strong>Voice rules:</strong> Founder voice ("I, Dave") for LinkedIn long-form. Product voice for X/Twitter and Reddit. "Decode" wordplay used <strong>once</strong> total (Sec+ X hook). Reddit posts have <strong>no links</strong>. All scenarios illustrative — not from any real exam.</p>
+
+    <h3>Cluster 1 — PMP</h3>
+
+    <div class="copy-card">
+      <div class="meta">LinkedIn long-form #1 · founder voice · Hook: "Most PMP-prep tools are solving the wrong problem."</div>
+      <div class="body">I've watched a hundred candidates go through PMP prep and there's a pattern most coaches don't talk about.
+
+Around week six, the smart ones plateau. They know every process, every ITTO, every formula. Their practice scores hover around 80%. But every time they sit a sample test, the same thing happens — they feel like the questions are *trying to trick them*.
+
+They're not. The questions are testing a thing the prep books almost never teach: the Exam Lens. *What would PMI want you to do?*
+
+It's not the same as "what would a good PM do" or "what would your last manager do." PMI has a very specific worldview about how project managers behave, and the exam grades you against that worldview. If you've been managing projects for ten years in a hard-deliverables shop, you've probably built habits that PMI considers *suboptimal*. The exam catches those habits.
+
+When candidates start asking "what's the PMI answer?" instead of "what's the right answer?" — that's when their scores jump.
+
+If you're at the plateau, that's the shift to make. The facts aren't your problem. The frame is.
+
+— Dave, founder of CipherExam
+
+(We built CipherExam around this exact lens. Free 7-day trial, no card: cipherexam.com)</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">LinkedIn long-form #2 · founder voice · worked question</div>
+      <div class="body">Here's the PMP question that breaks every memorizer I know.
+
+Scenario (paraphrased, not from any exam): You're three sprints into a software project. A stakeholder emails you Friday afternoon and says the scope they signed off on six weeks ago is "no longer what we need." They want a meeting Monday morning to discuss adding two new features. What do you do?
+
+A) Schedule the meeting and prepare an impact analysis for the new features
+B) Reject the request — scope was signed off, this is scope creep
+C) Accept the new scope and adjust the next sprint backlog
+D) Tell the stakeholder to submit a formal change request before any discussion
+
+Most candidates I've worked with pick D. It feels right. "Use the change-control process." Textbook.
+
+The Exam Lens answer is A. Why?
+
+PMI's worldview is collaborative-first. The change-control process exists, but invoking it as a *first response* to a stakeholder signals "I'm here to gate, not to help." PMI wants the project manager to first *understand the change* (impact analysis), *bring stakeholders together* (the Monday meeting), and *then* run it through formal change control. D is procedurally correct but PMI-relationally cold.
+
+That's the lens. Not "what does the PMBOK say to do" but "what would a PMI-aligned PM do as their *first move*."
+
+Once you can read questions through that lens, the exam stops feeling like a trick.
+
+— Dave
+
+(CipherExam builds the lens into every answer explanation. 7-day free trial, no card.)</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">X/Twitter · hook post</div>
+      <div class="body">80% on PMP practice tests but still scared?
+
+The issue isn't your facts.
+
+It's that PMP doesn't grade facts.
+
+It grades whether you think the way PMI thinks.
+
+Different problem. Different prep.
+
+cipherexam.com</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">X/Twitter · worked-question post · Exam Lens</div>
+      <div class="body">PMP question type that breaks memorizers:
+
+"A stakeholder demands a scope change Friday afternoon. What do you do first?"
+
+Memorizer's answer: "Tell them to file a change request."
+PMI's answer: "Run an impact analysis and bring the stakeholders together."
+
+The lens isn't process. The lens is *what PMI wants the PM to do.* Those aren't the same.
+
+7-day free trial: cipherexam.com</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">Reddit · r/pmp · value-only, NO link · Title: "The plateau at 80% — what finally moved me past it"</div>
+      <div class="body">Hit a wall around week six of prep. Practice scores stuck at 78–82%. Every question I missed felt like the choices were designed to fool me.
+
+Thing that finally clicked: stop asking "which answer is right?" and start asking "which answer would PMI want me to pick?"
+
+Those are *not* the same question. PMI has a doctrine about PM behavior — collaborative-first, stakeholder-centric, lean toward people-management over process-enforcement. Most working PMs (myself included) have spent years building habits that PMI considers suboptimal. The exam catches those habits.
+
+The shift was reading every question as "what does the PMI playbook say a PM does here?" rather than "what is correct in the abstract." After that, my scores went 80% → 89% in about two weeks.
+
+Anyone else hit this and break through? Curious what worked for you.</div>
+    </div>
+
+    <h3>Cluster 2 — CompTIA Security+</h3>
+
+    <div class="copy-card">
+      <div class="meta">LinkedIn long-form #1 · founder voice · Hook: "Security+ candidates pass every practice quiz and still fail PBQs."</div>
+      <div class="body">A pattern I see constantly with CompTIA Security+ candidates:
+
+They drill question banks. They watch Professor Messer twice. They take Pocket Prep up to 92%. Then they sit the real exam, hit the performance-based questions in the first ten minutes, and panic.
+
+PBQs aren't trick questions. They're a different *cognitive task* than multiple-choice. Drag-and-drop a firewall rule into the right position. Match the attack to the control. Pick the right output from a CLI simulation. You can't pattern-match these from flashcards because they're testing whether you can *operate*, not whether you can *recognize*.
+
+The fix isn't more flashcards. It's training the underlying reasoning frame — the CIA triad. Every Security+ question, MCQ or PBQ, is asking "which leg of confidentiality / integrity / availability is being protected, and what attacks compromise it?" Once that frame is automatic, PBQs stop feeling like a different exam.
+
+If you've passed every quiz and you're still nervous, that's the gap. Not facts. Frames.
+
+— Dave, founder of CipherExam
+
+(CipherExam's Security+ simulator runs PBQs natively, with the CIA-triad lens built into every explanation. 7-day free trial, no card: cipherexam.com)</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">LinkedIn long-form #2 · founder voice · worked PBQ walkthrough</div>
+      <div class="body">How to approach a Security+ PBQ when your brain freezes.
+
+Performance-based questions on Security+ feel different because they are. Here's the loop I teach.
+
+Imagine a PBQ shows you a network diagram with three subnets, a firewall, and a web server in a DMZ. The prompt: "Drag the appropriate firewall rules to allow only HTTPS traffic from the internet to the web server and block all other inbound traffic." (Paraphrased — not from any real exam.)
+
+Step 1: Name the CIA triad principle. *Confidentiality + integrity of the web server,* by limiting attack surface.
+
+Step 2: Name the trust zones. Internet (untrusted) → DMZ (semi-trusted) → internal (trusted).
+
+Step 3: Write the minimum rule. Allow TCP/443 from any to web server. Deny all else inbound. That's it.
+
+Step 4: Ignore the decoys. PBQs often include extra rules that *look* right but violate least-privilege.
+
+The reason this works isn't because I'm telling you anything new — you already know firewall rules. It's because the four-step loop forces you to *use the CIA triad lens first* instead of pattern-matching from memory. Memory will give you a rule that almost-works. The lens gives you the rule that's exactly right.
+
+If you've been bombing PBQs in practice, try the loop on three of them this week. Tell me how it goes.
+
+— Dave
+
+(CipherExam's Sec+ Full Mock runs 90 questions in 90 minutes with native PBQ support. cipherexam.com.)</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">X/Twitter · hook post · uses the ONE allowed decode wordplay</div>
+      <div class="body">CompTIA Security+ PBQs aren't harder.
+
+They're encoded differently.
+
+Decode the CIA triad question hiding inside the diagram, and the PBQ becomes 30 seconds.
+
+7-day free trial, no card: cipherexam.com</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">X/Twitter · worked-question post · Exam Lens</div>
+      <div class="body">Security+ question that splits the room:
+
+"Which control best ensures sensitive data remains unaltered during transit?"
+
+Memorizer: "TLS, obviously."
+Lens answer: "Which CIA principle? *Integrity.* Which control delivers integrity in transit? HMAC / digital signatures. TLS gives you confidentiality first; integrity is a side effect."
+
+CIA triad first. Control second. Order matters.
+
+cipherexam.com</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">Reddit · r/CompTIA · value-only, NO link · Title: "What finally got me through Security+ PBQs (after I bombed the first attempt)"</div>
+      <div class="body">First attempt I scored 720 — failed by 30 points. Two of the PBQs killed me. I went in with Messer videos done twice, Dion question bank at 88%, and I still walked out shaky.
+
+What changed for the retake: I stopped studying *content* and started studying the *CIA triad lens*. Every question — MCQ or PBQ — got the same first move: "which of C / I / A is this question protecting?" Once that's named, the answer space collapses by 60-70%.
+
+Example pattern. A PBQ shows you firewall rules and asks which one to add. Before I look at the rules I ask: confidentiality of *what*, from *whom*? Once I've named that, the right rule is usually obvious and the decoy rules show themselves.
+
+Passed the retake with 812 two weeks later. Hadn't learned new content. I'd just trained the lens.
+
+If anyone's stuck on PBQs and the answer banks aren't getting you there — try this. It's free to try.</div>
+    </div>
+
+    <h3>Cluster 3 — SHRM-CP</h3>
+
+    <div class="copy-card">
+      <div class="meta">LinkedIn long-form #1 · founder voice · Hook: "SHRM-CP isn't testing what you know about HR. It's testing how SHRM thinks about HR."</div>
+      <div class="body">If you've ever sat the SHRM-CP and walked out frustrated, you probably ran into the same thing I did when I built the prep material for it.
+
+The behavioral / situational-judgment questions aren't right-or-wrong in the way most exams are. Three of the four options will be defensible HR moves. The "correct" answer is the one that aligns with SHRM's nine behavioral competencies — *Leadership, Ethical Practice, Business Acumen, Relationship Management, Consultation, Critical Evaluation, Global Mindset, Cultural Effectiveness, Communication.*
+
+Knowing the competencies is the easy part. Anyone can list them. The hard part is reading a situational question and recognizing *which competency is being tested* before you pick. Because once you know the competency, the right answer is usually the one that demonstrates *that* competency most directly — not the one that solves the business problem fastest.
+
+Example: a question about an employee complaining their manager plays favorites isn't a "resolve the complaint" question. It's a *Relationship Management + Ethical Practice* question. The answer that just resolves the complaint will lose to the answer that demonstrates how a SHRM-certified HR professional would steward both the relationship and the ethical concern.
+
+That's the Exam Lens. It's what the exam grades. Most prep books drill HR knowledge. The exam is grading HR *judgment* — and judgment is competency-shaped.
+
+If you're an HR pro studying for SHRM-CP and the practice questions feel "soft" or "subjective," that's actually the signal. They feel that way because they're testing your competency frame, not your factual recall.
+
+— Dave, founder of CipherExam
+
+(CipherExam's SHRM-CP explanations name the competency on every question. 7-day free trial, no card.)</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">LinkedIn long-form #2 · founder voice · worked question</div>
+      <div class="body">The SHRM-CP question type that catches almost every senior HR pro.
+
+Senior HR professionals fail SHRM-CP more often than I expected when I started looking at the data.
+
+The reason isn't knowledge. It's the opposite. They've spent ten years making pragmatic HR calls — moving fast, resolving issues, getting buy-in. SHRM grades you against an idealized competency frame, and pragmatism sometimes looks *suboptimal* against that frame.
+
+Scenario (illustrative): A high-performing manager is consistently late submitting performance reviews. Her director defends her — "she's a top producer, leave her alone." HR's options:
+
+A) Defer to the director and let it go
+B) Escalate to the CHRO
+C) Coach the director on why timely performance management matters to the org
+D) Document the pattern and address the manager directly
+
+A pragmatic HR pro picks A or D. Get it done, move on.
+
+SHRM's lens picks C. Why? Because the competency being tested is *Consultation* — HR's role is to be an internal advisor who helps leaders make better people decisions, not to either capitulate (A) or police (D). C demonstrates Consultation directly.
+
+This is what trips up experienced practitioners. The exam isn't asking what works. It's asking what a SHRM-certified HR professional does, by SHRM's competency definition.
+
+Read every question for the competency first. The answer follows.
+
+— Dave
+
+(CipherExam tags every SHRM-CP question with the competency it tests. cipherexam.com.)</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">X/Twitter · hook post</div>
+      <div class="body">SHRM-CP isn't testing HR knowledge.
+
+It's testing the SHRM competency frame.
+
+Most pros know the nine competencies cold but never trained the reflex of *naming the competency* before picking the answer.
+
+That reflex is the prep gap.
+
+cipherexam.com</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">X/Twitter · worked-question post · Exam Lens</div>
+      <div class="body">SHRM-CP scenario, paraphrased:
+
+"A manager is late on performance reviews. Her director defends her. What does HR do?"
+
+Wrong instinct: just escalate or document.
+Right lens: which competency is this question grading? *Consultation.*
+Once you've named it: the answer is the one that shows HR consulting the director, not policing the manager.
+
+Name the competency first. The answer follows.
+
+cipherexam.com</div>
+    </div>
+
+    <div class="copy-card">
+      <div class="meta">Reddit · r/humanresources · value-only, NO link · Title: "Senior HR pros: SHRM-CP is testing a different thing than you think"</div>
+      <div class="body">I've been in HR for 12 years. Sat SHRM-CP last fall. Walked out *certain* I'd failed because half the situational answers felt arbitrary. Passed, but barely.
+
+Realization in hindsight: the exam isn't grading "what works in HR." It's grading "what does the SHRM competency model say a certified HR professional does." Those overlap maybe 70%. The 30% gap is where senior pros lose points.
+
+Specifically: anywhere your instinct is "just handle it pragmatically," SHRM probably wants the answer that demonstrates *Consultation* or *Critical Evaluation* or *Relationship Management* more visibly. Pragmatic answers feel right but score lower than the answer that visibly enacts a named behavioral competency.
+
+If you're prepping and the situational questions feel subjective, that's the signal — you're reading them as HR problems instead of as competency-frame questions. Try this on your next 20 practice items: before you pick, name which of the nine competencies the question is grading. My hit rate went from ~75% to ~88% with that one habit.
+
+Anyone else have a similar shift on study? Curious what helped.</div>
+    </div>
+
+    <h3>Exam-agnostic LinkedIn warm-outreach template</h3>
+    <p style="color:var(--dim);">Merge tag: <code>{{exam_name}}</code> / <code>{{exam_name_specific_lens}}</code>. Decline-friendly. No pitch, no opt-in trap.</p>
+    <div class="copy-card">
+      <div class="meta">LinkedIn DM · warm-outreach template</div>
+      <div class="body">Hi {{first_name}},
+
+Saw your post about prepping for {{exam_name}}. I run CipherExam — a tool that focuses on the reasoning frame the {{exam_name}} actually grades, not just the facts. Not pitching anything, just curious where you are in prep and whether the question-bank-style tools are working for you.
+
+If you want, I'll send you a worked example of one {{exam_name}} question explained through the {{exam_name_specific_lens}} — no opt-in, no list, just one example you can read and ignore.
+
+Either way, good luck with the exam.
+
+— Dave</div>
+    </div>
+    <table>
+      <thead><tr><th>{{exam_name}}</th><th>{{exam_name_specific_lens}}</th></tr></thead>
+      <tbody>
+        <tr><td>PMP</td><td>Exam Lens</td></tr>
+        <tr><td>Security+</td><td>CIA triad / Exam Lens</td></tr>
+        <tr><td>SHRM-CP</td><td>Exam Lens</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====== EMAIL ====== -->
+  <section class="section hidden" id="email">
+    <h2 style="margin-top:0;">7-day onboarding email sequence</h2>
+    <p style="color:var(--dim);"><strong>Voice:</strong> product ("we") — not founder. <strong>One CTA per email.</strong> Days 0, 1, 2, 3, 5, 6, 7. Day 4 intentionally empty per plan §9.2. <strong>A/B subject lines:</strong> 3 variants each, 33/33/33 split, pick winner after 100 sends.</p>
+
+    <h3>Merge-tag system</h3>
+    <table>
+      <thead><tr><th>Tag</th><th>PMP user</th><th>Security+ user</th><th>SHRM-CP user</th></tr></thead>
+      <tbody>
+        <tr><td><code>{{exam_name}}</code></td><td>PMP</td><td>Security+</td><td>SHRM-CP</td></tr>
+        <tr><td><code>{{exam_lens}}</code></td><td>Exam Lens</td><td>Exam Lens</td><td>Exam Lens</td></tr>
+        <tr><td><code>{{exam_lens_prompt}}</code></td><td>What would PMI want you to do?</td><td>CIA triad — which principle is being protected?</td><td>What aligns with SHRM behavioral competencies?</td></tr>
+        <tr><td><code>{{weakest_domain}}</code></td><td>People</td><td>Threats, Vulnerabilities, and Mitigations</td><td>Organization</td></tr>
+        <tr><td><code>{{full_mock_questions}}</code> / <code>{{full_mock_minutes}}</code></td><td>180 / 230</td><td>90 / 90</td><td>134 / 220</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Day 0 — Welcome / pick your exam</h3>
+    <div class="copy-card">
+      <div class="meta">Day 0 · trigger: signup_complete · CTA: Pick your exam → /select-exam</div>
+      <div class="body">Subject A: Welcome to CipherExam — start with your exam
+Subject B: You're in. Pick the exam you're preparing for.
+Subject C: First step: which certification are you studying for?
+
+—
+
+Hi {{first_name}},
+
+Welcome to CipherExam. You've got a 7-day free trial — no credit card on file, cancel anytime — to use the whole product.
+
+Before you do anything else, pick the exam you're preparing for. The product is exam-aware: every question, every explanation, every analytics view changes based on which cert you're studying. Picking your exam is what unlocks the rest.
+
+If you're studying for more than one cert, pick the one you're sitting first. You can add the second later from your dashboard.
+
+One link, one action:
+
+[Pick your exam →]({{app_url}}/select-exam)
+
+— The CipherExam team</div>
+    </div>
+
+    <h3>Day 1 — Your weakest domain identified (PMP user)</h3>
+    <div class="copy-card">
+      <div class="meta">Day 1 · 24h after signup, IF user answered ≥ 5 questions · CTA: Practice your weak domain</div>
+      <div class="body">Subject A: Your weakest PMP domain so far: People
+Subject B: We spotted a pattern in your first {{question_count}} questions
+Subject C: Where you're losing PMP points (and how to fix it)
+
+—
+
+Hi {{first_name}},
+
+You've answered {{question_count}} PMP questions so far. Long enough for us to start spotting patterns.
+
+Your weakest domain right now is **People** — you're at 62% there, vs. 81% across the rest of your practice.
+
+What's interesting isn't the score. It's *what kind of question* you're missing in People. Looking at your last few wrong answers, you're picking the procedurally correct option over the PMI-relationally correct one — that's a Bloom's-level signal (evaluate), not a knowledge gap.
+
+We've built you a targeted practice set: 15 questions specifically in the People domain, weighted toward the cognitive level you've been missing.
+
+[Practice your weak domain →]({{app_url}}/practice?domain=people&focus=traps)
+
+If you've got 15 minutes today, this is where to spend them.
+
+— The CipherExam team</div>
+    </div>
+
+    <h3>Day 2 — Decision Lens for this exam (PMP user)</h3>
+    <p style="color:var(--dim);font-size:0.9rem;">Reframed from plan §9.2's "How AI explanations improve scores" — Day 2 now introduces the per-exam Decision Lens <em>by name</em>. Confirmed by Dave 2026-05-11.</p>
+    <div class="copy-card">
+      <div class="meta">Day 2 · CTA: Try an explanation → /history</div>
+      <div class="body">Subject A: The Exam Lens (and why your PMP score depends on it)
+Subject B: The 30-second habit that moves your PMP score
+Subject C: Why our PMP explanations name the lens
+
+—
+
+Hi {{first_name}},
+
+Every PMP prep tool gives you the right answer. Most of them give you a one-line explanation: "C is correct because X."
+
+That's the wrong half of the answer.
+
+The half that actually moves your PMP score is the part that says: *what would PMI want you to do?* That's the Exam Lens, and it's the reasoning frame the exam grades you against. Knowing the right answer to one question doesn't transfer. Knowing the lens transfers to every question.
+
+Every CipherExam explanation walks through the lens first, then the answer. Read the lens section, not just the answer. The 30 seconds you spend there is what compounds across the 200+ questions you'll see between now and your exam.
+
+Quick test of the habit: pick any question you've already answered, click in, and read the lens section. Not just "C is correct" — the lens.
+
+[Try an explanation →]({{app_url}}/history)
+
+— The CipherExam team</div>
+    </div>
+
+    <h3>Day 3 — Complete your diagnostic</h3>
+    <div class="copy-card">
+      <div class="meta">Day 3 · CTA: Generate your Readiness Report → /readiness</div>
+      <div class="body">Subject A: You're 3 days in. Finish your diagnostic.
+Subject B: {{question_count}} questions answered. Here's what's missing.
+Subject C: The one report you should generate this week
+
+—
+
+Hi {{first_name}},
+
+You've answered {{question_count}} PMP questions in your first three days. Enough to generate a real diagnostic.
+
+The Readiness Report combines two things: your per-domain accuracy *and* the thinking-traps you keep falling into. Together, those two views tell you where your remaining prep time should go.
+
+Most people skip this and just keep practicing. That's leaving information on the table — especially the traps view, which surfaces patterns you wouldn't spot just looking at scores.
+
+10 seconds to generate. 3 minutes to read.
+
+[Generate your Readiness Report →]({{app_url}}/readiness)
+
+— The CipherExam team</div>
+    </div>
+
+    <p style="color:var(--dim);"><em>Day 4 — intentionally empty per plan §9.2.</em></p>
+
+    <h3>Day 5 — Progress + social proof</h3>
+    <div class="copy-card">
+      <div class="meta">Day 5 · CTA: Continue practicing → /practice?focus=weak</div>
+      <div class="body">Subject A: {{first_name}}, here's how your week went
+Subject B: You're outperforming most week-1 users in Process
+Subject C: Your PMP progress so far (and what's next)
+
+—
+
+Hi {{first_name}},
+
+Five days in. Quick recap of where you are:
+
+- Questions answered: **{{question_count}}**
+- Strongest domain: **Process** (82%)
+- Domain that needs the most work: **People** (62%)
+- Most common thinking-trap: **picks process-correct over PMI-correct**
+
+A common pattern for users who pass PMP on the first attempt: they spend the last third of prep deliberately practicing their weakest domain *plus* their top trap, instead of doing more random practice across the whole exam.
+
+You've got {{days_remaining}} days left on your trial. The highest-leverage move from here is targeted practice in People, weighted toward the trap above.
+
+[Continue practicing →]({{app_url}}/practice?focus=weak)
+
+— The CipherExam team</div>
+    </div>
+
+    <h3>Day 6 — Trial ending tomorrow (highest-stakes)</h3>
+    <div class="copy-card">
+      <div class="meta">Day 6 · CTA: Upgrade to Pro → /upgrade · conversion happens here</div>
+      <div class="body">Subject A: Your CipherExam trial ends tomorrow
+Subject B: Tomorrow: you lose the 180-question PMP Full Mock
+Subject C: {{first_name}}, one day left on your trial
+
+—
+
+Hi {{first_name}},
+
+Your free trial ends tomorrow. After that, your account drops to the free Starter plan — 5 questions per day, basic explanations, no Full Mock simulator, no Readiness Report.
+
+Here's what you've done in 6 days:
+
+- Answered {{question_count}} PMP questions
+- Identified People as your weakest domain
+- Logged {{traps_count}} thinking-traps the system is tracking for you
+
+The PMP Full Mock is the closest simulation to PMI's actual exam structure you'll find: 180 questions, 230 minutes, with EMV math and matching items included. You lose access to that simulator tomorrow if you don't keep going.
+
+Pro is **$19/month, or $189/year (save 17%)**. Cancel anytime. We don't charge for the trial.
+
+[Upgrade to Pro →]({{app_url}}/upgrade)
+
+— The CipherExam team</div>
+    </div>
+
+    <h3>Day 7 — Final convert offer</h3>
+    <div class="copy-card">
+      <div class="meta">Day 7 · CTA: Subscribe to Pro → /upgrade</div>
+      <div class="body">Subject A: Last day: Pro is $19/mo, cancel anytime
+Subject B: {{first_name}}, decision time
+Subject C: Trial ends tonight. Subscribe?
+
+—
+
+Hi {{first_name}},
+
+Your trial ends tonight. No surprise charge — we never put a card on file.
+
+If CipherExam helped you see PMP questions differently this week, Pro is **$19/month** ($189/year if you go annual, saving 17%). Cancel any time from your dashboard.
+
+If it didn't click, that's fine too — you'll drop to the free tier automatically. No action required. We'd love a one-line reply telling us what didn't land, so we can fix it.
+
+[Subscribe to Pro →]({{app_url}}/upgrade)
+
+— The CipherExam team</div>
+    </div>
+
+    <h3>Per-cert Day 6 deadline framing (all 11 live exams)</h3>
+    <table>
+      <thead><tr><th>Exam</th><th>Subject B variant</th><th>Body insertion</th></tr></thead>
+      <tbody>
+        <tr><td>PMP</td><td>Tomorrow: you lose the 180-question PMP Full Mock</td><td>180 questions, 230 minutes, with EMV math and matching.</td></tr>
+        <tr><td>PgMP</td><td>Tomorrow: you lose the 170-question PgMP Full Mock</td><td>170 questions, 240 minutes. There's not another simulator like it for PgMP.</td></tr>
+        <tr><td>CSM</td><td>Tomorrow: trial ends — 50-question CSM mocks gone</td><td>50 questions, 60 minutes — the closest pacing match to the real CSM assessment.</td></tr>
+        <tr><td>SHRM-CP</td><td>Tomorrow: you lose the 134-question SHRM-CP Full Mock</td><td>134 questions, 220 minutes — actual exam length and pacing.</td></tr>
+        <tr><td>Six Sigma GB</td><td>Tomorrow: you lose the 110-question Six Sigma Full Mock</td><td>110 questions, 258 minutes — DMAIC-classified throughout.</td></tr>
+        <tr><td>CPP</td><td>Tomorrow: you lose the 190-question CPP Full Mock</td><td>190 questions, 240 minutes — every question explained through the Exam Lens.</td></tr>
+        <tr><td>CIA Part 1</td><td>Tomorrow: you lose the 125-question CIA Part 1 Full Mock</td><td>125 questions, 150 minutes — explained against IIA Standards.</td></tr>
+        <tr><td>ITIL 4</td><td>Tomorrow: trial ends — 40-question ITIL 4 mocks gone</td><td>40 questions, 60 minutes — actual ITIL 4 Foundation exam length.</td></tr>
+        <tr><td>Security+</td><td>Tomorrow: you lose PBQ simulator access</td><td>90 questions, 90 minutes, with native PBQ support — the differentiator vs. flashcard-only banks.</td></tr>
+        <tr><td>Network+</td><td>Tomorrow: you lose PBQ simulator access</td><td>90 questions, 90 minutes, with native PBQ + Exam Lens explanations.</td></tr>
+        <tr><td>A+ Core 2</td><td>Tomorrow: you lose PBQ simulator access</td><td>90 questions, 90 minutes, with native PBQ + Exam Lens explanations.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Operations notes</h3>
+    <ul>
+      <li><strong>Send times:</strong> 9:00 local user timezone. Default UTC 14:00 if unknown.</li>
+      <li><strong>Suppression:</strong> if user converts to Pro mid-sequence, suppress Days 6 + 7 and switch to post-conversion track.</li>
+      <li><strong>Reply handling:</strong> all emails reply to a Dave-monitored inbox.</li>
+      <li><strong>Tracking:</strong> UTM <code>utm_source=email&amp;utm_medium=onboarding&amp;utm_campaign=day{N}_{variant}_{exam}</code>. The <code>{exam}</code> tag is new — needed for cluster attribution.</li>
+    </ul>
+  </section>
+
+
+</section>
+
+<hr class="rollup-divider">
+
+<section id="landing" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Landing</h2>
+  </header>
+
+
+  <div class="hero">
+    <h1>Landing page drafts</h1>
+    <p class="sub">Three Tier 1 LP drafts — DRAFT, not for live deployment. Routes confirmed by Dave 2026-05-11. Pricing block reproduces <code>/pricing</code> verbatim. Universal CTA: <strong>Start Free Trial.</strong></p>
+  </div>
+
+  <p style="color:var(--dim);font-size:0.92rem;">Click a section header to expand. First LP open by default.</p>
+
+  <!-- ====== PMP ====== -->
+  <details id="pmp" open>
+    <summary>LP #1 — <code>/lp/pmp-practice</code> (PMP)</summary>
+
+    <h3>Meta</h3>
+    <ul>
+      <li><strong>Title:</strong> PMP Practice with Exam Lens Explanations — CipherExam</li>
+      <li><strong>Description:</strong> Practice PMP questions explained through the Exam Lens. 180-question Full Mock with EMV math. 7-day free trial. No credit card.</li>
+    </ul>
+
+    <h3>Hero</h3>
+    <div class="card tier-1">
+      <h2 style="margin-top:0;">Practice PMP the way PMI thinks.</h2>
+      <p>Every CipherExam answer is explained through the Exam Lens — <em>what would PMI want you to do?</em> — plus the Bloom's-level reasoning behind the question. Memorizing the PMBOK isn't enough. Reading the question the way the test writers do is.</p>
+      <p><strong>[Start Free Trial]</strong> <span style="color:var(--dim);font-size:0.9rem;">Start your free 7-day trial. No credit card required.</span></p>
+    </div>
+
+    <h3>Problem</h3>
+    <p>Most PMP candidates plateau around 80% on practice tests and never break through. The reason isn't a knowledge gap — it's a frame gap. PMI grades whether you think like a PMI-certified PM, not whether you know every ITTO. Practice tools that just drill facts can't close that gap.</p>
+
+    <h3>Solution — three things compound for PMP</h3>
+    <ol>
+      <li><strong>Bloom's-classified practice.</strong> Every PMP question tagged by cognitive level. See whether you're nailing easy "remember" questions but missing the "evaluate"-level scenarios that dominate the real exam.</li>
+      <li><strong>Exam Lens explanations.</strong> Every right and wrong answer walked through the same lens — <em>what would PMI want you to do?</em></li>
+      <li><strong>180-question Full Mock with EMV math.</strong> Same length and pacing as the actual PMP. EMV / earned-value math supported natively, not buried in a text box.</li>
+    </ol>
+
+    <h3>Decision Lens callout</h3>
+    <blockquote>
+      <strong>The Exam Lens</strong><br>
+      <em>What would PMI want you to do?</em><br><br>
+      Every PMP question is testing this. We make it explicit on every explanation.
+    </blockquote>
+
+    <h3>Try a Question widget</h3>
+    <div class="card">
+      <p><em>(Illustrative — not from any real exam.)</em> A stakeholder demands a scope change on Friday afternoon. Your scrum team's next sprint starts Monday. What do you do <em>first</em>?</p>
+      <ol type="A">
+        <li>Tell the stakeholder to submit a formal change request</li>
+        <li>Prepare an impact analysis and schedule a stakeholder meeting Monday</li>
+        <li>Reject the request — scope was signed off</li>
+        <li>Adjust the next sprint backlog</li>
+      </ol>
+      <p><strong>[Reveal answer]</strong></p>
+      <p>→ Answer: <strong>B</strong>. The Exam Lens prioritizes <em>understanding the change</em> and <em>bringing stakeholders together</em> as a first move. A is the textbook process answer but PMI-relationally cold. Bloom's level: <strong>evaluate.</strong></p>
+      <p><strong>[Start Free Trial to see more questions like this →]</strong></p>
+    </div>
+
+    <h3>Pricing card</h3>
+    <p style="color:var(--dim);font-size:0.9rem;">Verbatim from <code>/pricing</code>, verified 2026-05-11.</p>
+    <table>
+      <thead><tr><th>Starter</th><th>Pro Membership ★ POPULAR</th></tr></thead>
+      <tbody>
+        <tr><td><strong>$0 / forever</strong></td><td><strong>$19 / month</strong> (yearly saves 17% — ~$189/yr)</td></tr>
+        <tr><td>Daily Quiz (5 questions/day)</td><td>Unlimited AI Quizzes</td></tr>
+        <tr><td>Basic Progress Tracking</td><td>Detailed Domain Analytics</td></tr>
+        <tr><td>Standard Explanations</td><td>Priority Support</td></tr>
+        <tr><td>Community Exam Coverage</td><td>Full Exam Simulators</td></tr>
+        <tr><td>Study Plan (Basic)</td><td>AI-Powered Study Plans</td></tr>
+        <tr><td>—</td><td><strong>7-day free trial. Cancel anytime. No credit card required.</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--dim);"><em>Secure payments powered by Stripe.</em></p>
+    <p><strong>[Start Free Trial]</strong></p>
+
+    <h3>FAQ</h3>
+    <ul>
+      <li><strong>Is this aligned to the current PMP exam (post-2021 update)?</strong> Yes — built against PMI's current published exam objectives (People / Process / Business Environment).</li>
+      <li><strong>Do you cover EMV / earned-value math?</strong> Yes, natively. EMV questions are interactive, not just text.</li>
+      <li><strong>How many questions is the Full Mock?</strong> 180 questions in 230 minutes — same length as the actual PMP exam.</li>
+      <li><strong>Can I cancel anytime?</strong> Yes. The 7-day trial never charges a card. Cancel from your dashboard.</li>
+      <li><strong>Do you have CAPM coverage?</strong> Not yet. PMP is fully live. Adjacent PMI certs added based on user demand.</li>
+    </ul>
+
+    <h3>Footer CTA</h3>
+    <blockquote>Ready to read PMP questions the way the writers do?<br><br><strong>[Start Free Trial]</strong><br><em>7-day free trial. No credit card. Cancel anytime.</em></blockquote>
+  </details>
+
+  <!-- ====== Security+ ====== -->
+  <details id="secplus">
+    <summary>LP #2 — <code>/lp/security-plus-practice</code> (Security+)</summary>
+
+    <h3>Meta</h3>
+    <ul>
+      <li><strong>Title:</strong> CompTIA Security+ PBQ Simulator with CIA Triad Explanations — CipherExam</li>
+      <li><strong>Description:</strong> Native PBQ simulation for Security+ SY0-701. Every question explained through the CIA triad. 90-question Full Mock. 7-day free trial. No credit card.</li>
+    </ul>
+
+    <h3>Hero</h3>
+    <div class="card tier-1">
+      <h2 style="margin-top:0;">Stop bombing Security+ PBQs.</h2>
+      <p>CipherExam runs CompTIA Security+ (SY0-701) Performance-Based Questions <em>natively</em> — drag-and-drop, network topology, and CLI items — and explains every answer through the CIA triad. Pass the simulator that matches the real exam.</p>
+      <p><strong>[Start Free Trial]</strong> <span style="color:var(--dim);font-size:0.9rem;">Start your free 7-day trial. No credit card required.</span></p>
+    </div>
+
+    <h3>Problem</h3>
+    <p>Most Security+ candidates pass every practice quiz at 90%+ and still walk out of the testing center shaken. The reason: question banks drill facts, but the real Security+ exam mixes MCQ with Performance-Based Questions — and PBQs test whether you can <em>operate</em>, not whether you can <em>recognize</em>. Flashcards can't close that gap.</p>
+
+    <h3>Solution — three things compound for Security+</h3>
+    <ol>
+      <li><strong>Native PBQ simulation.</strong> Drag-and-drop firewall rules, match attacks to controls, parse CLI output — the same item types CompTIA uses, not text approximations. The wedge against flashcard-only competitors.</li>
+      <li><strong>CIA-triad-first explanations.</strong> Every answer names the triad principle (confidentiality / integrity / availability) being tested <em>before</em> the control. Naming the principle first makes PBQs feel like 30-second questions instead of 5-minute panics.</li>
+      <li><strong>90-question Full Mock at exam pacing.</strong> 90 questions in 90 minutes — same length CompTIA uses. MCQ + matching + PBQ in one session.</li>
+    </ol>
+
+    <h3>Decision Lens callout</h3>
+    <blockquote>
+      <strong>The Exam Lens</strong><br>
+      <em>CIA triad — which principle is being protected?</em><br><br>
+      Name the principle first. The control follows.
+    </blockquote>
+
+    <h3>Try a Question widget</h3>
+    <div class="card">
+      <p><em>(Illustrative — not from any real exam.)</em> Which control best ensures sensitive customer records remain unaltered while transmitted across an untrusted network?</p>
+      <ol type="A">
+        <li>TLS encryption</li>
+        <li>HMAC / digital signatures</li>
+        <li>AES-256 at rest</li>
+        <li>RADIUS authentication</li>
+      </ol>
+      <p><strong>[Reveal answer]</strong></p>
+      <p>→ Answer: <strong>B</strong>. The CIA principle is <strong>integrity</strong> — unaltered during transit. TLS (A) gives you confidentiality first; integrity is a side effect. HMAC and digital signatures give you integrity directly. Name the principle first; the control follows. Bloom's level: <strong>analyze.</strong></p>
+      <p><strong>[Start Free Trial to see PBQs in the simulator →]</strong></p>
+    </div>
+
+    <h3>Pricing card</h3>
+    <p style="color:var(--dim);font-size:0.9rem;">Identical pricing block to LP #1 — verbatim from <code>/pricing</code>.</p>
+
+    <h3>FAQ</h3>
+    <ul>
+      <li><strong>Is this current for SY0-701?</strong> Yes — built against CompTIA's published SY0-701 exam objectives.</li>
+      <li><strong>Do PBQs actually work in the simulator?</strong> Yes. Drag-and-drop, matching, and topology items are native. Not text-only approximations.</li>
+      <li><strong>How many questions is the Full Mock?</strong> 90 questions in 90 minutes — same as CompTIA's exam.</li>
+      <li><strong>Will this help me pass Network+ or CySA+ next?</strong> Network+ is fully live — same Bloom's classification and PBQ support, with the Exam Lens. CySA+ is on the roadmap.</li>
+      <li><strong>Cancel anytime?</strong> Yes. 7-day trial never charges a card.</li>
+    </ul>
+
+    <h3>Footer CTA</h3>
+    <blockquote>Practice the question type that actually fails most candidates.<br><br><strong>[Start Free Trial]</strong><br><em>7-day free trial. No credit card. Cancel anytime.</em></blockquote>
+  </details>
+
+  <!-- ====== SHRM-CP ====== -->
+  <details id="shrm">
+    <summary>LP #3 — <code>/lp/shrm-cp-practice</code> (SHRM-CP)</summary>
+
+    <h3>Meta</h3>
+    <ul>
+      <li><strong>Title:</strong> SHRM-CP Practice with Competency Lens Explanations — CipherExam</li>
+      <li><strong>Description:</strong> SHRM-CP situational-judgment practice explained through the SHRM competency model. 134-question Full Mock at real exam pacing. 7-day free trial. No credit card.</li>
+    </ul>
+
+    <h3>Hero</h3>
+    <div class="card tier-1">
+      <h2 style="margin-top:0;">SHRM-CP situational questions, decoded.</h2>
+      <p>Three of four answer choices will be defensible HR moves. The "right" one aligns with a specific SHRM behavioral competency. CipherExam names the competency on every explanation, so you train the reflex the exam actually grades.</p>
+      <p><strong>[Start Free Trial]</strong> <span style="color:var(--dim);font-size:0.9rem;">Start your free 7-day trial. No credit card required.</span></p>
+    </div>
+
+    <h3>Problem</h3>
+    <p>Most senior HR pros fail SHRM-CP not because they lack knowledge — but because they've spent years making pragmatic HR calls. The exam grades you against an idealized competency frame, and pragmatic answers score lower than the answer that visibly enacts a named SHRM competency. Knowing the nine competencies isn't enough. Naming which one is being tested <em>before</em> you pick is the skill.</p>
+
+    <h3>Solution — three things compound for SHRM-CP</h3>
+    <ol>
+      <li><strong>Bloom's-classified practice.</strong> SHRM-CP is heavy on <em>evaluate</em>-level situational judgment. Classification tells you whether you're missing easy items or the high-cognitive items that dominate scored questions.</li>
+      <li><strong>Exam Lens explanations.</strong> Every answer names which of the nine behavioral competencies (Leadership, Ethical Practice, Business Acumen, Relationship Management, Consultation, Critical Evaluation, Global Mindset, Cultural Effectiveness, Communication) is being tested.</li>
+      <li><strong>134-question Full Mock at real exam pacing.</strong> 134 questions in 220 minutes — same length and pacing as the actual SHRM-CP. Time pressure is where pragmatic-vs-competency reflexes break; we train both.</li>
+    </ol>
+
+    <h3>Decision Lens callout</h3>
+    <blockquote>
+      <strong>The Exam Lens</strong><br>
+      <em>What aligns with SHRM behavioral competencies?</em><br><br>
+      Name the competency. The answer follows.
+    </blockquote>
+
+    <h3>Try a Question widget</h3>
+    <div class="card">
+      <p><em>(Illustrative — not from any real exam.)</em> A high-performing manager is consistently late submitting performance reviews. Her director defends her — "she's a top producer, leave her alone." What does HR do?</p>
+      <ol type="A">
+        <li>Defer to the director and let it go</li>
+        <li>Escalate to the CHRO</li>
+        <li>Coach the director on why timely performance management matters to the org</li>
+        <li>Document the pattern and address the manager directly</li>
+      </ol>
+      <p><strong>[Reveal answer]</strong></p>
+      <p>→ Answer: <strong>C</strong>. The competency being tested is <strong>Consultation</strong> — HR's role is to advise leaders to make better people decisions, not to capitulate (A) or police (D). C demonstrates Consultation most directly. Bloom's level: <strong>evaluate.</strong></p>
+      <p><strong>[Start Free Trial to see more questions like this →]</strong></p>
+    </div>
+
+    <h3>Pricing card</h3>
+    <p style="color:var(--dim);font-size:0.9rem;">Identical pricing block to LP #1 — verbatim from <code>/pricing</code>.</p>
+
+    <h3>FAQ</h3>
+    <ul>
+      <li><strong>Is this aligned to the current SHRM-CP exam?</strong> Yes — built against SHRM's Body of Applied Skills and Knowledge (BASK) and the nine behavioral competencies.</li>
+      <li><strong>Do you cover situational-judgment questions specifically?</strong> Yes — they're the dominant format and every one is tagged with the competency being tested.</li>
+      <li><strong>How many questions is the Full Mock?</strong> 134 questions in 220 minutes — the same as the actual exam.</li>
+      <li><strong>Do you also have SHRM-SCP?</strong> Not yet. SHRM-CP is fully live; SHRM-SCP is on the roadmap based on user demand.</li>
+      <li><strong>Cancel anytime?</strong> Yes. 7-day trial never charges a card.</li>
+    </ul>
+
+    <h3>Footer CTA</h3>
+    <blockquote>Train the reflex the exam actually grades.<br><br><strong>[Start Free Trial]</strong><br><em>7-day free trial. No credit card. Cancel anytime.</em></blockquote>
+  </details>
+
+  <h2>QA checklist before any LP goes live</h2>
+  <ul>
+    <li>Confirm route exists in <code>web/src/</code> and is reachable</li>
+    <li>Confirm GA4 + Meta Pixel + LinkedIn Insight + Google Ads conversion tags fire on <code>signup_complete</code> from each LP</li>
+    <li>Confirm pricing block matches <code>/pricing</code> byte-for-byte</li>
+    <li>Confirm the "Try a Question" widget question is original / AI-generated and not lifted from any third party</li>
+    <li>Confirm hero loads without layout shift on mobile (Tailwind responsive check)</li>
+    <li>Confirm the universal CTA button text is literally "Start Free Trial" — not "Try CipherExam" or any variant</li>
+    <li>Spot-check each FAQ against the verified exam specs in <code>cipher-exam-context</code> skill</li>
+  </ul>
+
+
+</section>
+
+<hr class="rollup-divider">
+
+<section id="engineering" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Engineering</h2>
+  </header>
+
+
+  <div class="hero">
+    <h1>Engineering handoff</h1>
+    <p class="sub"><strong>Owner:</strong> Dave (cipherexam.com / dquillman/cipher). <strong>Target:</strong> all items shipped before Week 1 of the campaign starts. Total estimated effort: ~4 days of solo-founder engineering.</p>
+  </div>
+
+  <!-- §1 -->
+  <h2 id="s1" style="margin-top:0;">1. Stand up the three Tier 1 landing pages</h2>
+  <p>Routes confirmed 2026-05-11:</p>
+  <table>
+    <thead><tr><th>Cert</th><th>Route</th><th>Copy source</th></tr></thead>
+    <tbody>
+      <tr><td>PMP</td><td><code>/lp/pmp-practice</code></td><td><a href="#landing">LP #1</a></td></tr>
+      <tr><td>Security+</td><td><code>/lp/security-plus-practice</code></td><td><a href="#landing">LP #2</a></td></tr>
+      <tr><td>SHRM-CP</td><td><code>/lp/shrm-cp-practice</code></td><td><a href="#landing">LP #3</a></td></tr>
+    </tbody>
+  </table>
+  <h3>Requirements</h3>
+  <ul>
+    <li>Same <code>#020617</code> dark theme as main site. Satoshi + General Sans font stack.</li>
+    <li>Primary CTA on each: <strong>Start Free Trial</strong> → existing signup flow with the corresponding <code>examId</code> pre-selected. Pre-select query param: <code>?exam={pmp|security-plus|shrm-cp}</code> resolved server-side to the Firestore exam doc ID.</li>
+    <li>Each LP must include the <strong>"Try a Question" widget</strong> — one fully-functional question, full AI explanation visible after answering, <strong>no signup required to use it</strong>. Critical per MARKETING-PLAN.md §7.3 (pre-signup explanation experience = highest conversion lift).</li>
+    <li><code>&lt;head&gt;</code> includes the existing site analytics stack: GA4, Meta Pixel, LinkedIn Insight, Microsoft Clarity, Google Ads conversion tag.</li>
+    <li>Each LP needs distinct <code>&lt;title&gt;</code> and meta description per the copy file.</li>
+  </ul>
+  <p><strong>Open question:</strong> Vite pages in <code>web/src/pages/landing/</code> or separate <code>marketing-dashboard</code> subdomain? <strong>Default recommendation:</strong> keep in main React app so analytics tags flow automatically.</p>
+
+  <!-- §2 -->
+  <h2 id="s2">2. Wire conversion events</h2>
+  <p>Per MARKETING-PLAN.md §1.1–1.3. Confirm all firing before paid spend unlocks.</p>
+  <table>
+    <thead><tr><th>Event</th><th>Trigger</th><th>Required for</th></tr></thead>
+    <tbody>
+      <tr><td><code>landing_page_view</code></td><td>Any <code>/lp/*</code> page load</td><td>LP CVR tracking</td></tr>
+      <tr><td><code>cta_click</code></td><td>Click on "Start Free Trial"</td><td>Funnel diagnostics</td></tr>
+      <tr><td><code>trial_start</code></td><td>Signup form opens</td><td>Funnel diagnostics</td></tr>
+      <tr><td><code>signup_complete</code></td><td>Successful signup</td><td><strong>Primary ad-platform conversion</strong></td></tr>
+      <tr><td><code>exam_selected</code></td><td>User confirms exam in onboarding</td><td>Activation step 1</td></tr>
+      <tr><td><code>activated_user</code></td><td>User completes 10th question</td><td><strong>Internal KPI — primary success metric</strong></td></tr>
+      <tr><td><code>explanation_viewed</code></td><td>User opens an AI explanation panel</td><td>"Is the wedge resonating?" diagnostic</td></tr>
+    </tbody>
+  </table>
+  <p>Send <code>signup_complete</code> to <strong>Google Ads</strong> (imported conversion action), <strong>Meta</strong> via Conversions API (server-side, not just pixel — Meta needs server events at low volume), and <strong>LinkedIn Insight Tag</strong>. <code>activated_user</code> and <code>explanation_viewed</code> stay internal in GA4.</p>
+  <p>Include <code>examId</code> as a custom dimension on <code>exam_selected</code>, <code>activated_user</code>, <code>explanation_viewed</code> so the funnel splits by cert cluster without re-querying Firestore.</p>
+
+  <!-- §3 -->
+  <h2 id="s3">3. In-app testimonial prompt</h2>
+  <p>Per MARKETING-PLAN.md §3.4. Trigger: user hits <code>activated_user</code> (10th question answered).</p>
+  <blockquote>
+    <strong>What surprised you most about CipherExam?</strong><br><br>
+    (One paragraph. We may quote you on the site — you'll see the exact wording before it goes live.)
+  </blockquote>
+  <p>Save responses to <code>users/{uid}/testimonialResponses/{timestamp}</code> with <code>examId</code>, <code>submittedAt</code>, <code>consentToQuote: boolean</code> (default true, since the prompt says "you'll see the exact wording before it goes live"). Build admin view in marketing-dashboard to surface high-quality responses.</p>
+  <blockquote class="warn"><strong>Non-trivial for the campaign.</strong> The brief assumes the first batch of testimonials comes from the in-app prompt, not from email outreach. If this isn't shipped by Week 2, the brief loses its primary social-proof source.</blockquote>
+
+  <!-- §4 -->
+  <h2 id="s4">4. 7-day onboarding email sequence (Resend)</h2>
+  <p>Copy in <a href="#content">content § email</a>. Implementation requirements:</p>
+  <ul>
+    <li><strong>Days 0, 1, 2, 3, 5, 6, 7.</strong> Day 4 intentionally skipped.</li>
+    <li><strong>One CTA per email</strong>, no fluff per plan §9.2.</li>
+    <li><strong>Merge tags:</strong> <code>{{exam_name}}</code>, <code>{{exam_lens}}</code>, <code>{{weakest_domain}}</code>, <code>{{cert_specific_deadline}}</code>.</li>
+    <li><strong>Suppression:</strong> any user who upgrades to Pro mid-trial gets the rest of the sequence cancelled.</li>
+    <li><strong>Tracking:</strong> UTM <code>utm_source=email&amp;utm_medium=onboarding&amp;utm_campaign=day{N}_{variant}_{exam}</code>. The <code>{exam}</code> tag is <strong>new</strong> and required for cluster attribution.</li>
+    <li><strong>Day 1 weakest-domain logic:</strong> needs in-app diagnostic that runs after exam selection but before first practice quiz. If diagnostic not shipped, fall back to "Start with Domain 1" Day 1 message.</li>
+  </ul>
+
+  <!-- §5 -->
+  <h2 id="s5">5. Reddit ad pixel (low priority)</h2>
+  <p>Only if paid-spend gate hits. First paid dollar most likely goes to Reddit Promoted Posts in r/pmp / r/CompTIA / r/humanresources after 25-activated-user gate. When that happens:</p>
+  <ul>
+    <li>Install Reddit's conversion pixel (similar to Meta Pixel) and wire to <code>signup_complete</code>.</li>
+    <li>Won't be needed weeks 1–4 since paid is off. Park until gate hits.</li>
+  </ul>
+
+  <!-- §6 — pre-launch checklist with persisted checkboxes -->
+  <h2 id="s6">6. Pre-launch verification checklist</h2>
+  <p>Before publishing the cornerstone blog (Week 1 Monday), confirm each. Checkbox state persists in <code>localStorage</code> (separate key from the today page).</p>
+
+  <div class="card">
+    <div class="checklist-item"><input type="checkbox" id="c1" data-key="c1"><label for="c1">All three LPs are deployed, render correctly, and the CTA works end-to-end</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c2" data-key="c2"><label for="c2">"Try a Question" widget renders the right question for each cert and the explanation panel opens</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3" data-key="c3"><label for="c3">GA4 <code>signup_complete</code> fires on a real test signup and shows in DebugView</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c4" data-key="c4"><label for="c4">Meta Conversions API receives a server-side test event</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c5" data-key="c5"><label for="c5">LinkedIn Insight Tag is firing on <code>/lp/*</code> pages</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c6" data-key="c6"><label for="c6">Resend Day 0 email sends to a test address with merge tags populated</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c7" data-key="c7"><label for="c7">Resend suppresses correctly when a test user upgrades mid-trial</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c8" data-key="c8"><label for="c8">Testimonial prompt fires at the 10th-question milestone</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c9" data-key="c9"><label for="c9">All four UTM source/medium/campaign/exam tags resolve to clean reports in GA4</label></div>
+  </div>
+  <blockquote class="warn">If any of the above isn't done, <strong>do not start the campaign</strong> — paid spend is gated on real conversion tracking and the campaign brief assumes the data is flowing.</blockquote>
+
+  <!-- §7 -->
+  <h2 id="s7">7. Owner / sequence</h2>
+  <table>
+    <thead><tr><th>Step</th><th>Owner</th><th>Estimated effort</th></tr></thead>
+    <tbody>
+      <tr><td>1. Three LPs (routes + copy + Try-a-Question widget)</td><td>Engineering</td><td>1–2 days</td></tr>
+      <tr><td>2. Conversion event wiring</td><td>Engineering</td><td>0.5 day</td></tr>
+      <tr><td>3. In-app testimonial prompt</td><td>Engineering</td><td>0.5 day</td></tr>
+      <tr><td>4. Resend 7-day sequence</td><td>Engineering / Marketing pair</td><td>1 day</td></tr>
+      <tr><td>5. Reddit pixel</td><td>Engineering</td><td>Park until gate hits</td></tr>
+      <tr><td>6. Pre-launch verification</td><td>Marketing + engineering review</td><td>0.5 day</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Total pre-Week-1 effort: ~4 days</strong> of solo-founder engineering.</p>
+  <p>If anything in this list slips, push Week 1 — running paid without conversion tracking, or sending the onboarding sequence without merge tags, breaks the campaign's measurement foundation.</p>
+
+
+</section>
+
+<hr class="rollup-divider">
+
+<section id="voice" class="rollup-section">
+  <header class="rollup-section-head">
+    <div class="rollup-eyebrow">Section</div>
+    <h2 class="rollup-title">Voice</h2>
+  </header>
+
+
+  <div class="hero">
+    <h1>Brand voice check</h1>
+    <p class="sub">Five assets reviewed. <strong>Zero BLOCK findings. Zero WARN findings. Six NOTE-severity flags</strong> (most documenting deliberate-and-defensible choices). Campaign passes brand-voice review.</p>
+  </div>
+
+  <h2 style="margin-top:0;">Guardrails reviewed against</h2>
+  <div class="card">
+    <ul style="margin:0;">
+      <li><strong>Tone:</strong> direct, plain-spoken, slightly weary-of-bad-prep-tools, confident without hype</li>
+      <li><strong>Reading level:</strong> 8th–10th grade</li>
+      <li><strong>Approved frames:</strong> "Understand how exams think" / "Reasoning, not memorization" / "The mindset behind the questions" / "Thinking patterns, not just answers"</li>
+      <li><strong>Voice split:</strong> Founder ("I, Dave") for /story-adjacent, LinkedIn long-form, blog. Product ("we") for ads, LPs, in-app, email.</li>
+      <li><strong>Forbidden:</strong> crush / dominate / smash · guaranteed pass · game-changer / revolutionary / unleash · fake urgency · fake scarcity · named-competitor comparisons in ads</li>
+      <li><strong>"Cipher/decode" wordplay:</strong> sparingly. Site uses it once total (title tag). Campaign uses it once (Sec+ X/Twitter hook).</li>
+      <li><strong>Pricing:</strong> Starter $0 / Pro $19/mo (yearly saves 17%) / 7-day trial / no credit card. Universal CTA: "Start Free Trial."</li>
+    </ul>
+  </div>
+
+  <h2>Severity scale</h2>
+  <p>
+    <span class="pill bad">BLOCK</span> must fix before publishing &nbsp;
+    <span class="pill warn">WARN</span> should fix; defensible only with founder override &nbsp;
+    <span class="pill dim">NOTE</span> stylistic flag for awareness &nbsp;
+    <span class="pill good">PASS</span> clean
+  </p>
+
+  <h2>Per-asset findings</h2>
+
+  <h3>00-campaign-brief.md</h3>
+  <table>
+    <thead><tr><th>#</th><th>Severity</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="pill dim">NOTE</span></td><td>Brief disagrees with MARKETING-PLAN.md §4.4 (overrides Sec+ from Priority 5 to Tier 1). Disagreement is <strong>explicit and reasoned</strong> per user direction. None — working as required.</td></tr>
+      <tr><td>2</td><td><span class="pill dim">NOTE</span></td><td>Composite scores 1–5; "search competition" inverted (higher = less competition = better). Called out under matrix to avoid confusion.</td></tr>
+      <tr><td>3</td><td><span class="pill good">PASS</span></td><td>No forbidden words present.</td></tr>
+      <tr><td>4</td><td><span class="pill good">PASS</span></td><td>Pricing references match verbatim.</td></tr>
+      <tr><td>5</td><td><span class="pill good">PASS</span></td><td>Universal CTA "Start Free Trial" referenced; no variants invented.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>01-cornerstone-cipherexam-thinking.md</h3>
+  <table>
+    <thead><tr><th>#</th><th>Severity</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="pill good">PASS</span></td><td>Founder voice ("I, Dave"). First-person, signed at the bottom. Matches /story tone.</td></tr>
+      <tr><td>2</td><td><span class="pill good">PASS</span></td><td>References existing cornerstones rather than competing. Per anti-pattern in context skill.</td></tr>
+      <tr><td>3</td><td><span class="pill good">PASS</span></td><td>Uses all three Tier 1 certs as worked examples.</td></tr>
+      <tr><td>4</td><td><span class="pill good">PASS</span></td><td>Approved frames present. Canonical line "exam stops feeling like a trick" used once.</td></tr>
+      <tr><td>5</td><td><span class="pill dim">NOTE</span></td><td>"I'll be blunt" appears once. Slightly stronger than rest of prose but acceptable for founder voice. Hold for Dave's pass — leave or soften.</td></tr>
+      <tr><td>6</td><td><span class="pill good">PASS</span></td><td>"Start a free 7-day trial" with no card. Pricing not invented.</td></tr>
+      <tr><td>7</td><td><span class="pill good">PASS</span></td><td>Reading-level scan clean. Most sentences ≤ 20 words.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>02-multi-exam-social.md</h3>
+  <table>
+    <thead><tr><th>#</th><th>Severity</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="pill good">PASS</span></td><td>Founder voice on LinkedIn long-form, product voice on X/Twitter and Reddit.</td></tr>
+      <tr><td>2</td><td><span class="pill good">PASS</span></td><td>"Decode" wordplay used <strong>once</strong> total — Sec+ X hook.</td></tr>
+      <tr><td>3</td><td><span class="pill good">PASS</span></td><td>Reddit posts contain <strong>no links</strong>.</td></tr>
+      <tr><td>4</td><td><span class="pill good">PASS</span></td><td>LinkedIn warm-outreach template is decline-friendly ("read and ignore"), no opt-in trap.</td></tr>
+      <tr><td>5</td><td><span class="pill good">PASS</span></td><td>All scenarios prefaced "illustrative, not from any real exam."</td></tr>
+      <tr><td>6</td><td><span class="pill dim">NOTE</span></td><td>"Splits the room" appears once on Twitter. Slightly casual but channel-appropriate.</td></tr>
+      <tr><td>7</td><td><span class="pill good">PASS</span></td><td>No forbidden words. No invented urgency. No "first N users."</td></tr>
+      <tr><td>8</td><td><span class="pill good">PASS</span></td><td>All CTAs route to <code>cipherexam.com</code> or <code>/pricing</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>03-onboarding-email.md</h3>
+  <table>
+    <thead><tr><th>#</th><th>Severity</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="pill good">PASS</span></td><td>Product voice ("we") throughout. No founder-voice slips.</td></tr>
+      <tr><td>2</td><td><span class="pill good">PASS</span></td><td>One CTA per email, per plan §9.2. Verified Days 0, 1, 2, 3, 5, 6, 7.</td></tr>
+      <tr><td>3</td><td><span class="pill good">PASS</span></td><td>Day 4 intentionally omitted (per plan).</td></tr>
+      <tr><td>4</td><td><span class="pill good">PASS</span></td><td>Subject lines ≤ 50 chars where possible.</td></tr>
+      <tr><td>5</td><td><span class="pill good">PASS</span></td><td>Pricing in Day 6 + Day 7 exact: "$19/month, or $189/year (save 17%)."</td></tr>
+      <tr><td>6</td><td><span class="pill good">PASS</span></td><td>Full EXAM_LENS table reproduced; merge-tag swap is unambiguous.</td></tr>
+      <tr><td>7</td><td><span class="pill good">PASS</span></td><td>Cert-specific Day 6 deadline framing covers all 11 live exams.</td></tr>
+      <tr><td>8</td><td><span class="pill dim">NOTE</span></td><td>Day 2 reframed from plan's "How AI explanations improve scores" to "Decision Lens for this exam." Confirmed by Dave. CTA unchanged.</td></tr>
+      <tr><td>9</td><td><span class="pill good">PASS</span></td><td>UTM tracking now includes <code>{exam}</code> tag for cluster-level attribution.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>04-multi-exam-landing-pages.md</h3>
+  <table>
+    <thead><tr><th>#</th><th>Severity</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="pill good">PASS</span></td><td>"DRAFT — NOT FOR LIVE DEPLOYMENT" header present.</td></tr>
+      <tr><td>2</td><td><span class="pill good">PASS</span></td><td>Pricing block reproduces <code>/pricing</code> verbatim across all three LPs.</td></tr>
+      <tr><td>3</td><td><span class="pill good">PASS</span></td><td>Universal CTA "Start Free Trial" used consistently.</td></tr>
+      <tr><td>4</td><td><span class="pill good">PASS</span></td><td>"Try a Question" widgets each contain a single AI-generated illustrative question flagged "(Illustrative — not from any real exam.)"</td></tr>
+      <tr><td>5</td><td><span class="pill good">PASS</span></td><td>All Full Mock specs match verified <code>exams.ts</code> table.</td></tr>
+      <tr><td>6</td><td><span class="pill good">PASS</span></td><td>Decision Lens names and prompts match EXAM_LENS exactly.</td></tr>
+      <tr><td>7</td><td><span class="pill dim">NOTE</span></td><td>Sec+ hero H1 "Stop bombing Security+ PBQs." Mildly emphatic but within "slightly weary-of-bad-prep-tools" guardrail.</td></tr>
+      <tr><td>8</td><td><span class="pill good">PASS</span></td><td>No competitor names in LP copy itself (Messer, Dion, PrepCast appear in brief + social but not LPs).</td></tr>
+      <tr><td>9</td><td><span class="pill good">PASS</span></td><td>QA checklist included with explicit pre-launch gates.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Cross-asset consistency</h2>
+  <table>
+    <thead><tr><th>Check</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Universal CTA "Start Free Trial" — never "Try CipherExam" / "Sign Up Free"</td><td><span class="pill good">PASS</span> across all 5 assets</td></tr>
+      <tr><td>Pricing — Starter $0 / Pro $19/mo (yearly saves 17%) / 7-day trial / no card</td><td><span class="pill good">PASS</span> identical in brief, emails, LPs</td></tr>
+      <tr><td>Decision Lens names — Exam Lens / Exam Lens / Exam Lens</td><td><span class="pill good">PASS</span> identical across blog, social, emails, LPs</td></tr>
+      <tr><td>Full Mock specs — 180Q/230min, 90Q/90min, 134Q/220min</td><td><span class="pill good">PASS</span></td></tr>
+      <tr><td>Founder vs. product voice split</td><td><span class="pill good">PASS</span></td></tr>
+      <tr><td>"Decode/cipher" wordplay — once across campaign</td><td><span class="pill good">PASS</span> (Sec+ X hook only)</td></tr>
+      <tr><td>No "guaranteed pass" / "crush" / "dominate" / "revolutionary"</td><td><span class="pill good">PASS</span></td></tr>
+      <tr><td>No invented urgency / scarcity / "first N users" / lifetime tier</td><td><span class="pill good">PASS</span></td></tr>
+      <tr><td>Competitor names — present in brief + social, never in LP copy</td><td><span class="pill good">PASS</span></td></tr>
+      <tr><td><code>[ASSUMPTION YYYY-MM-DD]</code> tags on every unverified claim</td><td><span class="pill good">PASS</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>All confirmed by Dave on 2026-05-11</h2>
+  <div class="card">
+    <p style="color:var(--dim);">Four items were tagged <code>[ASSUMPTION]</code> during the rebuild. All four <strong>confirmed by Dave</strong> at close-out and locked as working facts for this campaign.</p>
+    <ol style="margin:0;">
+      <li><strong>Tier 1 LP routes locked:</strong> <code>/lp/pmp-practice</code>, <code>/lp/security-plus-practice</code>, <code>/lp/shrm-cp-practice</code> — stand these up in <code>web/src/</code>.</li>
+      <li><strong>Trial → paid working target: 10%</strong> across all three Tier 1 clusters. Treat as planning baseline; recalibrate once enough real trials flow through.</li>
+      <li><strong>Day 2 email framing locked:</strong> introduce the per-exam Decision Lens <em>by name</em> ("Exam Lens," "Exam Lens," "Exam Lens"). Deliberate departure from MARKETING-PLAN.md §9.2 literal wording. CTA unchanged.</li>
+      <li><strong>TAM estimates locked as working figures</strong> — no further pre-launch verification pass required. Revisit only if a cluster underperforms its forecast in flight.</li>
+      <li><strong>Paid spend cap: $2/day TOTAL.</strong> Overrides MARKETING-PLAN.md §5. <strong>Gate:</strong> $0 paid until 25 cumulative activated users land organically; then $2/day retargeting unlocks (Reddit Promoted or Google Search RT — not LinkedIn, not Meta cold).</li>
+      <li><strong>Revised 4-week target: 55 activated users</strong> (PMP 30 / Sec+ 15 / SHRM-CP 10), downgraded from 100 to reflect the $2/day cap. The 100-user threshold from MARKETING-PLAN.md §3 is now the <strong>6-month</strong> goal.</li>
+    </ol>
+  </div>
+
+  <h2>Summary</h2>
+  <blockquote>Five assets reviewed, zero BLOCK-severity findings, zero WARN-severity findings, six NOTE-severity flags (most positive — documenting deliberate-and-defensible choices). The campaign passes brand-voice review and is ready for founder pass + LP standup.</blockquote>
+
+
+</section>
+</main>
+
+
+<!--INLINE-ASSETS-->
+<!--INLINE-STATE-->
+<script>window.__CAMPAIGN_STATE__ = {
+  "_meta": {
+    "lastUpdatedBy": "claude",
+    "lastUpdatedAt": "2026-05-11T14:00:00Z",
+    "schemaVersion": 1,
+    "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
+  },
+  "campaign": {
+    "start": "2026-05-18",
+    "tier1": ["PMP", "Security+", "SHRM-CP"],
+    "paidSpendCap": 2,
+    "activationGate": 25,
+    "activationTarget4wk": 55
+  },
+  "metrics": {
+    "activatedUsersTotal": 0,
+    "trialSignupsTotal": 0,
+    "paidSpendThisWeek": 0,
+    "perCluster": {
+      "PMP":       { "signups": 0, "activated": 0, "target": 30 },
+      "Security+": { "signups": 0, "activated": 0, "target": 15 },
+      "SHRM-CP":   { "signups": 0, "activated": 0, "target": 10 }
+    }
+  },
+  "blockers": [
+    { "id": "lps-deployed",       "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",          "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "conversion-events",  "label": "GA4 / Meta / LinkedIn conversion events wired",            "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "testimonial-prompt", "label": "In-app testimonial prompt at 10th-question milestone",    "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "resend-sequence",    "label": "Resend 7-day onboarding with exam merge tags",            "owner": "Engineering + Marketing", "status": "pending", "due": "2026-05-17" }
+  ],
+  "decisions": [
+    { "date": "2026-05-11", "what": "Tier 1 = PMP / Security+ / SHRM-CP",                       "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority" },
+    { "date": "2026-05-11", "what": "$2/day paid cap; gate at 25 activated users",              "why": "Dave's actual budget constraint" },
+    { "date": "2026-05-11", "what": "4-week target 55 activated users (was 100)",               "why": "Original target assumed paid acquisition at $45/day" },
+    { "date": "2026-05-11", "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)", "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text" }
+  ],
+  "dailyLog": [
+    { "date": "2026-05-11", "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18." }
+  ]
+}
+;</script>
+<!--/INLINE-STATE-->
+<script>
+/* CipherExam campaign site — shared JS (vanilla, no deps) */
+
+// ---------- CONFIG ----------
+// Defaults — overridden by data/campaign-state.json at runtime if reachable.
+let CAMPAIGN_START = '2026-05-18';
+let CURRENT_ACTIVATED = 0;
+let ACTIVATION_GATE = 25;
+let ACTIVATION_TARGET_4WK = 55;
+let STATE = null;                              // populated by loadState()
+const STATE_URL = 'data/campaign-state.json';
+
+function applyState(j) {
+  if (!j) return null;
+  STATE = j;
+  if (j.campaign?.start) CAMPAIGN_START = j.campaign.start;
+  if (j.campaign?.activationGate != null) ACTIVATION_GATE = j.campaign.activationGate;
+  if (j.campaign?.activationTarget4wk != null) ACTIVATION_TARGET_4WK = j.campaign.activationTarget4wk;
+  if (j.metrics?.activatedUsersTotal != null) CURRENT_ACTIVATED = j.metrics.activatedUsersTotal;
+  return j;
+}
+
+async function loadState() {
+  // 1. Prefer inline state (works in static preview without fetch)
+  if (typeof window !== 'undefined' && window.__CAMPAIGN_STATE__) {
+    return applyState(window.__CAMPAIGN_STATE__);
+  }
+  // 2. Fall back to fetch (works when served via http)
+  try {
+    const res = await fetch(STATE_URL, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return applyState(await res.json());
+  } catch (e) {
+    console.warn('[campaign-state] fetch failed, using defaults:', e.message);
+    return null;
+  }
+}
+
+// ---------- 4-WEEK CALENDAR DATA (from 00-campaign-brief.md §3) ----------
+// Week 0 = pre-launch (engineering blockers from 06-engineering-handoff.md §7).
+// Weekdays only Mon–Fri; weekends graceful.
+const CALENDAR = {
+  // ---- PRE-LAUNCH WEEK (week 0) ----
+  preLaunch: {
+    label: 'Pre-launch — engineering blockers',
+    tasks: [
+      'Three Tier 1 LPs (PMP, Sec+, SHRM-CP) deployed and reachable',
+      'Try-a-Question widget renders on each LP with explanation panel working',
+      'GA4 signup_complete fires on a real test signup (verify in DebugView)',
+      'Meta Conversions API server-side test event received',
+      'LinkedIn Insight Tag firing on /lp/* pages',
+      'Resend Day 0 email sends to test address with merge tags populated',
+      'Resend suppresses correctly when test user upgrades mid-trial',
+      'In-app testimonial prompt fires at 10th-question milestone',
+      'UTM source/medium/campaign/exam tags resolve cleanly in GA4'
+    ]
+  },
+  // ---- ACTIVE 4 WEEKS ----
+  weeks: [
+    { // Week 1 (prep)
+      label: 'Week 1 — prep & cornerstone',
+      days: {
+        Mon: { tasks: ['Publish cornerstone blog (01-cornerstone-cipherexam-thinking.md)'] },
+        Tue: { tasks: ['PMP LP live (no ads yet) — verify analytics fire'] },
+        Wed: { tasks: ['Security+ LP live (no ads yet) — verify analytics fire'] },
+        Thu: { tasks: ['SHRM-CP LP live (no ads yet) — verify analytics fire'] },
+        Fri: { tasks: ['LinkedIn founder post: PMP worked-question (LI long-form #1 from 02-multi-exam-social.md)'] }
+      }
+    },
+    { // Week 2
+      label: 'Week 2 — Sec+ + Reddit value posts',
+      days: {
+        Mon: { tasks: ['LinkedIn founder post: Sec+ PBQ walkthrough (LI long-form #1)'] },
+        Tue: { tasks: ['Reddit r/pmp value post (no link)'] },
+        Wed: { tasks: ['Reddit r/CompTIA value post (no link)'] },
+        Thu: { tasks: ['LinkedIn founder post: SHRM-CP Competency Lens (LI long-form #1)'] },
+        Fri: { tasks: ['Mid-campaign read: which channel is producing signups? Pull GA4 by-source.'] }
+      }
+    },
+    { // Week 3
+      label: 'Week 3 — X/Twitter + warm outreach',
+      days: {
+        Mon: { tasks: ['Reddit r/humanresources value post (no link)'] },
+        Tue: { tasks: ['X/Twitter PMP worked-question thread'] },
+        Wed: { tasks: ['X/Twitter Sec+ "the question you\'ll see" hook (uses the one allowed decode wordplay)'] },
+        Thu: { tasks: ['LinkedIn warm-outreach push: 10–15 personalized DMs (exam-merge-tagged template from 02 §exam-agnostic)'] },
+        Fri: { tasks: ['LinkedIn founder post #2: PMP (worked-question variant)'] }
+      }
+    },
+    { // Week 4
+      label: 'Week 4 — retro + paid-gate decision',
+      days: {
+        Mon: { tasks: ['LinkedIn founder post #2: Security+'] },
+        Tue: { tasks: ['LinkedIn founder post #2: SHRM-CP'] },
+        Wed: { tasks: ['X/Twitter SHRM-CP worked question'] },
+        Thu: { tasks: ['4-week retro: which cluster activated most users? Pull GA4 by examId.'] },
+        Fri: { tasks: ['Decision day: hit the 25-activated-user paid-spend gate yet?', 'If yes — turn on $2/day retargeting on highest-leverage channel (Reddit Promoted or Google Search RT of LP visitors).', 'If no — extend organic. Tier 2 expansion is gated on hitting cluster targets.'] }
+        }
+    }
+  ],
+  postCampaign: {
+    label: 'Post-campaign — retro & next cycle',
+    tasks: [
+      'Campaign done — write retro: cluster-level activation rates vs. target',
+      'Decide which Tier 1 cluster gets sustained organic + paid retargeting',
+      'Decide whether to start Tier 2 rollout (Network+, Six Sigma GB, CSM SEO)',
+      'Update cipher-exam-context skill with real conversion-rate numbers'
+    ]
+  }
+};
+
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+// ---------- VIDEO CREATIVE PER DAY ----------
+// Keyed by `${weekIndex}-${weekday}` (week 1-4, weekday Mon-Fri).
+// Days not present here are text-only / no video.
+// LinkedIn-targeted days use the -li (4:5) variants so they don't get
+// letterboxed in the LinkedIn desktop feed. X/Twitter and blog-embed days
+// use the original 9:16 or 1:1 versions.
+const CALENDAR_VIDEOS = {
+  '1-Mon': { id: 'launch-teaser-pmp',           title: 'Launch teaser — PMP (1:1)',                            use: 'Embed at top of the cornerstone blog post',         why: 'Sets up "we teach you how the exam thinks" before the long read.' },
+  '1-Fri': { id: 'ai-tutor-demo-pmp-li',        title: 'AI tutor demo — PMP scenario #1 (4:5 LinkedIn)',       use: 'LinkedIn founder post — PMP worked question',       why: 'Stakeholder-excluded scenario shows the Exam Lens. 4:5 fits LinkedIn feed without letterboxing.' },
+  '2-Mon': { id: 'pbq-walkthrough-secplus-li',  title: 'Sec+ PBQ walkthrough (4:5 LinkedIn)',                  use: 'LinkedIn founder post — PBQ walkthrough',           why: 'PBQ-native demo. CompTIA-family differentiator. 4:5 for LinkedIn.' },
+  '2-Thu': { id: 'ai-tutor-demo-shrm-li',       title: 'AI tutor demo — SHRM-CP (4:5 LinkedIn)',               use: 'LinkedIn founder post — Exam Lens',                 why: 'Worked scenario showing the Exam Lens. 4:5 for LinkedIn.' },
+  '3-Tue': { id: 'ai-tutor-demo-pmp',           title: 'AI tutor demo — PMP (9:16)',                           use: 'X/Twitter thread — PMP worked question',            why: '9:16 vertical works on X mobile. Reusing the PMP demo as a thread anchor.' },
+  '3-Wed': { id: 'launch-teaser-secplus',       title: 'Launch teaser — Security+ (1:1)',                      use: 'X/Twitter — Sec+ "the question you\'ll see" hook',  why: '1:1 hook fits X feed cleanly.' },
+  '3-Fri': { id: 'ai-tutor-demo-pmp2-li',       title: 'AI tutor demo — PMP #2 / scope creep (4:5 LinkedIn)',  use: 'LinkedIn founder post #2 — PMP variant',            why: 'Different angle: change-control scenario. 4:5 for LinkedIn.' },
+  '4-Mon': { id: 'ai-tutor-demo-secplus2-li',   title: 'AI tutor demo — Sec+ #2 / incident response (4:5 LI)', use: 'LinkedIn founder post #2 — Sec+',                   why: 'Ransomware containment scenario. 4:5 for LinkedIn.' },
+  '4-Tue': { id: 'ai-tutor-demo-shrm2-li',      title: 'AI tutor demo — SHRM-CP #2 / business acumen (4:5 LI)', use: 'LinkedIn founder post #2 — SHRM-CP',              why: 'Termination-readiness scenario, Business Acumen lens. 4:5 for LinkedIn.' },
+  '4-Wed': { id: 'ai-tutor-demo-shrm',          title: 'AI tutor demo — SHRM-CP (9:16)',                       use: 'X/Twitter — SHRM-CP worked question',               why: '9:16 works on X mobile. Re-use Round 1 SHRM demo as X thread anchor.' },
+};
+
+function videoPathFor(id) {
+  // Videos live one level up in `videos/out/`. The site/ http server can't reach
+  // outside its root, so show a relative path the user can open from disk or
+  // serve separately. Returns a string to display, not a working <video src>.
+  return `videos/out/${id}.mp4`;
+}
+
+// ---------- DATE / STAGE HELPERS ----------
+function dayKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function parseISO(s) {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function daysBetween(a, b) {
+  const ms = 24 * 60 * 60 * 1000;
+  return Math.floor((b.getTime() - a.getTime()) / ms);
+}
+
+function weekdayName(d) {
+  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+}
+
+function formatDateLong(d) {
+  return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+/**
+ * Returns {stage, weekIndex, weekday, label, tasks, isWeekend}
+ *   stage: 'pre' | 'active' | 'post'
+ *   weekIndex: 1-4 when active; null otherwise
+ *   weekday: Mon..Fri or Sat/Sun
+ */
+function stageFor(date) {
+  const start = parseISO(CAMPAIGN_START);
+  const diff = daysBetween(start, date);
+  const wd = weekdayName(date);
+  const isWeekend = wd === 'Sat' || wd === 'Sun';
+
+  if (diff < 0) {
+    return { stage: 'pre', weekIndex: null, weekday: wd, label: CALENDAR.preLaunch.label, tasks: CALENDAR.preLaunch.tasks, isWeekend };
+  }
+  const weekIndex = Math.floor(diff / 7) + 1; // day 0 → week 1
+  if (weekIndex > 4) {
+    return { stage: 'post', weekIndex: null, weekday: wd, label: CALENDAR.postCampaign.label, tasks: CALENDAR.postCampaign.tasks, isWeekend };
+  }
+  const wk = CALENDAR.weeks[weekIndex - 1];
+  if (isWeekend) {
+    return { stage: 'active', weekIndex, weekday: wd, label: `${wk.label} — Weekend`, tasks: [], isWeekend: true };
+  }
+  const dayEntry = wk.days[wd] || { tasks: [] };
+  return { stage: 'active', weekIndex, weekday: wd, label: `${wk.label} — ${wd}`, tasks: dayEntry.tasks, isWeekend: false };
+}
+
+// ---------- LOCALSTORAGE ----------
+function loadDone(scope, dateKey) {
+  try { return JSON.parse(localStorage.getItem(`ce.${scope}.${dateKey}`) || '{}'); }
+  catch { return {}; }
+}
+function saveDone(scope, dateKey, obj) {
+  localStorage.setItem(`ce.${scope}.${dateKey}`, JSON.stringify(obj));
+}
+
+// ---------- RENDER HELPERS ----------
+function renderTaskList(container, info, dateKey, opts = {}) {
+  container.innerHTML = '';
+  if (info.isWeekend && info.tasks.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim);font-style:italic;">Weekend — no scheduled tasks. Recharge.</p>';
+    return;
+  }
+  if (info.tasks.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim);">No scheduled tasks for this day.</p>';
+    return;
+  }
+  const done = opts.readonly ? (opts.doneOverride || {}) : loadDone(opts.scope || 'today', dateKey);
+
+  info.tasks.forEach((task, i) => {
+    const row = document.createElement('div');
+    const isDone = !!done[i];
+    row.className = 'task-row' + (opts.readonly ? ' readonly' : '') + (isDone ? ' done status-good' : ' status-bad');
+    const id = `${opts.scope || 'today'}-${dateKey}-${i}`;
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.id = id;
+    cb.checked = isDone;
+    if (opts.readonly) cb.disabled = true;
+    cb.addEventListener('change', () => {
+      const cur = loadDone(opts.scope || 'today', dateKey);
+      cur[i] = cb.checked;
+      saveDone(opts.scope || 'today', dateKey, cur);
+      row.classList.toggle('done', cb.checked);
+      row.classList.toggle('status-good', cb.checked);
+      row.classList.toggle('status-bad', !cb.checked);
+    });
+    const lab = document.createElement('label');
+    lab.htmlFor = id;
+    lab.textContent = task;
+    row.appendChild(cb);
+    row.appendChild(lab);
+    container.appendChild(row);
+  });
+}
+
+function renderWeekStrip(container, refDate) {
+  container.innerHTML = '';
+  const today = new Date(refDate);
+  const todayDow = today.getDay(); // 0..6
+  // Anchor to Monday of current week
+  const monOffset = (todayDow === 0 ? -6 : 1 - todayDow);
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + monOffset);
+
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const wd = weekdayName(d);
+    const isToday = dayKey(d) === dayKey(today);
+    const el = document.createElement('div');
+    el.className = 'day' + (isToday ? ' today' : '');
+    el.innerHTML = `<span class="label">${wd}</span>${d.getDate()}`;
+    container.appendChild(el);
+  }
+}
+
+function renderProgressBar(container, current, total) {
+  const pct = Math.min(100, Math.round((current / total) * 100));
+  // For the paid-spend gate: red < 33%, yellow 33–99%, green at 100%.
+  const status = current >= total ? 'good' : (pct >= 33 ? 'warn' : 'bad');
+  container.innerHTML = `
+    <div class="progress-meta">
+      <span><strong class="status-${status}">${current}</strong> of ${total} activated users</span>
+      <span class="status-${status}">${pct}%</span>
+    </div>
+    <div class="progress-bar"><div class="fill status-${status}" style="width:${pct}%"></div></div>
+  `;
+}
+
+// ---------- NAV CURRENT-PAGE HIGHLIGHT ----------
+function highlightNav() {
+  const path = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link').forEach(a => {
+    const href = a.getAttribute('href');
+    if (href === path || (path === '' && href === 'index.html')) a.classList.add('current');
+  });
+}
+
+// ---------- TODAY CREATIVE (which video to attach to today's post) ----------
+function renderTodayCreative(container) {
+  if (!container) return;
+  const today = new Date();
+  const info = stageFor(today);
+  if (info.stage !== 'active' || info.isWeekend) {
+    container.innerHTML = `<p style="color:var(--dim);margin:0;">${info.stage === 'pre' ? 'Pre-launch — no campaign-day creative yet. Once Week 1 starts, today\'s recommended video will appear here.' : 'No video creative scheduled today.'}</p>`;
+    return;
+  }
+  const key = `${info.weekIndex}-${info.weekday}`;
+  const v = CALENDAR_VIDEOS[key];
+  if (!v) {
+    container.innerHTML = '<p style="color:var(--dim);margin:0;"><strong>Text-only day.</strong> No video creative scheduled — focus on the copy.</p>';
+    return;
+  }
+  container.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:240px;">
+        <div style="font-family:'Satoshi',sans-serif;font-size:0.75rem;font-weight:700;color:var(--purple);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Today's video creative</div>
+        <div style="font-family:'Satoshi',sans-serif;font-size:1.2rem;font-weight:700;color:var(--cyan);margin-bottom:6px;">${escapeHtml(v.title)}</div>
+        <div style="font-size:0.92rem;margin-bottom:4px;"><strong>Use:</strong> ${escapeHtml(v.use)}</div>
+        <div style="font-size:0.88rem;color:var(--dim);"><strong>Why this one:</strong> ${escapeHtml(v.why)}</div>
+      </div>
+      <div style="flex:0 0 auto;text-align:right;font-size:0.82rem;">
+        <div style="color:var(--muted);margin-bottom:4px;">File:</div>
+        <code style="display:inline-block;font-size:0.82rem;padding:4px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--cyan);">${videoPathFor(v.id)}</code>
+      </div>
+    </div>`;
+}
+
+// ---------- STATE RENDERERS ----------
+function renderDailyLog(container, max = 7) {
+  if (!container || !STATE?.dailyLog) return;
+  const items = [...STATE.dailyLog].reverse().slice(0, max);
+  if (items.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim);font-style:italic;">No entries yet — tell Claude what happened today and it\'ll appear here.</p>';
+    return;
+  }
+  container.innerHTML = items.map(e =>
+    `<div class="log-entry"><div class="log-date">${e.date}</div><div class="log-body">${escapeHtml(e.entry)}</div></div>`
+  ).join('');
+}
+
+function renderBlockers(container) {
+  if (!container || !STATE?.blockers) return;
+  const items = STATE.blockers;
+  if (items.length === 0) {
+    container.innerHTML = '<p style="color:var(--good);">No open blockers.</p>';
+    return;
+  }
+  container.innerHTML = items.map(b => {
+    const statusClass = b.status === 'done' ? 'good' : (b.status === 'in-progress' ? 'warn' : 'bad');
+    const statusLabel = b.status === 'done' ? '✓ done' : (b.status === 'in-progress' ? '⋯ in-progress' : '○ pending');
+    return `<div class="blocker-row">
+      <span class="pill ${statusClass}">${statusLabel}</span>
+      <span class="blocker-label">${escapeHtml(b.label)}</span>
+      <span class="blocker-meta">${escapeHtml(b.owner)} · due ${escapeHtml(b.due || '—')}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderClusterKpis(container) {
+  if (!container || !STATE?.metrics?.perCluster) return;
+  const c = STATE.metrics.perCluster;
+  container.innerHTML = Object.entries(c).map(([name, v]) => {
+    const pct = v.target > 0 ? Math.min(100, Math.round((v.activated / v.target) * 100)) : 0;
+    const s = statusFor(v.activated, v.target);
+    return `<div class="kpi-card status-${s}">
+      <div class="label">${escapeHtml(name)}</div>
+      <div class="value status-${s}">${v.activated} <span style="font-size:0.55em;color:var(--dim);">/ ${v.target}</span></div>
+      <div class="sub">${v.signups} signups · ${pct}% to target</div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// Health-status helper: map (value, target) -> 'bad' | 'warn' | 'good'
+//   bad:  < badAbove  (default 0.25)
+//   warn: badAbove .. warnAbove
+//   good: >= warnAbove (default 0.75)
+function statusFor(value, target, opts) {
+  const o = opts || {};
+  const badAbove = o.badAbove != null ? o.badAbove : 0.25;
+  const warnAbove = o.warnAbove != null ? o.warnAbove : 0.75;
+  if (!target || target <= 0) return 'good';
+  const ratio = value / target;
+  if (ratio >= warnAbove) return 'good';
+  if (ratio >= badAbove) return 'warn';
+  return 'bad';
+}
+
+// ---------- SCRATCHPAD + COPY-FOR-CLAUDE ----------
+function initScratchpad() {
+  const ta = document.getElementById('scratchpad');
+  const btn = document.getElementById('copy-update-btn');
+  const status = document.getElementById('copy-status');
+  if (!ta || !btn) return;
+
+  const today = new Date();
+  const key = `ce.scratchpad.${dayKey(today)}`;
+  ta.value = localStorage.getItem(key) || '';
+  ta.addEventListener('input', () => localStorage.setItem(key, ta.value));
+
+  btn.addEventListener('click', async () => {
+    const info = stageFor(today);
+    const dKey = dayKey(today);
+    const done = loadDone('today', dKey);
+    const completedTasks = info.tasks.filter((_, i) => done[i]);
+    const notes = ta.value.trim();
+
+    const parts = [];
+    parts.push(`[CipherExam campaign update — ${dKey}]`);
+    parts.push(`Stage: ${info.label}`);
+    parts.push('');
+    if (completedTasks.length > 0) {
+      parts.push('Tasks completed today:');
+      completedTasks.forEach(t => parts.push(`- ${t}`));
+      parts.push('');
+    }
+    if (notes) {
+      parts.push('Notes:');
+      parts.push(notes);
+      parts.push('');
+    }
+    parts.push('---');
+    parts.push('Please update site/data/campaign-state.json:');
+    parts.push('1. Append this to dailyLog (use today\'s date)');
+    parts.push('2. Update any KPI numbers I mentioned (activatedUsersTotal, trialSignupsTotal, perCluster)');
+    parts.push('3. Mark any blockers as done/in-progress if I named them');
+    parts.push('4. Bump _meta.lastUpdatedAt');
+
+    const message = parts.join('\n');
+    try {
+      await navigator.clipboard.writeText(message);
+      if (status) { status.textContent = '✓ Copied. Paste into Claude Code.'; status.classList.add('good'); }
+      setTimeout(() => { if (status) { status.textContent = ''; status.classList.remove('good'); } }, 4000);
+    } catch (e) {
+      if (status) { status.textContent = '✗ Copy failed — select the text in the textarea below and copy manually.'; status.classList.add('bad'); }
+      const fallback = document.getElementById('copy-fallback');
+      if (fallback) { fallback.value = message; fallback.style.display = 'block'; }
+    }
+  });
+}
+
+// ---------- TODAY PAGE ENTRY ----------
+function initTodayPage() {
+  const today = new Date();
+  const info = stageFor(today);
+  const banner = document.getElementById('stage-banner');
+  if (banner) {
+    banner.innerHTML = `
+      <div class="stage">${info.label}</div>
+      <div class="date">${formatDateLong(today)}</div>
+    `;
+  }
+
+  const todayList = document.getElementById('today-tasks');
+  if (todayList) renderTaskList(todayList, info, dayKey(today), { scope: 'today' });
+
+  // Yesterday recap
+  const yest = new Date(today); yest.setDate(yest.getDate() - 1);
+  const yInfo = stageFor(yest);
+  const yList = document.getElementById('yesterday-tasks');
+  if (yList) renderTaskList(yList, yInfo, dayKey(yest), { scope: 'today' });
+  const ySum = document.getElementById('yesterday-summary');
+  if (ySum) ySum.textContent = `Yesterday — ${weekdayName(yest)} ${yest.toLocaleDateString()}`;
+
+  // Tomorrow preview (read-only)
+  const tmrw = new Date(today); tmrw.setDate(tmrw.getDate() + 1);
+  const tInfo = stageFor(tmrw);
+  const tList = document.getElementById('tomorrow-tasks');
+  if (tList) renderTaskList(tList, tInfo, dayKey(tmrw), { scope: 'today', readonly: true });
+  const tSum = document.getElementById('tomorrow-summary');
+  if (tSum) tSum.textContent = `Tomorrow — ${weekdayName(tmrw)} ${tmrw.toLocaleDateString()}`;
+
+  // Week strip
+  const strip = document.getElementById('week-strip');
+  if (strip) renderWeekStrip(strip, today);
+
+  // Paid-spend gate progress
+  const gate = document.getElementById('gate-progress');
+  if (gate) renderProgressBar(gate, CURRENT_ACTIVATED, ACTIVATION_GATE);
+  const gateNote = document.getElementById('gate-note');
+  if (gateNote) {
+    if (CURRENT_ACTIVATED >= ACTIVATION_GATE) {
+      gateNote.innerHTML = '<span class="pill good">UNLOCKED</span> $2/day retargeting is eligible — pick Reddit Promoted or Google Search RT.';
+    } else {
+      gateNote.innerHTML = `<span class="pill warn">LOCKED</span> $0 paid until ${ACTIVATION_GATE - CURRENT_ACTIVATED} more activated users land organically.`;
+    }
+  }
+
+  // Live KPI cards from state
+  const kpiSnap = document.getElementById('kpi-snapshot');
+  if (kpiSnap) renderClusterKpis(kpiSnap);
+  const stateNote = document.getElementById('state-source');
+  if (stateNote && STATE?._meta?.lastUpdatedAt) {
+    stateNote.textContent = `Numbers from data/campaign-state.json · last updated ${STATE._meta.lastUpdatedAt}`;
+  }
+
+  // Today's recommended video creative
+  const creative = document.getElementById('today-creative');
+  if (creative) renderTodayCreative(creative);
+
+  // Daily log
+  const log = document.getElementById('daily-log');
+  if (log) renderDailyLog(log, 7);
+
+  // Scratchpad
+  initScratchpad();
+}
+
+// ---------- INDEX PAGE TODAY WIDGET ----------
+function initIndexWidget() {
+  const today = new Date();
+  const info = stageFor(today);
+  const widget = document.getElementById('index-today-widget');
+  if (!widget) return;
+  const top = info.tasks.slice(0, 3);
+  let html = `<div class="meta" style="color:var(--purple);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">${info.label}</div>`;
+  if (top.length === 0) {
+    html += '<p style="color:var(--dim);margin:0;">No tasks scheduled today.</p>';
+  } else {
+    html += '<ul style="margin:0 0 8px;padding-left:18px;">';
+    top.forEach(t => { html += `<li style="margin-bottom:4px;">${t}</li>`; });
+    html += '</ul>';
+  }
+  // In app.html, cipherShow exists and switches sections.
+  // In a standalone page, fall back to today.html.
+  html += '<a href="today.html" onclick="if(typeof cipherShow===\'function\'){cipherShow(\'today\');return false;}" style="font-size:0.88rem;font-weight:600;">Full daily view →</a>';
+  widget.innerHTML = html;
+}
+
+// ---------- ENGINEERING CHECKLIST (separate localStorage scope) ----------
+function initEngineeringChecklist() {
+  document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(cb => {
+    const key = cb.dataset.key;
+    if (!key) return;
+    const stored = localStorage.getItem(`ce.eng.${key}`) === '1';
+    cb.checked = stored;
+    applyChecklistStatus(cb);
+    cb.addEventListener('change', () => {
+      localStorage.setItem(`ce.eng.${key}`, cb.checked ? '1' : '0');
+      applyChecklistStatus(cb);
+    });
+  });
+}
+function applyChecklistStatus(cb) {
+  const item = cb.parentElement;
+  item.classList.toggle('done', cb.checked);
+  item.classList.toggle('status-good', cb.checked);
+  item.classList.toggle('status-bad', !cb.checked);
+}
+
+// ---------- INDEX PAGE STATE RENDERERS ----------
+function initIndexState() {
+  const blockers = document.getElementById('index-blockers');
+  if (blockers) renderBlockers(blockers);
+
+  const log = document.getElementById('index-daily-log');
+  if (log) renderDailyLog(log, 3);
+
+  const activatedHeader = document.getElementById('index-activated-total');
+  if (activatedHeader && STATE?.metrics) {
+    const v = STATE.metrics.activatedUsersTotal;
+    const t = STATE.campaign.activationTarget4wk;
+    const s = statusFor(v, t);
+    activatedHeader.className = 'status-' + s;
+    activatedHeader.textContent = `${v} / ${t}`;
+  }
+
+  const gateProgress = document.getElementById('index-gate-progress');
+  if (gateProgress) renderProgressBar(gateProgress, CURRENT_ACTIVATED, ACTIVATION_GATE);
+
+  const lastUpdated = document.getElementById('index-state-updated');
+  if (lastUpdated && STATE?._meta?.lastUpdatedAt) {
+    lastUpdated.textContent = STATE._meta.lastUpdatedAt;
+  }
+}
+
+// ---------- BOOT ----------
+// Run inits via readyState check rather than DOMContentLoaded so this still
+// works if the script tag is encountered after DOMContentLoaded has fired
+// (some preview sandboxes inject the script late). Each init is try/caught
+// so one failure can't prevent the others from running.
+async function boot() {
+  try { highlightNav(); } catch (e) { console.warn('highlightNav:', e); }
+  try { await loadState(); } catch (e) { console.warn('loadState:', e); }
+  try { if (document.getElementById('today-tasks')) initTodayPage(); } catch (e) { console.warn('initTodayPage:', e); }
+  try { if (document.getElementById('index-today-widget')) initIndexWidget(); } catch (e) { console.warn('initIndexWidget:', e); }
+  try { if (document.getElementById('index-blockers') || document.getElementById('index-daily-log')) initIndexState(); } catch (e) { console.warn('initIndexState:', e); }
+  try { if (document.querySelector('.checklist-item')) initEngineeringChecklist(); } catch (e) { console.warn('initEngineeringChecklist:', e); }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+</script>
+<!--/INLINE-ASSETS-->
+<script src="assets/site.js"></script>
+</body>
+</html>

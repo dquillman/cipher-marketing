@@ -1,0 +1,25 @@
+{
+  "name": "cipher-exam-launch-videos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion compositions for the Cipher Exam Security+ launch campaign",
+  "scripts": {
+    "studio": "remotion studio",
+    "render:pmp": "remotion render src/index.ts launch-teaser-pmp out/launch-teaser-pmp.mp4 && remotion render src/index.ts ai-tutor-demo-pmp out/ai-tutor-demo-pmp.mp4 && remotion render src/index.ts domain-weights-pmp out/domain-weights-pmp.mp4",
+    "render:secplus": "remotion render src/index.ts launch-teaser-secplus out/launch-teaser-secplus.mp4 && remotion render src/index.ts ai-tutor-demo-secplus out/ai-tutor-demo-secplus.mp4 && remotion render src/index.ts domain-weights-secplus out/domain-weights-secplus.mp4",
+    "render:shrm": "remotion render src/index.ts launch-teaser-shrm out/launch-teaser-shrm.mp4 && remotion render src/index.ts ai-tutor-demo-shrm out/ai-tutor-demo-shrm.mp4 && remotion render src/index.ts domain-weights-shrm out/domain-weights-shrm.mp4",
+    "render:all": "npm run render:pmp && npm run render:secplus && npm run render:shrm"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.290",
+    "@remotion/google-fonts": "^4.0.290",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.290"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

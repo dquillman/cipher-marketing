@@ -1,0 +1,9 @@
+node_modules/
+videos/out/
+videos/.remotion/
+.DS_Store
+*.log
+
+# Local server artifacts
+_server.cjs
+*.pid
