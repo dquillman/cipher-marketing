@@ -639,6 +639,155 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 
 </style>
+<!--INLINE-STATE-->
+<script>window.__CAMPAIGN_STATE__ = {
+  "_meta": {
+    "lastUpdatedBy": "claude",
+    "lastUpdatedAt": "2026-05-12T13:40:20.416Z",
+    "schemaVersion": 1,
+    "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
+  },
+  "campaign": {
+    "start": "2026-05-18",
+    "tier1": [
+      "PMP",
+      "Security+",
+      "SHRM-CP"
+    ],
+    "paidSpendCap": 2,
+    "activationGate": 25,
+    "activationTarget4wk": 55
+  },
+  "metrics": {
+    "activatedUsersTotal": 0,
+    "trialSignupsTotal": 0,
+    "paidSpendThisWeek": 0,
+    "perCluster": {
+      "PMP": {
+        "signups": 0,
+        "activated": 0,
+        "target": 30
+      },
+      "Security+": {
+        "signups": 0,
+        "activated": 0,
+        "target": 15
+      },
+      "SHRM-CP": {
+        "signups": 0,
+        "activated": 0,
+        "target": 10
+      }
+    }
+  },
+  "blockers": [
+    {
+      "id": "lps-deployed",
+      "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",
+      "owner": "Engineering",
+      "status": "done",
+      "due": "2026-05-17",
+      "note": "Shipped to prod 2026-05-12. All 3 LPs verified: /lp/pmp, /lp/security-plus, /lp/shrm-cp render correctly. Pre-select wiring confirmed: ?exam=pmp writes correct Firestore ID to localStorage. Required follow-up: cipher#8 fixed a route-slug mismatch from cipher#6 (-practice suffix dropped)."
+    },
+    {
+      "id": "conversion-events",
+      "label": "GA4 / Meta / LinkedIn conversion events wired",
+      "owner": "Engineering",
+      "status": "done",
+      "due": "2026-05-17",
+      "note": "Audit 2026-05-12: GA4 funnel (landing_page_view, cta_click, signup_complete, activated_user, exam_selected, explanation_viewed) shipped 2026-03-17 — see web/docs/event-definitions.md. Google Ads + Meta Pixel CompleteRegistration fire inside trackSignupComplete. LinkedIn Insight Tag installed for pageview attribution. UTMs captured on LandingShell mount, persist via sessionStorage through signup → quiz. Optional follow-up: lintrk track call for LinkedIn Campaign Manager conversion (only matters if/when LinkedIn paid ads run)."
+    },
+    {
+      "id": "testimonial-prompt",
+      "label": "In-app testimonial prompt at 10th-question milestone",
+      "owner": "Engineering",
+      "status": "done",
+      "due": "2026-05-17",
+      "note": "Shipped 2026-05-12 as cipher#10. Slide-up card at bottom-right of Quiz page appears at Q10 (same trigger as activated_user). Captures rating (1-5) + optional quote + share consent + UTM attribution. One write per user (Firestore create-only rule + localStorage dedup). Future work: display approved testimonials on LPs as social proof; admin moderation UI."
+    },
+    {
+      "id": "resend-sequence",
+      "label": "Resend 7-day onboarding with exam merge tags",
+      "owner": "Engineering + Marketing",
+      "status": "deferred",
+      "due": "2026-05-25",
+      "note": "DEFERRED to Week 2 (2026-05-25). For Week 1, all signups get personal founder emails from Dave instead — templates at cipher-marketing/07-founder-1to1-emails.md (Day 0 / Day 3 / Day 6). Decision rationale: at <25 activated users, founder-touch outperforms any drip on signal-quality + testimonial-yield + brand loyalty. Building Cloud Function infra (functions/package.json + resend SDK + first-time deploy from this repo) was estimated 2-3h with non-trivial risk to existing 50+ deployed functions. Tradeoff was clearly not worth it pre-launch. Brad will surface founder-email recommendations during morning briefings (matched to day-since-signup + activation status)."
+    }
+  ],
+  "decisions": [
+    {
+      "date": "2026-05-11",
+      "what": "Tier 1 = PMP / Security+ / SHRM-CP",
+      "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority"
+    },
+    {
+      "date": "2026-05-11",
+      "what": "$2/day paid cap; gate at 25 activated users",
+      "why": "Dave's actual budget constraint"
+    },
+    {
+      "date": "2026-05-11",
+      "what": "4-week target 55 activated users (was 100)",
+      "why": "Original target assumed paid acquisition at $45/day"
+    },
+    {
+      "date": "2026-05-11",
+      "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)",
+      "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text"
+    },
+    {
+      "date": "2026-05-11",
+      "what": "Cornerstone blog holds for Monday 2026-05-18 — NOT publishing early",
+      "why": "Publishing today breaks the week-1 social drumbeat that anchors on the cornerstone-launch beat"
+    },
+    {
+      "date": "2026-05-11",
+      "what": "Tier 1 LPs (PMP, Sec+, SHRM-CP) built as React components + signup pre-select wiring",
+      "why": "Shipped as two PRs: cipher#6 (LP components/routes) + cipher#7 (login ?exam= reader). Both must merge for message-match to work end-to-end. Dave reviews + merges + runs deploy-web.sh."
+    },
+    {
+      "date": "2026-05-12",
+      "what": "Deferred Resend onboarding drip automation to Week 2. Week 1 uses manual founder 1:1 emails (templates in cipher-marketing/07-founder-1to1-emails.md).",
+      "why": "At <25 activated users, founder emails > automation. Functions infrastructure was partially gitignored in this repo (package.json missing, deploy script excludes functions) — 2-3h work with risk of breaking 50 deployed functions. Not worth it pre-launch."
+    }
+  ],
+  "dailyLog": [
+    {
+      "date": "2026-05-11",
+      "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
+    },
+    {
+      "date": "2026-05-11",
+      "entry": "Tier 1 LP work shipped to cipher product repo as cipher#6 (3 LP components + routes + 3 shared sub-components) and cipher#7 (login ?exam= pre-select reader, 25-line surgical change). Both PRs open with test plans, awaiting Dave's review + merge + deploy. Blocker lps-deployed moved pending → in-progress."
+    },
+    {
+      "date": "2026-05-11",
+      "entry": "Daily walkthrough mode added to cipher-exam-marketing agent — triggered by phrases like 'walk me through today' / 'what's on today' / 'morning briefing'. Agent now consolidates calendar + state + recommended creative into a guided per-task flow instead of pointing at multiple files."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Morning briefing: deployed Tier 1 LPs to staging, caught route-slug bug (/lp/pmp-practice vs /lp/pmp), shipped fix as cipher#8, redeployed staging + prod. All 3 LPs verified on cipherexam.com. Pre-select wiring confirmed via localStorage. Blocker lps-deployed marked done."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "conversion-events blocker audited and marked done. All GA4/Meta/Google Ads/LinkedIn Insight wiring shipped back on 2026-03-17 — verified via grep + web/docs/event-definitions.md. No code changes needed for Week 1 attribution. LinkedIn lintrk conversion id stub queued as optional add-on."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "LinkedIn conversion stub shipped as cipher#9 (no-op until LINKEDIN_CONVERSION_IDS filled in). Verified prod with UTM smoke test: ?utm_source=test landed correctly into sessionStorage.ec_utm. Forward-prep for whenever LinkedIn paid ads run."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "testimonial-prompt blocker shipped via cipher#10. TestimonialPrompt component fires at Q10 (activated_user milestone). Captures rating + optional quote + consent + UTM snapshot for attribution back to source post. Deployed to both staging and prod. Firestore rule create-only at testimonials/{uid} prevents overwrite."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "resend-sequence blocker deferred to Week 2 (due 2026-05-25). Week 1 strategy switched to manual founder 1:1 emails — 3 templates (Day 0 / Day 3 / Day 6) written to cipher-marketing/07-founder-1to1-emails.md. Brad updated to surface signup-by-signup recommendations during morning briefings."
+    }
+  ]
+}
+;</script>
+<!--/INLINE-STATE-->
 <!--/INLINE-ASSETS-->
 </head>
 <body>
@@ -766,53 +915,6 @@ details[open] summary::before { transform: rotate(90deg); }
 
 
 <!--INLINE-ASSETS-->
-<!--INLINE-STATE-->
-<script>window.__CAMPAIGN_STATE__ = {
-  "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T01:30:00Z",
-    "schemaVersion": 1,
-    "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
-  },
-  "campaign": {
-    "start": "2026-05-18",
-    "tier1": ["PMP", "Security+", "SHRM-CP"],
-    "paidSpendCap": 2,
-    "activationGate": 25,
-    "activationTarget4wk": 55
-  },
-  "metrics": {
-    "activatedUsersTotal": 0,
-    "trialSignupsTotal": 0,
-    "paidSpendThisWeek": 0,
-    "perCluster": {
-      "PMP":       { "signups": 0, "activated": 0, "target": 30 },
-      "Security+": { "signups": 0, "activated": 0, "target": 15 },
-      "SHRM-CP":   { "signups": 0, "activated": 0, "target": 10 }
-    }
-  },
-  "blockers": [
-    { "id": "lps-deployed",       "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",          "owner": "Engineering",           "status": "in-progress", "due": "2026-05-17", "note": "Code shipped — cipher#6 (LPs) + cipher#7 (login pre-select). Awaiting Dave review + merge + deploy." },
-    { "id": "conversion-events",  "label": "GA4 / Meta / LinkedIn conversion events wired",            "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
-    { "id": "testimonial-prompt", "label": "In-app testimonial prompt at 10th-question milestone",    "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
-    { "id": "resend-sequence",    "label": "Resend 7-day onboarding with exam merge tags",            "owner": "Engineering + Marketing", "status": "pending", "due": "2026-05-17" }
-  ],
-  "decisions": [
-    { "date": "2026-05-11", "what": "Tier 1 = PMP / Security+ / SHRM-CP",                       "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority" },
-    { "date": "2026-05-11", "what": "$2/day paid cap; gate at 25 activated users",              "why": "Dave's actual budget constraint" },
-    { "date": "2026-05-11", "what": "4-week target 55 activated users (was 100)",               "why": "Original target assumed paid acquisition at $45/day" },
-    { "date": "2026-05-11", "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)", "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text" },
-    { "date": "2026-05-11", "what": "Cornerstone blog holds for Monday 2026-05-18 — NOT publishing early", "why": "Publishing today breaks the week-1 social drumbeat that anchors on the cornerstone-launch beat" },
-    { "date": "2026-05-11", "what": "Tier 1 LPs (PMP, Sec+, SHRM-CP) built as React components + signup pre-select wiring", "why": "Shipped as two PRs: cipher#6 (LP components/routes) + cipher#7 (login ?exam= reader). Both must merge for message-match to work end-to-end. Dave reviews + merges + runs deploy-web.sh." }
-  ],
-  "dailyLog": [
-    { "date": "2026-05-11", "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18." },
-    { "date": "2026-05-11", "entry": "Tier 1 LP work shipped to cipher product repo as cipher#6 (3 LP components + routes + 3 shared sub-components) and cipher#7 (login ?exam= pre-select reader, 25-line surgical change). Both PRs open with test plans, awaiting Dave's review + merge + deploy. Blocker lps-deployed moved pending → in-progress." },
-    { "date": "2026-05-11", "entry": "Daily walkthrough mode added to cipher-exam-marketing agent — triggered by phrases like 'walk me through today' / 'what's on today' / 'morning briefing'. Agent now consolidates calendar + state + recommended creative into a guided per-task flow instead of pointing at multiple files." }
-  ]
-}
-;</script>
-<!--/INLINE-STATE-->
 <script>
 /* CipherExam campaign site — shared JS (vanilla, no deps) */
 
