@@ -729,7 +729,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-11T14:00:00Z",
+    "lastUpdatedAt": "2026-05-12T01:30:00Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -751,7 +751,7 @@ details[open] summary::before { transform: rotate(90deg); }
     }
   },
   "blockers": [
-    { "id": "lps-deployed",       "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",          "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
+    { "id": "lps-deployed",       "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",          "owner": "Engineering",           "status": "in-progress", "due": "2026-05-17", "note": "Code shipped — cipher#6 (LPs) + cipher#7 (login pre-select). Awaiting Dave review + merge + deploy." },
     { "id": "conversion-events",  "label": "GA4 / Meta / LinkedIn conversion events wired",            "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
     { "id": "testimonial-prompt", "label": "In-app testimonial prompt at 10th-question milestone",    "owner": "Engineering",           "status": "pending", "due": "2026-05-17" },
     { "id": "resend-sequence",    "label": "Resend 7-day onboarding with exam merge tags",            "owner": "Engineering + Marketing", "status": "pending", "due": "2026-05-17" }
@@ -760,10 +760,14 @@ details[open] summary::before { transform: rotate(90deg); }
     { "date": "2026-05-11", "what": "Tier 1 = PMP / Security+ / SHRM-CP",                       "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority" },
     { "date": "2026-05-11", "what": "$2/day paid cap; gate at 25 activated users",              "why": "Dave's actual budget constraint" },
     { "date": "2026-05-11", "what": "4-week target 55 activated users (was 100)",               "why": "Original target assumed paid acquisition at $45/day" },
-    { "date": "2026-05-11", "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)", "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text" }
+    { "date": "2026-05-11", "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)", "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text" },
+    { "date": "2026-05-11", "what": "Cornerstone blog holds for Monday 2026-05-18 — NOT publishing early", "why": "Publishing today breaks the week-1 social drumbeat that anchors on the cornerstone-launch beat" },
+    { "date": "2026-05-11", "what": "Tier 1 LPs (PMP, Sec+, SHRM-CP) built as React components + signup pre-select wiring", "why": "Shipped as two PRs: cipher#6 (LP components/routes) + cipher#7 (login ?exam= reader). Both must merge for message-match to work end-to-end. Dave reviews + merges + runs deploy-web.sh." }
   ],
   "dailyLog": [
-    { "date": "2026-05-11", "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18." }
+    { "date": "2026-05-11", "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18." },
+    { "date": "2026-05-11", "entry": "Tier 1 LP work shipped to cipher product repo as cipher#6 (3 LP components + routes + 3 shared sub-components) and cipher#7 (login ?exam= pre-select reader, 25-line surgical change). Both PRs open with test plans, awaiting Dave's review + merge + deploy. Blocker lps-deployed moved pending → in-progress." },
+    { "date": "2026-05-11", "entry": "Daily walkthrough mode added to cipher-exam-marketing agent — triggered by phrases like 'walk me through today' / 'what's on today' / 'morning briefing'. Agent now consolidates calendar + state + recommended creative into a guided per-task flow instead of pointing at multiple files." }
   ]
 }
 ;</script>
