@@ -1,0 +1,20 @@
+{
+  "name": "cipher-marketing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Marketing campaign for CipherExam (cipherexam.com) — strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
+  "scripts": {
+    "serve": "node serve.mjs",
+    "serve:lan": "cross-env-shell HOST=0.0.0.0 node serve.mjs",
+    "build": "cd site && node inline-assets.mjs && node build-app.mjs",
+    "videos:install": "cd videos && npm install",
+    "videos:render:all": "cd videos && npm run render:all",
+    "videos:studio": "cd videos && npm run studio"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dquillman/cipher-marketing.git"
+  },
+  "license": "UNLICENSED"
+}
