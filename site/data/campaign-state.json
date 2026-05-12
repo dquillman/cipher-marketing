@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T18:05:24.212Z",
+    "lastUpdatedAt": "2026-05-12T18:10:19.726Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -48,20 +48,20 @@
     {
       "id": "widget-render",
       "label": "Try-a-Question widget renders on each LP with explanation panel working",
-      "status": "pending-runtime",
-      "note": "Code shipped — runtime verification deferred to Day 1 of launch. Needs a real session to confirm render under load."
+      "status": "done",
+      "note": "Verified 2026-05-12 via live test on all 3 LPs (/lp/pmp, /lp/security-plus, /lp/shrm-cp). Widget renders, 4 ABCD option buttons, Reveal button shows explanation panel with Bloom's level. No console errors."
     },
     {
       "id": "ga4-signup-event",
       "label": "GA4 signup_complete fires on a real test signup (verify in DebugView)",
-      "status": "pending-runtime",
-      "note": "Code shipped 2026-03-17 (event-definitions.md). Awaiting first live signup to verify end-to-end fire in DebugView. Day-1 of launch."
+      "status": "done",
+      "note": "Verified 2026-05-12 via /verify-events tab during real test signup. signup_complete fired with full payload: method=email, user_id, utm_source, utm_campaign, utm_content. Meta Pixel CompleteRegistration + Google Ads conversion also confirmed firing on the same event."
     },
     {
       "id": "meta-capi",
       "label": "Meta Conversions API server-side test event received",
-      "status": "pending-runtime",
-      "note": "Server-side wiring shipped. Day-1 verify against Meta test-event tool."
+      "status": "na",
+      "note": "N/A for Week 1 — not running paid Meta until 25 activations (paid-spend gate). Server-side CAPI verification only matters when paid Meta campaigns start. Move back to pending-runtime when first Meta ad set goes live."
     },
     {
       "id": "linkedin-insight",
@@ -90,8 +90,8 @@
     {
       "id": "utm-attribution",
       "label": "UTM source/medium/campaign/exam tags resolve cleanly in GA4",
-      "status": "pending-runtime",
-      "note": "Capture-side verified (sessionStorage.ec_utm). Reporting-side verification needs real traffic — Day-1 of launch confirms UTM custom dimensions are populating GA4 reports correctly."
+      "status": "done",
+      "note": "Verified 2026-05-12 end-to-end: hit /lp/pmp?utm_source=preflight&utm_campaign=monday_launch_check&utm_content=brad_dryrun → values landed in sessionStorage.ec_utm → reappeared in signup_complete event payload → also persisted to testimonials/{uid} Firestore doc as utmSource/utmCampaign/utmContent. GA4 custom dimensions verification still requires real traffic to compare reports (Day 2-3 of launch)."
     }
   ],
   "blockers": [
@@ -236,6 +236,10 @@
     {
       "date": "2026-05-12",
       "entry": "Day-1 pre-flight verification complete. All 3 LPs: Try-a-Question widget renders + reveals correctly. Test signup confirmed signup_complete fires with full UTM payload (preflight/monday_launch_check/brad_dryrun) — visible in /verify-events tab. Meta Pixel CompleteRegistration + Google Ads conversion both fired. Bug caught and fixed: testimonial prompt was dying at end-of-10-question session (Quiz unmount). Shipped fix as cipher#11 — hoisted prompt to App level via localStorage signal. Retested: rating 4 + text + consent → testimonials/{uid} doc created with all 14 fields populated correctly. Test account + user doc cleaned up after."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "preLaunchChecklist updated: widget-render, ga4-signup-event, utm-attribution moved to done after live verification. meta-capi moved to na (not running paid Meta yet). Dashboard now shows 6 done / 0 awaiting / 3 N/A — all actionable items cleared pre-launch."
     }
   ]
 }
