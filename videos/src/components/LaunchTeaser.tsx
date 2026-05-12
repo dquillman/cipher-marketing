@@ -8,6 +8,7 @@ import {
 import { theme } from "./theme";
 import { fontHeading, fontBody } from "./fonts";
 import { VARIANTS, type ExamVariant } from "../data/examVariants";
+import { AudioTrack } from "./AudioTrack";
 
 type FadeLineProps = {
   text: string;
@@ -103,6 +104,7 @@ export const LaunchTeaser: React.FC<{ variant?: ExamVariant }> = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg, fontFamily: fontBody }}>
+      <AudioTrack category="teaser" />
       <AbsoluteFill
         style={{
           background:

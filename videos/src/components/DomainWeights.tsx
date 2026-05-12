@@ -8,6 +8,7 @@ import {
 import { theme } from "./theme";
 import { fontHeading, fontBody } from "./fonts";
 import { VARIANTS, type ExamVariant, type Domain } from "../data/examVariants";
+import { AudioTrack } from "./AudioTrack";
 
 type BarRowProps = {
   domain: Domain;
@@ -173,6 +174,7 @@ export const DomainWeights: React.FC<{ variant?: ExamVariant }> = ({
         flexDirection: "column",
       }}
     >
+      <AudioTrack category="domains" />
       <div
         style={{
           opacity: titleOpacity,

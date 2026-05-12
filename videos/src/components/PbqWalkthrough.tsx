@@ -7,6 +7,7 @@ import {
 } from "remotion";
 import { theme } from "./theme";
 import { fontHeading, fontBody } from "./fonts";
+import { AudioTrack } from "./AudioTrack";
 
 // Sec+ PBQ-walkthrough: match each control to which CIA-triad principle it protects.
 // 9:16, 1080×1920, 30s @ 30fps = 900 frames.
@@ -104,6 +105,7 @@ export const PbqWalkthrough: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg, fontFamily: fontBody, color: theme.fg }}>
+      <AudioTrack category="pbq" />
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at 50% 30%, rgba(125,211,252,0.10) 0%, rgba(2,6,23,0) 60%)" }} />
 
       {/* Title */}

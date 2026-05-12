@@ -8,6 +8,7 @@ import {
 import { theme } from "./theme";
 import { fontHeading, fontBody } from "./fonts";
 import { VARIANTS, type ExamVariant } from "../data/examVariants";
+import { AudioTrack } from "./AudioTrack";
 
 type OptionRowProps = {
   letter: string;
@@ -220,6 +221,7 @@ export const AiTutorDemo: React.FC<{ variant?: ExamVariant }> = ({
         flexDirection: "column",
       }}
     >
+      <AudioTrack category="tutor" />
       <div
         style={{
           opacity: headerOpacity,
