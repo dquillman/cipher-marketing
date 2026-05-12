@@ -15,6 +15,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROUTES = [
   { file: "today.html",       route: "today",       label: "Today" },
   { file: "index.html",       route: "dashboard",   label: "Dashboard" },
+  { file: "posts.html",       route: "posts",       label: "Posts" },
   { file: "strategy.html",    route: "strategy",    label: "Strategy" },
   { file: "content.html",     route: "content",     label: "Content" },
   { file: "landing.html",     route: "landing",     label: "Landing" },
@@ -122,6 +123,7 @@ function cipherShow(route) {
   document.title = ({
     today:       'Today — CipherExam Campaign',
     dashboard:   'Dashboard — CipherExam Campaign',
+    posts:       'Posts — CipherExam Campaign',
     strategy:    'Strategy — CipherExam Campaign',
     content:     'Content — CipherExam Campaign',
     landing:     'Landing — CipherExam Campaign',

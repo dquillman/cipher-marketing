@@ -13,23 +13,40 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(join(HERE, "assets/shared.css"), "utf8");
 const js = readFileSync(join(HERE, "assets/site.js"), "utf8");
 const state = readFileSync(join(HERE, "data/campaign-state.json"), "utf8");
+const posts = readFileSync(join(HERE, "data/posts.json"), "utf8");
 
 const INLINE_OPEN = "<!--INLINE-ASSETS-->";
 const INLINE_CLOSE = "<!--/INLINE-ASSETS-->";
 const STATE_OPEN = "<!--INLINE-STATE-->";
 const STATE_CLOSE = "<!--/INLINE-STATE-->";
 
-const styleBlock =
-  `${INLINE_OPEN}\n<style>\n${css}\n</style>\n${INLINE_CLOSE}`;
-
-function jsBlock(includeState) {
-  const stateScript = includeState
-    ? `${STATE_OPEN}\n<script>window.__CAMPAIGN_STATE__ = ${state};</script>\n${STATE_CLOSE}\n`
-    : "";
-  return `${INLINE_OPEN}\n${stateScript}<script>\n${js}\n</script>\n${INLINE_CLOSE}`;
+// CSS + state both inline into <head> so state is parsed BEFORE any inline
+// <script> in <main>. Critical for posts.html where the render script lives
+// inside <main> (required by build-app.mjs) and needs window.__POSTS__ set
+// at parse time.
+function styleAndStateBlock(stateKind) {
+  let stateScript = "";
+  if (stateKind === "campaign" || stateKind === "both") {
+    stateScript += `<script>window.__CAMPAIGN_STATE__ = ${state};</script>\n`;
+  }
+  if (stateKind === "posts" || stateKind === "both") {
+    stateScript += `<script>window.__POSTS__ = ${posts};</script>\n`;
+  }
+  if (stateScript) {
+    stateScript = `${STATE_OPEN}\n${stateScript}${STATE_CLOSE}\n`;
+  }
+  return `${INLINE_OPEN}\n<style>\n${css}\n</style>\n${stateScript}${INLINE_CLOSE}`;
 }
 
-const STATE_PAGES = new Set(["today.html", "index.html"]);
+function jsBlock() {
+  return `${INLINE_OPEN}\n<script>\n${js}\n</script>\n${INLINE_CLOSE}`;
+}
+
+const STATE_KIND = {
+  "today.html": "both",
+  "index.html": "campaign",
+  "posts.html": "posts",
+};
 
 // Skip files that already have their own self-contained styles
 // (the legacy single-page rollup uses different class names).
@@ -46,7 +63,7 @@ for (const f of files) {
   const path = join(HERE, f);
   let html = readFileSync(path, "utf8");
   const before = html;
-  const includeState = STATE_PAGES.has(f);
+  const stateKind = STATE_KIND[f] || null;
 
   // Strip prior inline blocks (re-inlinable, leaves surrounding whitespace tidy)
   html = html.replace(
@@ -63,15 +80,16 @@ for (const f of files) {
     html = html.replace(/<\/body>/, `${SCRIPT_TAG}\n</body>`);
   }
 
-  // Inline CSS *after* the external <link> tag (link stays, inline block follows)
-  html = html.replace(LINK_TAG, `${LINK_TAG}\n${styleBlock}`);
+  // Inline CSS + STATE *after* the external <link> tag in <head>
+  // (state must be in <head> so any <script> inside <main> sees it parsed).
+  html = html.replace(LINK_TAG, `${LINK_TAG}\n${styleAndStateBlock(stateKind)}`);
 
   // Inline JS *before* the external <script src> tag so the inline runs first
-  html = html.replace(SCRIPT_TAG, `${jsBlock(includeState)}\n${SCRIPT_TAG}`);
+  html = html.replace(SCRIPT_TAG, `${jsBlock()}\n${SCRIPT_TAG}`);
 
   if (html !== before) {
     writeFileSync(path, html);
-    console.log(`inlined: ${f}${includeState ? " (+state)" : ""}`);
+    console.log(`inlined: ${f}${stateKind ? ` (+${stateKind} state)` : ""}`);
   } else {
     console.log(`unchanged: ${f}`);
   }
