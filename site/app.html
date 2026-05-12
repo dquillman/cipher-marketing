@@ -433,6 +433,56 @@ tr:hover td { background: rgba(17,25,58,0.4); }
 .task-row.done label { color: var(--muted); text-decoration: line-through; }
 .task-row.readonly input { opacity: 0.5; pointer-events: none; }
 .task-row.readonly { opacity: 0.78; }
+.task-row { flex-wrap: wrap; }
+.task-row .task-note {
+  flex-basis: 100%;
+  margin-left: 28px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--dim);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.task-summary {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.task-summary-line { font-size: 0.95rem; line-height: 1.6; }
+.task-summary-sub { font-size: 0.88rem; margin-top: 6px; }
+
+#today-tasks details,
+#yesterday-tasks details,
+#tomorrow-tasks details {
+  margin-bottom: 12px;
+}
+#today-tasks details > summary,
+#yesterday-tasks details > summary,
+#tomorrow-tasks details > summary {
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  list-style: none;
+}
+#today-tasks details > summary::-webkit-details-marker,
+#yesterday-tasks details > summary::-webkit-details-marker,
+#tomorrow-tasks details > summary::-webkit-details-marker { display: none; }
+#today-tasks details > summary::before,
+#yesterday-tasks details > summary::before,
+#tomorrow-tasks details > summary::before {
+  content: '▸ ';
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--dim);
+  transition: transform 0.15s;
+}
+#today-tasks details[open] > summary::before,
+#yesterday-tasks details[open] > summary::before,
+#tomorrow-tasks details[open] > summary::before { content: '▾ '; }
 
 .checklist-item {
   display: flex;
@@ -643,7 +693,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T13:40:20.416Z",
+    "lastUpdatedAt": "2026-05-12T18:05:24.212Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -680,6 +730,62 @@ details[open] summary::before { transform: rotate(90deg); }
       }
     }
   },
+  "preLaunchChecklist": [
+    {
+      "id": "lps-deployed",
+      "label": "Three Tier 1 LPs (PMP, Sec+, SHRM-CP) deployed and reachable",
+      "status": "done",
+      "note": "Shipped 2026-05-12. All 3 LPs live on cipherexam.com — see blocker lps-deployed."
+    },
+    {
+      "id": "widget-render",
+      "label": "Try-a-Question widget renders on each LP with explanation panel working",
+      "status": "pending-runtime",
+      "note": "Code shipped — runtime verification deferred to Day 1 of launch. Needs a real session to confirm render under load."
+    },
+    {
+      "id": "ga4-signup-event",
+      "label": "GA4 signup_complete fires on a real test signup (verify in DebugView)",
+      "status": "pending-runtime",
+      "note": "Code shipped 2026-03-17 (event-definitions.md). Awaiting first live signup to verify end-to-end fire in DebugView. Day-1 of launch."
+    },
+    {
+      "id": "meta-capi",
+      "label": "Meta Conversions API server-side test event received",
+      "status": "pending-runtime",
+      "note": "Server-side wiring shipped. Day-1 verify against Meta test-event tool."
+    },
+    {
+      "id": "linkedin-insight",
+      "label": "LinkedIn Insight Tag firing on /lp/* pages",
+      "status": "done",
+      "note": "Insight Tag installed + cipher#9 conversion stub shipped. Verified pageview attribution."
+    },
+    {
+      "id": "resend-day0",
+      "label": "Resend Day 0 email sends to test address with merge tags populated",
+      "status": "na",
+      "note": "N/A for Week 1 — Resend drip deferred to Week 2 (resend-sequence blocker). Week 1 uses manual founder 1:1 emails (07-founder-1to1-emails.md)."
+    },
+    {
+      "id": "resend-suppression",
+      "label": "Resend suppresses correctly when test user upgrades mid-trial",
+      "status": "na",
+      "note": "N/A for Week 1 — same deferral as Resend Day 0. Re-activates when resend-sequence blocker is built in Week 2."
+    },
+    {
+      "id": "testimonial-prompt",
+      "label": "In-app testimonial prompt fires at 10th-question milestone",
+      "status": "done",
+      "note": "Shipped 2026-05-12 (cipher#10). Slide-up card at Q10 captures rating + quote + UTM."
+    },
+    {
+      "id": "utm-attribution",
+      "label": "UTM source/medium/campaign/exam tags resolve cleanly in GA4",
+      "status": "pending-runtime",
+      "note": "Capture-side verified (sessionStorage.ec_utm). Reporting-side verification needs real traffic — Day-1 of launch confirms UTM custom dimensions are populating GA4 reports correctly."
+    }
+  ],
   "blockers": [
     {
       "id": "lps-deployed",
@@ -749,6 +855,21 @@ details[open] summary::before { transform: rotate(90deg); }
       "date": "2026-05-12",
       "what": "Deferred Resend onboarding drip automation to Week 2. Week 1 uses manual founder 1:1 emails (templates in cipher-marketing/07-founder-1to1-emails.md).",
       "why": "At <25 activated users, founder emails > automation. Functions infrastructure was partially gitignored in this repo (package.json missing, deploy script excludes functions) — 2-3h work with risk of breaking 50 deployed functions. Not worth it pre-launch."
+    },
+    {
+      "date": "2026-05-12",
+      "what": "Week 1 (2026-05-18 → 05-22) is PMP-only. Security+ and SHRM-CP drafts deferred to Weeks 2 and 3.",
+      "why": "Concentration over spread. 6 posts across one exam cluster gives a cleaner signal on which hook converts (tool-builder vs why-B-is-a-trap vs domain-weights) than 6 posts fragmented across 3 audiences. Once we see what works for PMP, we replicate the winning hook structure for Sec+ in Week 2 and SHRM-CP in Week 3. Also lower cognitive load on a solo founder running first-week ops."
+    },
+    {
+      "date": "2026-05-12",
+      "what": "Locked Week 1 posting times: LinkedIn 08:00 ET (12:00 UTC), X 09:00 ET (13:00 UTC), Mon/Wed/Fri.",
+      "why": "LinkedIn 08:00 ET catches working-professional pre-work scroll across all US time zones (mid-morning Central, early West Coast). X 09:00 ET stays in same morning window for cross-channel reinforcement without exact-minute duplication. Same time slot all three days = clean A/B on hook variation while holding timing constant."
+    },
+    {
+      "date": "2026-05-12",
+      "what": "All 6 Week 1 PMP drafts flipped draft → scheduled in posts.json.",
+      "why": "Copy reviewed for voice (no first-person exam-taking, no 'cadence', max one 'cipher' pun per asset — none of the 6 used the pun). Hooks differentiated across the three days. Ready for Dave's final voice sign-off before publish."
     }
   ],
   "dailyLog": [
@@ -783,6 +904,30 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-12",
       "entry": "resend-sequence blocker deferred to Week 2 (due 2026-05-25). Week 1 strategy switched to manual founder 1:1 emails — 3 templates (Day 0 / Day 3 / Day 6) written to cipher-marketing/07-founder-1to1-emails.md. Brad updated to surface signup-by-signup recommendations during morning briefings."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Morning briefing continuation: no new signups since yesterday. Moved to Week 1 post-draft review (6 drafts in posts.json — 3 LinkedIn / 3 X, all PMP-focused, scheduled Mon/Wed/Fri 2026-05-18 → 2026-05-22)."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Week 1 locked as PMP-only — Sec+/SHRM-CP deferred to Weeks 2/3. Decision logged for hook-isolation rationale: 6 posts on one cluster gives cleaner signal on which framing converts. Once Week 1 names a winning hook, replicate it for Sec+ in Week 2."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Locked posting times for all 6 Week 1 PMP posts: LinkedIn 08:00 ET, X 09:00 ET, Mon (5/18) / Wed (5/20) / Fri (5/22). Flipped all 6 posts.json entries from status:draft → status:scheduled. Added scheduledTime (ISO UTC) and scheduledTimeLocal fields to each. Awaiting Dave's final voice sign-off on copy before publish."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Pre-launch status review (T-6 days). Code-shipped blockers confirmed done: 3 Tier 1 LPs deployed, LinkedIn Insight Tag installed (cipher#9 stub for conversion id), testimonial prompt live at Q10 (cipher#10). Resend Day 0 + suppression list confirmed N/A for Week 1 — folded into deferred resend-sequence blocker; Week 1 uses founder 1:1 emails instead. Runtime verification still pending on 4 items: widget render under load, GA4 signup_complete fires end-to-end, Meta CAPI server-side mirror, UTM custom dimensions visible in GA4 reports. All 4 are 'code shipped, awaiting first live signups to verify' — cannot fully validate until traffic hits post-launch."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Dashboard pre-launch task list rewired to read from campaign-state.json → preLaunchChecklist instead of the flat hardcoded array in site.js. Each of the 9 §7 items now carries status (done / na / pending-runtime) + a note explaining why. Renderer groups by status, shows a summary line ('5 of 9 done · 4 awaiting Day-1 verification'), and disables checkboxes for done/N/A items (those are server-driven, not user-driven). Source-doc footnote on today.html updated to point at campaign-state.json. Rebuild via site/inline-assets.mjs + build-app.mjs."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Day-1 pre-flight verification complete. All 3 LPs: Try-a-Question widget renders + reveals correctly. Test signup confirmed signup_complete fires with full UTM payload (preflight/monday_launch_check/brad_dryrun) — visible in /verify-events tab. Meta Pixel CompleteRegistration + Google Ads conversion both fired. Bug caught and fixed: testimonial prompt was dying at end-of-10-question session (Quiz unmount). Shipped fix as cipher#11 — hoisted prompt to App level via localStorage signal. Retested: rating 4 + text + consent → testimonials/{uid} doc created with all 14 fields populated correctly. Test account + user doc cleaned up after."
     }
   ]
 }
@@ -790,7 +935,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__POSTS__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T04:31:14.188Z",
+    "lastUpdatedAt": "2026-05-12T15:30:00.000Z",
     "schemaVersion": 1,
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -812,9 +957,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-mon-2026-05-11-launch",
       "scheduled": "2026-05-18",
+      "scheduledTime": "2026-05-18T12:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 08:00 ET",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "tool-builder",
       "video": "launch-teaser-pmp.mp4",
@@ -831,9 +978,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-mon-2026-05-11-launch",
       "scheduled": "2026-05-18",
+      "scheduledTime": "2026-05-18T13:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 09:00 ET",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "tool-builder",
       "video": "launch-teaser-pmp.mp4",
@@ -850,9 +999,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-wed-2026-05-13-trap",
       "scheduled": "2026-05-20",
+      "scheduledTime": "2026-05-20T12:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 08:00 ET",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "why-B-is-a-trap",
       "video": "ai-tutor-demo-pmp.mp4",
@@ -869,9 +1020,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-wed-2026-05-13-trap",
       "scheduled": "2026-05-20",
+      "scheduledTime": "2026-05-20T13:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 09:00 ET",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "why-B-is-a-trap",
       "video": "ai-tutor-demo-pmp.mp4",
@@ -888,9 +1041,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-fri-2026-05-15-domains",
       "scheduled": "2026-05-22",
+      "scheduledTime": "2026-05-22T12:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 08:00 ET",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "domain-weights",
       "video": "domain-weights-pmp.mp4",
@@ -907,9 +1062,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-fri-2026-05-15-domains",
       "scheduled": "2026-05-22",
+      "scheduledTime": "2026-05-22T13:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 09:00 ET",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "domain-weights",
       "video": "domain-weights-pmp.mp4",
@@ -995,7 +1152,7 @@ function cipherShow(route) {
 
   <!-- 2. Today's tasks -->
   <h2 style="margin-top:0;">Today's tasks</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Tasks pulled from 00-campaign-brief.md §3 (active weeks) or 06-engineering-handoff.md §7 (pre-launch).</p>
+  <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Active-week tasks come from 00-campaign-brief.md §3. Pre-launch checklist comes from <code>data/campaign-state.json → preLaunchChecklist</code> (status set by Brad; source list mirrors 06-engineering-handoff.md §7). Items marked <em>done</em> or <em>N/A</em> are server-driven — local checkboxes can't override them.</p>
   <div id="today-tasks"></div>
 
   <!-- 6. KPI snapshot from state -->
@@ -2734,7 +2891,14 @@ function stageFor(date) {
   const isWeekend = wd === 'Sat' || wd === 'Sun';
 
   if (diff < 0) {
-    return { stage: 'pre', weekIndex: null, weekday: wd, label: CALENDAR.preLaunch.label, tasks: CALENDAR.preLaunch.tasks, isWeekend };
+    // Pre-launch: prefer the per-item checklist from campaign-state.json if present,
+    // so the dashboard reflects done / N/A / pending-runtime status set by Brad.
+    // Falls back to the flat string array for older state files.
+    const checklist = STATE?.preLaunchChecklist;
+    const tasks = Array.isArray(checklist) && checklist.length > 0
+      ? checklist
+      : CALENDAR.preLaunch.tasks;
+    return { stage: 'pre', weekIndex: null, weekday: wd, label: CALENDAR.preLaunch.label, tasks, isWeekend };
   }
   const weekIndex = Math.floor(diff / 7) + 1; // day 0 → week 1
   if (weekIndex > 4) {
@@ -2770,6 +2934,100 @@ function renderTaskList(container, info, dateKey, opts = {}) {
   }
   const done = opts.readonly ? (opts.doneOverride || {}) : loadDone(opts.scope || 'today', dateKey);
 
+  // Detect structured tasks (objects with status) vs the legacy flat string list.
+  const isStructured = typeof info.tasks[0] === 'object' && info.tasks[0] !== null;
+
+  if (isStructured) {
+    // Group by status so the eye sees "what's left" first.
+    const groups = { 'pending-runtime': [], 'in-progress': [], pending: [], done: [], na: [] };
+    info.tasks.forEach((t, i) => {
+      const k = (groups[t.status] ? t.status : 'pending');
+      groups[k].push({ task: t, index: i });
+    });
+
+    const doneCount = groups.done.length;
+    const naCount = groups.na.length;
+    const pendingRuntime = groups['pending-runtime'].length;
+    const inProgress = groups['in-progress'].length;
+    const pending = groups.pending.length;
+    const total = info.tasks.length;
+    const remaining = pendingRuntime + inProgress + pending;
+
+    const summary = document.createElement('div');
+    summary.className = 'task-summary';
+    summary.innerHTML = `
+      <div class="task-summary-line">
+        <span class="status-good"><strong>${doneCount}</strong> of ${total} done</span>
+        ${inProgress > 0 ? ` · <span class="status-warn"><strong>${inProgress}</strong> in progress</span>` : ''}
+        ${pendingRuntime > 0 ? ` · <span class="status-warn"><strong>${pendingRuntime}</strong> awaiting Day-1 verification</span>` : ''}
+        ${pending > 0 ? ` · <span class="status-bad"><strong>${pending}</strong> pending</span>` : ''}
+        ${naCount > 0 ? ` · <span style="color:var(--dim);"><strong>${naCount}</strong> N/A</span>` : ''}
+      </div>
+      ${remaining === 0 ? '<div class="task-summary-sub status-good">All actionable items cleared — runtime checks deferred to Day 1.</div>' : ''}
+    `;
+    container.appendChild(summary);
+
+    // Render groups in priority order. Hide pending-runtime/done/na behind collapsible
+    // <details> blocks if they're not the "thing you have to do right now" group.
+    const ORDER = [
+      { key: 'in-progress',      label: 'In progress',                 statusClass: 'warn', collapsed: false },
+      { key: 'pending',          label: 'Pending — action required',   statusClass: 'bad',  collapsed: false },
+      { key: 'pending-runtime',  label: 'Awaiting Day-1 verification', statusClass: 'warn', collapsed: true  },
+      { key: 'done',             label: 'Done',                        statusClass: 'good', collapsed: true  },
+      { key: 'na',               label: 'N/A — deferred',              statusClass: 'dim',  collapsed: true  }
+    ];
+
+    for (const g of ORDER) {
+      const items = groups[g.key];
+      if (items.length === 0) continue;
+      const details = document.createElement('details');
+      if (!g.collapsed) details.open = true;
+      const sum = document.createElement('summary');
+      sum.innerHTML = `<span class="pill ${g.statusClass}">${g.label}</span> <span style="color:var(--dim);font-size:0.88rem;">${items.length}</span>`;
+      details.appendChild(sum);
+
+      items.forEach(({ task, index }) => {
+        const row = document.createElement('div');
+        const serverDone = task.status === 'done' || task.status === 'na';
+        const isLocalDone = !!done[index];
+        const visibleDone = serverDone || isLocalDone;
+        const statusCls = task.status === 'done' ? 'good'
+          : task.status === 'na' ? 'dim'
+          : task.status === 'pending-runtime' || task.status === 'in-progress' ? 'warn'
+          : 'bad';
+        row.className = 'task-row' + (opts.readonly ? ' readonly' : '') + (visibleDone ? ' done' : '') + ` status-${statusCls}`;
+        const id = `${opts.scope || 'today'}-${dateKey}-${index}`;
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = id;
+        cb.checked = visibleDone;
+        // Disable when server has already marked done/na — local checkbox shouldn't override truth.
+        if (opts.readonly || serverDone) cb.disabled = true;
+        cb.addEventListener('change', () => {
+          const cur = loadDone(opts.scope || 'today', dateKey);
+          cur[index] = cb.checked;
+          saveDone(opts.scope || 'today', dateKey, cur);
+          row.classList.toggle('done', cb.checked);
+        });
+        const lab = document.createElement('label');
+        lab.htmlFor = id;
+        lab.textContent = task.label;
+        row.appendChild(cb);
+        row.appendChild(lab);
+        if (task.note) {
+          const noteEl = document.createElement('div');
+          noteEl.className = 'task-note';
+          noteEl.textContent = task.note;
+          row.appendChild(noteEl);
+        }
+        details.appendChild(row);
+      });
+      container.appendChild(details);
+    }
+    return;
+  }
+
+  // Legacy: flat string-array tasks.
   info.tasks.forEach((task, i) => {
     const row = document.createElement('div');
     const isDone = !!done[i];
@@ -2950,7 +3208,10 @@ function initScratchpad() {
     const info = stageFor(today);
     const dKey = dayKey(today);
     const done = loadDone('today', dKey);
-    const completedTasks = info.tasks.filter((_, i) => done[i]);
+    // Tasks may be plain strings (active-week calendar) or structured objects
+    // (pre-launch checklist). For the scratchpad we want a plain label string.
+    const taskLabel = (t) => (typeof t === 'string' ? t : (t && t.label) || String(t));
+    const completedTasks = info.tasks.filter((_, i) => done[i]).map(taskLabel);
     const notes = ta.value.trim();
 
     const parts = [];
