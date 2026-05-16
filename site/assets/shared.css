@@ -421,6 +421,56 @@ tr:hover td { background: rgba(17,25,58,0.4); }
 .task-row.done label { color: var(--muted); text-decoration: line-through; }
 .task-row.readonly input { opacity: 0.5; pointer-events: none; }
 .task-row.readonly { opacity: 0.78; }
+.task-row { flex-wrap: wrap; }
+.task-row .task-note {
+  flex-basis: 100%;
+  margin-left: 28px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--dim);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.task-summary {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.task-summary-line { font-size: 0.95rem; line-height: 1.6; }
+.task-summary-sub { font-size: 0.88rem; margin-top: 6px; }
+
+#today-tasks details,
+#yesterday-tasks details,
+#tomorrow-tasks details {
+  margin-bottom: 12px;
+}
+#today-tasks details > summary,
+#yesterday-tasks details > summary,
+#tomorrow-tasks details > summary {
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  list-style: none;
+}
+#today-tasks details > summary::-webkit-details-marker,
+#yesterday-tasks details > summary::-webkit-details-marker,
+#tomorrow-tasks details > summary::-webkit-details-marker { display: none; }
+#today-tasks details > summary::before,
+#yesterday-tasks details > summary::before,
+#tomorrow-tasks details > summary::before {
+  content: '▸ ';
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--dim);
+  transition: transform 0.15s;
+}
+#today-tasks details[open] > summary::before,
+#yesterday-tasks details[open] > summary::before,
+#tomorrow-tasks details[open] > summary::before { content: '▾ '; }
 
 .checklist-item {
   display: flex;

@@ -693,7 +693,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T18:10:19.726Z",
+    "lastUpdatedAt": "2026-05-12T19:30:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -784,6 +784,12 @@ details[open] summary::before { transform: rotate(90deg); }
       "label": "UTM source/medium/campaign/exam tags resolve cleanly in GA4",
       "status": "done",
       "note": "Verified 2026-05-12 end-to-end: hit /lp/pmp?utm_source=preflight&utm_campaign=monday_launch_check&utm_content=brad_dryrun → values landed in sessionStorage.ec_utm → reappeared in signup_complete event payload → also persisted to testimonials/{uid} Firestore doc as utmSource/utmCampaign/utmContent. GA4 custom dimensions verification still requires real traffic to compare reports (Day 2-3 of launch)."
+    },
+    {
+      "id": "phone-alarms-set",
+      "label": "Set 3 phone alarms — Mon/Wed/Fri 8:00 AM ET — for manual posting",
+      "status": "pending",
+      "note": "Week 1 is manual posting (no Buffer/Publer). Three recurring phone alarms at 08:00 AM ET on 2026-05-18 (Mon), 2026-05-20 (Wed), 2026-05-22 (Fri). Each alarm = sit down, post LinkedIn at 08:00 ET + X at 09:00 ET, copy from posts.json. Revisit scheduler tooling only if posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
     }
   ],
   "blockers": [
@@ -870,6 +876,11 @@ details[open] summary::before { transform: rotate(90deg); }
       "date": "2026-05-12",
       "what": "All 6 Week 1 PMP drafts flipped draft → scheduled in posts.json.",
       "why": "Copy reviewed for voice (no first-person exam-taking, no 'cadence', max one 'cipher' pun per asset — none of the 6 used the pun). Hooks differentiated across the three days. Ready for Dave's final voice sign-off before publish."
+    },
+    {
+      "date": "2026-05-12",
+      "what": "Dropped Publer setup entirely. Deferred Buffer setup (08-buffer-setup-sunday.md). Week 1 will be manually posted Mon/Wed/Fri.",
+      "why": "Six posts across one week is low enough volume that a scheduler is overhead, not leverage. Manual posting also keeps Dave inside the post UI on launch morning — he sees engagement, comments, edge cases in real time, which matters more in Week 1 than convenience. Replaced with three phone alarms at 08:00 ET on Mon/Wed/Fri. Buffer reference doc left in place with a deferred-header note; revisit when posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
     }
   ],
   "dailyLog": [
@@ -932,6 +943,10 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-12",
       "entry": "preLaunchChecklist updated: widget-render, ga4-signup-event, utm-attribution moved to done after live verification. meta-capi moved to na (not running paid Meta yet). Dashboard now shows 6 done / 0 awaiting / 3 N/A — all actionable items cleared pre-launch."
+    },
+    {
+      "date": "2026-05-12",
+      "entry": "Scheduler tooling dropped for Week 1. Publer setup removed entirely (no task ever existed in checklist — confirmed). Buffer setup deferred — 08-buffer-setup-sunday.md kept as future reference with a deferred-header note added. New checklist item added: phone-alarms-set (pending) — three recurring alarms at 08:00 ET on Mon/Wed/Fri. Dashboard now shows 6 done / 1 pending / 3 N/A."
     }
   ]
 }

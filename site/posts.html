@@ -573,6 +573,56 @@ tr:hover td { background: rgba(17,25,58,0.4); }
 .task-row.done label { color: var(--muted); text-decoration: line-through; }
 .task-row.readonly input { opacity: 0.5; pointer-events: none; }
 .task-row.readonly { opacity: 0.78; }
+.task-row { flex-wrap: wrap; }
+.task-row .task-note {
+  flex-basis: 100%;
+  margin-left: 28px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--dim);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.task-summary {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.task-summary-line { font-size: 0.95rem; line-height: 1.6; }
+.task-summary-sub { font-size: 0.88rem; margin-top: 6px; }
+
+#today-tasks details,
+#yesterday-tasks details,
+#tomorrow-tasks details {
+  margin-bottom: 12px;
+}
+#today-tasks details > summary,
+#yesterday-tasks details > summary,
+#tomorrow-tasks details > summary {
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  list-style: none;
+}
+#today-tasks details > summary::-webkit-details-marker,
+#yesterday-tasks details > summary::-webkit-details-marker,
+#tomorrow-tasks details > summary::-webkit-details-marker { display: none; }
+#today-tasks details > summary::before,
+#yesterday-tasks details > summary::before,
+#tomorrow-tasks details > summary::before {
+  content: '▸ ';
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--dim);
+  transition: transform 0.15s;
+}
+#today-tasks details[open] > summary::before,
+#yesterday-tasks details[open] > summary::before,
+#tomorrow-tasks details[open] > summary::before { content: '▾ '; }
 
 .checklist-item {
   display: flex;
@@ -783,7 +833,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__POSTS__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T04:31:14.188Z",
+    "lastUpdatedAt": "2026-05-12T15:30:00.000Z",
     "schemaVersion": 1,
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -805,9 +855,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-mon-2026-05-11-launch",
       "scheduled": "2026-05-18",
+      "scheduledTime": "2026-05-18T12:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 08:00 ET",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "tool-builder",
       "video": "launch-teaser-pmp.mp4",
@@ -824,9 +876,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-mon-2026-05-11-launch",
       "scheduled": "2026-05-18",
+      "scheduledTime": "2026-05-18T13:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 09:00 ET",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "tool-builder",
       "video": "launch-teaser-pmp.mp4",
@@ -843,9 +897,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-wed-2026-05-13-trap",
       "scheduled": "2026-05-20",
+      "scheduledTime": "2026-05-20T12:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 08:00 ET",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "why-B-is-a-trap",
       "video": "ai-tutor-demo-pmp.mp4",
@@ -862,9 +918,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-wed-2026-05-13-trap",
       "scheduled": "2026-05-20",
+      "scheduledTime": "2026-05-20T13:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 09:00 ET",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "why-B-is-a-trap",
       "video": "ai-tutor-demo-pmp.mp4",
@@ -881,9 +939,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-fri-2026-05-15-domains",
       "scheduled": "2026-05-22",
+      "scheduledTime": "2026-05-22T12:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 08:00 ET",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "domain-weights",
       "video": "domain-weights-pmp.mp4",
@@ -900,9 +960,11 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-fri-2026-05-15-domains",
       "scheduled": "2026-05-22",
+      "scheduledTime": "2026-05-22T13:00:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 09:00 ET",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "draft",
+      "status": "scheduled",
       "examFocus": "PMP",
       "hook": "domain-weights",
       "video": "domain-weights-pmp.mp4",
@@ -1290,7 +1352,14 @@ function stageFor(date) {
   const isWeekend = wd === 'Sat' || wd === 'Sun';
 
   if (diff < 0) {
-    return { stage: 'pre', weekIndex: null, weekday: wd, label: CALENDAR.preLaunch.label, tasks: CALENDAR.preLaunch.tasks, isWeekend };
+    // Pre-launch: prefer the per-item checklist from campaign-state.json if present,
+    // so the dashboard reflects done / N/A / pending-runtime status set by Brad.
+    // Falls back to the flat string array for older state files.
+    const checklist = STATE?.preLaunchChecklist;
+    const tasks = Array.isArray(checklist) && checklist.length > 0
+      ? checklist
+      : CALENDAR.preLaunch.tasks;
+    return { stage: 'pre', weekIndex: null, weekday: wd, label: CALENDAR.preLaunch.label, tasks, isWeekend };
   }
   const weekIndex = Math.floor(diff / 7) + 1; // day 0 → week 1
   if (weekIndex > 4) {
@@ -1326,6 +1395,100 @@ function renderTaskList(container, info, dateKey, opts = {}) {
   }
   const done = opts.readonly ? (opts.doneOverride || {}) : loadDone(opts.scope || 'today', dateKey);
 
+  // Detect structured tasks (objects with status) vs the legacy flat string list.
+  const isStructured = typeof info.tasks[0] === 'object' && info.tasks[0] !== null;
+
+  if (isStructured) {
+    // Group by status so the eye sees "what's left" first.
+    const groups = { 'pending-runtime': [], 'in-progress': [], pending: [], done: [], na: [] };
+    info.tasks.forEach((t, i) => {
+      const k = (groups[t.status] ? t.status : 'pending');
+      groups[k].push({ task: t, index: i });
+    });
+
+    const doneCount = groups.done.length;
+    const naCount = groups.na.length;
+    const pendingRuntime = groups['pending-runtime'].length;
+    const inProgress = groups['in-progress'].length;
+    const pending = groups.pending.length;
+    const total = info.tasks.length;
+    const remaining = pendingRuntime + inProgress + pending;
+
+    const summary = document.createElement('div');
+    summary.className = 'task-summary';
+    summary.innerHTML = `
+      <div class="task-summary-line">
+        <span class="status-good"><strong>${doneCount}</strong> of ${total} done</span>
+        ${inProgress > 0 ? ` · <span class="status-warn"><strong>${inProgress}</strong> in progress</span>` : ''}
+        ${pendingRuntime > 0 ? ` · <span class="status-warn"><strong>${pendingRuntime}</strong> awaiting Day-1 verification</span>` : ''}
+        ${pending > 0 ? ` · <span class="status-bad"><strong>${pending}</strong> pending</span>` : ''}
+        ${naCount > 0 ? ` · <span style="color:var(--dim);"><strong>${naCount}</strong> N/A</span>` : ''}
+      </div>
+      ${remaining === 0 ? '<div class="task-summary-sub status-good">All actionable items cleared — runtime checks deferred to Day 1.</div>' : ''}
+    `;
+    container.appendChild(summary);
+
+    // Render groups in priority order. Hide pending-runtime/done/na behind collapsible
+    // <details> blocks if they're not the "thing you have to do right now" group.
+    const ORDER = [
+      { key: 'in-progress',      label: 'In progress',                 statusClass: 'warn', collapsed: false },
+      { key: 'pending',          label: 'Pending — action required',   statusClass: 'bad',  collapsed: false },
+      { key: 'pending-runtime',  label: 'Awaiting Day-1 verification', statusClass: 'warn', collapsed: true  },
+      { key: 'done',             label: 'Done',                        statusClass: 'good', collapsed: true  },
+      { key: 'na',               label: 'N/A — deferred',              statusClass: 'dim',  collapsed: true  }
+    ];
+
+    for (const g of ORDER) {
+      const items = groups[g.key];
+      if (items.length === 0) continue;
+      const details = document.createElement('details');
+      if (!g.collapsed) details.open = true;
+      const sum = document.createElement('summary');
+      sum.innerHTML = `<span class="pill ${g.statusClass}">${g.label}</span> <span style="color:var(--dim);font-size:0.88rem;">${items.length}</span>`;
+      details.appendChild(sum);
+
+      items.forEach(({ task, index }) => {
+        const row = document.createElement('div');
+        const serverDone = task.status === 'done' || task.status === 'na';
+        const isLocalDone = !!done[index];
+        const visibleDone = serverDone || isLocalDone;
+        const statusCls = task.status === 'done' ? 'good'
+          : task.status === 'na' ? 'dim'
+          : task.status === 'pending-runtime' || task.status === 'in-progress' ? 'warn'
+          : 'bad';
+        row.className = 'task-row' + (opts.readonly ? ' readonly' : '') + (visibleDone ? ' done' : '') + ` status-${statusCls}`;
+        const id = `${opts.scope || 'today'}-${dateKey}-${index}`;
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = id;
+        cb.checked = visibleDone;
+        // Disable when server has already marked done/na — local checkbox shouldn't override truth.
+        if (opts.readonly || serverDone) cb.disabled = true;
+        cb.addEventListener('change', () => {
+          const cur = loadDone(opts.scope || 'today', dateKey);
+          cur[index] = cb.checked;
+          saveDone(opts.scope || 'today', dateKey, cur);
+          row.classList.toggle('done', cb.checked);
+        });
+        const lab = document.createElement('label');
+        lab.htmlFor = id;
+        lab.textContent = task.label;
+        row.appendChild(cb);
+        row.appendChild(lab);
+        if (task.note) {
+          const noteEl = document.createElement('div');
+          noteEl.className = 'task-note';
+          noteEl.textContent = task.note;
+          row.appendChild(noteEl);
+        }
+        details.appendChild(row);
+      });
+      container.appendChild(details);
+    }
+    return;
+  }
+
+  // Legacy: flat string-array tasks.
   info.tasks.forEach((task, i) => {
     const row = document.createElement('div');
     const isDone = !!done[i];
@@ -1506,7 +1669,10 @@ function initScratchpad() {
     const info = stageFor(today);
     const dKey = dayKey(today);
     const done = loadDone('today', dKey);
-    const completedTasks = info.tasks.filter((_, i) => done[i]);
+    // Tasks may be plain strings (active-week calendar) or structured objects
+    // (pre-launch checklist). For the scratchpad we want a plain label string.
+    const taskLabel = (t) => (typeof t === 'string' ? t : (t && t.label) || String(t));
+    const completedTasks = info.tasks.filter((_, i) => done[i]).map(taskLabel);
     const notes = ta.value.trim();
 
     const parts = [];
