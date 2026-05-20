@@ -9,8 +9,735 @@
 
 <link rel="stylesheet" href="assets/shared.css">
 <!--INLINE-ASSETS-->
+<style>
+/* CipherExam campaign site — shared styles */
+
+/* ---- Status colour scale (red/yellow/green health indicators) ---- */
+/* Applied via JS to KPI values, progress bars, task rows, checklist items.
+   --bad / --warn / --good are defined in :root below. */
+.status-good { color: var(--good); }
+.status-warn { color: var(--warn); }
+.status-bad  { color: var(--bad); }
+
+/* KPI cards: tint the left border so the colour is visible without overwhelming */
+.kpi-card.status-good { border-left: 3px solid var(--good); }
+.kpi-card.status-warn { border-left: 3px solid var(--warn); }
+.kpi-card.status-bad  { border-left: 3px solid var(--bad); }
+.kpi-card .value.status-good { color: var(--good); }
+.kpi-card .value.status-warn { color: var(--warn); }
+.kpi-card .value.status-bad  { color: var(--bad); }
+
+/* Progress-bar fill colour overrides the default cyan */
+.progress-bar .fill.status-good { background: var(--good); }
+.progress-bar .fill.status-warn { background: var(--warn); }
+.progress-bar .fill.status-bad  { background: var(--bad); }
+
+/* Task rows + checklist items: subtle tint on the left border */
+.task-row.status-good,
+.checklist-item.status-good { border-left: 3px solid var(--good); padding-left: 9px; }
+.task-row.status-warn,
+.checklist-item.status-warn { border-left: 3px solid var(--warn); padding-left: 9px; }
+.task-row.status-bad,
+.checklist-item.status-bad  { border-left: 3px solid var(--bad);  padding-left: 9px; }
+.task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
+
+
+/* ---- Route sections (class-driven tabs — used by app.html) ----
+   Today starts with the .active class; clicking a nav button calls
+   cipherShow() which toggles .active across sections. */
+.route-section { display: none; }
+.route-section.active { display: block; }
+/* Nav buttons must look like the original nav-link anchors. */
+button.nav-link {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  /* color/padding/etc come from .nav-link rules above */
+}
+
+
+/* ---- Scratchpad / daily log / blockers (added with JSON state layer) ---- */
+textarea {
+  width: 100%;
+  background: var(--bg-elev, var(--surface));
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: "General Sans", system-ui, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+}
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+button {
+  background: var(--accent);
+  color: #001423;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-family: "Satoshi", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: filter 0.15s;
+}
+button:hover { filter: brightness(1.08); }
+button:focus { outline: 2px solid var(--purple); outline-offset: 2px; }
+#copy-status.good { color: var(--good); font-weight: 600; }
+#copy-status.bad  { color: var(--bad); font-weight: 600; }
+.log-entry {
+  background: var(--bg-elev, var(--surface));
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+.log-entry .log-date {
+  font-family: "Satoshi", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--purple);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.log-entry .log-body { color: var(--fg); font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
+.blocker-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.blocker-row:last-child { border-bottom: 0; }
+.blocker-label { color: var(--fg); font-size: 0.95rem; }
+.blocker-meta { color: var(--muted); font-size: 0.82rem; font-style: italic; }
+@media (max-width: 700px) {
+  .blocker-row { grid-template-columns: auto 1fr; }
+  .blocker-meta { grid-column: 1 / -1; margin-top: -4px; padding-left: 56px; }
+}
+
+:root {
+  --bg: #020617;
+  --surface: #0b1226;
+  --surface-2: #11193a;
+  --border: #1d2748;
+  --text: #e6edf3;
+  --dim: #9da7b3;
+  --muted: #6e7681;
+  --cyan: #7dd3fc;
+  --purple: #a78bfa;
+  --good: #4ade80;
+  --warn: #fbbf24;
+  --bad: #f87171;
+  --max: 940px;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'General Sans', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 0.6em;
+  color: var(--text);
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.45rem; margin-top: 1.6em; }
+h3 { font-size: 1.15rem; font-weight: 700; margin-top: 1.4em; }
+h4 { font-size: 1rem; font-weight: 700; color: var(--cyan); margin-top: 1.2em; }
+
+p { margin: 0 0 1em; }
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(125,211,252,0.4);
+}
+a:hover { border-bottom-color: var(--cyan); }
+a:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+code, pre, .mono {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.92em;
+}
+code { background: var(--surface-2); padding: 1px 5px; border-radius: 4px; color: var(--cyan); }
+pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+blockquote {
+  margin: 1em 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--purple);
+  background: var(--surface);
+  color: var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+blockquote.warn {
+  border-left-color: var(--warn);
+  background: rgba(251,191,36,0.06);
+  color: var(--text);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+}
+
+ul, ol { padding-left: 1.4em; margin: 0 0 1em; }
+li { margin-bottom: 0.3em; }
+
+/* Layout */
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 24px 22px 80px;
+}
+
+/* Top nav */
+.nav {
+  background: rgba(11,18,38,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.nav-brand {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+  border: none;
+  white-space: nowrap;
+}
+.nav-brand:hover { color: var(--cyan); }
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
+  overflow-x: auto;
+}
+.nav-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--dim);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--text); background: var(--surface-2); }
+.nav-link.current {
+  color: var(--cyan);
+  background: rgba(125,211,252,0.1);
+}
+.nav-rollup {
+  font-size: 0.82rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
+.version-bar {
+  position: fixed;
+  top: 68px;
+  left: max(22px, calc(50% - 448px));
+  font-size: 0.475rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  pointer-events: none;
+  z-index: 51;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.card.tier-1 { border-color: rgba(125,211,252,0.4); }
+.card.warn {
+  border-color: rgba(251,191,36,0.5);
+  background: rgba(251,191,36,0.04);
+}
+.card h3, .card h4 { margin-top: 0; }
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.tier-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(125,211,252,0.15);
+  color: var(--cyan);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+.score-badge {
+  display: inline-block;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--purple);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+/* KPI cards */
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.kpi-card .label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.kpi-card .value {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--cyan);
+  margin: 4px 0 2px;
+}
+.kpi-card .sub { font-size: 0.82rem; color: var(--dim); }
+
+/* Hero */
+.hero {
+  padding: 14px 0 6px;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: 2.1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--text), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero .sub {
+  font-size: 1.05rem;
+  color: var(--dim);
+  max-width: 700px;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.92rem;
+}
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+th {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--cyan);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+tr:hover td { background: rgba(17,25,58,0.4); }
+
+/* Today page */
+.stage-banner {
+  background: linear-gradient(90deg, rgba(125,211,252,0.12), rgba(167,139,250,0.08));
+  border: 1px solid rgba(125,211,252,0.3);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+.stage-banner .stage {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--cyan);
+}
+.stage-banner .date { font-size: 0.9rem; color: var(--dim); margin-top: 2px; }
+
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.15s;
+}
+.task-row:hover { border-color: rgba(125,211,252,0.3); }
+.task-row input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cyan);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.task-row label {
+  flex: 1;
+  cursor: pointer;
+  line-height: 1.45;
+}
+.task-row.done label { color: var(--muted); text-decoration: line-through; }
+.task-row.readonly input { opacity: 0.5; pointer-events: none; }
+.task-row.readonly { opacity: 0.78; }
+.task-row { flex-wrap: wrap; }
+.task-row .task-note {
+  flex-basis: 100%;
+  margin-left: 28px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--dim);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.task-summary {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.task-summary-line { font-size: 0.95rem; line-height: 1.6; }
+.task-summary-sub { font-size: 0.88rem; margin-top: 6px; }
+
+#today-tasks details,
+#yesterday-tasks details,
+#tomorrow-tasks details {
+  margin-bottom: 12px;
+}
+#today-tasks details > summary,
+#yesterday-tasks details > summary,
+#tomorrow-tasks details > summary {
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  list-style: none;
+}
+#today-tasks details > summary::-webkit-details-marker,
+#yesterday-tasks details > summary::-webkit-details-marker,
+#tomorrow-tasks details > summary::-webkit-details-marker { display: none; }
+#today-tasks details > summary::before,
+#yesterday-tasks details > summary::before,
+#tomorrow-tasks details > summary::before {
+  content: '▸ ';
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--dim);
+  transition: transform 0.15s;
+}
+#today-tasks details[open] > summary::before,
+#yesterday-tasks details[open] > summary::before,
+#tomorrow-tasks details[open] > summary::before { content: '▾ '; }
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input { margin-top: 4px; accent-color: var(--cyan); cursor: pointer; }
+.checklist-item label { cursor: pointer; flex: 1; }
+.checklist-item.done label { color: var(--muted); text-decoration: line-through; }
+
+/* Collapsible */
+details {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 12px;
+}
+details[open] { padding-bottom: 16px; }
+summary {
+  cursor: pointer;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--text);
+  padding: 6px 0;
+  list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: '▸';
+  color: var(--cyan);
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.15s;
+  font-size: 0.85em;
+}
+details[open] summary::before { transform: rotate(90deg); }
+
+/* Week strip */
+.week-strip {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 20px;
+}
+.week-strip .day {
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.week-strip .day.today {
+  background: rgba(125,211,252,0.1);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.week-strip .day.today .label { color: var(--cyan); font-weight: 700; }
+.week-strip .day.weekend { opacity: 0.45; }
+.week-strip .label {
+  display: block;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: width 0.3s;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin: 6px 0 4px;
+}
+
+/* Sub-nav within content page */
+.subnav {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.subnav a {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--dim);
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.subnav a:hover { color: var(--text); }
+.subnav a.current { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* Status pills */
+.pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pill.good { background: rgba(74,222,128,0.15); color: var(--good); }
+.pill.warn { background: rgba(251,191,36,0.15); color: var(--warn); }
+.pill.bad { background: rgba(248,113,113,0.15); color: var(--bad); }
+.pill.dim { background: var(--surface-2); color: var(--muted); }
+
+/* Quick-link grid */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.quick-grid a {
+  display: block;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.quick-grid a:hover { border-color: var(--cyan); color: var(--cyan); }
+.quick-grid a .qlabel {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+.quick-grid a .qdesc { font-size: 0.82rem; color: var(--dim); }
+
+/* Copy-able card (social posts) */
+.copy-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  position: relative;
+}
+.copy-card .meta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--purple);
+  margin-bottom: 8px;
+}
+.copy-card .body {
+  white-space: pre-wrap;
+  font-size: 0.94rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .wrap { padding: 18px 14px 60px; }
+  h1 { font-size: 1.6rem; }
+  .hero h1 { font-size: 1.7rem; }
+  h2 { font-size: 1.25rem; }
+  .nav-inner { padding: 10px 14px; gap: 10px; }
+  .nav-links { gap: 2px; }
+  .nav-link { font-size: 0.8rem; padding: 4px 7px; }
+  .nav-rollup { display: none; }
+  table { font-size: 0.82rem; }
+  th, td { padding: 6px 7px; }
+  .week-strip .day { padding: 8px 2px; font-size: 0.7rem; }
+}
+
+/* Print */
+@media print {
+  body { background: white; color: black; }
+  .nav, .nav-rollup, details summary::before { display: none; }
+  details { border: 1px solid #ccc; }
+  details > *:not(summary) { display: block !important; }
+  .card, .kpi-card, .copy-card { border: 1px solid #ccc; background: white; color: black; }
+  a { color: black; border-bottom: none; }
+  .hero h1 { color: black; -webkit-text-fill-color: black; background: none; }
+}
+
+/* ---- Grade modal (used by schedule + posts pages) ---- */
+.grade-modal { position: fixed; inset: 0; z-index: 60; display: none; }
+.grade-modal.open { display: block; }
+.grade-modal-backdrop { position: absolute; inset: 0; background: rgba(8,11,18,0.72); backdrop-filter: blur(2px); }
+.grade-modal-body {
+  position: relative; max-width: 480px; margin: 6vh auto 0; background: #11141c;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px 22px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55); color: #e6e8ee;
+}
+.grade-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.grade-modal-head h3 { margin: 0; font-size: 1.05rem; }
+.grade-modal-x { background: transparent; color: #e6e8ee; border: 0; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.grade-modal-x:hover { background: rgba(255,255,255,0.08); }
+.grade-modal-sub { color: #98a0b3; font-size: 0.88rem; margin: 6px 0 14px; }
+.grade-form { display: grid; gap: 10px; }
+.grade-form label { display: grid; gap: 4px; font-size: 0.85rem; color: #cbd0dc; }
+.grade-form input[type="number"] {
+  background: #0b0d13; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-variant-numeric: tabular-nums;
+}
+.grade-form input[type="number"]:focus { outline: 2px solid #5b8def; outline-offset: 1px; }
+.grade-form-actions { display: flex; gap: 8px; margin-top: 6px; }
+.grade-form-status { font-size: 0.85rem; min-height: 1.1em; margin-top: 4px; color: #98a0b3; }
+.grade-form-status.ok  { color: #86efac; }
+.grade-form-status.err { color: #fca5a5; }
+
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
+  if(!firebase.apps.length)firebase.initializeApp(cfg);
+  window._cipherDb=firebase.firestore();
+})();
+</script>
 <!--/INLINE-ASSETS-->
 
+<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
 </head>
 <body>
 
@@ -258,5 +985,857 @@
   </script>
 
 </main>
+<!--INLINE-ASSETS-->
+<script>
+/* CipherExam campaign site — shared JS (vanilla, no deps) */
+
+// ---------- CONFIG ----------
+// Defaults — overridden by data/campaign-state.json at runtime if reachable.
+let CAMPAIGN_START = '2026-05-18';
+let CURRENT_ACTIVATED = 0;
+let ACTIVATION_GATE = 25;
+let ACTIVATION_TARGET_4WK = 55;
+let STATE = null;                              // populated by loadState()
+const STATE_URL = 'data/campaign-state.json';
+
+function applyState(j) {
+  if (!j) return null;
+  STATE = j;
+  if (j.campaign?.start) CAMPAIGN_START = j.campaign.start;
+  if (j.campaign?.activationGate != null) ACTIVATION_GATE = j.campaign.activationGate;
+  if (j.campaign?.activationTarget4wk != null) ACTIVATION_TARGET_4WK = j.campaign.activationTarget4wk;
+  if (j.metrics?.activatedUsersTotal != null) CURRENT_ACTIVATED = j.metrics.activatedUsersTotal;
+  return j;
+}
+
+async function loadState() {
+  // 1. Prefer inline state (works in static preview without fetch)
+  if (typeof window !== 'undefined' && window.__CAMPAIGN_STATE__) {
+    return applyState(window.__CAMPAIGN_STATE__);
+  }
+  // 2. Fall back to fetch (works when served via http)
+  try {
+    const res = await fetch(STATE_URL, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return applyState(await res.json());
+  } catch (e) {
+    console.warn('[campaign-state] fetch failed, using defaults:', e.message);
+    return null;
+  }
+}
+
+// ---------- 4-WEEK CALENDAR DATA (from 00-campaign-brief.md §3) ----------
+// Week 0 = pre-launch (engineering blockers from 06-engineering-handoff.md §7).
+// Weekdays only Mon–Fri; weekends graceful.
+const CALENDAR = {
+  // ---- PRE-LAUNCH WEEK (week 0) ----
+  preLaunch: {
+    label: 'Pre-launch — engineering blockers',
+    tasks: [
+      'Three Tier 1 LPs (PMP, Sec+, SHRM-CP) deployed and reachable',
+      'Try-a-Question widget renders on each LP with explanation panel working',
+      'GA4 signup_complete fires on a real test signup (verify in DebugView)',
+      'Meta Conversions API server-side test event received',
+      'LinkedIn Insight Tag firing on /lp/* pages',
+      'Resend Day 0 email sends to test address with merge tags populated',
+      'Resend suppresses correctly when test user upgrades mid-trial',
+      'In-app testimonial prompt fires at 10th-question milestone',
+      'UTM source/medium/campaign/exam tags resolve cleanly in GA4'
+    ]
+  },
+  // ---- ACTIVE 4 WEEKS ----
+  weeks: [
+    { // Week 1 (prep)
+      label: 'Week 1 — prep & cornerstone',
+      days: {
+        Mon: { tasks: ['Publish cornerstone blog (01-cornerstone-cipherexam-thinking.md)'] },
+        Tue: { tasks: ['PMP LP live (no ads yet) — verify analytics fire'] },
+        Wed: { tasks: ['Security+ LP live (no ads yet) — verify analytics fire'] },
+        Thu: { tasks: ['SHRM-CP LP live (no ads yet) — verify analytics fire'] },
+        Fri: { tasks: ['LinkedIn founder post: PMP worked-question (LI long-form #1 from 02-multi-exam-social.md)'] }
+      }
+    },
+    { // Week 2
+      label: 'Week 2 — Sec+ + Reddit value posts',
+      days: {
+        Mon: { tasks: ['LinkedIn founder post: Sec+ PBQ walkthrough (LI long-form #1)'] },
+        Tue: { tasks: ['Reddit r/pmp value post (no link)'] },
+        Wed: { tasks: ['Reddit r/CompTIA value post (no link)'] },
+        Thu: { tasks: ['LinkedIn founder post: SHRM-CP Competency Lens (LI long-form #1)'] },
+        Fri: { tasks: ['Mid-campaign read: which channel is producing signups? Pull GA4 by-source.'] }
+      }
+    },
+    { // Week 3
+      label: 'Week 3 — X/Twitter + warm outreach',
+      days: {
+        Mon: { tasks: ['Reddit r/humanresources value post (no link)'] },
+        Tue: { tasks: ['X/Twitter PMP worked-question thread'] },
+        Wed: { tasks: ['X/Twitter Sec+ "the question you\'ll see" hook (uses the one allowed decode wordplay)'] },
+        Thu: { tasks: ['LinkedIn warm-outreach push: 10–15 personalized DMs (exam-merge-tagged template from 02 §exam-agnostic)'] },
+        Fri: { tasks: ['LinkedIn founder post #2: PMP (worked-question variant)'] }
+      }
+    },
+    { // Week 4
+      label: 'Week 4 — retro + paid-gate decision',
+      days: {
+        Mon: { tasks: ['LinkedIn founder post #2: Security+'] },
+        Tue: { tasks: ['LinkedIn founder post #2: SHRM-CP'] },
+        Wed: { tasks: ['X/Twitter SHRM-CP worked question'] },
+        Thu: { tasks: ['4-week retro: which cluster activated most users? Pull GA4 by examId.'] },
+        Fri: { tasks: ['Decision day: hit the 25-activated-user paid-spend gate yet?', 'If yes — turn on $2/day retargeting on highest-leverage channel (Reddit Promoted or Google Search RT of LP visitors).', 'If no — extend organic. Tier 2 expansion is gated on hitting cluster targets.'] }
+        }
+    }
+  ],
+  postCampaign: {
+    label: 'Post-campaign — retro & next cycle',
+    tasks: [
+      'Campaign done — write retro: cluster-level activation rates vs. target',
+      'Decide which Tier 1 cluster gets sustained organic + paid retargeting',
+      'Decide whether to start Tier 2 rollout (Network+, Six Sigma GB, CSM SEO)',
+      'Update cipher-exam-context skill with real conversion-rate numbers'
+    ]
+  }
+};
+
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+// ---------- VIDEO CREATIVE PER DAY ----------
+// Keyed by `${weekIndex}-${weekday}` (week 1-4, weekday Mon-Fri).
+// Days not present here are text-only / no video.
+// LinkedIn-targeted days use the -li (4:5) variants so they don't get
+// letterboxed in the LinkedIn desktop feed. X/Twitter and blog-embed days
+// use the original 9:16 or 1:1 versions.
+const CALENDAR_VIDEOS = {
+  '1-Mon': { id: 'launch-teaser-pmp',           title: 'Launch teaser — PMP (1:1)',                            use: 'Embed at top of the cornerstone blog post',         why: 'Sets up "we teach you how the exam thinks" before the long read.' },
+  '1-Fri': { id: 'ai-tutor-demo-pmp-li',        title: 'AI tutor demo — PMP scenario #1 (4:5 LinkedIn)',       use: 'LinkedIn founder post — PMP worked question',       why: 'Stakeholder-excluded scenario shows the Exam Lens. 4:5 fits LinkedIn feed without letterboxing.' },
+  '2-Mon': { id: 'pbq-walkthrough-secplus-li',  title: 'Sec+ PBQ walkthrough (4:5 LinkedIn)',                  use: 'LinkedIn founder post — PBQ walkthrough',           why: 'PBQ-native demo. CompTIA-family differentiator. 4:5 for LinkedIn.' },
+  '2-Thu': { id: 'ai-tutor-demo-shrm-li',       title: 'AI tutor demo — SHRM-CP (4:5 LinkedIn)',               use: 'LinkedIn founder post — Exam Lens',                 why: 'Worked scenario showing the Exam Lens. 4:5 for LinkedIn.' },
+  '3-Tue': { id: 'ai-tutor-demo-pmp',           title: 'AI tutor demo — PMP (9:16)',                           use: 'X/Twitter thread — PMP worked question',            why: '9:16 vertical works on X mobile. Reusing the PMP demo as a thread anchor.' },
+  '3-Wed': { id: 'launch-teaser-secplus',       title: 'Launch teaser — Security+ (1:1)',                      use: 'X/Twitter — Sec+ "the question you\'ll see" hook',  why: '1:1 hook fits X feed cleanly.' },
+  '3-Fri': { id: 'ai-tutor-demo-pmp2-li',       title: 'AI tutor demo — PMP #2 / scope creep (4:5 LinkedIn)',  use: 'LinkedIn founder post #2 — PMP variant',            why: 'Different angle: change-control scenario. 4:5 for LinkedIn.' },
+  '4-Mon': { id: 'ai-tutor-demo-secplus2-li',   title: 'AI tutor demo — Sec+ #2 / incident response (4:5 LI)', use: 'LinkedIn founder post #2 — Sec+',                   why: 'Ransomware containment scenario. 4:5 for LinkedIn.' },
+  '4-Tue': { id: 'ai-tutor-demo-shrm2-li',      title: 'AI tutor demo — SHRM-CP #2 / business acumen (4:5 LI)', use: 'LinkedIn founder post #2 — SHRM-CP',              why: 'Termination-readiness scenario, Business Acumen lens. 4:5 for LinkedIn.' },
+  '4-Wed': { id: 'ai-tutor-demo-shrm',          title: 'AI tutor demo — SHRM-CP (9:16)',                       use: 'X/Twitter — SHRM-CP worked question',               why: '9:16 works on X mobile. Re-use Round 1 SHRM demo as X thread anchor.' },
+};
+
+function videoPathFor(id) {
+  // Videos live one level up in `videos/out/`. The site/ http server can't reach
+  // outside its root, so show a relative path the user can open from disk or
+  // serve separately. Returns a string to display, not a working <video src>.
+  return `videos/out/${id}.mp4`;
+}
+
+// ---------- DATE / STAGE HELPERS ----------
+function dayKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function parseISO(s) {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function daysBetween(a, b) {
+  const ms = 24 * 60 * 60 * 1000;
+  return Math.floor((b.getTime() - a.getTime()) / ms);
+}
+
+function weekdayName(d) {
+  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+}
+
+function formatDateLong(d) {
+  return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+/**
+ * Returns {stage, weekIndex, weekday, label, tasks, isWeekend}
+ *   stage: 'pre' | 'active' | 'post'
+ *   weekIndex: 1-4 when active; null otherwise
+ *   weekday: Mon..Fri or Sat/Sun
+ */
+function stageFor(date) {
+  const start = parseISO(CAMPAIGN_START);
+  const diff = daysBetween(start, date);
+  const wd = weekdayName(date);
+  const isWeekend = wd === 'Sat' || wd === 'Sun';
+
+  if (diff < 0) {
+    // Pre-launch: prefer the per-item checklist from campaign-state.json if present,
+    // so the dashboard reflects done / N/A / pending-runtime status set by Brad.
+    // Falls back to the flat string array for older state files.
+    const checklist = STATE?.preLaunchChecklist;
+    const tasks = Array.isArray(checklist) && checklist.length > 0
+      ? checklist
+      : CALENDAR.preLaunch.tasks;
+    return { stage: 'pre', weekIndex: null, weekday: wd, label: CALENDAR.preLaunch.label, tasks, isWeekend };
+  }
+  const weekIndex = Math.floor(diff / 7) + 1; // day 0 → week 1
+  if (weekIndex > 4) {
+    return { stage: 'post', weekIndex: null, weekday: wd, label: CALENDAR.postCampaign.label, tasks: CALENDAR.postCampaign.tasks, isWeekend };
+  }
+  const wk = CALENDAR.weeks[weekIndex - 1];
+  if (isWeekend) {
+    return { stage: 'active', weekIndex, weekday: wd, label: `${wk.label} — Weekend`, tasks: [], isWeekend: true };
+  }
+  const dayEntry = wk.days[wd] || { tasks: [] };
+  return { stage: 'active', weekIndex, weekday: wd, label: `${wk.label} — ${wd}`, tasks: dayEntry.tasks, isWeekend: false };
+}
+
+// ---------- LOCALSTORAGE ----------
+function loadDone(scope, dateKey) {
+  try { return JSON.parse(localStorage.getItem(`ce.${scope}.${dateKey}`) || '{}'); }
+  catch { return {}; }
+}
+function saveDone(scope, dateKey, obj) {
+  localStorage.setItem(`ce.${scope}.${dateKey}`, JSON.stringify(obj));
+}
+
+// ---------- RENDER HELPERS ----------
+function renderTaskList(container, info, dateKey, opts = {}) {
+  container.innerHTML = '';
+  if (info.isWeekend && info.tasks.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim);font-style:italic;">Weekend — no scheduled tasks. Recharge.</p>';
+    return;
+  }
+  if (info.tasks.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim);">No scheduled tasks for this day.</p>';
+    return;
+  }
+  const done = opts.readonly ? (opts.doneOverride || {}) : loadDone(opts.scope || 'today', dateKey);
+
+  // Detect structured tasks (objects with status) vs the legacy flat string list.
+  const isStructured = typeof info.tasks[0] === 'object' && info.tasks[0] !== null;
+
+  if (isStructured) {
+    // Group by status so the eye sees "what's left" first.
+    const groups = { 'pending-runtime': [], 'in-progress': [], pending: [], done: [], na: [] };
+    info.tasks.forEach((t, i) => {
+      const k = (groups[t.status] ? t.status : 'pending');
+      groups[k].push({ task: t, index: i });
+    });
+
+    const doneCount = groups.done.length;
+    const naCount = groups.na.length;
+    const pendingRuntime = groups['pending-runtime'].length;
+    const inProgress = groups['in-progress'].length;
+    const pending = groups.pending.length;
+    const total = info.tasks.length;
+    const remaining = pendingRuntime + inProgress + pending;
+
+    const summary = document.createElement('div');
+    summary.className = 'task-summary';
+    summary.innerHTML = `
+      <div class="task-summary-line">
+        <span class="status-good"><strong>${doneCount}</strong> of ${total} done</span>
+        ${inProgress > 0 ? ` · <span class="status-warn"><strong>${inProgress}</strong> in progress</span>` : ''}
+        ${pendingRuntime > 0 ? ` · <span class="status-warn"><strong>${pendingRuntime}</strong> awaiting Day-1 verification</span>` : ''}
+        ${pending > 0 ? ` · <span class="status-bad"><strong>${pending}</strong> pending</span>` : ''}
+        ${naCount > 0 ? ` · <span style="color:var(--dim);"><strong>${naCount}</strong> N/A</span>` : ''}
+      </div>
+      ${remaining === 0 ? '<div class="task-summary-sub status-good">All actionable items cleared — runtime checks deferred to Day 1.</div>' : ''}
+    `;
+    container.appendChild(summary);
+
+    // Render groups in priority order. Hide pending-runtime/done/na behind collapsible
+    // <details> blocks if they're not the "thing you have to do right now" group.
+    const ORDER = [
+      { key: 'in-progress',      label: 'In progress',                 statusClass: 'warn', collapsed: false },
+      { key: 'pending',          label: 'Pending — action required',   statusClass: 'bad',  collapsed: false },
+      { key: 'pending-runtime',  label: 'Awaiting Day-1 verification', statusClass: 'warn', collapsed: true  },
+      { key: 'done',             label: 'Done',                        statusClass: 'good', collapsed: true  },
+      { key: 'na',               label: 'N/A — deferred',              statusClass: 'dim',  collapsed: true  }
+    ];
+
+    for (const g of ORDER) {
+      const items = groups[g.key];
+      if (items.length === 0) continue;
+      const details = document.createElement('details');
+      if (!g.collapsed) details.open = true;
+      const sum = document.createElement('summary');
+      sum.innerHTML = `<span class="pill ${g.statusClass}">${g.label}</span> <span style="color:var(--dim);font-size:0.88rem;">${items.length}</span>`;
+      details.appendChild(sum);
+
+      items.forEach(({ task, index }) => {
+        const row = document.createElement('div');
+        const serverDone = task.status === 'done' || task.status === 'na';
+        const isLocalDone = !!done[index];
+        const visibleDone = serverDone || isLocalDone;
+        const statusCls = task.status === 'done' ? 'good'
+          : task.status === 'na' ? 'dim'
+          : task.status === 'pending-runtime' || task.status === 'in-progress' ? 'warn'
+          : 'bad';
+        row.className = 'task-row' + (opts.readonly ? ' readonly' : '') + (visibleDone ? ' done' : '') + ` status-${statusCls}`;
+        const id = `${opts.scope || 'today'}-${dateKey}-${index}`;
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = id;
+        cb.checked = visibleDone;
+        // Disable when server has already marked done/na — local checkbox shouldn't override truth.
+        if (opts.readonly || serverDone) cb.disabled = true;
+        cb.addEventListener('change', () => {
+          const cur = loadDone(opts.scope || 'today', dateKey);
+          cur[index] = cb.checked;
+          saveDone(opts.scope || 'today', dateKey, cur);
+          row.classList.toggle('done', cb.checked);
+        });
+        const lab = document.createElement('label');
+        lab.htmlFor = id;
+        lab.textContent = task.label;
+        row.appendChild(cb);
+        row.appendChild(lab);
+        if (task.note) {
+          const noteEl = document.createElement('div');
+          noteEl.className = 'task-note';
+          noteEl.textContent = task.note;
+          row.appendChild(noteEl);
+        }
+        details.appendChild(row);
+      });
+      container.appendChild(details);
+    }
+    return;
+  }
+
+  // Legacy: flat string-array tasks.
+  info.tasks.forEach((task, i) => {
+    const row = document.createElement('div');
+    const isDone = !!done[i];
+    row.className = 'task-row' + (opts.readonly ? ' readonly' : '') + (isDone ? ' done status-good' : ' status-bad');
+    const id = `${opts.scope || 'today'}-${dateKey}-${i}`;
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.id = id;
+    cb.checked = isDone;
+    if (opts.readonly) cb.disabled = true;
+    cb.addEventListener('change', () => {
+      const cur = loadDone(opts.scope || 'today', dateKey);
+      cur[i] = cb.checked;
+      saveDone(opts.scope || 'today', dateKey, cur);
+      row.classList.toggle('done', cb.checked);
+      row.classList.toggle('status-good', cb.checked);
+      row.classList.toggle('status-bad', !cb.checked);
+    });
+    const lab = document.createElement('label');
+    lab.htmlFor = id;
+    lab.textContent = task;
+    row.appendChild(cb);
+    row.appendChild(lab);
+    container.appendChild(row);
+  });
+}
+
+function renderWeekStrip(container, refDate) {
+  container.innerHTML = '';
+  const today = new Date(refDate);
+  const todayDow = today.getDay(); // 0..6
+  // Anchor to Monday of current week
+  const monOffset = (todayDow === 0 ? -6 : 1 - todayDow);
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + monOffset);
+
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const wd = weekdayName(d);
+    const isToday = dayKey(d) === dayKey(today);
+    const el = document.createElement('div');
+    el.className = 'day' + (isToday ? ' today' : '');
+    el.innerHTML = `<span class="label">${wd}</span>${d.getDate()}`;
+    container.appendChild(el);
+  }
+}
+
+function renderProgressBar(container, current, total) {
+  const pct = Math.min(100, Math.round((current / total) * 100));
+  // For the paid-spend gate: red < 33%, yellow 33–99%, green at 100%.
+  const status = current >= total ? 'good' : (pct >= 33 ? 'warn' : 'bad');
+  container.innerHTML = `
+    <div class="progress-meta">
+      <span><strong class="status-${status}">${current}</strong> of ${total} activated users</span>
+      <span class="status-${status}">${pct}%</span>
+    </div>
+    <div class="progress-bar"><div class="fill status-${status}" style="width:${pct}%"></div></div>
+  `;
+}
+
+// ---------- NAV CURRENT-PAGE HIGHLIGHT ----------
+function highlightNav() {
+  const path = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link').forEach(a => {
+    const href = a.getAttribute('href');
+    if (href === path || (path === '' && href === 'index.html')) a.classList.add('current');
+  });
+}
+
+// ---------- TODAY CREATIVE (which video to attach to today's post) ----------
+function renderTodayCreative(container) {
+  if (!container) return;
+  const today = new Date();
+  const info = stageFor(today);
+  if (info.stage !== 'active' || info.isWeekend) {
+    container.innerHTML = `<p style="color:var(--dim);margin:0;">${info.stage === 'pre' ? 'Pre-launch — no campaign-day creative yet. Once Week 1 starts, today\'s recommended video will appear here.' : 'No video creative scheduled today.'}</p>`;
+    return;
+  }
+  const key = `${info.weekIndex}-${info.weekday}`;
+  const v = CALENDAR_VIDEOS[key];
+  if (!v) {
+    container.innerHTML = '<p style="color:var(--dim);margin:0;"><strong>Text-only day.</strong> No video creative scheduled — focus on the copy.</p>';
+    return;
+  }
+  container.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:240px;">
+        <div style="font-family:'Satoshi',sans-serif;font-size:0.75rem;font-weight:700;color:var(--purple);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Today's video creative</div>
+        <div style="font-family:'Satoshi',sans-serif;font-size:1.2rem;font-weight:700;color:var(--cyan);margin-bottom:6px;">${escapeHtml(v.title)}</div>
+        <div style="font-size:0.92rem;margin-bottom:4px;"><strong>Use:</strong> ${escapeHtml(v.use)}</div>
+        <div style="font-size:0.88rem;color:var(--dim);"><strong>Why this one:</strong> ${escapeHtml(v.why)}</div>
+      </div>
+      <div style="flex:0 0 auto;text-align:right;font-size:0.82rem;">
+        <div style="color:var(--muted);margin-bottom:4px;">File:</div>
+        <code style="display:inline-block;font-size:0.82rem;padding:4px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--cyan);">${videoPathFor(v.id)}</code>
+      </div>
+    </div>`;
+}
+
+// ---------- STATE RENDERERS ----------
+function renderDailyLog(container, max = 7) {
+  if (!container || !STATE?.dailyLog) return;
+  const items = [...STATE.dailyLog].reverse().slice(0, max);
+  if (items.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim);font-style:italic;">No entries yet — tell Claude what happened today and it\'ll appear here.</p>';
+    return;
+  }
+  container.innerHTML = items.map(e =>
+    `<div class="log-entry"><div class="log-date">${e.date}</div><div class="log-body">${escapeHtml(e.entry)}</div></div>`
+  ).join('');
+}
+
+function renderBlockers(container) {
+  if (!container || !STATE?.blockers) return;
+  const items = STATE.blockers;
+  if (items.length === 0) {
+    container.innerHTML = '<p style="color:var(--good);">No open blockers.</p>';
+    return;
+  }
+  container.innerHTML = items.map(b => {
+    const statusClass = b.status === 'done' ? 'good' : (b.status === 'in-progress' ? 'warn' : 'bad');
+    const statusLabel = b.status === 'done' ? '✓ done' : (b.status === 'in-progress' ? '⋯ in-progress' : '○ pending');
+    return `<div class="blocker-row">
+      <span class="pill ${statusClass}">${statusLabel}</span>
+      <span class="blocker-label">${escapeHtml(b.label)}</span>
+      <span class="blocker-meta">${escapeHtml(b.owner)} · due ${escapeHtml(b.due || '—')}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderClusterKpis(container) {
+  if (!container || !STATE?.metrics?.perCluster) return;
+  const c = STATE.metrics.perCluster;
+  container.innerHTML = Object.entries(c).map(([name, v]) => {
+    const pct = v.target > 0 ? Math.min(100, Math.round((v.activated / v.target) * 100)) : 0;
+    const s = statusFor(v.activated, v.target);
+    return `<div class="kpi-card status-${s}">
+      <div class="label">${escapeHtml(name)}</div>
+      <div class="value status-${s}">${v.activated} <span style="font-size:0.55em;color:var(--dim);">/ ${v.target}</span></div>
+      <div class="sub">${v.signups} signups · ${pct}% to target</div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// Health-status helper: map (value, target) -> 'bad' | 'warn' | 'good'
+//   bad:  < badAbove  (default 0.25)
+//   warn: badAbove .. warnAbove
+//   good: >= warnAbove (default 0.75)
+function statusFor(value, target, opts) {
+  const o = opts || {};
+  const badAbove = o.badAbove != null ? o.badAbove : 0.25;
+  const warnAbove = o.warnAbove != null ? o.warnAbove : 0.75;
+  if (!target || target <= 0) return 'good';
+  const ratio = value / target;
+  if (ratio >= warnAbove) return 'good';
+  if (ratio >= badAbove) return 'warn';
+  return 'bad';
+}
+
+// ---------- SCRATCHPAD + COPY-FOR-CLAUDE ----------
+function initScratchpad() {
+  const ta = document.getElementById('scratchpad');
+  const btn = document.getElementById('copy-update-btn');
+  const status = document.getElementById('copy-status');
+  if (!ta || !btn) return;
+
+  const today = new Date();
+  const key = `ce.scratchpad.${dayKey(today)}`;
+  ta.value = localStorage.getItem(key) || '';
+  ta.addEventListener('input', () => localStorage.setItem(key, ta.value));
+
+  btn.addEventListener('click', async () => {
+    const info = stageFor(today);
+    const dKey = dayKey(today);
+    const done = loadDone('today', dKey);
+    // Tasks may be plain strings (active-week calendar) or structured objects
+    // (pre-launch checklist). For the scratchpad we want a plain label string.
+    const taskLabel = (t) => (typeof t === 'string' ? t : (t && t.label) || String(t));
+    const completedTasks = info.tasks.filter((_, i) => done[i]).map(taskLabel);
+    const notes = ta.value.trim();
+
+    const parts = [];
+    parts.push(`[CipherExam campaign update — ${dKey}]`);
+    parts.push(`Stage: ${info.label}`);
+    parts.push('');
+    if (completedTasks.length > 0) {
+      parts.push('Tasks completed today:');
+      completedTasks.forEach(t => parts.push(`- ${t}`));
+      parts.push('');
+    }
+    if (notes) {
+      parts.push('Notes:');
+      parts.push(notes);
+      parts.push('');
+    }
+    parts.push('---');
+    parts.push('Please update site/data/campaign-state.json:');
+    parts.push('1. Append this to dailyLog (use today\'s date)');
+    parts.push('2. Update any KPI numbers I mentioned (activatedUsersTotal, trialSignupsTotal, perCluster)');
+    parts.push('3. Mark any blockers as done/in-progress if I named them');
+    parts.push('4. Bump _meta.lastUpdatedAt');
+
+    const message = parts.join('\n');
+    try {
+      await navigator.clipboard.writeText(message);
+      if (status) { status.textContent = '✓ Copied. Paste into Claude Code.'; status.classList.add('good'); }
+      setTimeout(() => { if (status) { status.textContent = ''; status.classList.remove('good'); } }, 4000);
+    } catch (e) {
+      if (status) { status.textContent = '✗ Copy failed — select the text in the textarea below and copy manually.'; status.classList.add('bad'); }
+      const fallback = document.getElementById('copy-fallback');
+      if (fallback) { fallback.value = message; fallback.style.display = 'block'; }
+    }
+  });
+}
+
+// ---------- TODAY PAGE ENTRY ----------
+function initTodayPage() {
+  const today = new Date();
+  const info = stageFor(today);
+  const banner = document.getElementById('stage-banner');
+  if (banner) {
+    banner.innerHTML = `
+      <div class="stage">${info.label}</div>
+      <div class="date">${formatDateLong(today)}</div>
+    `;
+  }
+
+  const todayList = document.getElementById('today-tasks');
+  if (todayList) renderTaskList(todayList, info, dayKey(today), { scope: 'today' });
+
+  // Yesterday recap
+  const yest = new Date(today); yest.setDate(yest.getDate() - 1);
+  const yInfo = stageFor(yest);
+  const yList = document.getElementById('yesterday-tasks');
+  if (yList) renderTaskList(yList, yInfo, dayKey(yest), { scope: 'today' });
+  const ySum = document.getElementById('yesterday-summary');
+  if (ySum) ySum.textContent = `Yesterday — ${weekdayName(yest)} ${yest.toLocaleDateString()}`;
+
+  // Tomorrow preview (read-only)
+  const tmrw = new Date(today); tmrw.setDate(tmrw.getDate() + 1);
+  const tInfo = stageFor(tmrw);
+  const tList = document.getElementById('tomorrow-tasks');
+  if (tList) renderTaskList(tList, tInfo, dayKey(tmrw), { scope: 'today', readonly: true });
+  const tSum = document.getElementById('tomorrow-summary');
+  if (tSum) tSum.textContent = `Tomorrow — ${weekdayName(tmrw)} ${tmrw.toLocaleDateString()}`;
+
+  // Week strip
+  const strip = document.getElementById('week-strip');
+  if (strip) renderWeekStrip(strip, today);
+
+  // Paid-spend gate progress
+  const gate = document.getElementById('gate-progress');
+  if (gate) renderProgressBar(gate, CURRENT_ACTIVATED, ACTIVATION_GATE);
+  const gateNote = document.getElementById('gate-note');
+  if (gateNote) {
+    if (CURRENT_ACTIVATED >= ACTIVATION_GATE) {
+      gateNote.innerHTML = '<span class="pill good">UNLOCKED</span> $2/day retargeting is eligible — pick Reddit Promoted or Google Search RT.';
+    } else {
+      gateNote.innerHTML = `<span class="pill warn">LOCKED</span> $0 paid until ${ACTIVATION_GATE - CURRENT_ACTIVATED} more activated users land organically.`;
+    }
+  }
+
+  // Live KPI cards from state
+  const kpiSnap = document.getElementById('kpi-snapshot');
+  if (kpiSnap) renderClusterKpis(kpiSnap);
+  const stateNote = document.getElementById('state-source');
+  if (stateNote && STATE?._meta?.lastUpdatedAt) {
+    stateNote.textContent = `Numbers from data/campaign-state.json · last updated ${STATE._meta.lastUpdatedAt}`;
+  }
+
+  // Today's recommended video creative
+  const creative = document.getElementById('today-creative');
+  if (creative) renderTodayCreative(creative);
+
+  // Daily log
+  const log = document.getElementById('daily-log');
+  if (log) renderDailyLog(log, 7);
+
+  // Scratchpad
+  initScratchpad();
+}
+
+// ---------- INDEX PAGE TODAY WIDGET ----------
+function initIndexWidget() {
+  const today = new Date();
+  const info = stageFor(today);
+  const widget = document.getElementById('index-today-widget');
+  if (!widget) return;
+  const top = info.tasks.slice(0, 3);
+  let html = `<div class="meta" style="color:var(--purple);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">${info.label}</div>`;
+  if (top.length === 0) {
+    html += '<p style="color:var(--dim);margin:0;">No tasks scheduled today.</p>';
+  } else {
+    html += '<ul style="margin:0 0 8px;padding-left:18px;">';
+    top.forEach(t => { html += `<li style="margin-bottom:4px;">${t}</li>`; });
+    html += '</ul>';
+  }
+  // In app.html, cipherShow exists and switches sections.
+  // In a standalone page, fall back to today.html.
+  html += '<a href="today.html" onclick="if(typeof cipherShow===\'function\'){cipherShow(\'today\');return false;}" style="font-size:0.88rem;font-weight:600;">Full daily view →</a>';
+  widget.innerHTML = html;
+}
+
+// ---------- ENGINEERING CHECKLIST (separate localStorage scope) ----------
+function initEngineeringChecklist() {
+  document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(cb => {
+    const key = cb.dataset.key;
+    if (!key) return;
+    const stored = localStorage.getItem(`ce.eng.${key}`) === '1';
+    cb.checked = stored;
+    applyChecklistStatus(cb);
+    cb.addEventListener('change', () => {
+      localStorage.setItem(`ce.eng.${key}`, cb.checked ? '1' : '0');
+      applyChecklistStatus(cb);
+    });
+  });
+}
+function applyChecklistStatus(cb) {
+  const item = cb.parentElement;
+  item.classList.toggle('done', cb.checked);
+  item.classList.toggle('status-good', cb.checked);
+  item.classList.toggle('status-bad', !cb.checked);
+}
+
+// ---------- INDEX PAGE STATE RENDERERS ----------
+function initIndexState() {
+  const blockers = document.getElementById('index-blockers');
+  if (blockers) renderBlockers(blockers);
+
+  const log = document.getElementById('index-daily-log');
+  if (log) renderDailyLog(log, 3);
+
+  const activatedHeader = document.getElementById('index-activated-total');
+  if (activatedHeader && STATE?.metrics) {
+    const v = STATE.metrics.activatedUsersTotal;
+    const t = STATE.campaign.activationTarget4wk;
+    const s = statusFor(v, t);
+    activatedHeader.className = 'status-' + s;
+    activatedHeader.textContent = `${v} / ${t}`;
+  }
+
+  const gateProgress = document.getElementById('index-gate-progress');
+  if (gateProgress) renderProgressBar(gateProgress, CURRENT_ACTIVATED, ACTIVATION_GATE);
+
+  const lastUpdated = document.getElementById('index-state-updated');
+  if (lastUpdated && STATE?._meta?.lastUpdatedAt) {
+    lastUpdated.textContent = STATE._meta.lastUpdatedAt;
+  }
+}
+
+// ---------- BOOT ----------
+// Run inits via readyState check rather than DOMContentLoaded so this still
+// works if the script tag is encountered after DOMContentLoaded has fired
+// (some preview sandboxes inject the script late). Each init is try/caught
+// so one failure can't prevent the others from running.
+async function boot() {
+  try { highlightNav(); } catch (e) { console.warn('highlightNav:', e); }
+  try { await loadState(); } catch (e) { console.warn('loadState:', e); }
+  try { if (document.getElementById('today-tasks')) initTodayPage(); } catch (e) { console.warn('initTodayPage:', e); }
+  try { if (document.getElementById('index-today-widget')) initIndexWidget(); } catch (e) { console.warn('initIndexWidget:', e); }
+  try { if (document.getElementById('index-blockers') || document.getElementById('index-daily-log')) initIndexState(); } catch (e) { console.warn('initIndexState:', e); }
+  try { if (document.querySelector('.checklist-item')) initEngineeringChecklist(); } catch (e) { console.warn('initEngineeringChecklist:', e); }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+// ---- Firebase live sync (wires up after boot so applyState is defined) ----
+(function () {
+  function wireFirestore() {
+    var db = window._cipherDb;
+    if (!db) return; // Firebase SDK not available (offline / CDN blocked)
+
+    // Live campaign state → updates header metrics, blockers, etc.
+    db.collection('campaign').doc('state').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__CAMPAIGN_STATE__ = snap.data();
+      applyState(window.__CAMPAIGN_STATE__);
+    }, function (err) {
+      console.warn('[cipher] Firestore state sync error:', err.message);
+    });
+
+    // Live posts → notifies schedule + posts tabs to re-render
+    db.collection('campaign').doc('posts').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__POSTS__ = snap.data();
+      document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+    }, function (err) {
+      console.warn('[cipher] Firestore posts sync error:', err.message);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFirestore);
+  } else {
+    wireFirestore();
+  }
+})();
+
+// ---- Grade modal (shared across schedule + posts pages) ----
+(function () {
+  var MODAL_HTML = ''
+    + '<div id="grade-modal" class="grade-modal" aria-hidden="true">'
+    +   '<div class="grade-modal-backdrop" data-grade-close></div>'
+    +   '<div class="grade-modal-body" role="dialog" aria-labelledby="grade-modal-title">'
+    +     '<div class="grade-modal-head">'
+    +       '<h3 id="grade-modal-title">Grade post</h3>'
+    +       '<button type="button" class="grade-modal-x" data-grade-close aria-label="Close">×</button>'
+    +     '</div>'
+    +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
+    +     '<form id="grade-form" class="grade-form">'
+    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
+    +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
+    +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
+    +       '<label>Reposts / reshares <input type="number" min="0" name="reposts" value="0"></label>'
+    +       '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '<div class="grade-form-actions">'
+    +         '<button type="submit" class="btn-primary" id="grade-submit-btn">Submit grade</button>'
+    +         '<button type="button" class="btn-secondary" data-grade-close>Cancel</button>'
+    +       '</div>'
+    +       '<div class="grade-form-status" id="grade-form-status" aria-live="polite"></div>'
+    +     '</form>'
+    +   '</div>'
+    + '</div>';
+
+  var currentPostId = null;
+
+  function ensureModal() {
+    if (document.getElementById('grade-modal')) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML = MODAL_HTML;
+    document.body.appendChild(wrap.firstChild);
+  }
+
+  function openModal(postId) {
+    ensureModal();
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var post = posts.find(function (p) { return p.id === postId; });
+    if (!post) { console.warn('[grade] post not found:', postId); return; }
+    currentPostId = postId;
+    var modal = document.getElementById('grade-modal');
+    document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
+    document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
+    document.getElementById('grade-form-status').textContent = '';
+    document.getElementById('grade-form').reset();
+    document.getElementById('grade-submit-btn').disabled = false;
+    document.getElementById('grade-submit-btn').textContent = 'Submit grade';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    var first = modal.querySelector('input[name="impressions"]');
+    if (first) setTimeout(function () { first.focus(); }, 50);
+  }
+
+  function closeModal() {
+    var modal = document.getElementById('grade-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    currentPostId = null;
+  }
+
+  async function submitGrade(form) {
+    if (!currentPostId) return;
+    var statusEl = document.getElementById('grade-form-status');
+    var btn = document.getElementById('grade-submit-btn');
+    var fd = new FormData(form);
+    var likes    = Number(fd.get('likes') || 0);
+    var comments = Number(fd.get('comments') || 0);
+    var reposts  = Number(fd.get('reposts') || 0);
+    var metrics = {
+      impressions:            Number(fd.get('impressions') || 0),
+      linkClicks:             Number(fd.get('linkClicks') || 0),
+      likes:                  likes,
+      comments:               comments,
+      reposts:                reposts,
+      engagementActions:      likes + comments + reposts,
+      trialSignupsAttributed: Number(fd.get('trialSignups') || 0),
+    };
+    statusEl.textContent = 'Brad is grading…';
+    statusEl.className = 'grade-form-status';
+    btn.disabled = true;
+    btn.textContent = 'Grading…';
+    try {
+      var res = await fetch('/api/grade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: currentPostId, metrics: metrics }),
+      });
+      var json = await res.json();
+      if (!res.ok) throw new Error(json.error || ('HTTP ' + res.status));
+      statusEl.className = 'grade-form-status ok';
+      statusEl.textContent = 'Graded ' + json.grade + ' — closing…';
+      setTimeout(closeModal, 900);
+    } catch (e) {
+      console.error('[grade] submit failed:', e);
+      statusEl.className = 'grade-form-status err';
+      statusEl.textContent = 'Failed: ' + (e.message || 'unknown error');
+      btn.disabled = false;
+      btn.textContent = 'Submit grade';
+    }
+  }
+
+  // Event delegation — survives any number of re-renders.
+  document.addEventListener('click', function (e) {
+    var openBtn = e.target.closest && e.target.closest('[data-grade-open]');
+    if (openBtn) {
+      e.preventDefault();
+      openModal(openBtn.getAttribute('data-grade-open'));
+      return;
+    }
+    if (e.target.matches && e.target.matches('[data-grade-close]')) {
+      e.preventDefault();
+      closeModal();
+    }
+  });
+  document.addEventListener('submit', function (e) {
+    if (e.target && e.target.id === 'grade-form') {
+      e.preventDefault();
+      submitGrade(e.target);
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+})();
+
+</script>
+<!--/INLINE-ASSETS-->
 </body>
 </html>

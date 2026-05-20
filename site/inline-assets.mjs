@@ -92,16 +92,18 @@ for (const f of files) {
   if (!html.includes(LINK_TAG)) {
     html = html.replace(/<\/head>/, `${LINK_TAG}\n</head>`);
   }
-  if (!html.includes(SCRIPT_TAG)) {
-    html = html.replace(/<\/body>/, `${SCRIPT_TAG}\n</body>`);
-  }
-
   // Inline CSS + STATE *after* the external <link> tag in <head>
   // (state must be in <head> so any <script> inside <main> sees it parsed).
   html = html.replace(LINK_TAG, `${LINK_TAG}\n${styleAndStateBlock(stateKind)}`);
 
-  // Inline JS *before* the external <script src> tag so the inline runs first
-  html = html.replace(SCRIPT_TAG, `${jsBlock()}\n${SCRIPT_TAG}`);
+  // Replace the external <script src="assets/site.js"> with the inline JS block.
+  // Loading both inline + external would re-declare top-level `let CAMPAIGN_START`
+  // (and others) → SyntaxError at parse time → handlers never register.
+  if (html.includes(SCRIPT_TAG)) {
+    html = html.replace(SCRIPT_TAG, jsBlock());
+  } else {
+    html = html.replace(/<\/body>/, `${jsBlock()}\n</body>`);
+  }
 
   if (html !== before) {
     writeFileSync(path, html);

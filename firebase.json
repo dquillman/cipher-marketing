@@ -19,9 +19,18 @@
       "competitors.html"
     ],
     "rewrites": [
+      { "source": "/api/grade", "function": "gradePost", "region": "us-central1" },
       { "source": "**", "destination": "/app.html" }
     ]
   },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "nodejs20",
+      "ignore": ["node_modules", ".git", "*.local"]
+    }
+  ],
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"

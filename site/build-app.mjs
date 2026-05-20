@@ -80,7 +80,7 @@ const navBtnsHtml = ROUTES.map(r =>
 
 const newNav = `<nav class="nav">
   <div class="nav-inner">
-    <a class="nav-brand" href="#" onclick="cipherShow('today');return false;">CipherExam Campaign</a>
+    <a class="nav-brand" href="#" onclick="cipherShow('today');return false;" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32" style="display:block;"></a>
     <div class="nav-links">
 ${navBtnsHtml}
     </div>
@@ -186,7 +186,7 @@ const tocLinksHtml = ROUTES.map(r =>
 
 const rollupNav = `<nav class="nav">
   <div class="nav-inner">
-    <a class="nav-brand" href="#top">CipherExam Campaign — Full Rollup</a>
+    <a class="nav-brand" href="#top" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32" style="display:block;vertical-align:middle;"> <span style="vertical-align:middle;margin-left:10px;color:var(--dim);font-weight:500;">— Full Rollup</span></a>
     <div class="nav-links">
 ${tocLinksHtml}
     </div>

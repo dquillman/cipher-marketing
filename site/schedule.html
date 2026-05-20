@@ -3,10 +3,338 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Landing pages — CipherExam Campaign</title>
+<title>Schedule — CipherExam Campaign</title>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
+<style>
+.sched-banner {
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.sched-banner-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.sched-banner-body { flex: 1; }
+.sched-banner-body strong { color: var(--warn); font-family: 'Satoshi', system-ui, sans-serif; }
+
+.sched-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.sched-card.tonight  { border-left: 4px solid var(--warn); }
+.sched-card.upcoming { border-left: 4px solid var(--cyan); }
+.sched-card.posted   { border-left: 4px solid var(--good); opacity: 0.65; }
+
+.sched-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sched-title {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  flex: 1;
+  min-width: 160px;
+}
+.sched-time-mt {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--warn);
+  white-space: nowrap;
+}
+.sched-card.upcoming .sched-time-mt { color: var(--cyan); }
+.sched-card.posted   .sched-time-mt { color: var(--good); }
+
+.sched-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  background: var(--surface);
+}
+.sched-pill.channel-linkedin { background: rgba(10,102,194,0.18); color: #7eb8ff; border-color: rgba(10,102,194,0.45); }
+.sched-pill.channel-x        { background: rgba(255,255,255,0.08); color: var(--text); }
+.sched-pill.exam             { background: rgba(167,139,250,0.16); color: #c4b5fd; border-color: rgba(167,139,250,0.45); }
+.sched-pill.status-posted    { background: rgba(74,222,128,0.16); color: #86efac; border-color: rgba(74,222,128,0.45); }
+
+.sched-copy-box {
+  white-space: pre-wrap;
+  font-family: 'General Sans', system-ui, sans-serif;
+  font-size: 0.91rem;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.sched-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  font-size: 0.83rem;
+  color: var(--dim);
+  margin-bottom: 14px;
+}
+.sched-meta code {
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--cyan);
+  word-break: break-all;
+}
+
+/* Video-attach block — sits at TOP of card so it visually matches
+   how the post looks on LinkedIn/X (video on top, text below). */
+.sched-video-block {
+  background: rgba(125, 211, 252, 0.06);
+  border: 1px dashed rgba(125, 211, 252, 0.4);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sched-video-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.sched-video-meta { flex: 1; min-width: 180px; }
+.sched-video-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cyan);
+  margin-bottom: 2px;
+}
+.sched-video-file {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.86rem;
+  color: var(--text);
+  word-break: break-all;
+}
+.sched-video-format {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  background: var(--surface-2);
+  padding: 3px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-copy-video {
+  background: rgba(125, 211, 252, 0.18);
+  color: var(--cyan);
+  border: 1px solid rgba(125, 211, 252, 0.5);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.btn-copy-video:hover { background: rgba(125, 211, 252, 0.3); }
+.video-path-help {
+  width: 100%;
+  flex-basis: 100%;
+  font-size: 0.78rem;
+  color: var(--dim);
+  font-style: italic;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(125, 211, 252, 0.2);
+}
+.video-path-help code {
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  color: var(--cyan);
+  font-style: normal;
+  word-break: break-all;
+}
+
+.sched-text-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.sched-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.btn-primary {
+  background: var(--cyan);
+  color: #001423;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: filter 0.15s;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-warn {
+  background: rgba(251,191,36,0.15);
+  color: var(--warn);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+.btn-warn:hover { background: rgba(251,191,36,0.25); }
+.copy-confirm {
+  font-size: 0.82rem;
+  color: var(--good);
+  font-weight: 600;
+  display: none;
+}
+.copy-confirm.show { display: inline; }
+
+.publish-form {
+  display: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 12px;
+}
+.publish-form.show { display: block; }
+.publish-form-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--purple);
+  margin-bottom: 10px;
+}
+.publish-form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.publish-url-input {
+  flex: 1;
+  min-width: 220px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+}
+.publish-url-input:focus { outline: none; border-color: var(--cyan); }
+.pub-error { color: var(--warn); font-size: 0.82rem; margin-top: 6px; display: none; }
+.pub-error.show { display: block; }
+
+.section-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin: 28px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tz-note {
+  font-size: 0.82rem;
+  color: var(--dim);
+  margin-bottom: 22px;
+}
+.tz-note strong { color: var(--cyan); }
+
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 18px 0 28px;
+}
+.workflow-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.workflow-step .step-num {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+.workflow-step .step-text {
+  font-size: 0.88rem;
+  color: var(--dim);
+  line-height: 1.45;
+}
+.workflow-step .step-text strong { color: var(--text); }
+
+.empty-state {
+  text-align: center;
+  color: var(--dim);
+  font-style: italic;
+  padding: 24px 0;
+}
+</style>
 <link rel="stylesheet" href="assets/shared.css">
 <!--INLINE-ASSETS-->
 <style>
@@ -726,6 +1054,160 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-form-status.err { color: #fca5a5; }
 
 </style>
+<!--INLINE-STATE-->
+<script>window.__POSTS__ = {
+  "_meta": {
+    "lastUpdatedBy": "claude",
+    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
+    "schemaVersion": 1,
+    "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit."
+  },
+  "benchmarks": {
+    "linkedin": {
+      "engagementRatePctGoodAtLeast": 2,
+      "engagementRatePctGreatAtLeast": 5,
+      "linkClickRatePctGoodAtLeast": 1,
+      "linkClickRatePctGreatAtLeast": 2.5
+    },
+    "x": {
+      "engagementRatePctGoodAtLeast": 1,
+      "engagementRatePctGreatAtLeast": 3,
+      "linkClickRatePctGoodAtLeast": 0.5,
+      "linkClickRatePctGreatAtLeast": 1.5
+    }
+  },
+  "posts": [
+    {
+      "id": "li-mon-2026-05-11-launch",
+      "scheduled": "2026-05-18",
+      "scheduledTime": "2026-05-18T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 10:30 MT",
+      "channel": "linkedin",
+      "channelAccount": "personal",
+      "status": "posted",
+      "examFocus": "PMP",
+      "hook": "tool-builder",
+      "video": "launch-teaser-pmp.mp4",
+      "videoFormat": "1:1",
+      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
+      "postedAt": "2026-05-18T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null
+    },
+    {
+      "id": "x-mon-2026-05-11-launch",
+      "scheduled": "2026-05-18",
+      "scheduledTime": "2026-05-18T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 11:30 MT",
+      "channel": "x",
+      "channelAccount": "personal",
+      "channelHandle": "@QuillmanDavid",
+      "status": "posted",
+      "examFocus": "PMP",
+      "hook": "tool-builder",
+      "video": "launch-teaser-pmp.mp4",
+      "videoFormat": "1:1",
+      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch",
+      "postedAt": "2026-05-18T17:30:00.000Z",
+      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null
+    },
+    {
+      "id": "li-wed-2026-05-13-trap",
+      "scheduled": "2026-05-20",
+      "scheduledTime": "2026-05-20T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 10:30 MT",
+      "channel": "linkedin",
+      "channelAccount": "personal",
+      "status": "scheduled",
+      "examFocus": "PMP",
+      "hook": "why-B-is-a-trap",
+      "video": "ai-tutor-demo-pmp.mp4",
+      "videoFormat": "9:16",
+      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "postedAt": null,
+      "postUrl": null,
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null
+    },
+    {
+      "id": "x-wed-2026-05-13-trap",
+      "scheduled": "2026-05-20",
+      "scheduledTime": "2026-05-20T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 11:30 MT",
+      "channel": "x",
+      "channelAccount": "personal",
+      "status": "scheduled",
+      "examFocus": "PMP",
+      "hook": "why-B-is-a-trap",
+      "video": "ai-tutor-demo-pmp.mp4",
+      "videoFormat": "9:16",
+      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "postedAt": null,
+      "postUrl": null,
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null
+    },
+    {
+      "id": "li-fri-2026-05-15-domains",
+      "scheduled": "2026-05-22",
+      "scheduledTime": "2026-05-22T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 10:30 MT",
+      "channel": "linkedin",
+      "channelAccount": "personal",
+      "status": "scheduled",
+      "examFocus": "PMP",
+      "hook": "domain-weights",
+      "video": "domain-weights-pmp.mp4",
+      "videoFormat": "1:1",
+      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\nPMPs — which domain tripped you up hardest? Process, People, or Business Environment? Curious where most people get stuck.\n\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
+      "postedAt": null,
+      "postUrl": null,
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null
+    },
+    {
+      "id": "x-fri-2026-05-15-domains",
+      "scheduled": "2026-05-22",
+      "scheduledTime": "2026-05-22T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 11:30 MT",
+      "channel": "x",
+      "channelAccount": "personal",
+      "status": "scheduled",
+      "examFocus": "PMP",
+      "hook": "domain-weights",
+      "video": "domain-weights-pmp.mp4",
+      "videoFormat": "1:1",
+      "copy": "Process is 50% of the PMP exam.\n\nMost candidates split study time evenly across all 3 domains.\n\nCipherExam routes adaptively to your weakest.\n\nWhich domain tripped YOU up hardest?\n\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
+      "postedAt": null,
+      "postUrl": null,
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null
+    }
+  ]
+}
+;</script>
+<!--/INLINE-STATE-->
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
 <script>
@@ -737,7 +1219,6 @@ details[open] summary::before { transform: rotate(90deg); }
 </script>
 <!--/INLINE-ASSETS-->
 
-
 <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
 </head>
 <body>
@@ -748,246 +1229,584 @@ details[open] summary::before { transform: rotate(90deg); }
     <div class="nav-links">
       <a class="nav-link" href="today.html">Today</a>
       <a class="nav-link" href="index.html">Dashboard</a>
+      <a class="nav-link current" href="schedule.html">Schedule</a>
+      <a class="nav-link" href="posts.html">Posts</a>
       <a class="nav-link" href="strategy.html">Strategy</a>
       <a class="nav-link" href="content.html">Content</a>
       <a class="nav-link" href="landing.html">Landing</a>
       <a class="nav-link" href="engineering.html">Engineering</a>
       <a class="nav-link" href="voice.html">Voice</a>
     </div>
-    <a class="nav-rollup" href="../launch-campaign.html">Full rollup ↗</a>
+    <a class="nav-rollup" href="launch-campaign.html">Full rollup ↗</a>
   </div>
 </nav>
 
 <main class="wrap">
 
-  <div class="hero">
-    <h1>Landing page drafts</h1>
-    <p class="sub">Three Tier 1 LP drafts — DRAFT, not for live deployment. Routes confirmed by Dave 2026-05-11. Pricing block reproduces <code>/pricing</code> verbatim. Universal CTA: <strong>Start Free Trial.</strong></p>
+<style>
+/* Schedule-tab styles — duplicated inside <main> so build-app.mjs's
+   extractMain() carries them into app.html. Identical to the <head>
+   <style> block above (which serves standalone schedule.html). */
+.sched-banner {
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.sched-banner-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.sched-banner-body { flex: 1; }
+.sched-banner-body strong { color: var(--warn); font-family: 'Satoshi', system-ui, sans-serif; }
+.sched-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.sched-card.tonight  { border-left: 4px solid var(--warn); }
+.sched-card.upcoming { border-left: 4px solid var(--cyan); }
+.sched-card.posted   { border-left: 4px solid var(--good); opacity: 0.65; }
+.sched-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.sched-title {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 1rem; color: var(--text);
+  flex: 1; min-width: 160px;
+}
+.sched-time-mt {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.9rem; color: var(--warn); white-space: nowrap;
+}
+.sched-card.upcoming .sched-time-mt { color: var(--cyan); }
+.sched-card.posted   .sched-time-mt { color: var(--good); }
+.sched-pill {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; padding: 3px 9px; border-radius: 100px;
+  border: 1px solid var(--border); color: var(--dim); background: var(--surface);
+}
+.sched-pill.channel-linkedin { background: rgba(10,102,194,0.18); color: #7eb8ff; border-color: rgba(10,102,194,0.45); }
+.sched-pill.channel-x        { background: rgba(255,255,255,0.08); color: var(--text); }
+.sched-pill.exam             { background: rgba(167,139,250,0.16); color: #c4b5fd; border-color: rgba(167,139,250,0.45); }
+.sched-pill.status-posted    { background: rgba(74,222,128,0.16); color: #86efac; border-color: rgba(74,222,128,0.45); }
+.sched-copy-box {
+  white-space: pre-wrap;
+  font-family: 'General Sans', system-ui, sans-serif;
+  font-size: 0.91rem; line-height: 1.55; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 14px;
+}
+.sched-meta {
+  display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px;
+  font-size: 0.83rem; color: var(--dim); margin-bottom: 14px;
+}
+.sched-meta code {
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px;
+  font-size: 0.8rem; color: var(--cyan); word-break: break-all;
+}
+.sched-video-block {
+  background: rgba(125, 211, 252, 0.06);
+  border: 1px dashed rgba(125, 211, 252, 0.4);
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.sched-video-icon { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+.sched-video-meta { flex: 1; min-width: 180px; }
+.sched-video-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--cyan); margin-bottom: 2px;
+}
+.sched-video-file {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.86rem; color: var(--text); word-break: break-all;
+}
+.sched-video-format {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--dim);
+  background: var(--surface-2); padding: 3px 8px; border-radius: 100px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.btn-copy-video {
+  background: rgba(125, 211, 252, 0.18); color: var(--cyan);
+  border: 1px solid rgba(125, 211, 252, 0.5);
+  border-radius: 8px; padding: 7px 13px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.82rem; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: background 0.15s;
+}
+.btn-copy-video:hover { background: rgba(125, 211, 252, 0.3); }
+.video-path-help {
+  width: 100%; flex-basis: 100%;
+  font-size: 0.78rem; color: var(--dim); font-style: italic;
+  margin-top: 4px; padding-top: 8px;
+  border-top: 1px solid rgba(125, 211, 252, 0.2);
+}
+.video-path-help code {
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px;
+  font-size: 0.76rem; color: var(--cyan); font-style: normal; word-break: break-all;
+}
+.sched-text-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--dim); margin-bottom: 6px;
+}
+.sched-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn-primary {
+  background: var(--cyan); color: #001423; border: 0; border-radius: 8px;
+  padding: 9px 16px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer;
+  letter-spacing: 0.01em; transition: filter 0.15s;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary {
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 15px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.86rem; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-warn {
+  background: rgba(251,191,36,0.15); color: var(--warn);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 8px; padding: 8px 15px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.86rem; cursor: pointer;
+}
+.btn-warn:hover { background: rgba(251,191,36,0.25); }
+.copy-confirm { font-size: 0.82rem; color: var(--good); font-weight: 600; display: none; }
+.copy-confirm.show { display: inline; }
+.publish-form {
+  display: none; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-top: 12px;
+}
+.publish-form.show { display: block; }
+.publish-form-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--purple); margin-bottom: 10px;
+}
+.publish-form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.publish-url-input {
+  flex: 1; min-width: 220px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px;
+  color: var(--text); font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+}
+.publish-url-input:focus { outline: none; border-color: var(--cyan); }
+.pub-error { color: var(--warn); font-size: 0.82rem; margin-top: 6px; display: none; }
+.pub-error.show { display: block; }
+.section-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--dim);
+  margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.tz-note { font-size: 0.82rem; color: var(--dim); margin-bottom: 22px; }
+.tz-note strong { color: var(--cyan); }
+.workflow-steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px; margin: 18px 0 28px;
+}
+.workflow-step {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.workflow-step .step-num {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800; font-size: 1.4rem; color: var(--cyan); margin-bottom: 4px;
+}
+.workflow-step .step-text { font-size: 0.88rem; color: var(--dim); line-height: 1.45; }
+.workflow-step .step-text strong { color: var(--text); }
+</style>
+
+<h1 style="margin-top:0;">Post Scheduler</h1>
+<p class="tz-note">All times shown in <strong>Mountain Time (MT)</strong>. The workflow: prep posts the night before using LinkedIn's and X's native schedulers — no early mornings needed.</p>
+
+<div class="workflow-steps">
+  <div class="workflow-step">
+    <div class="step-num">1</div>
+    <div class="step-text"><strong>Attach video as MEDIA</strong> — NOT as text in the body:<br>
+      <span style="display:block;margin-top:6px;">a. Click <em>"Copy video path"</em> on the card</span>
+      <span style="display:block;">b. In LinkedIn/X composer, click the <strong>camera / "Add photo or video"</strong> button</span>
+      <span style="display:block;">c. A <strong>file picker window</strong> opens — paste the path into <strong>its address bar</strong> (top of the picker) and hit Enter</span>
+      <span style="display:block;">d. Video attaches as a playable preview. <strong style="color:var(--bad);">Never paste the path into the post body.</strong></span>
+    </div>
   </div>
+  <div class="workflow-step">
+    <div class="step-num">2</div>
+    <div class="step-text"><strong>Paste the post text</strong> into the composer body (where you type the caption). Set the scheduler to your preferred MT time.</div>
+  </div>
+  <div class="workflow-step">
+    <div class="step-num">3</div>
+    <div class="step-text"><strong>After it posts</strong> — click <em>"Mark as Posted"</em> on the card, paste the live post URL into the field, and click <strong>Mark Posted</strong>. The dashboard updates instantly.</div>
+  </div>
+</div>
 
-  <p style="color:var(--dim);font-size:0.92rem;">Click a section header to expand. First LP open by default.</p>
+<div id="sched-banner-zone"></div>
+<div id="sched-tonight-section"></div>
+<div id="sched-upcoming-section"></div>
+<div id="sched-posted-section"></div>
 
-  <!-- ====== PMP ====== -->
-  <details id="pmp" open>
-    <summary>LP #1 — <code>/lp/pmp-practice</code> (PMP)</summary>
+<script>
+(function renderSchedulePage() {
 
-    <h3>Meta</h3>
-    <ul>
-      <li><strong>Title:</strong> PMP Practice with Exam Lens Explanations — CipherExam</li>
-      <li><strong>Description:</strong> Practice PMP questions explained through the Exam Lens. 180-question Full Mock with EMV math. 7-day free trial. No credit card.</li>
-    </ul>
+  var TZ = 'America/Denver';
+  var VIDEO_DIR = 'G:\\Users\\daveq\\cipher-marketing\\videos\\out\\';
 
-    <h3>Hero</h3>
-    <div class="card tier-1">
-      <h2 style="margin-top:0;">Practice PMP the way PMI thinks.</h2>
-      <p>Every CipherExam answer is explained through the Exam Lens — <em>what would PMI want you to do?</em> — plus the Bloom's-level reasoning behind the question. Memorizing the PMBOK isn't enough. Reading the question the way the test writers do is.</p>
-      <p><strong>[Start Free Trial]</strong> <span style="color:var(--dim);font-size:0.9rem;">Start your free 7-day trial. No credit card required.</span></p>
-    </div>
+  function toMT(isoStr) {
+    if (!isoStr) return '—';
+    try {
+      var d = new Date(isoStr);
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ,
+        weekday: 'short',
+        month:   'short',
+        day:     'numeric',
+        hour:    'numeric',
+        minute:  '2-digit',
+        hour12:  true,
+        timeZoneName: 'short'
+      }).format(d);
+    } catch(e) { return isoStr; }
+  }
 
-    <h3>Problem</h3>
-    <p>Most PMP candidates plateau around 80% on practice tests and never break through. The reason isn't a knowledge gap — it's a frame gap. PMI grades whether you think like a PMI-certified PM, not whether you know every ITTO. Practice tools that just drill facts can't close that gap.</p>
+  function toMTDateOnly(isoStr) {
+    if (!isoStr) return '';
+    try {
+      var d = new Date(isoStr);
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ,
+        weekday: 'long',
+        month:   'long',
+        day:     'numeric'
+      }).format(d);
+    } catch(e) { return isoStr; }
+  }
 
-    <h3>Solution — three things compound for PMP</h3>
-    <ol>
-      <li><strong>Bloom's-classified practice.</strong> Every PMP question tagged by cognitive level. See whether you're nailing easy "remember" questions but missing the "evaluate"-level scenarios that dominate the real exam.</li>
-      <li><strong>Exam Lens explanations.</strong> Every right and wrong answer walked through the same lens — <em>what would PMI want you to do?</em></li>
-      <li><strong>180-question Full Mock with EMV math.</strong> Same length and pacing as the actual PMP. EMV / earned-value math supported natively, not buried in a text box.</li>
-    </ol>
+  function todayInMT() {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date());
+  }
 
-    <h3>Decision Lens callout</h3>
-    <blockquote>
-      <strong>The Exam Lens</strong><br>
-      <em>What would PMI want you to do?</em><br><br>
-      Every PMP question is testing this. We make it explicit on every explanation.
-    </blockquote>
+  function tomorrowInMT() {
+    var d = new Date();
+    d.setDate(d.getDate() + 1);
+    return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(d);
+  }
 
-    <h3>Try a Question widget</h3>
-    <div class="card">
-      <p><em>(Illustrative — not from any real exam.)</em> A stakeholder demands a scope change on Friday afternoon. Your scrum team's next sprint starts Monday. What do you do <em>first</em>?</p>
-      <ol type="A">
-        <li>Tell the stakeholder to submit a formal change request</li>
-        <li>Prepare an impact analysis and schedule a stakeholder meeting Monday</li>
-        <li>Reject the request — scope was signed off</li>
-        <li>Adjust the next sprint backlog</li>
-      </ol>
-      <p><strong>[Reveal answer]</strong></p>
-      <p>→ Answer: <strong>B</strong>. The Exam Lens prioritizes <em>understanding the change</em> and <em>bringing stakeholders together</em> as a first move. A is the textbook process answer but PMI-relationally cold. Bloom's level: <strong>evaluate.</strong></p>
-      <p><strong>[Start Free Trial to see more questions like this →]</strong></p>
-    </div>
+  function scheduledDateMT(isoStr) {
+    if (!isoStr) return '';
+    try {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date(isoStr));
+    } catch(e) { return ''; }
+  }
 
-    <h3>Pricing card</h3>
-    <p style="color:var(--dim);font-size:0.9rem;">Verbatim from <code>/pricing</code>, verified 2026-05-11.</p>
-    <table>
-      <thead><tr><th>Starter</th><th>Pro Membership ★ POPULAR</th></tr></thead>
-      <tbody>
-        <tr><td><strong>$0 / forever</strong></td><td><strong>$19 / month</strong> (yearly saves 17% — ~$189/yr)</td></tr>
-        <tr><td>Daily Quiz (5 questions/day)</td><td>Unlimited AI Quizzes</td></tr>
-        <tr><td>Basic Progress Tracking</td><td>Detailed Domain Analytics</td></tr>
-        <tr><td>Standard Explanations</td><td>Priority Support</td></tr>
-        <tr><td>Community Exam Coverage</td><td>Full Exam Simulators</td></tr>
-        <tr><td>Study Plan (Basic)</td><td>AI-Powered Study Plans</td></tr>
-        <tr><td>—</td><td><strong>7-day free trial. Cancel anytime. No credit card required.</strong></td></tr>
-      </tbody>
-    </table>
-    <p style="color:var(--dim);"><em>Secure payments powered by Stripe.</em></p>
-    <p><strong>[Start Free Trial]</strong></p>
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
 
-    <h3>FAQ</h3>
-    <ul>
-      <li><strong>Is this aligned to the current PMP exam (post-2021 update)?</strong> Yes — built against PMI's current published exam objectives (People / Process / Business Environment).</li>
-      <li><strong>Do you cover EMV / earned-value math?</strong> Yes, natively. EMV questions are interactive, not just text.</li>
-      <li><strong>How many questions is the Full Mock?</strong> 180 questions in 230 minutes — same length as the actual PMP exam.</li>
-      <li><strong>Can I cancel anytime?</strong> Yes. The 7-day trial never charges a card. Cancel from your dashboard.</li>
-      <li><strong>Do you have CAPM coverage?</strong> Not yet. PMP is fully live. Adjacent PMI certs added based on user demand.</li>
-    </ul>
+  // Robust clipboard copy with fallback for sandboxed/insecure contexts
+  // (preview iframes, file:// URLs, etc. where navigator.clipboard is blocked).
+  function safeCopy(text, onSuccess, onError) {
+    var done = function(ok) { (ok && onSuccess) ? onSuccess() : (onError && onError()); };
+    // Try modern API first
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext !== false) {
+      navigator.clipboard.writeText(text).then(
+        function(){ done(true); },
+        function(){ fallback(); }
+      );
+    } else {
+      fallback();
+    }
+    function fallback() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        ta.style.pointerEvents = 'none';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        done(ok);
+      } catch (e) {
+        done(false);
+      }
+    }
+  }
 
-    <h3>Footer CTA</h3>
-    <blockquote>Ready to read PMP questions the way the writers do?<br><br><strong>[Start Free Trial]</strong><br><em>7-day free trial. No credit card. Cancel anytime.</em></blockquote>
-  </details>
+  function render() {
+    // Clear every section first so stale buttons from a prior render can't
+    // survive — otherwise the wireup loop below double-attaches click handlers
+    // to leftover buttons and Mark-as-Posted toggles itself off mid-click.
+    var bannerEl   = document.getElementById('sched-banner-zone');
+    var tonightEl  = document.getElementById('sched-tonight-section');
+    var upcomingEl = document.getElementById('sched-upcoming-section');
+    var postedEl   = document.getElementById('sched-posted-section');
+    bannerEl.innerHTML = '';
+    tonightEl.innerHTML = '';
+    upcomingEl.innerHTML = '';
+    postedEl.innerHTML = '';
 
-  <!-- ====== Security+ ====== -->
-  <details id="secplus">
-    <summary>LP #2 — <code>/lp/security-plus-practice</code> (Security+)</summary>
+    var data = window.__POSTS__;
+    if (!data || !Array.isArray(data.posts)) {
+      upcomingEl.innerHTML = '<p class="empty-state">No posts data loaded.</p>';
+      return;
+    }
 
-    <h3>Meta</h3>
-    <ul>
-      <li><strong>Title:</strong> CompTIA Security+ PBQ Simulator with CIA Triad Explanations — CipherExam</li>
-      <li><strong>Description:</strong> Native PBQ simulation for Security+ SY0-701. Every question explained through the CIA triad. 90-question Full Mock. 7-day free trial. No credit card.</li>
-    </ul>
+    var today     = todayInMT();
+    var tomorrow  = tomorrowInMT();
+    var posts     = data.posts.slice().sort(function(a,b){
+      return (a.scheduledTime||'').localeCompare(b.scheduledTime||'');
+    });
 
-    <h3>Hero</h3>
-    <div class="card tier-1">
-      <h2 style="margin-top:0;">Stop bombing Security+ PBQs.</h2>
-      <p>CipherExam runs CompTIA Security+ (SY0-701) Performance-Based Questions <em>natively</em> — drag-and-drop, network topology, and CLI items — and explains every answer through the CIA triad. Pass the simulator that matches the real exam.</p>
-      <p><strong>[Start Free Trial]</strong> <span style="color:var(--dim);font-size:0.9rem;">Start your free 7-day trial. No credit card required.</span></p>
-    </div>
+    var tonightPosts  = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === tomorrow; });
+    var upcomingPosts = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) > tomorrow; });
+    var todayPosts    = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === today; });
+    var postedPosts   = posts.filter(function(p){ return p.status === 'posted'; });
 
-    <h3>Problem</h3>
-    <p>Most Security+ candidates pass every practice quiz at 90%+ and still walk out of the testing center shaken. The reason: question banks drill facts, but the real Security+ exam mixes MCQ with Performance-Based Questions — and PBQs test whether you can <em>operate</em>, not whether you can <em>recognize</em>. Flashcards can't close that gap.</p>
+    // Banner: show if there are posts due today or tomorrow
+    if (todayPosts.length > 0) {
+      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🔔</div><div class="sched-banner-body"><strong>' + todayPosts.length + ' post' + (todayPosts.length > 1 ? 's' : '') + ' scheduled for today.</strong> Check that they were posted, then click "Mark as Posted" on each one to record the live URL.</div></div>';
+    } else if (tonightPosts.length > 0) {
+      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🌙</div><div class="sched-banner-body"><strong>Prep tonight:</strong> ' + tonightPosts.length + ' post' + (tonightPosts.length > 1 ? 's are' : ' is') + ' due tomorrow (' + toMTDateOnly(tonightPosts[0].scheduledTime) + '). Copy the text below and schedule it in LinkedIn/X before bed.</div></div>';
+    }
 
-    <h3>Solution — three things compound for Security+</h3>
-    <ol>
-      <li><strong>Native PBQ simulation.</strong> Drag-and-drop firewall rules, match attacks to controls, parse CLI output — the same item types CompTIA uses, not text approximations. The wedge against flashcard-only competitors.</li>
-      <li><strong>CIA-triad-first explanations.</strong> Every answer names the triad principle (confidentiality / integrity / availability) being tested <em>before</em> the control. Naming the principle first makes PBQs feel like 30-second questions instead of 5-minute panics.</li>
-      <li><strong>90-question Full Mock at exam pacing.</strong> 90 questions in 90 minutes — same length CompTIA uses. MCQ + matching + PBQ in one session.</li>
-    </ol>
+    // Tonight section
+    var allSoon = todayPosts.concat(tonightPosts);
+    if (allSoon.length > 0) {
+      tonightEl.innerHTML = '<div class="section-label">' + (todayPosts.length > 0 ? 'Today' : 'Up Next — Prep Tonight') + '</div>' +
+        allSoon.map(function(p){ return renderCard(p, todayPosts.includes(p) ? 'tonight' : 'tonight'); }).join('');
+    }
 
-    <h3>Decision Lens callout</h3>
-    <blockquote>
-      <strong>The Exam Lens</strong><br>
-      <em>CIA triad — which principle is being protected?</em><br><br>
-      Name the principle first. The control follows.
-    </blockquote>
+    // Upcoming section
+    if (upcomingPosts.length > 0) {
+      upcomingEl.innerHTML = '<div class="section-label">Upcoming</div>' +
+        upcomingPosts.map(function(p){ return renderCard(p, 'upcoming'); }).join('');
+    } else if (allSoon.length === 0) {
+      upcomingEl.innerHTML = '<p class="empty-state">No upcoming scheduled posts.</p>';
+    }
 
-    <h3>Try a Question widget</h3>
-    <div class="card">
-      <p><em>(Illustrative — not from any real exam.)</em> Which control best ensures sensitive customer records remain unaltered while transmitted across an untrusted network?</p>
-      <ol type="A">
-        <li>TLS encryption</li>
-        <li>HMAC / digital signatures</li>
-        <li>AES-256 at rest</li>
-        <li>RADIUS authentication</li>
-      </ol>
-      <p><strong>[Reveal answer]</strong></p>
-      <p>→ Answer: <strong>B</strong>. The CIA principle is <strong>integrity</strong> — unaltered during transit. TLS (A) gives you confidentiality first; integrity is a side effect. HMAC and digital signatures give you integrity directly. Name the principle first; the control follows. Bloom's level: <strong>analyze.</strong></p>
-      <p><strong>[Start Free Trial to see PBQs in the simulator →]</strong></p>
-    </div>
+    // Posted section
+    if (postedPosts.length > 0) {
+      postedEl.innerHTML = '<div class="section-label">Posted</div>' +
+        postedPosts.map(function(p){ return renderCard(p, 'posted'); }).join('');
+    }
 
-    <h3>Pricing card</h3>
-    <p style="color:var(--dim);font-size:0.9rem;">Identical pricing block to LP #1 — verbatim from <code>/pricing</code>.</p>
+    // Wire up buttons after render
+    document.querySelectorAll('[data-sched-copy]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-copy');
+        var post = posts.find(function(p){ return p.id === id; });
+        if (!post) return;
+        safeCopy(post.copy || '',
+          function() {
+            var conf = document.getElementById('copy-conf-' + id);
+            if (conf) { conf.textContent = '✓ Copied!'; conf.classList.add('show'); setTimeout(function(){ conf.classList.remove('show'); }, 2000); }
+          },
+          function() {
+            var conf = document.getElementById('copy-conf-' + id);
+            if (conf) { conf.textContent = '✗ Copy blocked — select the text and Ctrl+C'; conf.classList.add('show'); }
+          }
+        );
+      });
+    });
 
-    <h3>FAQ</h3>
-    <ul>
-      <li><strong>Is this current for SY0-701?</strong> Yes — built against CompTIA's published SY0-701 exam objectives.</li>
-      <li><strong>Do PBQs actually work in the simulator?</strong> Yes. Drag-and-drop, matching, and topology items are native. Not text-only approximations.</li>
-      <li><strong>How many questions is the Full Mock?</strong> 90 questions in 90 minutes — same as CompTIA's exam.</li>
-      <li><strong>Will this help me pass Network+ or CySA+ next?</strong> Network+ is fully live — same Bloom's classification and PBQ support, with the Exam Lens. CySA+ is on the roadmap.</li>
-      <li><strong>Cancel anytime?</strong> Yes. 7-day trial never charges a card.</li>
-    </ul>
+    document.querySelectorAll('[data-sched-video]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-video');
+        var post = posts.find(function(p){ return p.id === id; });
+        if (!post || !post.video) return;
+        var path = VIDEO_DIR + post.video;
+        safeCopy(path,
+          function() {
+            btn.textContent = '✓ Path copied';
+            setTimeout(function(){ btn.textContent = 'Copy video path'; }, 1800);
+          },
+          function() {
+            btn.textContent = '✗ Blocked';
+            setTimeout(function(){ btn.textContent = 'Copy video path'; }, 2200);
+          }
+        );
+      });
+    });
 
-    <h3>Footer CTA</h3>
-    <blockquote>Practice the question type that actually fails most candidates.<br><br><strong>[Start Free Trial]</strong><br><em>7-day free trial. No credit card. Cancel anytime.</em></blockquote>
-  </details>
+    document.querySelectorAll('[data-sched-cta]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-cta');
+        var post = posts.find(function(p){ return p.id === id; });
+        if (!post || !post.cta) return;
+        safeCopy(post.cta,
+          function() {
+            btn.textContent = '✓ Copied';
+            setTimeout(function(){ btn.textContent = 'Copy CTA link'; }, 1800);
+          },
+          function() {
+            btn.textContent = '✗ Blocked';
+            setTimeout(function(){ btn.textContent = 'Copy CTA link'; }, 2200);
+          }
+        );
+      });
+    });
 
-  <!-- ====== SHRM-CP ====== -->
-  <details id="shrm">
-    <summary>LP #3 — <code>/lp/shrm-cp-practice</code> (SHRM-CP)</summary>
+    document.querySelectorAll('[data-sched-publish]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-publish');
+        var form = document.getElementById('pub-form-' + id);
+        if (!form) return;
+        if (form.classList.contains('show')) {
+          form.classList.remove('show');
+          return;
+        }
+        form.classList.add('show');
+        var input = document.getElementById('pub-url-' + id);
+        if (input) setTimeout(function(){ input.focus(); }, 50);
+      });
+    });
 
-    <h3>Meta</h3>
-    <ul>
-      <li><strong>Title:</strong> SHRM-CP Practice with Competency Lens Explanations — CipherExam</li>
-      <li><strong>Description:</strong> SHRM-CP situational-judgment practice explained through the SHRM competency model. 134-question Full Mock at real exam pacing. 7-day free trial. No credit card.</li>
-    </ul>
+    document.querySelectorAll('[data-sched-cancel]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-cancel');
+        var form = document.getElementById('pub-form-' + id);
+        if (form) form.classList.remove('show');
+        var err = document.getElementById('pub-err-' + id);
+        if (err) { err.textContent = ''; err.classList.remove('show'); }
+      });
+    });
 
-    <h3>Hero</h3>
-    <div class="card tier-1">
-      <h2 style="margin-top:0;">SHRM-CP situational questions, decoded.</h2>
-      <p>Three of four answer choices will be defensible HR moves. The "right" one aligns with a specific SHRM behavioral competency. CipherExam names the competency on every explanation, so you train the reflex the exam actually grades.</p>
-      <p><strong>[Start Free Trial]</strong> <span style="color:var(--dim);font-size:0.9rem;">Start your free 7-day trial. No credit card required.</span></p>
-    </div>
+    document.querySelectorAll('[data-sched-submit]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-submit');
+        var input = document.getElementById('pub-url-' + id);
+        var errEl = document.getElementById('pub-err-' + id);
+        var postUrl = input ? input.value.trim() : '';
+        if (!postUrl || !postUrl.startsWith('http')) {
+          if (errEl) { errEl.textContent = 'Please enter a valid URL starting with http'; errEl.classList.add('show'); }
+          return;
+        }
+        if (errEl) { errEl.textContent = ''; errEl.classList.remove('show'); }
+        btn.textContent = 'Saving…';
+        btn.disabled = true;
+        var db = window._cipherDb;
+        if (!db) {
+          if (errEl) { errEl.textContent = 'Firebase not loaded — check your internet connection and refresh.'; errEl.classList.add('show'); }
+          btn.textContent = 'Mark Posted';
+          btn.disabled = false;
+          return;
+        }
+        var docRef = db.collection('campaign').doc('posts');
+        docRef.get()
+          .then(function(snap) {
+            var data = snap.data();
+            var postsList = data.posts;
+            var idx = postsList.findIndex(function(p) { return p.id === id; });
+            if (idx === -1) throw new Error('Post "' + id + '" not found in Firestore');
+            var now = new Date().toISOString();
+            postsList[idx].status   = 'posted';
+            postsList[idx].postedAt = now;
+            postsList[idx].postUrl  = postUrl;
+            data._meta.lastUpdatedAt = now;
+            return docRef.set(data);
+          })
+          .then(function() {
+            // onSnapshot fires automatically → cipher:posts-updated → render()
+            // btn state will reset when the card re-renders
+          })
+          .catch(function(e) {
+            if (errEl) { errEl.textContent = 'Error: ' + (e.message || 'Firestore write failed'); errEl.classList.add('show'); }
+            btn.textContent = 'Mark Posted';
+            btn.disabled = false;
+          });
+      });
+    });
+  }
 
-    <h3>Problem</h3>
-    <p>Most senior HR pros fail SHRM-CP not because they lack knowledge — but because they've spent years making pragmatic HR calls. The exam grades you against an idealized competency frame, and pragmatic answers score lower than the answer that visibly enacts a named SHRM competency. Knowing the nine competencies isn't enough. Naming which one is being tested <em>before</em> you pick is the skill.</p>
+  function renderCard(p, variant) {
+    var mtTime = toMT(p.scheduledTime);
+    var channelLabel = (p.channel || 'other').toUpperCase();
+    var statusPosted = p.status === 'posted';
 
-    <h3>Solution — three things compound for SHRM-CP</h3>
-    <ol>
-      <li><strong>Bloom's-classified practice.</strong> SHRM-CP is heavy on <em>evaluate</em>-level situational judgment. Classification tells you whether you're missing easy items or the high-cognitive items that dominate scored questions.</li>
-      <li><strong>Exam Lens explanations.</strong> Every answer names which of the nine behavioral competencies (Leadership, Ethical Practice, Business Acumen, Relationship Management, Consultation, Critical Evaluation, Global Mindset, Cultural Effectiveness, Communication) is being tested.</li>
-      <li><strong>134-question Full Mock at real exam pacing.</strong> 134 questions in 220 minutes — same length and pacing as the actual SHRM-CP. Time pressure is where pragmatic-vs-competency reflexes break; we train both.</li>
-    </ol>
+    var publishForm = !statusPosted ? (
+      '<div class="publish-form" id="pub-form-' + esc(p.id) + '">' +
+        '<div class="publish-form-label">Paste the live post URL, then click Mark Posted</div>' +
+        '<div class="publish-form-row">' +
+          '<input type="url" class="publish-url-input" id="pub-url-' + esc(p.id) + '" placeholder="https://www.linkedin.com/feed/update/...">' +
+          '<button class="btn-primary" type="button" data-sched-submit="' + esc(p.id) + '">Mark Posted</button>' +
+          '<button class="btn-secondary" type="button" data-sched-cancel="' + esc(p.id) + '">Cancel</button>' +
+        '</div>' +
+        '<div class="pub-error" id="pub-err-' + esc(p.id) + '"></div>' +
+      '</div>'
+    ) : '';
 
-    <h3>Decision Lens callout</h3>
-    <blockquote>
-      <strong>The Exam Lens</strong><br>
-      <em>What aligns with SHRM behavioral competencies?</em><br><br>
-      Name the competency. The answer follows.
-    </blockquote>
+    var statusAwaitingGrade = statusPosted && !p.grade;
+    var statusGraded        = statusPosted && !!p.grade;
+    var actions = statusGraded
+      ? '<span class="sched-pill status-posted">✓ Posted · Grade ' + esc(p.grade) + '</span>'
+      : statusAwaitingGrade
+        ? '<span class="sched-pill status-posted">✓ Posted</span>' +
+          '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '">Grade this post</button>'
+        : '<button class="btn-primary" type="button" data-sched-copy="' + esc(p.id) + '">Copy post text</button>' +
+          '<span class="copy-confirm" id="copy-conf-' + esc(p.id) + '">✓ Copied!</span>' +
+          '<button class="btn-secondary" type="button" data-sched-cta="' + esc(p.id) + '">Copy CTA link</button>' +
+          '<button class="btn-warn" type="button" data-sched-publish="' + esc(p.id) + '">Mark as Posted</button>';
 
-    <h3>Try a Question widget</h3>
-    <div class="card">
-      <p><em>(Illustrative — not from any real exam.)</em> A high-performing manager is consistently late submitting performance reviews. Her director defends her — "she's a top producer, leave her alone." What does HR do?</p>
-      <ol type="A">
-        <li>Defer to the director and let it go</li>
-        <li>Escalate to the CHRO</li>
-        <li>Coach the director on why timely performance management matters to the org</li>
-        <li>Document the pattern and address the manager directly</li>
-      </ol>
-      <p><strong>[Reveal answer]</strong></p>
-      <p>→ Answer: <strong>C</strong>. The competency being tested is <strong>Consultation</strong> — HR's role is to advise leaders to make better people decisions, not to capitulate (A) or police (D). C demonstrates Consultation most directly. Bloom's level: <strong>evaluate.</strong></p>
-      <p><strong>[Start Free Trial to see more questions like this →]</strong></p>
-    </div>
+    var videoPath = p.video ? (VIDEO_DIR + p.video) : '';
+    var videoBlock = p.video ? (
+      '<div class="sched-video-block">' +
+        '<div class="sched-video-icon">🎬</div>' +
+        '<div class="sched-video-meta">' +
+          '<div class="sched-video-label">Step 1 — Attach as MEDIA (use the camera button, not the body)</div>' +
+          '<div class="sched-video-file">' + esc(p.video) + '</div>' +
+        '</div>' +
+        '<div class="sched-video-format">' + esc(p.videoFormat || '?') + '</div>' +
+        '<button class="btn-copy-video" type="button" data-sched-video="' + esc(p.id) + '">Copy video path</button>' +
+        '<div class="video-path-help"><strong style="color:var(--warn);">⚠ Do NOT paste into the post body.</strong> Click LinkedIn/X\'s camera/"Add photo or video" button → file picker opens → paste this into the picker\'s <strong>address bar at the top</strong> → Enter:<br><code style="display:inline-block;margin-top:6px;">' + esc(videoPath) + '</code></div>' +
+      '</div>'
+    ) : '';
 
-    <h3>Pricing card</h3>
-    <p style="color:var(--dim);font-size:0.9rem;">Identical pricing block to LP #1 — verbatim from <code>/pricing</code>.</p>
+    return '<div class="sched-card ' + variant + '">' +
+      '<div class="sched-head">' +
+        '<div class="sched-title">' +
+          '<span class="sched-pill channel-' + esc(p.channel || 'other') + '">' + esc(channelLabel) + '</span> ' +
+          (p.examFocus ? '<span class="sched-pill exam">' + esc(p.examFocus) + '</span> ' : '') +
+          ' <span style="color:var(--dim);font-size:0.88rem;margin-left:4px;">' + esc(p.hook || '') + '</span>' +
+        '</div>' +
+        '<div class="sched-time-mt">' + esc(mtTime) + '</div>' +
+      '</div>' +
+      videoBlock +
+      '<div class="sched-text-label">Step 2 — Paste this text below the video</div>' +
+      '<div class="sched-copy-box">' + esc(p.copy || '') + '</div>' +
+      (p.cta ? '<div class="sched-meta"><span>CTA link</span><code>' + esc(p.cta) + '</code></div>' : '') +
+      '<div class="sched-actions">' + actions + '</div>' +
+      publishForm +
+    '</div>';
+  }
 
-    <h3>FAQ</h3>
-    <ul>
-      <li><strong>Is this aligned to the current SHRM-CP exam?</strong> Yes — built against SHRM's Body of Applied Skills and Knowledge (BASK) and the nine behavioral competencies.</li>
-      <li><strong>Do you cover situational-judgment questions specifically?</strong> Yes — they're the dominant format and every one is tagged with the competency being tested.</li>
-      <li><strong>How many questions is the Full Mock?</strong> 134 questions in 220 minutes — the same as the actual exam.</li>
-      <li><strong>Do you also have SHRM-SCP?</strong> Not yet. SHRM-CP is fully live; SHRM-SCP is on the roadmap based on user demand.</li>
-      <li><strong>Cancel anytime?</strong> Yes. 7-day trial never charges a card.</li>
-    </ul>
+  // Re-render whenever Firestore pushes fresh post data
+  // Re-render whenever Firestore pushes fresh post data
+  document.addEventListener('cipher:posts-updated', render);
 
-    <h3>Footer CTA</h3>
-    <blockquote>Train the reflex the exam actually grades.<br><br><strong>[Start Free Trial]</strong><br><em>7-day free trial. No credit card. Cancel anytime.</em></blockquote>
-  </details>
-
-  <h2>QA checklist before any LP goes live</h2>
-  <ul>
-    <li>Confirm route exists in <code>web/src/</code> and is reachable</li>
-    <li>Confirm GA4 + Meta Pixel + LinkedIn Insight + Google Ads conversion tags fire on <code>signup_complete</code> from each LP</li>
-    <li>Confirm pricing block matches <code>/pricing</code> byte-for-byte</li>
-    <li>Confirm the "Try a Question" widget question is original / AI-generated and not lifted from any third party</li>
-    <li>Confirm hero loads without layout shift on mobile (Tailwind responsive check)</li>
-    <li>Confirm the universal CTA button text is literally "Start Free Trial" — not "Try CipherExam" or any variant</li>
-    <li>Spot-check each FAQ against the verified exam specs in <code>cipher-exam-context</code> skill</li>
-  </ul>
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+})();
+</script>
 
 </main>
-
-
-
 
 <!--INLINE-ASSETS-->
 <script>

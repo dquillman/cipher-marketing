@@ -717,3 +717,131 @@ if (document.readyState === 'loading') {
     wireFirestore();
   }
 })();
+
+// ---- Grade modal (shared across schedule + posts pages) ----
+(function () {
+  var MODAL_HTML = ''
+    + '<div id="grade-modal" class="grade-modal" aria-hidden="true">'
+    +   '<div class="grade-modal-backdrop" data-grade-close></div>'
+    +   '<div class="grade-modal-body" role="dialog" aria-labelledby="grade-modal-title">'
+    +     '<div class="grade-modal-head">'
+    +       '<h3 id="grade-modal-title">Grade post</h3>'
+    +       '<button type="button" class="grade-modal-x" data-grade-close aria-label="Close">×</button>'
+    +     '</div>'
+    +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
+    +     '<form id="grade-form" class="grade-form">'
+    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
+    +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
+    +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
+    +       '<label>Reposts / reshares <input type="number" min="0" name="reposts" value="0"></label>'
+    +       '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '<div class="grade-form-actions">'
+    +         '<button type="submit" class="btn-primary" id="grade-submit-btn">Submit grade</button>'
+    +         '<button type="button" class="btn-secondary" data-grade-close>Cancel</button>'
+    +       '</div>'
+    +       '<div class="grade-form-status" id="grade-form-status" aria-live="polite"></div>'
+    +     '</form>'
+    +   '</div>'
+    + '</div>';
+
+  var currentPostId = null;
+
+  function ensureModal() {
+    if (document.getElementById('grade-modal')) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML = MODAL_HTML;
+    document.body.appendChild(wrap.firstChild);
+  }
+
+  function openModal(postId) {
+    ensureModal();
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var post = posts.find(function (p) { return p.id === postId; });
+    if (!post) { console.warn('[grade] post not found:', postId); return; }
+    currentPostId = postId;
+    var modal = document.getElementById('grade-modal');
+    document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
+    document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
+    document.getElementById('grade-form-status').textContent = '';
+    document.getElementById('grade-form').reset();
+    document.getElementById('grade-submit-btn').disabled = false;
+    document.getElementById('grade-submit-btn').textContent = 'Submit grade';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    var first = modal.querySelector('input[name="impressions"]');
+    if (first) setTimeout(function () { first.focus(); }, 50);
+  }
+
+  function closeModal() {
+    var modal = document.getElementById('grade-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    currentPostId = null;
+  }
+
+  async function submitGrade(form) {
+    if (!currentPostId) return;
+    var statusEl = document.getElementById('grade-form-status');
+    var btn = document.getElementById('grade-submit-btn');
+    var fd = new FormData(form);
+    var likes    = Number(fd.get('likes') || 0);
+    var comments = Number(fd.get('comments') || 0);
+    var reposts  = Number(fd.get('reposts') || 0);
+    var metrics = {
+      impressions:            Number(fd.get('impressions') || 0),
+      linkClicks:             Number(fd.get('linkClicks') || 0),
+      likes:                  likes,
+      comments:               comments,
+      reposts:                reposts,
+      engagementActions:      likes + comments + reposts,
+      trialSignupsAttributed: Number(fd.get('trialSignups') || 0),
+    };
+    statusEl.textContent = 'Brad is grading…';
+    statusEl.className = 'grade-form-status';
+    btn.disabled = true;
+    btn.textContent = 'Grading…';
+    try {
+      var res = await fetch('/api/grade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: currentPostId, metrics: metrics }),
+      });
+      var json = await res.json();
+      if (!res.ok) throw new Error(json.error || ('HTTP ' + res.status));
+      statusEl.className = 'grade-form-status ok';
+      statusEl.textContent = 'Graded ' + json.grade + ' — closing…';
+      setTimeout(closeModal, 900);
+    } catch (e) {
+      console.error('[grade] submit failed:', e);
+      statusEl.className = 'grade-form-status err';
+      statusEl.textContent = 'Failed: ' + (e.message || 'unknown error');
+      btn.disabled = false;
+      btn.textContent = 'Submit grade';
+    }
+  }
+
+  // Event delegation — survives any number of re-renders.
+  document.addEventListener('click', function (e) {
+    var openBtn = e.target.closest && e.target.closest('[data-grade-open]');
+    if (openBtn) {
+      e.preventDefault();
+      openModal(openBtn.getAttribute('data-grade-open'));
+      return;
+    }
+    if (e.target.matches && e.target.matches('[data-grade-close]')) {
+      e.preventDefault();
+      closeModal();
+    }
+  });
+  document.addEventListener('submit', function (e) {
+    if (e.target && e.target.id === 'grade-form') {
+      e.preventDefault();
+      submitGrade(e.target);
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+})();

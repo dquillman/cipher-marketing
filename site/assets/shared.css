@@ -686,3 +686,29 @@ details[open] summary::before { transform: rotate(90deg); }
   a { color: black; border-bottom: none; }
   .hero h1 { color: black; -webkit-text-fill-color: black; background: none; }
 }
+
+/* ---- Grade modal (used by schedule + posts pages) ---- */
+.grade-modal { position: fixed; inset: 0; z-index: 60; display: none; }
+.grade-modal.open { display: block; }
+.grade-modal-backdrop { position: absolute; inset: 0; background: rgba(8,11,18,0.72); backdrop-filter: blur(2px); }
+.grade-modal-body {
+  position: relative; max-width: 480px; margin: 6vh auto 0; background: #11141c;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px 22px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55); color: #e6e8ee;
+}
+.grade-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.grade-modal-head h3 { margin: 0; font-size: 1.05rem; }
+.grade-modal-x { background: transparent; color: #e6e8ee; border: 0; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.grade-modal-x:hover { background: rgba(255,255,255,0.08); }
+.grade-modal-sub { color: #98a0b3; font-size: 0.88rem; margin: 6px 0 14px; }
+.grade-form { display: grid; gap: 10px; }
+.grade-form label { display: grid; gap: 4px; font-size: 0.85rem; color: #cbd0dc; }
+.grade-form input[type="number"] {
+  background: #0b0d13; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-variant-numeric: tabular-nums;
+}
+.grade-form input[type="number"]:focus { outline: 2px solid #5b8def; outline-offset: 1px; }
+.grade-form-actions { display: flex; gap: 8px; margin-top: 6px; }
+.grade-form-status { font-size: 0.85rem; min-height: 1.1em; margin-top: 4px; color: #98a0b3; }
+.grade-form-status.ok  { color: #86efac; }
+.grade-form-status.err { color: #fca5a5; }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none" role="img" aria-label="CipherExam">
+  <g transform="translate(8, 8)">
+    <path d="M 24 0 A 24 24 0 1 0 24 48" stroke="#4f46e5" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 30 14 L 42 24 L 30 34" stroke="#a5b4fc" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="68" y="44" font-family="Satoshi, system-ui, sans-serif" font-weight="800" font-size="36" letter-spacing="-0.5" fill="#e6edf3">CipherExam</text>
+</svg>
