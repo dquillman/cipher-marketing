@@ -284,6 +284,17 @@ li { margin-bottom: 0.3em; }
   white-space: nowrap;
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
+.version-bar {
+  position: fixed;
+  top: 68px;
+  left: max(22px, calc(50% - 448px));
+  font-size: 0.475rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  pointer-events: none;
+  z-index: 51;
+}
 
 /* Cards */
 .card {
@@ -693,7 +704,20 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
+  if(!firebase.apps.length)firebase.initializeApp(cfg);
+  window._cipherDb=firebase.firestore();
+})();
+</script>
 <!--/INLINE-ASSETS-->
+
+
+
+
 </head>
 <body>
 
@@ -714,6 +738,13 @@ details[open] summary::before { transform: rotate(90deg); }
 </nav>
 
 <main class="wrap">
+
+<style>
+/* Duplicated inside <main> so build-app.mjs's extractMain() carries
+   these into app.html (head <style> blocks aren't extracted). */
+.section { scroll-margin-top: 80px; }
+.section.hidden { display: none; }
+</style>
 
   <div class="hero">
     <h1>Content</h1>
@@ -1325,6 +1356,8 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
     activate(['cornerstone','social','email'].includes(initial) ? initial : 'cornerstone');
   })();
 </script>
+
+
 <!--INLINE-ASSETS-->
 <script>
 /* CipherExam campaign site — shared JS (vanilla, no deps) */
@@ -2014,6 +2047,38 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+
+// ---- Firebase live sync (wires up after boot so applyState is defined) ----
+(function () {
+  function wireFirestore() {
+    var db = window._cipherDb;
+    if (!db) return; // Firebase SDK not available (offline / CDN blocked)
+
+    // Live campaign state → updates header metrics, blockers, etc.
+    db.collection('campaign').doc('state').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__CAMPAIGN_STATE__ = snap.data();
+      applyState(window.__CAMPAIGN_STATE__);
+    }, function (err) {
+      console.warn('[cipher] Firestore state sync error:', err.message);
+    });
+
+    // Live posts → notifies schedule + posts tabs to re-render
+    db.collection('campaign').doc('posts').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__POSTS__ = snap.data();
+      document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+    }, function (err) {
+      console.warn('[cipher] Firestore posts sync error:', err.message);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFirestore);
+  } else {
+    wireFirestore();
+  }
+})();
 
 </script>
 <!--/INLINE-ASSETS-->

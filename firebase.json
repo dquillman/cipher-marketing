@@ -1,0 +1,29 @@
+{
+  "hosting": {
+    "public": "site",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.mjs",
+      "data/**",
+      "index.html",
+      "today.html",
+      "schedule.html",
+      "posts.html",
+      "strategy.html",
+      "content.html",
+      "landing.html",
+      "engineering.html",
+      "voice.html",
+      "competitors.html"
+    ],
+    "rewrites": [
+      { "source": "**", "destination": "/app.html" }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

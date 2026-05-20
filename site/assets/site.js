@@ -685,3 +685,35 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+
+// ---- Firebase live sync (wires up after boot so applyState is defined) ----
+(function () {
+  function wireFirestore() {
+    var db = window._cipherDb;
+    if (!db) return; // Firebase SDK not available (offline / CDN blocked)
+
+    // Live campaign state → updates header metrics, blockers, etc.
+    db.collection('campaign').doc('state').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__CAMPAIGN_STATE__ = snap.data();
+      applyState(window.__CAMPAIGN_STATE__);
+    }, function (err) {
+      console.warn('[cipher] Firestore state sync error:', err.message);
+    });
+
+    // Live posts → notifies schedule + posts tabs to re-render
+    db.collection('campaign').doc('posts').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__POSTS__ = snap.data();
+      document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+    }, function (err) {
+      console.warn('[cipher] Firestore posts sync error:', err.message);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFirestore);
+  } else {
+    wireFirestore();
+  }
+})();

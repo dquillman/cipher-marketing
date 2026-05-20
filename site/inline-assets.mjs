@@ -20,10 +20,25 @@ const INLINE_CLOSE = "<!--/INLINE-ASSETS-->";
 const STATE_OPEN = "<!--INLINE-STATE-->";
 const STATE_CLOSE = "<!--/INLINE-STATE-->";
 
+// Firebase config — embedded so no env var needed for a personal tool.
+const FB_INIT = `
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
+  if(!firebase.apps.length)firebase.initializeApp(cfg);
+  window._cipherDb=firebase.firestore();
+})();
+</script>`.trim();
+
 // CSS + state both inline into <head> so state is parsed BEFORE any inline
 // <script> in <main>. Critical for posts.html where the render script lives
 // inside <main> (required by build-app.mjs) and needs window.__POSTS__ set
 // at parse time.
+//
+// Inline data is the fast-first-render cache. Firebase onSnapshot (wired in
+// site.js) overrides it with live Firestore data shortly after page load.
 function styleAndStateBlock(stateKind) {
   let stateScript = "";
   if (stateKind === "campaign" || stateKind === "both") {
@@ -35,7 +50,7 @@ function styleAndStateBlock(stateKind) {
   if (stateScript) {
     stateScript = `${STATE_OPEN}\n${stateScript}${STATE_CLOSE}\n`;
   }
-  return `${INLINE_OPEN}\n<style>\n${css}\n</style>\n${stateScript}${INLINE_CLOSE}`;
+  return `${INLINE_OPEN}\n<style>\n${css}\n</style>\n${stateScript}${FB_INIT}\n${INLINE_CLOSE}`;
 }
 
 function jsBlock() {
@@ -43,9 +58,10 @@ function jsBlock() {
 }
 
 const STATE_KIND = {
-  "today.html": "both",
-  "index.html": "campaign",
-  "posts.html": "posts",
+  "today.html":    "both",
+  "index.html":    "campaign",
+  "posts.html":    "posts",
+  "schedule.html": "posts",
 };
 
 // Skip files that already have their own self-contained styles

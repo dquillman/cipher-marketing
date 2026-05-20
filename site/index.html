@@ -280,6 +280,17 @@ li { margin-bottom: 0.3em; }
   white-space: nowrap;
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
+.version-bar {
+  position: fixed;
+  top: 68px;
+  left: max(22px, calc(50% - 448px));
+  font-size: 0.475rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  pointer-events: none;
+  z-index: 51;
+}
 
 /* Cards */
 .card {
@@ -693,7 +704,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T19:30:00.000Z",
+    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -947,12 +958,31 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-12",
       "entry": "Scheduler tooling dropped for Week 1. Publer setup removed entirely (no task ever existed in checklist — confirmed). Buffer setup deferred — 08-buffer-setup-sunday.md kept as future reference with a deferred-header note added. New checklist item added: phone-alarms-set (pending) — three recurring alarms at 08:00 ET on Mon/Wed/Fri. Dashboard now shows 6 done / 1 pending / 3 N/A."
+    },
+    {
+      "date": "2026-05-18",
+      "entry": "LAUNCH DAY: Monday LinkedIn launch post went live. Post 'li-mon-2026-05-11-launch' (tool-builder hook, PMP focus) — scheduled 10:30 MT via LinkedIn native scheduler. Video: launch-teaser-pmp.mp4 (1:1). URL: https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/ — posts.json status flipped scheduled → posted. Pre-launch hiccups resolved: (1) Remotion videos not yet rendered (ran npm install + npm run render:pmp — all 3 PMP videos now in videos/out/), (2) original post draft had file path pasted into body text instead of attached as media (caught + corrected pre-publish), (3) X posts updated with UTM URLs in visible body (was attribution gap), (4) hashtags added to all 6 Week 1 posts (#PMP #ProjectManagement #PMPExam on LinkedIn, #PMP on X). New dashboard tab built: Schedule (MT times, Copy text / Copy video path / Tell Brad I posted buttons). Awaiting: X Monday post still needs scheduling (suggested 11:30 MT). First grading window for Monday posts opens Wed 2026-05-20."
+    },
+    {
+      "date": "2026-05-18",
+      "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
     }
   ]
 }
 ;</script>
 <!--/INLINE-STATE-->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
+  if(!firebase.apps.length)firebase.initializeApp(cfg);
+  window._cipherDb=firebase.firestore();
+})();
+</script>
 <!--/INLINE-ASSETS-->
+
+
 </head>
 <body>
 
@@ -1076,6 +1106,7 @@ details[open] summary::before { transform: rotate(90deg); }
   </div>
 
 </main>
+
 
 
 <!--INLINE-ASSETS-->
@@ -1767,6 +1798,38 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+
+// ---- Firebase live sync (wires up after boot so applyState is defined) ----
+(function () {
+  function wireFirestore() {
+    var db = window._cipherDb;
+    if (!db) return; // Firebase SDK not available (offline / CDN blocked)
+
+    // Live campaign state → updates header metrics, blockers, etc.
+    db.collection('campaign').doc('state').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__CAMPAIGN_STATE__ = snap.data();
+      applyState(window.__CAMPAIGN_STATE__);
+    }, function (err) {
+      console.warn('[cipher] Firestore state sync error:', err.message);
+    });
+
+    // Live posts → notifies schedule + posts tabs to re-render
+    db.collection('campaign').doc('posts').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__POSTS__ = snap.data();
+      document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+    }, function (err) {
+      console.warn('[cipher] Firestore posts sync error:', err.message);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFirestore);
+  } else {
+    wireFirestore();
+  }
+})();
 
 </script>
 <!--/INLINE-ASSETS-->

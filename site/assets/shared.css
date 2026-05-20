@@ -268,6 +268,17 @@ li { margin-bottom: 0.3em; }
   white-space: nowrap;
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
+.version-bar {
+  position: fixed;
+  top: 68px;
+  left: max(22px, calc(50% - 448px));
+  font-size: 0.475rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  pointer-events: none;
+  z-index: 51;
+}
 
 /* Cards */
 .card {

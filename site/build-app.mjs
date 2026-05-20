@@ -11,16 +11,19 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
+const { version: APP_VERSION } = JSON.parse(readFileSync(join(HERE, "../package.json"), "utf8"));
 
 const ROUTES = [
   { file: "today.html",       route: "today",       label: "Today" },
   { file: "index.html",       route: "dashboard",   label: "Dashboard" },
+  { file: "schedule.html",    route: "schedule",    label: "Schedule" },
   { file: "posts.html",       route: "posts",       label: "Posts" },
   { file: "strategy.html",    route: "strategy",    label: "Strategy" },
   { file: "content.html",     route: "content",     label: "Content" },
   { file: "landing.html",     route: "landing",     label: "Landing" },
   { file: "engineering.html", route: "engineering", label: "Engineering" },
   { file: "voice.html",       route: "voice",       label: "Voice" },
+  { file: "competitors.html", route: "competitors", label: "Competitors" },
 ];
 
 const FILE_TO_ROUTE = Object.fromEntries(ROUTES.map(r => [r.file, r.route]));
@@ -83,7 +86,8 @@ ${navBtnsHtml}
     </div>
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
-</nav>`;
+</nav>
+<div class="version-bar">v${APP_VERSION}</div>`;
 
 // ---- Combined <main>. Today is "active" (visible) by default; others have
 //      class="route-section" only — CSS hides them. No `hidden` attribute,
@@ -123,12 +127,14 @@ function cipherShow(route) {
   document.title = ({
     today:       'Today — CipherExam Campaign',
     dashboard:   'Dashboard — CipherExam Campaign',
+    schedule:    'Schedule — CipherExam Campaign',
     posts:       'Posts — CipherExam Campaign',
     strategy:    'Strategy — CipherExam Campaign',
     content:     'Content — CipherExam Campaign',
     landing:     'Landing — CipherExam Campaign',
     engineering: 'Engineering — CipherExam Campaign',
-    voice:       'Voice — CipherExam Campaign'
+    voice:       'Voice — CipherExam Campaign',
+    competitors: 'Competitors — CipherExam Campaign'
   })[route] || 'CipherExam Campaign';
   window.scrollTo(0, 0);
 }

@@ -8,9 +8,10 @@
 // Press Ctrl-C to stop.
 
 import http from "node:http";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import { join, dirname, extname, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "site");
@@ -41,8 +42,97 @@ function resolveSafe(urlPath) {
   return p;
 }
 
+// ---- API helpers ----
+const POSTS_FILE    = join(ROOT, "data/posts.json");
+const STATE_FILE    = join(ROOT, "data/campaign-state.json");
+
+function jsonOk(res, body) {
+  const payload = JSON.stringify(body);
+  res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+  res.end(payload);
+}
+function jsonErr(res, code, msg) {
+  res.writeHead(code, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+  res.end(JSON.stringify({ ok: false, error: msg }));
+}
+async function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let buf = "";
+    req.on("data", c => buf += c);
+    req.on("end", () => {
+      try { resolve(JSON.parse(buf)); } catch { resolve({}); }
+    });
+    req.on("error", reject);
+  });
+}
+function triggerRebuild() {
+  try {
+    execSync("node inline-assets.mjs && node build-app.mjs", { cwd: ROOT, stdio: "ignore" });
+  } catch (e) {
+    console.error("[rebuild] failed:", e.message);
+  }
+}
+
+// ---- API routes ----
+async function handleApi(req, res) {
+  const url = req.url.split("?")[0];
+
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST", "Access-Control-Allow-Headers": "Content-Type" });
+    res.end(); return;
+  }
+
+  // GET /api/posts — always-fresh posts.json (bypasses inline cache)
+  if (req.method === "GET" && url === "/api/posts") {
+    try {
+      const raw = await readFile(POSTS_FILE, "utf8");
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
+      res.end(raw); return;
+    } catch { jsonErr(res, 500, "could not read posts.json"); return; }
+  }
+
+  // POST /api/publish — mark a post as published
+  if (req.method === "POST" && url === "/api/publish") {
+    const body = await readBody(req);
+    const { id, postUrl } = body;
+    if (!id || !postUrl) { jsonErr(res, 400, "id and postUrl required"); return; }
+    if (!postUrl.startsWith("http")) { jsonErr(res, 400, "postUrl must start with http"); return; }
+    try {
+      const data = JSON.parse(await readFile(POSTS_FILE, "utf8"));
+      const post = data.posts.find(p => p.id === id);
+      if (!post) { jsonErr(res, 404, `no post with id "${id}"`); return; }
+      if (post.status === "published" || post.status === "posted") {
+        jsonErr(res, 409, `post "${id}" is already marked ${post.status}`); return;
+      }
+      const now = new Date().toISOString();
+      post.status   = "posted";
+      post.postedAt = now;
+      post.postUrl  = postUrl;
+      data._meta.lastUpdatedAt = now;
+      await writeFile(POSTS_FILE, JSON.stringify(data, null, 2) + "\n", "utf8");
+      // Rebuild dashboard in background so the inline state reflects the change
+      setImmediate(triggerRebuild);
+      console.log(`[api] published: ${id} → ${postUrl}`);
+      jsonOk(res, { ok: true, id, status: "posted", postedAt: now });
+    } catch (e) { jsonErr(res, 500, e.message); }
+    return;
+  }
+
+  jsonErr(res, 404, "unknown api route");
+}
+
 const server = http.createServer(async (req, res) => {
   const t0 = Date.now();
+
+  // Route API calls before static serving
+  if (req.url.startsWith("/api/")) {
+    await handleApi(req, res);
+    const ms = Date.now() - t0;
+    console.log(`[${new Date().toISOString().slice(11,19)}] ${res.statusCode} ${req.method} ${req.url} (${ms}ms)`);
+    return;
+  }
+
   const fp = resolveSafe(req.url);
   if (!fp) { res.writeHead(403); res.end("forbidden"); return; }
 

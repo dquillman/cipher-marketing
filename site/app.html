@@ -280,6 +280,17 @@ li { margin-bottom: 0.3em; }
   white-space: nowrap;
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
+.version-bar {
+  position: fixed;
+  top: 68px;
+  left: max(22px, calc(50% - 448px));
+  font-size: 0.475rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  pointer-events: none;
+  z-index: 51;
+}
 
 /* Cards */
 .card {
@@ -693,7 +704,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T19:30:00.000Z",
+    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -947,6 +958,14 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-12",
       "entry": "Scheduler tooling dropped for Week 1. Publer setup removed entirely (no task ever existed in checklist — confirmed). Buffer setup deferred — 08-buffer-setup-sunday.md kept as future reference with a deferred-header note added. New checklist item added: phone-alarms-set (pending) — three recurring alarms at 08:00 ET on Mon/Wed/Fri. Dashboard now shows 6 done / 1 pending / 3 N/A."
+    },
+    {
+      "date": "2026-05-18",
+      "entry": "LAUNCH DAY: Monday LinkedIn launch post went live. Post 'li-mon-2026-05-11-launch' (tool-builder hook, PMP focus) — scheduled 10:30 MT via LinkedIn native scheduler. Video: launch-teaser-pmp.mp4 (1:1). URL: https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/ — posts.json status flipped scheduled → posted. Pre-launch hiccups resolved: (1) Remotion videos not yet rendered (ran npm install + npm run render:pmp — all 3 PMP videos now in videos/out/), (2) original post draft had file path pasted into body text instead of attached as media (caught + corrected pre-publish), (3) X posts updated with UTM URLs in visible body (was attribution gap), (4) hashtags added to all 6 Week 1 posts (#PMP #ProjectManagement #PMPExam on LinkedIn, #PMP on X). New dashboard tab built: Schedule (MT times, Copy text / Copy video path / Tell Brad I posted buttons). Awaiting: X Monday post still needs scheduling (suggested 11:30 MT). First grading window for Monday posts opens Wed 2026-05-20."
+    },
+    {
+      "date": "2026-05-18",
+      "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
     }
   ]
 }
@@ -954,7 +973,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__POSTS__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-12T15:30:00.000Z",
+    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
     "schemaVersion": 1,
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -976,19 +995,19 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-mon-2026-05-11-launch",
       "scheduled": "2026-05-18",
-      "scheduledTime": "2026-05-18T12:00:00.000Z",
-      "scheduledTimeLocal": "2026-05-18 08:00 ET",
+      "scheduledTime": "2026-05-18T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "scheduled",
+      "status": "posted",
       "examFocus": "PMP",
       "hook": "tool-builder",
       "video": "launch-teaser-pmp.mp4",
       "videoFormat": "1:1",
-      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
+      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": null,
-      "postUrl": null,
+      "postedAt": "2026-05-18T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
@@ -997,19 +1016,20 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-mon-2026-05-11-launch",
       "scheduled": "2026-05-18",
-      "scheduledTime": "2026-05-18T13:00:00.000Z",
-      "scheduledTimeLocal": "2026-05-18 09:00 ET",
+      "scheduledTime": "2026-05-18T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-18 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
-      "status": "scheduled",
+      "channelHandle": "@QuillmanDavid",
+      "status": "posted",
       "examFocus": "PMP",
       "hook": "tool-builder",
       "video": "launch-teaser-pmp.mp4",
       "videoFormat": "1:1",
-      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\ncipherexam.com/lp/pmp",
+      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\ncipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": null,
-      "postUrl": null,
+      "postedAt": "2026-05-18T17:30:00.000Z",
+      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
@@ -1018,8 +1038,8 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-wed-2026-05-13-trap",
       "scheduled": "2026-05-20",
-      "scheduledTime": "2026-05-20T12:00:00.000Z",
-      "scheduledTimeLocal": "2026-05-20 08:00 ET",
+      "scheduledTime": "2026-05-20T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "scheduled",
@@ -1027,7 +1047,7 @@ details[open] summary::before { transform: rotate(90deg); }
       "hook": "why-B-is-a-trap",
       "video": "ai-tutor-demo-pmp.mp4",
       "videoFormat": "9:16",
-      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
       "postedAt": null,
       "postUrl": null,
@@ -1039,8 +1059,8 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-wed-2026-05-13-trap",
       "scheduled": "2026-05-20",
-      "scheduledTime": "2026-05-20T13:00:00.000Z",
-      "scheduledTimeLocal": "2026-05-20 09:00 ET",
+      "scheduledTime": "2026-05-20T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-20 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
       "status": "scheduled",
@@ -1048,7 +1068,7 @@ details[open] summary::before { transform: rotate(90deg); }
       "hook": "why-B-is-a-trap",
       "video": "ai-tutor-demo-pmp.mp4",
       "videoFormat": "9:16",
-      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → cipherexam.com/lp/pmp",
+      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
       "postedAt": null,
       "postUrl": null,
@@ -1060,8 +1080,8 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "li-fri-2026-05-15-domains",
       "scheduled": "2026-05-22",
-      "scheduledTime": "2026-05-22T12:00:00.000Z",
-      "scheduledTimeLocal": "2026-05-22 08:00 ET",
+      "scheduledTime": "2026-05-22T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "scheduled",
@@ -1069,7 +1089,7 @@ details[open] summary::before { transform: rotate(90deg); }
       "hook": "domain-weights",
       "video": "domain-weights-pmp.mp4",
       "videoFormat": "1:1",
-      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\ncipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
+      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\ncipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
       "postedAt": null,
       "postUrl": null,
@@ -1081,8 +1101,8 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "id": "x-fri-2026-05-15-domains",
       "scheduled": "2026-05-22",
-      "scheduledTime": "2026-05-22T13:00:00.000Z",
-      "scheduledTimeLocal": "2026-05-22 09:00 ET",
+      "scheduledTime": "2026-05-22T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-22 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
       "status": "scheduled",
@@ -1090,7 +1110,7 @@ details[open] summary::before { transform: rotate(90deg); }
       "hook": "domain-weights",
       "video": "domain-weights-pmp.mp4",
       "videoFormat": "1:1",
-      "copy": "Quick PMP reality check:\n\nProcess is 50% of the exam.\n\nHalf. One domain.\n\nMost candidates split study time evenly across all three. CipherExam routes you adaptively to your weakest. cipherexam.com/lp/pmp",
+      "copy": "Quick PMP reality check:\n\nProcess is 50% of the exam.\n\nHalf. One domain.\n\nMost candidates split study time evenly across all three. CipherExam routes you adaptively to your weakest. cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
       "postedAt": null,
       "postUrl": null,
@@ -1103,7 +1123,18 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 ;</script>
 <!--/INLINE-STATE-->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
+  if(!firebase.apps.length)firebase.initializeApp(cfg);
+  window._cipherDb=firebase.firestore();
+})();
+</script>
 <!--/INLINE-ASSETS-->
+
+
 </head>
 <body>
 
@@ -1132,12 +1163,14 @@ function cipherShow(route) {
   document.title = ({
     today:       'Today — CipherExam Campaign',
     dashboard:   'Dashboard — CipherExam Campaign',
+    schedule:    'Schedule — CipherExam Campaign',
     posts:       'Posts — CipherExam Campaign',
     strategy:    'Strategy — CipherExam Campaign',
     content:     'Content — CipherExam Campaign',
     landing:     'Landing — CipherExam Campaign',
     engineering: 'Engineering — CipherExam Campaign',
-    voice:       'Voice — CipherExam Campaign'
+    voice:       'Voice — CipherExam Campaign',
+    competitors: 'Competitors — CipherExam Campaign'
   })[route] || 'CipherExam Campaign';
   window.scrollTo(0, 0);
 }
@@ -1148,16 +1181,19 @@ function cipherShow(route) {
     <div class="nav-links">
       <button class="nav-link" type="button" data-route="today" onclick="cipherShow('today')">Today</button>
       <button class="nav-link" type="button" data-route="dashboard" onclick="cipherShow('dashboard')">Dashboard</button>
+      <button class="nav-link" type="button" data-route="schedule" onclick="cipherShow('schedule')">Schedule</button>
       <button class="nav-link" type="button" data-route="posts" onclick="cipherShow('posts')">Posts</button>
       <button class="nav-link" type="button" data-route="strategy" onclick="cipherShow('strategy')">Strategy</button>
       <button class="nav-link" type="button" data-route="content" onclick="cipherShow('content')">Content</button>
       <button class="nav-link" type="button" data-route="landing" onclick="cipherShow('landing')">Landing</button>
       <button class="nav-link" type="button" data-route="engineering" onclick="cipherShow('engineering')">Engineering</button>
       <button class="nav-link" type="button" data-route="voice" onclick="cipherShow('voice')">Voice</button>
+      <button class="nav-link" type="button" data-route="competitors" onclick="cipherShow('competitors')">Competitors</button>
     </div>
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
+<div class="version-bar">v1.1.0</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -1333,8 +1369,704 @@ function cipherShow(route) {
 
 </section>
 
+<section class="route-section" data-route="schedule">
+
+
+<style>
+/* Schedule-tab styles — duplicated inside <main> so build-app.mjs's
+   extractMain() carries them into app.html. Identical to the <head>
+   <style> block above (which serves standalone schedule.html). */
+.sched-banner {
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.sched-banner-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.sched-banner-body { flex: 1; }
+.sched-banner-body strong { color: var(--warn); font-family: 'Satoshi', system-ui, sans-serif; }
+.sched-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.sched-card.tonight  { border-left: 4px solid var(--warn); }
+.sched-card.upcoming { border-left: 4px solid var(--cyan); }
+.sched-card.posted   { border-left: 4px solid var(--good); opacity: 0.65; }
+.sched-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.sched-title {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 1rem; color: var(--text);
+  flex: 1; min-width: 160px;
+}
+.sched-time-mt {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.9rem; color: var(--warn); white-space: nowrap;
+}
+.sched-card.upcoming .sched-time-mt { color: var(--cyan); }
+.sched-card.posted   .sched-time-mt { color: var(--good); }
+.sched-pill {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; padding: 3px 9px; border-radius: 100px;
+  border: 1px solid var(--border); color: var(--dim); background: var(--surface);
+}
+.sched-pill.channel-linkedin { background: rgba(10,102,194,0.18); color: #7eb8ff; border-color: rgba(10,102,194,0.45); }
+.sched-pill.channel-x        { background: rgba(255,255,255,0.08); color: var(--text); }
+.sched-pill.exam             { background: rgba(167,139,250,0.16); color: #c4b5fd; border-color: rgba(167,139,250,0.45); }
+.sched-pill.status-posted    { background: rgba(74,222,128,0.16); color: #86efac; border-color: rgba(74,222,128,0.45); }
+.sched-copy-box {
+  white-space: pre-wrap;
+  font-family: 'General Sans', system-ui, sans-serif;
+  font-size: 0.91rem; line-height: 1.55; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 14px;
+}
+.sched-meta {
+  display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px;
+  font-size: 0.83rem; color: var(--dim); margin-bottom: 14px;
+}
+.sched-meta code {
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px;
+  font-size: 0.8rem; color: var(--cyan); word-break: break-all;
+}
+.sched-video-block {
+  background: rgba(125, 211, 252, 0.06);
+  border: 1px dashed rgba(125, 211, 252, 0.4);
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.sched-video-icon { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+.sched-video-meta { flex: 1; min-width: 180px; }
+.sched-video-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--cyan); margin-bottom: 2px;
+}
+.sched-video-file {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.86rem; color: var(--text); word-break: break-all;
+}
+.sched-video-format {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--dim);
+  background: var(--surface-2); padding: 3px 8px; border-radius: 100px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.btn-copy-video {
+  background: rgba(125, 211, 252, 0.18); color: var(--cyan);
+  border: 1px solid rgba(125, 211, 252, 0.5);
+  border-radius: 8px; padding: 7px 13px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.82rem; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: background 0.15s;
+}
+.btn-copy-video:hover { background: rgba(125, 211, 252, 0.3); }
+.video-path-help {
+  width: 100%; flex-basis: 100%;
+  font-size: 0.78rem; color: var(--dim); font-style: italic;
+  margin-top: 4px; padding-top: 8px;
+  border-top: 1px solid rgba(125, 211, 252, 0.2);
+}
+.video-path-help code {
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px;
+  font-size: 0.76rem; color: var(--cyan); font-style: normal; word-break: break-all;
+}
+.sched-text-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--dim); margin-bottom: 6px;
+}
+.sched-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn-primary {
+  background: var(--cyan); color: #001423; border: 0; border-radius: 8px;
+  padding: 9px 16px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer;
+  letter-spacing: 0.01em; transition: filter 0.15s;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary {
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 15px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.86rem; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-warn {
+  background: rgba(251,191,36,0.15); color: var(--warn);
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 8px; padding: 8px 15px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.86rem; cursor: pointer;
+}
+.btn-warn:hover { background: rgba(251,191,36,0.25); }
+.copy-confirm { font-size: 0.82rem; color: var(--good); font-weight: 600; display: none; }
+.copy-confirm.show { display: inline; }
+.publish-form {
+  display: none; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-top: 12px;
+}
+.publish-form.show { display: block; }
+.publish-form-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--purple); margin-bottom: 10px;
+}
+.publish-form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.publish-url-input {
+  flex: 1; min-width: 220px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px;
+  color: var(--text); font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+}
+.publish-url-input:focus { outline: none; border-color: var(--cyan); }
+.pub-error { color: var(--warn); font-size: 0.82rem; margin-top: 6px; display: none; }
+.pub-error.show { display: block; }
+.section-label {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--dim);
+  margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.tz-note { font-size: 0.82rem; color: var(--dim); margin-bottom: 22px; }
+.tz-note strong { color: var(--cyan); }
+.workflow-steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px; margin: 18px 0 28px;
+}
+.workflow-step {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.workflow-step .step-num {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800; font-size: 1.4rem; color: var(--cyan); margin-bottom: 4px;
+}
+.workflow-step .step-text { font-size: 0.88rem; color: var(--dim); line-height: 1.45; }
+.workflow-step .step-text strong { color: var(--text); }
+</style>
+
+<h1 style="margin-top:0;">Post Scheduler</h1>
+<p class="tz-note">All times shown in <strong>Mountain Time (MT)</strong>. The workflow: prep posts the night before using LinkedIn's and X's native schedulers — no early mornings needed.</p>
+
+<div class="workflow-steps">
+  <div class="workflow-step">
+    <div class="step-num">1</div>
+    <div class="step-text"><strong>Attach video as MEDIA</strong> — NOT as text in the body:<br>
+      <span style="display:block;margin-top:6px;">a. Click <em>"Copy video path"</em> on the card</span>
+      <span style="display:block;">b. In LinkedIn/X composer, click the <strong>camera / "Add photo or video"</strong> button</span>
+      <span style="display:block;">c. A <strong>file picker window</strong> opens — paste the path into <strong>its address bar</strong> (top of the picker) and hit Enter</span>
+      <span style="display:block;">d. Video attaches as a playable preview. <strong style="color:var(--bad);">Never paste the path into the post body.</strong></span>
+    </div>
+  </div>
+  <div class="workflow-step">
+    <div class="step-num">2</div>
+    <div class="step-text"><strong>Paste the post text</strong> into the composer body (where you type the caption). Set the scheduler to your preferred MT time.</div>
+  </div>
+  <div class="workflow-step">
+    <div class="step-num">3</div>
+    <div class="step-text"><strong>After it posts</strong> — click <em>"Mark as Posted"</em> on the card, paste the live post URL into the field, and click <strong>Mark Posted</strong>. The dashboard updates instantly.</div>
+  </div>
+</div>
+
+<div id="sched-banner-zone"></div>
+<div id="sched-tonight-section"></div>
+<div id="sched-upcoming-section"></div>
+<div id="sched-posted-section"></div>
+
+<script>
+(function renderSchedulePage() {
+
+  var TZ = 'America/Denver';
+  var VIDEO_DIR = 'G:\\Users\\daveq\\cipher-marketing\\videos\\out\\';
+
+  function toMT(isoStr) {
+    if (!isoStr) return '—';
+    try {
+      var d = new Date(isoStr);
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ,
+        weekday: 'short',
+        month:   'short',
+        day:     'numeric',
+        hour:    'numeric',
+        minute:  '2-digit',
+        hour12:  true,
+        timeZoneName: 'short'
+      }).format(d);
+    } catch(e) { return isoStr; }
+  }
+
+  function toMTDateOnly(isoStr) {
+    if (!isoStr) return '';
+    try {
+      var d = new Date(isoStr);
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ,
+        weekday: 'long',
+        month:   'long',
+        day:     'numeric'
+      }).format(d);
+    } catch(e) { return isoStr; }
+  }
+
+  function todayInMT() {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date());
+  }
+
+  function tomorrowInMT() {
+    var d = new Date();
+    d.setDate(d.getDate() + 1);
+    return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(d);
+  }
+
+  function scheduledDateMT(isoStr) {
+    if (!isoStr) return '';
+    try {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: TZ }).format(new Date(isoStr));
+    } catch(e) { return ''; }
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Robust clipboard copy with fallback for sandboxed/insecure contexts
+  // (preview iframes, file:// URLs, etc. where navigator.clipboard is blocked).
+  function safeCopy(text, onSuccess, onError) {
+    var done = function(ok) { (ok && onSuccess) ? onSuccess() : (onError && onError()); };
+    // Try modern API first
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext !== false) {
+      navigator.clipboard.writeText(text).then(
+        function(){ done(true); },
+        function(){ fallback(); }
+      );
+    } else {
+      fallback();
+    }
+    function fallback() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        ta.style.pointerEvents = 'none';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        done(ok);
+      } catch (e) {
+        done(false);
+      }
+    }
+  }
+
+  function render() {
+    var data = window.__POSTS__;
+    if (!data || !Array.isArray(data.posts)) {
+      document.getElementById('sched-upcoming-section').innerHTML =
+        '<p class="empty-state">No posts data loaded.</p>';
+      return;
+    }
+
+    var today     = todayInMT();
+    var tomorrow  = tomorrowInMT();
+    var posts     = data.posts.slice().sort(function(a,b){
+      return (a.scheduledTime||'').localeCompare(b.scheduledTime||'');
+    });
+
+    var tonightPosts  = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === tomorrow; });
+    var upcomingPosts = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) > tomorrow; });
+    var todayPosts    = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === today; });
+    var postedPosts   = posts.filter(function(p){ return p.status === 'posted'; });
+
+    // Banner: show if there are posts due today or tomorrow
+    var bannerEl = document.getElementById('sched-banner-zone');
+    if (todayPosts.length > 0) {
+      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🔔</div><div class="sched-banner-body"><strong>' + todayPosts.length + ' post' + (todayPosts.length > 1 ? 's' : '') + ' scheduled for today.</strong> Check that they were posted, then click "Mark as Posted" on each one to record the live URL.</div></div>';
+    } else if (tonightPosts.length > 0) {
+      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🌙</div><div class="sched-banner-body"><strong>Prep tonight:</strong> ' + tonightPosts.length + ' post' + (tonightPosts.length > 1 ? 's are' : ' is') + ' due tomorrow (' + toMTDateOnly(tonightPosts[0].scheduledTime) + '). Copy the text below and schedule it in LinkedIn/X before bed.</div></div>';
+    }
+
+    // Tonight section
+    var tonightEl = document.getElementById('sched-tonight-section');
+    var allSoon = todayPosts.concat(tonightPosts);
+    if (allSoon.length > 0) {
+      tonightEl.innerHTML = '<div class="section-label">' + (todayPosts.length > 0 ? 'Today' : 'Up Next — Prep Tonight') + '</div>' +
+        allSoon.map(function(p){ return renderCard(p, todayPosts.includes(p) ? 'tonight' : 'tonight'); }).join('');
+    }
+
+    // Upcoming section
+    var upcomingEl = document.getElementById('sched-upcoming-section');
+    if (upcomingPosts.length > 0) {
+      upcomingEl.innerHTML = '<div class="section-label">Upcoming</div>' +
+        upcomingPosts.map(function(p){ return renderCard(p, 'upcoming'); }).join('');
+    } else if (allSoon.length === 0) {
+      upcomingEl.innerHTML = '<p class="empty-state">No upcoming scheduled posts.</p>';
+    }
+
+    // Posted section
+    var postedEl = document.getElementById('sched-posted-section');
+    if (postedPosts.length > 0) {
+      postedEl.innerHTML = '<div class="section-label">Posted</div>' +
+        postedPosts.map(function(p){ return renderCard(p, 'posted'); }).join('');
+    }
+
+    // Wire up buttons after render
+    document.querySelectorAll('[data-sched-copy]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-copy');
+        var post = posts.find(function(p){ return p.id === id; });
+        if (!post) return;
+        safeCopy(post.copy || '',
+          function() {
+            var conf = document.getElementById('copy-conf-' + id);
+            if (conf) { conf.textContent = '✓ Copied!'; conf.classList.add('show'); setTimeout(function(){ conf.classList.remove('show'); }, 2000); }
+          },
+          function() {
+            var conf = document.getElementById('copy-conf-' + id);
+            if (conf) { conf.textContent = '✗ Copy blocked — select the text and Ctrl+C'; conf.classList.add('show'); }
+          }
+        );
+      });
+    });
+
+    document.querySelectorAll('[data-sched-video]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-video');
+        var post = posts.find(function(p){ return p.id === id; });
+        if (!post || !post.video) return;
+        var path = VIDEO_DIR + post.video;
+        safeCopy(path,
+          function() {
+            btn.textContent = '✓ Path copied';
+            setTimeout(function(){ btn.textContent = 'Copy video path'; }, 1800);
+          },
+          function() {
+            btn.textContent = '✗ Blocked';
+            setTimeout(function(){ btn.textContent = 'Copy video path'; }, 2200);
+          }
+        );
+      });
+    });
+
+    document.querySelectorAll('[data-sched-cta]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-cta');
+        var post = posts.find(function(p){ return p.id === id; });
+        if (!post || !post.cta) return;
+        safeCopy(post.cta,
+          function() {
+            btn.textContent = '✓ Copied';
+            setTimeout(function(){ btn.textContent = 'Copy CTA link'; }, 1800);
+          },
+          function() {
+            btn.textContent = '✗ Blocked';
+            setTimeout(function(){ btn.textContent = 'Copy CTA link'; }, 2200);
+          }
+        );
+      });
+    });
+
+    document.querySelectorAll('[data-sched-publish]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-publish');
+        var form = document.getElementById('pub-form-' + id);
+        if (!form) return;
+        if (form.classList.contains('show')) {
+          form.classList.remove('show');
+          return;
+        }
+        form.classList.add('show');
+        var input = document.getElementById('pub-url-' + id);
+        if (input) setTimeout(function(){ input.focus(); }, 50);
+      });
+    });
+
+    document.querySelectorAll('[data-sched-cancel]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-cancel');
+        var form = document.getElementById('pub-form-' + id);
+        if (form) form.classList.remove('show');
+        var err = document.getElementById('pub-err-' + id);
+        if (err) { err.textContent = ''; err.classList.remove('show'); }
+      });
+    });
+
+    document.querySelectorAll('[data-sched-submit]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.getAttribute('data-sched-submit');
+        var input = document.getElementById('pub-url-' + id);
+        var errEl = document.getElementById('pub-err-' + id);
+        var postUrl = input ? input.value.trim() : '';
+        if (!postUrl || !postUrl.startsWith('http')) {
+          if (errEl) { errEl.textContent = 'Please enter a valid URL starting with http'; errEl.classList.add('show'); }
+          return;
+        }
+        if (errEl) { errEl.textContent = ''; errEl.classList.remove('show'); }
+        btn.textContent = 'Saving…';
+        btn.disabled = true;
+        var db = window._cipherDb;
+        if (!db) {
+          if (errEl) { errEl.textContent = 'Firebase not loaded — check your internet connection and refresh.'; errEl.classList.add('show'); }
+          btn.textContent = 'Mark Posted';
+          btn.disabled = false;
+          return;
+        }
+        var docRef = db.collection('campaign').doc('posts');
+        docRef.get()
+          .then(function(snap) {
+            var data = snap.data();
+            var postsList = data.posts;
+            var idx = postsList.findIndex(function(p) { return p.id === id; });
+            if (idx === -1) throw new Error('Post "' + id + '" not found in Firestore');
+            var now = new Date().toISOString();
+            postsList[idx].status   = 'posted';
+            postsList[idx].postedAt = now;
+            postsList[idx].postUrl  = postUrl;
+            data._meta.lastUpdatedAt = now;
+            return docRef.set(data);
+          })
+          .then(function() {
+            // onSnapshot fires automatically → cipher:posts-updated → render()
+            // btn state will reset when the card re-renders
+          })
+          .catch(function(e) {
+            if (errEl) { errEl.textContent = 'Error: ' + (e.message || 'Firestore write failed'); errEl.classList.add('show'); }
+            btn.textContent = 'Mark Posted';
+            btn.disabled = false;
+          });
+      });
+    });
+  }
+
+  function renderCard(p, variant) {
+    var mtTime = toMT(p.scheduledTime);
+    var channelLabel = (p.channel || 'other').toUpperCase();
+    var statusPosted = p.status === 'posted';
+
+    var publishForm = !statusPosted ? (
+      '<div class="publish-form" id="pub-form-' + esc(p.id) + '">' +
+        '<div class="publish-form-label">Paste the live post URL, then click Mark Posted</div>' +
+        '<div class="publish-form-row">' +
+          '<input type="url" class="publish-url-input" id="pub-url-' + esc(p.id) + '" placeholder="https://www.linkedin.com/feed/update/...">' +
+          '<button class="btn-primary" type="button" data-sched-submit="' + esc(p.id) + '">Mark Posted</button>' +
+          '<button class="btn-secondary" type="button" data-sched-cancel="' + esc(p.id) + '">Cancel</button>' +
+        '</div>' +
+        '<div class="pub-error" id="pub-err-' + esc(p.id) + '"></div>' +
+      '</div>'
+    ) : '';
+
+    var actions = statusPosted
+      ? '<span class="sched-pill status-posted">✓ Posted</span>'
+      : '<button class="btn-primary" type="button" data-sched-copy="' + esc(p.id) + '">Copy post text</button>' +
+        '<span class="copy-confirm" id="copy-conf-' + esc(p.id) + '">✓ Copied!</span>' +
+        '<button class="btn-secondary" type="button" data-sched-cta="' + esc(p.id) + '">Copy CTA link</button>' +
+        '<button class="btn-warn" type="button" data-sched-publish="' + esc(p.id) + '">Mark as Posted</button>';
+
+    var videoPath = p.video ? (VIDEO_DIR + p.video) : '';
+    var videoBlock = p.video ? (
+      '<div class="sched-video-block">' +
+        '<div class="sched-video-icon">🎬</div>' +
+        '<div class="sched-video-meta">' +
+          '<div class="sched-video-label">Step 1 — Attach as MEDIA (use the camera button, not the body)</div>' +
+          '<div class="sched-video-file">' + esc(p.video) + '</div>' +
+        '</div>' +
+        '<div class="sched-video-format">' + esc(p.videoFormat || '?') + '</div>' +
+        '<button class="btn-copy-video" type="button" data-sched-video="' + esc(p.id) + '">Copy video path</button>' +
+        '<div class="video-path-help"><strong style="color:var(--warn);">⚠ Do NOT paste into the post body.</strong> Click LinkedIn/X\'s camera/"Add photo or video" button → file picker opens → paste this into the picker\'s <strong>address bar at the top</strong> → Enter:<br><code style="display:inline-block;margin-top:6px;">' + esc(videoPath) + '</code></div>' +
+      '</div>'
+    ) : '';
+
+    return '<div class="sched-card ' + variant + '">' +
+      '<div class="sched-head">' +
+        '<div class="sched-title">' +
+          '<span class="sched-pill channel-' + esc(p.channel || 'other') + '">' + esc(channelLabel) + '</span> ' +
+          (p.examFocus ? '<span class="sched-pill exam">' + esc(p.examFocus) + '</span> ' : '') +
+          ' <span style="color:var(--dim);font-size:0.88rem;margin-left:4px;">' + esc(p.hook || '') + '</span>' +
+        '</div>' +
+        '<div class="sched-time-mt">' + esc(mtTime) + '</div>' +
+      '</div>' +
+      videoBlock +
+      '<div class="sched-text-label">Step 2 — Paste this text below the video</div>' +
+      '<div class="sched-copy-box">' + esc(p.copy || '') + '</div>' +
+      (p.cta ? '<div class="sched-meta"><span>CTA link</span><code>' + esc(p.cta) + '</code></div>' : '') +
+      '<div class="sched-actions">' + actions + '</div>' +
+      publishForm +
+    '</div>';
+  }
+
+  // Re-render whenever Firestore pushes fresh post data
+  document.addEventListener('cipher:posts-updated', render);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+})();
+</script>
+
+
+</section>
+
 <section class="route-section" data-route="posts">
 
+
+<style>
+/* Duplicated inside <main> so build-app.mjs's extractMain() carries
+   these into app.html. Mirror of the <head> <style> block above. */
+.post-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+}
+.post-card.status-posted    { border-left: 3px solid var(--good); }
+.post-card.status-scheduled { border-left: 3px solid var(--accent); }
+.post-card.status-draft     { border-left: 3px solid var(--warn); }
+.post-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.post-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: var(--bg-elev, var(--surface));
+  border: 1px solid var(--border);
+  color: var(--dim);
+}
+.post-pill.channel-linkedin { background: rgba(10, 102, 194, 0.18); color: #7eb8ff; border-color: rgba(10, 102, 194, 0.45); }
+.post-pill.channel-x        { background: rgba(255, 255, 255, 0.08); color: var(--fg); }
+.post-pill.exam             { background: rgba(167, 139, 250, 0.16); color: #c4b5fd; border-color: rgba(167, 139, 250, 0.45); }
+.post-pill.grade-A { background: rgba(74, 222, 128, 0.16); color: #86efac; border-color: rgba(74, 222, 128, 0.45); }
+.post-pill.grade-B { background: rgba(125, 211, 252, 0.16); color: #7dd3fc; border-color: rgba(125, 211, 252, 0.45); }
+.post-pill.grade-C { background: rgba(251, 191, 36, 0.16); color: #fbbf24; border-color: rgba(251, 191, 36, 0.45); }
+.post-pill.grade-D { background: rgba(248, 113, 113, 0.16); color: #f87171; border-color: rgba(248, 113, 113, 0.45); }
+.post-meta { font-size: 0.85rem; color: var(--dim); margin-left: auto; }
+.post-copy {
+  white-space: pre-wrap;
+  font-family: "General Sans", system-ui, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--fg);
+  background: var(--bg-elev, transparent);
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+}
+.post-fields {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-top: 8px;
+}
+.post-fields code {
+  background: var(--bg-elev, var(--surface));
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  color: var(--fg);
+  word-break: break-all;
+}
+.copy-post-btn {
+  background: var(--accent);
+  color: #001423;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.copy-post-btn:hover { opacity: 0.9; }
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+.metrics-table td { padding: 4px 10px 4px 0; color: var(--dim); }
+.metrics-table td:last-child {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.grade-card {
+  background: var(--bg-elev, var(--surface));
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  border-left: 3px solid var(--accent);
+  font-size: 0.88rem;
+}
+.grade-card h4 {
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.scorecard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+.summary-card .label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+.summary-card .value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-family: "Satoshi", system-ui, sans-serif;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.empty-state {
+  text-align: center;
+  color: var(--dim);
+  font-style: italic;
+  padding: 24px 0;
+}
+</style>
 
   <h1 style="margin-top:0;">Posts</h1>
   <p style="color:var(--dim);font-size:0.92rem;">Brad drafts here. After you publish, paste the metrics into Claude — the <code>post-performance-grader</code> subagent grades each post and updates this view. State lives in <code>data/posts.json</code>.</p>
@@ -1657,6 +2389,13 @@ function cipherShow(route) {
 
 <section class="route-section" data-route="content">
 
+
+<style>
+/* Duplicated inside <main> so build-app.mjs's extractMain() carries
+   these into app.html (head <style> blocks aren't extracted). */
+.section { scroll-margin-top: 80px; }
+.section.hidden { display: none; }
+</style>
 
   <div class="hero">
     <h1>Content</h1>
@@ -2728,7 +3467,242 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
 
 </section>
+
+<section class="route-section" data-route="competitors">
+
+
+  <style>
+  .agent-launcher {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .agent-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 18px 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .agent-card.primary { border-color: rgba(125,211,252,0.4); }
+  .agent-card h3 { margin: 0; font-size: 0.95rem; color: var(--cyan); }
+  .agent-card p { margin: 0; font-size: 0.85rem; color: var(--dim); line-height: 1.45; flex: 1; }
+  .agent-card button.view-btn {
+    width: 100%; padding: 10px 14px; font-size: 0.9rem;
+    background: var(--cyan); color: #001423;
+  }
+  .agent-card:not(.primary) button.view-btn {
+    background: var(--surface-2); color: var(--dim);
+    border: 1px solid var(--border);
+  }
+  .agent-card:not(.primary) button.view-btn:hover {
+    background: var(--surface); color: var(--text);
+    border-color: var(--cyan); filter: none;
+  }
+  button.view-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+
+  #ci-results {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  #ci-results-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  #ci-results-title {
+    font-family: 'Satoshi', system-ui, sans-serif;
+    font-weight: 700; font-size: 0.85rem;
+    color: var(--cyan);
+  }
+  #ci-results-meta { font-size: 0.75rem; color: var(--dim); }
+  #ci-results-head button {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.78rem; padding: 3px 8px; border-radius: 5px;
+  }
+  #ci-results-head button:hover { color: var(--text); border-color: var(--cyan); filter: none; }
+  #ci-results-body {
+    padding: 18px 20px;
+    font-size: 0.92rem; line-height: 1.65; color: var(--text);
+    min-height: 60px;
+  }
+  #ci-results-body h2 {
+    font-size: 1.15rem; color: var(--cyan);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px; margin: 1.4em 0 0.6em;
+  }
+  #ci-results-body h2:first-child { margin-top: 0; }
+  #ci-results-body h3 { font-size: 1rem; color: var(--purple); margin: 1.2em 0 0.4em; }
+  #ci-results-body hr { border: none; border-top: 1px solid var(--border); margin: 1.4em 0; }
+  #ci-results-body ul { padding-left: 1.3em; margin: 0.4em 0 0.8em; }
+  #ci-results-body li { margin-bottom: 0.3em; }
+  #ci-results-body blockquote {
+    border-left: 3px solid var(--cyan); background: var(--surface-2);
+    margin: 0.8em 0; padding: 8px 14px; border-radius: 0 6px 6px 0;
+    color: var(--text); font-style: italic;
+  }
+  .ci-spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid var(--border); border-top-color: var(--cyan);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+
+  <div class="hero">
+    <h1>Competitors</h1>
+    <p class="sub">Generated by Brad on the 1st of each month. <span id="ci-last-generated" style="color:var(--dim)"></span></p>
+  </div>
+
+  <div class="agent-launcher">
+    <div class="agent-card primary">
+      <h3>Full Landscape Scan</h3>
+      <p>Top 5 competitors ranked by threat level. Ranked list + 3 positioning moves to act on this week.</p>
+      <button class="view-btn" id="btn-landscape" onclick="showReport('landscape', 'Full Landscape Scan', this)">View report</button>
+    </div>
+    <div class="agent-card">
+      <h3>Deep Dive: Pocket Prep</h3>
+      <p>3 weaknesses to exploit + a post hook you can use this week.</p>
+      <button class="view-btn" id="btn-deepdive" onclick="showReport('deepdive', 'Deep Dive: Pocket Prep', this)">View deep dive</button>
+    </div>
+    <div class="agent-card">
+      <h3>Positioning Battlecard</h3>
+      <p>3-point battlecard vs. the memorization-loop category + a category-creation angle.</p>
+      <button class="view-btn" id="btn-battlecard" onclick="showReport('battlecard', 'Positioning Battlecard', this)">View battlecard</button>
+    </div>
+  </div>
+
+  <div id="ci-results">
+    <div id="ci-results-head">
+      <div>
+        <span id="ci-results-title">Report</span>
+        <span id="ci-results-meta"></span>
+      </div>
+      <button onclick="document.getElementById('ci-results').style.display='none'">Close</button>
+    </div>
+    <div id="ci-results-body"></div>
+  </div>
+
+  <hr>
+  <h2 style="margin-top:0;">Known competitor landscape</h2>
+  <p style="color:var(--dim);font-size:0.9rem;">Reference table. See full reports above for current positioning intel.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Competitor</th><th>Primary Strength</th><th>Known Weakness</th><th>Threat</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Pocket Prep</strong></td><td>Mobile-first, huge question bank</td><td>No answer explanations; pure memorization loop</td><td><span class="pill warn">High</span></td></tr>
+      <tr><td><strong>Examzify</strong></td><td>Clean UI, popular for IT certs</td><td>Static questions, no AI layer, no adaptive routing</td><td><span class="pill warn">High</span></td></tr>
+      <tr><td><strong>Kaplan IT</strong></td><td>Brand authority, Security+ stronghold</td><td>Old-school UX, expensive, no AI</td><td><span class="pill warn">High</span></td></tr>
+      <tr><td><strong>MeasureUp</strong></td><td>Official practice tests, exam-sim feel</td><td>Expensive, no explanations, purely transactional</td><td><span class="pill good">Med</span></td></tr>
+      <tr><td><strong>Magoosh</strong></td><td>Video-heavy, GMAT/GRE pedigree</td><td>Thin on PMI/SHRM; wrong audience</td><td><span class="pill good">Med</span></td></tr>
+      <tr><td><strong>Whizlabs</strong></td><td>Cheap, broad cert coverage</td><td>Notoriously low question quality; outdated</td><td><span class="pill dim">Low</span></td></tr>
+      <tr><td><strong>Pluralsight</strong></td><td>Deep IT video library</td><td>Cert prep is secondary; no adaptive questioning</td><td><span class="pill dim">Low</span></td></tr>
+      <tr><td><strong>Udemy courses</strong></td><td>Huge reach, cheap</td><td>Passive video; zero practice accountability</td><td><span class="pill dim">Low</span></td></tr>
+    </tbody>
+  </table>
+
+  <script>
+  var PROJECT = 'cipher-marketing-daveq';
+  var FBKEY   = 'AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts';
+  var FSBASE  = 'https://firestore.googleapis.com/v1/projects/' + PROJECT + '/databases/(default)/documents/competitor_intel';
+  var cache   = {};
+
+  function fmtDate(iso) {
+    try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    catch(e) { return iso; }
+  }
+
+  async function fetchDoc(docId) {
+    if (cache[docId]) return cache[docId];
+    var res = await fetch(FSBASE + '/' + docId + '?key=' + FBKEY);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    cache[docId] = {
+      content:      data.fields.content.stringValue,
+      generated_at: data.fields.generated_at.stringValue
+    };
+    return cache[docId];
+  }
+
+  async function showReport(docId, label, btn) {
+    var panel   = document.getElementById('ci-results');
+    var body    = document.getElementById('ci-results-body');
+    var titleEl = document.getElementById('ci-results-title');
+    var metaEl  = document.getElementById('ci-results-meta');
+
+    titleEl.innerHTML = '<span class="ci-spinner"></span>' + label;
+    metaEl.textContent = '';
+    body.innerHTML = '';
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    try {
+      var doc = await fetchDoc(docId);
+      titleEl.textContent = label;
+      metaEl.textContent = ' — ' + fmtDate(doc.generated_at);
+      body.innerHTML = mdToHtml(doc.content);
+    } catch(e) {
+      body.innerHTML = '<p style="color:var(--bad)">Failed to load: ' + e.message + '</p>';
+      titleEl.textContent = label;
+    }
+  }
+
+  function mdToHtml(text) {
+    var lines = text.split('\n');
+    var out = [], inUl = false, inOl = false;
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i];
+      var liM = l.match(/^[-*] (.+)/), olM = l.match(/^\d+\. (.+)/);
+      if (liM) {
+        if (!inUl) { if (inOl) { out.push('</ol>'); inOl = false; } out.push('<ul>'); inUl = true; }
+        out.push('<li>' + inline(liM[1]) + '</li>');
+      } else if (olM) {
+        if (!inOl) { if (inUl) { out.push('</ul>'); inUl = false; } out.push('<ol>'); inOl = true; }
+        out.push('<li>' + inline(olM[1]) + '</li>');
+      } else {
+        if (inUl) { out.push('</ul>'); inUl = false; }
+        if (inOl) { out.push('</ol>'); inOl = false; }
+        if (l.startsWith('## '))      out.push('<h2>' + inline(l.slice(3)) + '</h2>');
+        else if (l.startsWith('### ')) out.push('<h3>' + inline(l.slice(4)) + '</h3>');
+        else if (l.startsWith('> '))   out.push('<blockquote>' + inline(l.slice(2)) + '</blockquote>');
+        else if (l === '---')          out.push('<hr>');
+        else if (l.trim() === '')      out.push('');
+        else                           out.push('<p>' + inline(l) + '</p>');
+      }
+    }
+    if (inUl) out.push('</ul>');
+    if (inOl) out.push('</ol>');
+    return out.join('\n');
+  }
+
+  function inline(t) {
+    return t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/`(.+?)`/g, '<code>$1</code>');
+  }
+
+  // Show last-generated date in subtitle on load
+  fetchDoc('landscape').then(function(doc) {
+    var el = document.getElementById('ci-last-generated');
+    if (el) el.textContent = 'Last updated ' + fmtDate(doc.generated_at) + '.';
+  }).catch(function(){});
+  </script>
+
+
+</section>
 </main>
+
 
 
 <!--INLINE-ASSETS-->
@@ -3420,6 +4394,38 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+
+// ---- Firebase live sync (wires up after boot so applyState is defined) ----
+(function () {
+  function wireFirestore() {
+    var db = window._cipherDb;
+    if (!db) return; // Firebase SDK not available (offline / CDN blocked)
+
+    // Live campaign state → updates header metrics, blockers, etc.
+    db.collection('campaign').doc('state').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__CAMPAIGN_STATE__ = snap.data();
+      applyState(window.__CAMPAIGN_STATE__);
+    }, function (err) {
+      console.warn('[cipher] Firestore state sync error:', err.message);
+    });
+
+    // Live posts → notifies schedule + posts tabs to re-render
+    db.collection('campaign').doc('posts').onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      window.__POSTS__ = snap.data();
+      document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+    }, function (err) {
+      console.warn('[cipher] Firestore posts sync error:', err.message);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFirestore);
+  } else {
+    wireFirestore();
+  }
+})();
 
 </script>
 <!--/INLINE-ASSETS-->
