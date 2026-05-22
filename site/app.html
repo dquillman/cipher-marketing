@@ -77,6 +77,42 @@
 .section-status .row.na   .pill { background: rgba(107,114,128,0.2);  color: #9ca3af; }
 .section-status .row.warn .pill { background: rgba(251,191,36,0.18); color: #fbbf24; }
 .section-status .row.bad  .pill { background: rgba(248,113,113,0.18); color: #f87171; }
+
+/* Completed / Deferred lists at top of Engineering tab */
+.completed-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.completed-list .row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  border-left: 3px solid var(--border);
+}
+.completed-list .row.done     { border-left-color: #4ade80; }
+.completed-list .row.deferred { border-left-color: #6b7280; }
+.completed-list .row.parked   { border-left-color: #6b7280; opacity: 0.85; }
+.completed-list .date {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+.completed-list .row.done .date     { color: #4ade80; }
+.completed-list .row.deferred .date,
+.completed-list .row.parked .date   { color: #9ca3af; }
+.completed-list .label {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.9rem;
+}
+.completed-list .note {
+  font-size: 0.82rem;
+  color: var(--dim);
+  margin-top: 4px;
+  line-height: 1.45;
+}
 .task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
 
 
@@ -1288,7 +1324,7 @@ function cipherShow(route) {
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
-<div class="version-bar">v1.8.1</div>
+<div class="version-bar">v1.9.0</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -3386,7 +3422,21 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <div id="engineering-status-banner" class="card" style="background: rgba(74,222,128,0.08); border-left: 3px solid #4ade80; padding: 12px 16px; margin: 0 0 24px 0;">
     <strong style="color:#4ade80;">✓ All pre-launch engineering items complete.</strong>
-    <span style="color:var(--dim);"> Campaign shipped 2026-05-18. Sections below describe the original handoff; each one is annotated with the current shipped status pulled from <code>campaign-state.json → preLaunchChecklist</code>.</span>
+    <span style="color:var(--dim);"> Campaign shipped 2026-05-18. Sections below describe the original handoff; deferred / parked items show inline status under each heading.</span>
+  </div>
+
+  <!-- COMPLETED WORK (rendered from preLaunchChecklist items where status==done) -->
+  <h2 id="completed" style="margin-top:0;">✓ Completed work</h2>
+  <p style="color:var(--dim);font-size:0.9rem;margin-top:-4px;">Engineering items with a verified completion date. Sourced from <code>campaign-state.json → preLaunchChecklist</code> (status = <code>done</code>).</p>
+  <div id="engineering-completed-list" class="completed-list">
+    <p class="empty-state" style="color:var(--dim);">Loading completed items…</p>
+  </div>
+
+  <!-- DEFERRED / PARKED WORK -->
+  <h2 id="deferred">⏸ Deferred / parked</h2>
+  <p style="color:var(--dim);font-size:0.9rem;margin-top:-4px;">Engineering items intentionally not shipped pre-launch. Each has a re-activation trigger.</p>
+  <div id="engineering-deferred-list" class="completed-list">
+    <p class="empty-state" style="color:var(--dim);">Loading deferred items…</p>
   </div>
 
   <!-- §1 -->
@@ -3443,7 +3493,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <!-- §4 -->
   <h2 id="s4">4. 7-day onboarding email sequence (Resend)</h2>
-  <div class="section-status" data-pre-launch-id="resend-day-0,resend-suppression"></div>
+  <div class="section-status" data-pre-launch-id="resend-day0,resend-suppression"></div>
   <p>Copy in <a href="#" onclick="cipherShow('content');return false;">content § email</a>. Implementation requirements:</p>
   <ul>
     <li><strong>Days 0, 1, 2, 3, 5, 6, 7.</strong> Day 4 intentionally skipped.</li>
@@ -3473,7 +3523,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
     <div class="checklist-item" data-pre-launch-id="ga4-signup-event"><input type="checkbox" id="c3" data-key="c3"><label for="c3">GA4 <code>signup_complete</code> fires on a real test signup and shows in DebugView</label></div>
     <div class="checklist-item" data-pre-launch-id="meta-capi"><input type="checkbox" id="c4" data-key="c4"><label for="c4">Meta Conversions API receives a server-side test event</label></div>
     <div class="checklist-item" data-pre-launch-id="linkedin-insight"><input type="checkbox" id="c5" data-key="c5"><label for="c5">LinkedIn Insight Tag is firing on <code>/lp/*</code> pages</label></div>
-    <div class="checklist-item" data-pre-launch-id="resend-day-0"><input type="checkbox" id="c6" data-key="c6"><label for="c6">Resend Day 0 email sends to a test address with merge tags populated</label></div>
+    <div class="checklist-item" data-pre-launch-id="resend-day0"><input type="checkbox" id="c6" data-key="c6"><label for="c6">Resend Day 0 email sends to a test address with merge tags populated</label></div>
     <div class="checklist-item" data-pre-launch-id="resend-suppression"><input type="checkbox" id="c7" data-key="c7"><label for="c7">Resend suppresses correctly when a test user upgrades mid-trial</label></div>
     <div class="checklist-item" data-pre-launch-id="testimonial-prompt"><input type="checkbox" id="c8" data-key="c8"><label for="c8">Testimonial prompt fires at the 10th-question milestone</label></div>
     <div class="checklist-item" data-pre-launch-id="utm-attribution"><input type="checkbox" id="c9" data-key="c9"><label for="c9">All four UTM source/medium/campaign/exam tags resolve to clean reports in GA4</label></div>
@@ -4673,19 +4723,28 @@ function applyChecklistStatus(cb, status) {
   else                           { item.classList.add('status-bad'); }
 }
 
-// Renders one status row per checklist ID inside every .section-status block
-// on the Engineering tab. data-pre-launch-id can be a single ID or a
-// comma-separated list. Special IDs starting with __parked_ render a "Parked"
-// banner without needing a server entry.
+// Items hard-coded into the dashboard (no preLaunchChecklist entry) that
+// should still appear on the deferred/parked list.
+const PARKED_ITEMS = [
+  {
+    id:     '__parked_reddit_pixel',
+    label:  'Reddit ad pixel',
+    pillText: 'Parked',
+    cls:    'parked',
+    when:   'When paid gate hits',
+    note:   'Will install when the 25-activated-user paid-spend gate hits and the first Reddit ads run. Won\'t be needed weeks 1–4 since paid is off.',
+  },
+];
+
+// Renders three things on the Engineering tab:
+//   1. The top "Completed work" list — every preLaunchChecklist entry with
+//      status==='done', sorted by completedAt date.
+//   2. The top "Deferred / parked" list — every entry with status==='na'
+//      (with deferredUntil) plus the PARKED_ITEMS hard-coded above.
+//   3. The per-section .section-status banners — but ONLY for items that are
+//      NOT done. Done items live on the Completed list, so duplicating them
+//      under their section would be visual noise.
 function renderEngineeringSectionStatuses() {
-  const PARKED_LABELS = {
-    '__parked_reddit_pixel': {
-      label: 'Reddit pixel',
-      pill:  'Parked',
-      cls:   'na',
-      note:  'Will install when the 25-activated-user paid-spend gate hits and the first Reddit ads run. Won\'t be needed weeks 1–4 since paid is off.',
-    },
-  };
   const STATUS_META = {
     'done':            { pill: '✓ Done',           cls: 'good' },
     'na':              { pill: 'N/A',              cls: 'na'   },
@@ -4695,47 +4754,100 @@ function renderEngineeringSectionStatuses() {
   };
   const checklist = (STATE && Array.isArray(STATE.preLaunchChecklist)) ? STATE.preLaunchChecklist : [];
 
+  // --- 1. Completed list (top of page) ---
+  const completedHost = document.getElementById('engineering-completed-list');
+  if (completedHost) {
+    const completed = checklist
+      .filter(c => c.status === 'done')
+      .slice()
+      .sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
+    if (completed.length === 0) {
+      completedHost.innerHTML = '<p class="empty-state" style="color:var(--dim);">No completed engineering items yet.</p>';
+    } else {
+      completedHost.innerHTML = completed.map(c =>
+        '<div class="row done">' +
+          '<div class="date">' + escHtml(c.completedAt || '—') + '</div>' +
+          '<div>' +
+            '<div class="label">' + escHtml(c.label || c.id) + '</div>' +
+            (c.note ? '<div class="note">' + escHtml(c.note) + '</div>' : '') +
+          '</div>' +
+        '</div>'
+      ).join('');
+    }
+  }
+
+  // --- 2. Deferred / parked list (top of page) ---
+  const deferredHost = document.getElementById('engineering-deferred-list');
+  if (deferredHost) {
+    const deferredFromChecklist = checklist
+      .filter(c => c.status === 'na')
+      .map(c => ({
+        id: c.id,
+        label: c.label || c.id,
+        when: c.deferredUntil || 'Until further notice',
+        note: c.note || '',
+        cls: 'deferred',
+      }));
+    const deferred = deferredFromChecklist.concat(PARKED_ITEMS.map(p => ({
+      id: p.id, label: p.label, when: p.when, note: p.note, cls: p.cls,
+    })));
+    if (deferred.length === 0) {
+      deferredHost.innerHTML = '<p class="empty-state" style="color:var(--dim);">No deferred items — everything required is shipped.</p>';
+    } else {
+      deferredHost.innerHTML = deferred.map(d =>
+        '<div class="row ' + d.cls + '">' +
+          '<div class="date">' + escHtml(d.when) + '</div>' +
+          '<div>' +
+            '<div class="label">' + escHtml(d.label) + '</div>' +
+            (d.note ? '<div class="note">' + escHtml(d.note) + '</div>' : '') +
+          '</div>' +
+        '</div>'
+      ).join('');
+    }
+  }
+
+  // --- 3. Per-section .section-status banners (skip done items) ---
   document.querySelectorAll('.section-status').forEach(host => {
     host.innerHTML = '';
     const raw = host.dataset.preLaunchId || '';
     const ids = raw.split(',').map(s => s.trim()).filter(Boolean);
     if (ids.length === 0) return;
 
+    const rows = [];
     ids.forEach(id => {
-      const row = document.createElement('div');
-      let entry = null;
-      let label = id;
-      let pillText = '';
-      let cls = 'bad';
-      let note = '';
-
       if (id.startsWith('__parked_')) {
-        const p = PARKED_LABELS[id];
+        const p = PARKED_ITEMS.find(x => x.id === id);
         if (!p) return;
-        label = p.label;
-        pillText = p.pill;
-        cls = p.cls;
-        note = p.note;
-      } else {
-        entry = checklist.find(c => c.id === id);
-        if (!entry) {
-          label = id;
-          pillText = 'Not in checklist';
-          cls = 'bad';
-        } else {
-          label = entry.label || id;
-          const meta = STATUS_META[entry.status] || { pill: entry.status, cls: 'bad' };
-          pillText = meta.pill;
-          cls = meta.cls;
-          note = entry.note || '';
-        }
+        rows.push({ label: p.label, pillText: p.pillText, cls: 'na', note: p.note });
+        return;
       }
+      const entry = checklist.find(c => c.id === id);
+      if (!entry) {
+        rows.push({ label: id, pillText: 'Not in checklist', cls: 'bad', note: '' });
+        return;
+      }
+      // Done items live on the Completed list above; don't duplicate them here.
+      if (entry.status === 'done') return;
+      const meta = STATUS_META[entry.status] || { pill: entry.status, cls: 'bad' };
+      rows.push({ label: entry.label || id, pillText: meta.pill, cls: meta.cls, note: entry.note || '' });
+    });
 
-      row.className = 'row ' + cls;
+    if (rows.length === 0) {
+      // Whole section is done — show a compact "see Completed list above" line.
+      const row = document.createElement('div');
+      row.className = 'row good';
+      row.innerHTML = '<span class="pill">✓ Done</span><span class="note">See completion details in the <a href="#completed" onclick="document.getElementById(\'completed\').scrollIntoView({behavior:\'smooth\'});return false;">Completed work</a> list at the top of this page.</span>';
+      host.appendChild(row);
+      return;
+    }
+
+    rows.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'row ' + r.cls;
       row.innerHTML =
-        '<span class="pill">' + escHtml(pillText) + '</span>' +
-        '<span><strong class="lbl">' + escHtml(label) + '</strong>' +
-        (note ? ' <span class="note">— ' + escHtml(note) + '</span>' : '') +
+        '<span class="pill">' + escHtml(r.pillText) + '</span>' +
+        '<span><strong class="lbl">' + escHtml(r.label) + '</strong>' +
+        (r.note ? ' <span class="note">— ' + escHtml(r.note) + '</span>' : '') +
         '</span>';
       host.appendChild(row);
     });

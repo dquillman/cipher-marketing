@@ -122,54 +122,63 @@
       "id": "lps-deployed",
       "label": "Three Tier 1 LPs (PMP, Sec+, SHRM-CP) deployed and reachable",
       "status": "done",
+      "completedAt": "2026-05-12",
       "note": "Shipped 2026-05-12. All 3 LPs live on cipherexam.com — see blocker lps-deployed."
     },
     {
       "id": "widget-render",
       "label": "Try-a-Question widget renders on each LP with explanation panel working",
       "status": "done",
+      "completedAt": "2026-05-12",
       "note": "Verified 2026-05-12 via live test on all 3 LPs (/lp/pmp, /lp/security-plus, /lp/shrm-cp). Widget renders, 4 ABCD option buttons, Reveal button shows explanation panel with Bloom's level. No console errors."
     },
     {
       "id": "ga4-signup-event",
       "label": "GA4 signup_complete fires on a real test signup (verify in DebugView)",
       "status": "done",
+      "completedAt": "2026-05-12",
       "note": "Verified 2026-05-12 via /verify-events tab during real test signup. signup_complete fired with full payload: method=email, user_id, utm_source, utm_campaign, utm_content. Meta Pixel CompleteRegistration + Google Ads conversion also confirmed firing on the same event."
     },
     {
       "id": "meta-capi",
       "label": "Meta Conversions API server-side test event received",
       "status": "na",
+      "deferredUntil": "First paid Meta ad set after 25-activation gate",
       "note": "N/A for Week 1 — not running paid Meta until 25 activations (paid-spend gate). Server-side CAPI verification only matters when paid Meta campaigns start. Move back to pending-runtime when first Meta ad set goes live."
     },
     {
       "id": "linkedin-insight",
       "label": "LinkedIn Insight Tag firing on /lp/* pages",
       "status": "done",
+      "completedAt": "2026-05-12",
       "note": "Insight Tag installed + cipher#9 conversion stub shipped. Verified pageview attribution."
     },
     {
       "id": "resend-day0",
       "label": "Resend Day 0 email sends to test address with merge tags populated",
       "status": "na",
+      "deferredUntil": "2026-05-25 (Week 2)",
       "note": "N/A for Week 1 — Resend drip deferred to Week 2 (resend-sequence blocker). Week 1 uses manual founder 1:1 emails (07-founder-1to1-emails.md)."
     },
     {
       "id": "resend-suppression",
       "label": "Resend suppresses correctly when test user upgrades mid-trial",
       "status": "na",
+      "deferredUntil": "2026-05-25 (Week 2)",
       "note": "N/A for Week 1 — same deferral as Resend Day 0. Re-activates when resend-sequence blocker is built in Week 2."
     },
     {
       "id": "testimonial-prompt",
       "label": "In-app testimonial prompt fires at 10th-question milestone",
       "status": "done",
+      "completedAt": "2026-05-12",
       "note": "Shipped 2026-05-12 (cipher#10). Slide-up card at Q10 captures rating + quote + UTM."
     },
     {
       "id": "utm-attribution",
       "label": "UTM source/medium/campaign/exam tags resolve cleanly in GA4",
       "status": "done",
+      "completedAt": "2026-05-12",
       "note": "Verified 2026-05-12 end-to-end: hit /lp/pmp?utm_source=preflight&utm_campaign=monday_launch_check&utm_content=brad_dryrun → values landed in sessionStorage.ec_utm → reappeared in signup_complete event payload → also persisted to testimonials/{uid} Firestore doc as utmSource/utmCampaign/utmContent. GA4 custom dimensions verification still requires real traffic to compare reports (Day 2-3 of launch)."
     },
     {
