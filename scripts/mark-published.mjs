@@ -77,26 +77,33 @@ if (!post) {
   process.exit(1);
 }
 
-if (post.status === "published") {
-  console.warn(`⚠  Post "${post.id}" is already marked published.`);
+if (post.status === "posted") {
+  console.warn(`⚠  Post "${post.id}" is already marked posted.`);
   console.warn(`   postedAt: ${post.postedAt}`);
   console.warn(`   postUrl:  ${post.postUrl}`);
   process.exit(0);
 }
 
 // ---- Apply update ----
+// NOTE: status must be "posted" (not "published") to match the dashboard
+// filters in app.html / posts.html / schedule.html. "published" would make
+// the post invisible to both the drafts and the awaiting-grading lists.
 const now = new Date().toISOString();
-post.status = "published";
+post.status = "posted";
 post.postedAt = now;
 post.postUrl = postUrl;
 data._meta.lastUpdatedAt = now;
+data._meta.lastUpdatedBy = "mark-published";
 
 writeFileSync(POSTS_FILE, JSON.stringify(data, null, 2) + "\n");
 
 console.log(`✓  ${post.id}`);
 console.log(`   channel:   ${post.channel}`);
 console.log(`   scheduled: ${post.scheduledTimeLocal}`);
+console.log(`   status:    posted`);
 console.log(`   postedAt:  ${now}`);
 console.log(`   postUrl:   ${postUrl}`);
 console.log();
-console.log("   Run 'npm run build' to reflect in dashboard, or it will auto-rebuild if you're in Claude Code.");
+console.log("   Local posts.json updated. To reflect in the deployed dashboard:");
+console.log("     node scripts/seed-firestore.mjs");
+console.log("   (The seed script now preserves dashboard 'Mark Posted' clicks and grades.)");

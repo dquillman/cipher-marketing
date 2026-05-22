@@ -10,13 +10,17 @@
       "engagementRatePctGoodAtLeast": 2,
       "engagementRatePctGreatAtLeast": 5,
       "linkClickRatePctGoodAtLeast": 1,
-      "linkClickRatePctGreatAtLeast": 2.5
+      "linkClickRatePctGreatAtLeast": 2.5,
+      "videoViewRatePctGoodAtLeast": 30,
+      "videoViewRatePctGreatAtLeast": 50
     },
     "x": {
       "engagementRatePctGoodAtLeast": 1,
       "engagementRatePctGreatAtLeast": 3,
       "linkClickRatePctGoodAtLeast": 0.5,
-      "linkClickRatePctGreatAtLeast": 1.5
+      "linkClickRatePctGreatAtLeast": 1.5,
+      "videoViewRatePctGoodAtLeast": 15,
+      "videoViewRatePctGreatAtLeast": 30
     }
   },
   "posts": [

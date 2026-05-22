@@ -38,6 +38,85 @@
       }
     }
   },
+  "communityEngagement": {
+    "instructions": "Daily community-reply targets. Active exam(s) are auto-detected from the current campaign week's scheduled posts (posts.json → examFocus) — the dashboard picks the matching byExam[<exam>] block. If multiple exams are scheduled the same week, targets are merged. Falls back to byExam.default when nothing matches. dailyTarget = replies per platform per day.",
+    "dailyTarget": 3,
+    "byExam": {
+      "PMP": {
+        "reddit": [
+          { "label": "r/pmp", "url": "https://www.reddit.com/r/pmp/" },
+          { "label": "r/projectmanagement", "url": "https://www.reddit.com/r/projectmanagement/" }
+        ],
+        "facebook": [
+          { "label": "PMP Exam Prep group", "url": "https://www.facebook.com/groups/pmpexamprep", "note": "Verify exact URL — placeholder" },
+          { "label": "PMP Question Bank group", "url": "https://www.facebook.com/groups/pmpquestionbank", "note": "Verify exact URL — placeholder" }
+        ],
+        "linkedin": [
+          { "label": "#PMP feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=pmp" },
+          { "label": "PMI company page", "url": "https://www.linkedin.com/company/project-management-institute/" },
+          { "label": "PMP study group search", "url": "https://www.linkedin.com/search/results/groups/?keywords=PMP", "note": "Pick a specific group and pin its URL here" }
+        ],
+        "x": [
+          { "label": "#PMP live", "url": "https://x.com/search?q=%23PMP&f=live" },
+          { "label": "@PMInstitute", "url": "https://x.com/PMInstitute" },
+          { "label": "Add 2 more PMI handles", "url": "https://x.com/search?q=PMP%20PMI&f=user", "note": "Dave to curate" }
+        ]
+      },
+      "Security+": {
+        "reddit": [
+          { "label": "r/CompTIA", "url": "https://www.reddit.com/r/CompTIA/" },
+          { "label": "r/cybersecurity", "url": "https://www.reddit.com/r/cybersecurity/" },
+          { "label": "r/sysadmin", "url": "https://www.reddit.com/r/sysadmin/" }
+        ],
+        "facebook": [
+          { "label": "CompTIA Security+ Study Group", "url": "https://www.facebook.com/groups/comptiasecurityplus", "note": "Verify exact URL — placeholder" }
+        ],
+        "linkedin": [
+          { "label": "#SecurityPlus feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=securityplus" },
+          { "label": "#Cybersecurity feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=cybersecurity" },
+          { "label": "CompTIA company page", "url": "https://www.linkedin.com/company/comptia/" },
+          { "label": "Security+ study group search", "url": "https://www.linkedin.com/search/results/groups/?keywords=Security%2B", "note": "Pick a specific group and pin its URL here" }
+        ],
+        "x": [
+          { "label": "#SecurityPlus live", "url": "https://x.com/search?q=%23SecurityPlus&f=live" },
+          { "label": "@CompTIA", "url": "https://x.com/CompTIA" },
+          { "label": "Add 2 more infosec handles", "url": "https://x.com/search?q=Security%2B&f=user", "note": "Dave to curate" }
+        ]
+      },
+      "SHRM-CP": {
+        "reddit": [
+          { "label": "r/humanresources", "url": "https://www.reddit.com/r/humanresources/" },
+          { "label": "r/AskHR", "url": "https://www.reddit.com/r/AskHR/" }
+        ],
+        "facebook": [
+          { "label": "SHRM-CP / SCP Exam Prep", "url": "https://www.facebook.com/groups/shrmcpexamprep", "note": "Verify exact URL — placeholder" }
+        ],
+        "linkedin": [
+          { "label": "#SHRM feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=shrm" },
+          { "label": "#HumanResources feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=humanresources" },
+          { "label": "SHRM company page", "url": "https://www.linkedin.com/company/society-for-human-resource-management/" },
+          { "label": "SHRM-CP study group search", "url": "https://www.linkedin.com/search/results/groups/?keywords=SHRM-CP", "note": "Pick a specific group and pin its URL here" }
+        ],
+        "x": [
+          { "label": "#SHRM live", "url": "https://x.com/search?q=%23SHRM&f=live" },
+          { "label": "@SHRM", "url": "https://x.com/SHRM" },
+          { "label": "Add 2 more HR handles", "url": "https://x.com/search?q=SHRM-CP&f=user", "note": "Dave to curate" }
+        ]
+      },
+      "default": {
+        "reddit": [
+          { "label": "r/certifications", "url": "https://www.reddit.com/r/certifications/" }
+        ],
+        "facebook": [],
+        "linkedin": [
+          { "label": "#certification feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=certification" }
+        ],
+        "x": [
+          { "label": "#certification live", "url": "https://x.com/search?q=%23certification&f=live" }
+        ]
+      }
+    }
+  },
   "preLaunchChecklist": [
     {
       "id": "lps-deployed",

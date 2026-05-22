@@ -445,6 +445,34 @@ tr:hover td { background: rgba(17,25,58,0.4); }
 .task-row.readonly input { opacity: 0.5; pointer-events: none; }
 .task-row.readonly { opacity: 0.78; }
 .task-row { flex-wrap: wrap; }
+.community-engagement {
+  border: 1px solid rgba(125,211,252,0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: rgba(125,211,252,0.04);
+  margin-bottom: 18px;
+}
+.community-row { background: transparent; border-color: rgba(255,255,255,0.08); }
+.community-links {
+  flex-basis: 100%;
+  margin-left: 28px;
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.community-link {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(125,211,252,0.12);
+  border: 1px solid rgba(125,211,252,0.3);
+  border-radius: 999px;
+  color: var(--cyan, #7ad6ff);
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.community-link:hover { background: rgba(125,211,252,0.22); }
 .task-row .task-note {
   flex-basis: 100%;
   margin-left: 28px;
@@ -1222,7 +1250,7 @@ function cipherShow(route) {
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
-<div class="version-bar">v1.2.0</div>
+<div class="version-bar">v1.7.0</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -1237,6 +1265,7 @@ function cipherShow(route) {
   <!-- 2. Today's tasks -->
   <h2 style="margin-top:0;">Today's tasks</h2>
   <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Active-week tasks come from 00-campaign-brief.md §3. Pre-launch checklist comes from <code>data/campaign-state.json → preLaunchChecklist</code> (status set by Brad; source list mirrors 06-engineering-handoff.md §7). Items marked <em>done</em> or <em>N/A</em> are server-driven — local checkboxes can't override them.</p>
+  <div id="community-engagement-tasks"></div>
   <div id="today-tasks"></div>
 
   <!-- 6. KPI snapshot from state -->
@@ -2004,10 +2033,16 @@ function cipherShow(route) {
 .post-pill.channel-linkedin { background: rgba(10, 102, 194, 0.18); color: #7eb8ff; border-color: rgba(10, 102, 194, 0.45); }
 .post-pill.channel-x        { background: rgba(255, 255, 255, 0.08); color: var(--fg); }
 .post-pill.exam             { background: rgba(167, 139, 250, 0.16); color: #c4b5fd; border-color: rgba(167, 139, 250, 0.45); }
-.post-pill.grade-A { background: rgba(74, 222, 128, 0.16); color: #86efac; border-color: rgba(74, 222, 128, 0.45); }
-.post-pill.grade-B { background: rgba(125, 211, 252, 0.16); color: #7dd3fc; border-color: rgba(125, 211, 252, 0.45); }
-.post-pill.grade-C { background: rgba(251, 191, 36, 0.16); color: #fbbf24; border-color: rgba(251, 191, 36, 0.45); }
+/* Grade color scale: A = gold, B = green, C = yellow, D = red */
+.post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
+.post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
+.post-pill.grade-C { background: rgba(250, 204, 21,  0.16); color: #facc15; border-color: rgba(250, 204, 21,  0.45); }
 .post-pill.grade-D { background: rgba(248, 113, 113, 0.16); color: #f87171; border-color: rgba(248, 113, 113, 0.45); }
+/* Summary tile "Avg grade" value coloring — same scale, larger emphasis */
+.summary-card .value.grade-A { color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,0.35); }
+.summary-card .value.grade-B { color: #4ade80; }
+.summary-card .value.grade-C { color: #facc15; }
+.summary-card .value.grade-D { color: #f87171; }
 .post-meta { font-size: 0.85rem; color: var(--dim); margin-left: auto; }
 .post-copy {
   white-space: pre-wrap;
@@ -2164,7 +2199,7 @@ function cipherShow(route) {
       summaryCard('Drafts',   drafts.length)   +
       summaryCard('Awaiting', awaiting.length) +
       summaryCard('Graded',   graded.length)   +
-      summaryCard('Avg grade (4=A)', avgGrade) +
+      summaryCard('Avg grade (4=A)', avgGrade, avgGradeClass(avgGrade)) +
       summaryCard('Total impressions', totalImpressions.toLocaleString()) +
       summaryCard('Total link clicks', totalClicks.toLocaleString()) +
       summaryCard('Signups from posts', totalSignups);
@@ -2197,8 +2232,22 @@ function cipherShow(route) {
     });
   }
 
-  function summaryCard(label, value) {
-    return '<div class="summary-card"><div class="label">' + esc(label) + '</div><div class="value">' + esc(String(value)) + '</div></div>';
+  function summaryCard(label, value, valueClass) {
+    var cls = valueClass ? ' ' + valueClass : '';
+    return '<div class="summary-card"><div class="label">' + esc(label) + '</div><div class="value' + cls + '">' + esc(String(value)) + '</div></div>';
+  }
+
+  // Map a numeric avg-grade (1=D … 4=A) to a grade-A/B/C/D CSS class.
+  // Uses 0.5-band rounding so 1.5 lands in C, 2.5 in B, 3.5 in A.
+  function avgGradeClass(n) {
+    if (n === '—' || n == null) return '';
+    var v = Number(n);
+    if (isNaN(v)) return '';
+    if (v >= 3.5) return 'grade-A';
+    if (v >= 2.5) return 'grade-B';
+    if (v >= 1.5) return 'grade-C';
+    if (v >  0)   return 'grade-D';
+    return '';
   }
 
   function renderPost(p) {
@@ -2215,7 +2264,7 @@ function cipherShow(route) {
 
     var metrics = '';
     if (p.metrics) {
-      metrics = '<table class="metrics-table"><tbody>' +
+      var rows = '' +
         metricRow('Impressions', p.metrics.impressions) +
         metricRow('Engagements', p.metrics.engagements) +
         metricRow('Likes', p.metrics.likes) +
@@ -2223,8 +2272,14 @@ function cipherShow(route) {
         metricRow('Shares / Reposts', p.metrics.shares) +
         metricRow('Profile visits', p.metrics.profileVisits) +
         metricRow('Link clicks', p.metrics.linkClicks) +
-        metricRow('Trial signups attributed', p.metrics.trialSignupsAttributed) +
-        '</tbody></table>';
+        metricRow('Trial signups attributed', p.metrics.trialSignupsAttributed);
+      if (p.video || p.metrics.videoViews) {
+        rows += metricRow('Video views', p.metrics.videoViews);
+        if (p.metrics.videoViewRatePct != null) {
+          rows += metricRow('View rate', p.metrics.videoViewRatePct + '%');
+        }
+      }
+      metrics = '<table class="metrics-table"><tbody>' + rows + '</tbody></table>';
     }
 
     var gradeBlock = '';
@@ -2240,6 +2295,23 @@ function cipherShow(route) {
       ? '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '" style="margin-left:8px;">Grade this post</button>'
       : '';
 
+    // Show Mark Posted button for any post that hasn't been marked posted yet
+    // (covers status === 'scheduled' and status === 'draft'). The publish-form
+    // styles + global click delegation are already wired below.
+    var unposted = p.status !== 'posted';
+    var markBlock = unposted ? (
+      '<button class="btn-warn" type="button" data-sched-publish="' + esc(p.id) + '" style="margin-left:8px;">Mark as Posted</button>' +
+      '<div class="publish-form" id="pub-form-' + esc(p.id) + '">' +
+        '<div class="publish-form-label">Paste the live post URL, then click Mark Posted</div>' +
+        '<div class="publish-form-row">' +
+          '<input type="url" class="publish-url-input" id="pub-url-' + esc(p.id) + '" placeholder="https://www.linkedin.com/feed/update/...">' +
+          '<button class="btn-primary" type="button" data-sched-submit="' + esc(p.id) + '">Mark Posted</button>' +
+          '<button class="btn-secondary" type="button" data-sched-cancel="' + esc(p.id) + '">Cancel</button>' +
+        '</div>' +
+        '<div class="pub-error" id="pub-err-' + esc(p.id) + '"></div>' +
+      '</div>'
+    ) : '';
+
     return '<div class="post-card ' + statusClass + '">' +
       '<div class="post-head">' +
         '<span class="post-pill channel-' + esc(p.channel || 'other') + '">' + esc(channelLabel) + '</span>' +
@@ -2251,6 +2323,7 @@ function cipherShow(route) {
       '<div class="post-copy">' + esc(p.copy || '') + '</div>' +
       '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
       gradeBtn +
+      markBlock +
       fields +
       metrics +
       gradeBlock +
@@ -4100,6 +4173,125 @@ function renderTaskList(container, info, dateKey, opts = {}) {
   });
 }
 
+// Returns array of exam-focus strings active in the current campaign week.
+// Derived from window.__POSTS__.posts whose scheduled date falls Mon–Sun of `refDate`.
+function currentWeekExamFocus(refDate) {
+  const posts = (window.__POSTS__ && Array.isArray(window.__POSTS__.posts)) ? window.__POSTS__.posts : [];
+  if (posts.length === 0) return [];
+  const d = new Date(refDate);
+  // Anchor to Monday (campaign weeks run Mon–Sun)
+  const dow = d.getDay(); // 0=Sun..6=Sat
+  const monOffset = (dow === 0 ? -6 : 1 - dow);
+  const monday = new Date(d); monday.setDate(d.getDate() + monOffset); monday.setHours(0,0,0,0);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 7);
+  const exams = new Set();
+  for (const p of posts) {
+    const iso = p.scheduledTime || p.scheduled;
+    if (!iso) continue;
+    const pd = new Date(iso);
+    if (pd >= monday && pd < sunday && p.examFocus) exams.add(p.examFocus);
+  }
+  return [...exams];
+}
+
+// Merge target arrays across multiple exams, dedupe by URL.
+function mergeTargets(byExam, examList, platformKey) {
+  const seen = new Set();
+  const merged = [];
+  for (const exam of examList) {
+    const block = byExam[exam];
+    if (!block || !Array.isArray(block[platformKey])) continue;
+    for (const t of block[platformKey]) {
+      if (!t || !t.url || seen.has(t.url)) continue;
+      seen.add(t.url);
+      merged.push(t);
+    }
+  }
+  return merged;
+}
+
+function renderCommunityEngagement(container, dateKey) {
+  container.innerHTML = '';
+  const ce = STATE && STATE.communityEngagement;
+  if (!ce || !ce.byExam || typeof ce.byExam !== 'object') return;
+
+  const target = ce.dailyTarget || 3;
+  const done = loadDone('community', dateKey);
+
+  // Pick exam focus from this week's scheduled posts. Fall back to "default".
+  let activeExams = currentWeekExamFocus(new Date());
+  if (activeExams.length === 0) activeExams = ce.byExam.default ? ['default'] : [];
+
+  // Build platform list dynamically — keys present in any active-exam block.
+  const PLATFORM_LABELS = { linkedin: 'LinkedIn', reddit: 'Reddit', facebook: 'Facebook', x: 'X' };
+  const platformKeys = ['linkedin', 'reddit', 'facebook', 'x'].filter(k =>
+    activeExams.some(ex => ce.byExam[ex] && Array.isArray(ce.byExam[ex][k]) && ce.byExam[ex][k].length > 0)
+  );
+  if (platformKeys.length === 0) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'community-engagement';
+
+  const focusLabel = activeExams.filter(e => e !== 'default').join(' + ') || 'general';
+  const header = document.createElement('div');
+  header.className = 'community-engagement-head';
+  header.innerHTML = `<h3 style="margin:0 0 4px;font-size:1rem;">Community engagement <span style="color:var(--dim);font-weight:400;font-size:0.82rem;">— this week: <strong style="color:var(--cyan, #7ad6ff);">${escHtml(focusLabel)}</strong></span></h3>
+    <p style="color:var(--dim);font-size:0.85rem;margin:0 0 10px;">Reply to <strong>${target}</strong> threads in each platform's target communities. Targets auto-rotate based on the week's exam focus. Tap a community to open it.</p>`;
+  wrap.appendChild(header);
+
+  platformKeys.forEach(pkey => {
+    const platLabel = PLATFORM_LABELS[pkey] || pkey;
+    const targets = mergeTargets(ce.byExam, activeExams, pkey);
+    if (targets.length === 0) return;
+
+    const id = `community-${pkey}-${dateKey}`;
+    const isDone = !!done[pkey];
+    const row = document.createElement('div');
+    row.className = 'task-row community-row' + (isDone ? ' done status-good' : ' status-bad');
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.id = id;
+    cb.checked = isDone;
+    cb.addEventListener('change', () => {
+      const cur = loadDone('community', dateKey);
+      cur[pkey] = cb.checked;
+      saveDone('community', dateKey, cur);
+      row.classList.toggle('done', cb.checked);
+      row.classList.toggle('status-good', cb.checked);
+      row.classList.toggle('status-bad', !cb.checked);
+    });
+    row.appendChild(cb);
+
+    const lab = document.createElement('label');
+    lab.htmlFor = id;
+    lab.innerHTML = `<strong>${escHtml(platLabel)}</strong> — ${target} replies today`;
+    row.appendChild(lab);
+
+    const links = document.createElement('div');
+    links.className = 'community-links';
+    targets.forEach(t => {
+      const a = document.createElement('a');
+      a.href = t.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.className = 'community-link';
+      a.textContent = t.label;
+      if (t.note) a.title = t.note;
+      links.appendChild(a);
+    });
+    row.appendChild(links);
+
+    wrap.appendChild(row);
+  });
+
+  container.appendChild(wrap);
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
 function renderWeekStrip(container, refDate) {
   container.innerHTML = '';
   const today = new Date(refDate);
@@ -4305,6 +4497,9 @@ function initTodayPage() {
     `;
   }
 
+  const communityList = document.getElementById('community-engagement-tasks');
+  if (communityList) renderCommunityEngagement(communityList, dayKey(today));
+
   const todayList = document.getElementById('today-tasks');
   if (todayList) renderTaskList(todayList, info, dayKey(today), { scope: 'today' });
 
@@ -4458,6 +4653,13 @@ if (document.readyState === 'loading') {
       if (!snap.exists) return;
       window.__CAMPAIGN_STATE__ = snap.data();
       applyState(window.__CAMPAIGN_STATE__);
+      // Re-render any Today-page sections that depend on STATE.
+      try {
+        var ceEl = document.getElementById('community-engagement-tasks');
+        if (ceEl && typeof renderCommunityEngagement === 'function') {
+          renderCommunityEngagement(ceEl, (typeof dayKey === 'function') ? dayKey(new Date()) : new Date().toISOString().slice(0,10));
+        }
+      } catch (e) { console.warn('[cipher] community re-render failed:', e); }
     }, function (err) {
       console.warn('[cipher] Firestore state sync error:', err.message);
     });
@@ -4467,6 +4669,14 @@ if (document.readyState === 'loading') {
       if (!snap.exists) return;
       window.__POSTS__ = snap.data();
       document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+      // Community engagement targets depend on this week's examFocus from posts,
+      // so re-render the section when the schedule changes.
+      try {
+        var ceEl = document.getElementById('community-engagement-tasks');
+        if (ceEl && typeof renderCommunityEngagement === 'function') {
+          renderCommunityEngagement(ceEl, (typeof dayKey === 'function') ? dayKey(new Date()) : new Date().toISOString().slice(0,10));
+        }
+      } catch (e) { console.warn('[cipher] community re-render (posts) failed:', e); }
     }, function (err) {
       console.warn('[cipher] Firestore posts sync error:', err.message);
     });
@@ -4491,7 +4701,8 @@ if (document.readyState === 'loading') {
     +     '</div>'
     +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
     +     '<form id="grade-form" class="grade-form">'
-    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
+    +       '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
+    +       '<label data-video-only hidden>Video views <input type="number" min="0" name="videoViews" value="0"></label>'
     +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
     +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
     +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
@@ -4528,6 +4739,8 @@ if (document.readyState === 'loading') {
     document.getElementById('grade-form').reset();
     document.getElementById('grade-submit-btn').disabled = false;
     document.getElementById('grade-submit-btn').textContent = 'Submit grade';
+    var videoRow = modal.querySelector('[data-video-only]');
+    if (videoRow) videoRow.hidden = !post.video;
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     var first = modal.querySelector('input[name="impressions"]');
@@ -4552,6 +4765,7 @@ if (document.readyState === 'loading') {
     var reposts  = Number(fd.get('reposts') || 0);
     var metrics = {
       impressions:            Number(fd.get('impressions') || 0),
+      videoViews:             Number(fd.get('videoViews') || 0),
       linkClicks:             Number(fd.get('linkClicks') || 0),
       likes:                  likes,
       comments:               comments,
@@ -4594,6 +4808,77 @@ if (document.readyState === 'loading') {
     if (e.target.matches && e.target.matches('[data-grade-close]')) {
       e.preventDefault();
       closeModal();
+      return;
+    }
+
+    // Mark Posted flow — works on any tab that renders [data-sched-*] buttons.
+    var pubBtn = e.target.closest && e.target.closest('[data-sched-publish]');
+    if (pubBtn) {
+      e.preventDefault();
+      var id = pubBtn.getAttribute('data-sched-publish');
+      var form = document.getElementById('pub-form-' + id);
+      if (form) {
+        form.classList.toggle('show');
+        if (form.classList.contains('show')) {
+          var input = document.getElementById('pub-url-' + id);
+          if (input) setTimeout(function(){ input.focus(); }, 50);
+        }
+      }
+      return;
+    }
+    var cancelBtn = e.target.closest && e.target.closest('[data-sched-cancel]');
+    if (cancelBtn) {
+      e.preventDefault();
+      var cid = cancelBtn.getAttribute('data-sched-cancel');
+      var cform = document.getElementById('pub-form-' + cid);
+      if (cform) cform.classList.remove('show');
+      var cerr = document.getElementById('pub-err-' + cid);
+      if (cerr) { cerr.textContent = ''; cerr.classList.remove('show'); }
+      return;
+    }
+    var submitBtn = e.target.closest && e.target.closest('[data-sched-submit]');
+    if (submitBtn) {
+      e.preventDefault();
+      var sid = submitBtn.getAttribute('data-sched-submit');
+      var sInput = document.getElementById('pub-url-' + sid);
+      var sErr   = document.getElementById('pub-err-' + sid);
+      var postUrl = sInput ? sInput.value.trim() : '';
+      if (!postUrl || !postUrl.startsWith('http')) {
+        if (sErr) { sErr.textContent = 'Please enter a valid URL starting with http'; sErr.classList.add('show'); }
+        return;
+      }
+      if (sErr) { sErr.textContent = ''; sErr.classList.remove('show'); }
+      submitBtn.textContent = 'Saving…';
+      submitBtn.disabled = true;
+      var db = window._cipherDb;
+      if (!db) {
+        if (sErr) { sErr.textContent = 'Firebase not loaded — check your internet connection and refresh.'; sErr.classList.add('show'); }
+        submitBtn.textContent = 'Mark Posted';
+        submitBtn.disabled = false;
+        return;
+      }
+      var docRef = db.collection('campaign').doc('posts');
+      docRef.get()
+        .then(function(snap) {
+          var data = snap.data();
+          var postsList = data.posts;
+          var idx = postsList.findIndex(function(p) { return p.id === sid; });
+          if (idx === -1) throw new Error('Post "' + sid + '" not found in Firestore');
+          var now = new Date().toISOString();
+          postsList[idx].status   = 'posted';
+          postsList[idx].postedAt = now;
+          postsList[idx].postUrl  = postUrl;
+          data._meta = data._meta || {};
+          data._meta.lastUpdatedAt = now;
+          data._meta.lastUpdatedBy = 'dashboard mark-posted';
+          return docRef.set(data);
+        })
+        .catch(function(err) {
+          if (sErr) { sErr.textContent = 'Error: ' + (err.message || 'Firestore write failed'); sErr.classList.add('show'); }
+          submitBtn.textContent = 'Mark Posted';
+          submitBtn.disabled = false;
+        });
+      return;
     }
   });
   document.addEventListener('submit', function (e) {
