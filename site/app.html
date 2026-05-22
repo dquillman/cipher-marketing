@@ -39,6 +39,9 @@
 .checklist-item.status-warn { border-left: 3px solid var(--warn); padding-left: 9px; }
 .task-row.status-bad,
 .checklist-item.status-bad  { border-left: 3px solid var(--bad);  padding-left: 9px; }
+.checklist-item.status-na   { border-left: 3px solid #6b7280; padding-left: 9px; opacity: 0.7; }
+.checklist-item.status-na label { color: var(--muted); }
+.checklist-item input[type="checkbox"]:disabled { cursor: default; }
 .task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
 
 
@@ -1250,7 +1253,7 @@ function cipherShow(route) {
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
-<div class="version-bar">v1.7.0</div>
+<div class="version-bar">v1.8.0</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -3420,15 +3423,15 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   <p>Before publishing the cornerstone blog (Week 1 Monday), confirm each. Checkbox state persists in <code>localStorage</code> (separate key from the today page).</p>
 
   <div class="card">
-    <div class="checklist-item"><input type="checkbox" id="c1" data-key="c1"><label for="c1">All three LPs are deployed, render correctly, and the CTA works end-to-end</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c2" data-key="c2"><label for="c2">"Try a Question" widget renders the right question for each cert and the explanation panel opens</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c3" data-key="c3"><label for="c3">GA4 <code>signup_complete</code> fires on a real test signup and shows in DebugView</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c4" data-key="c4"><label for="c4">Meta Conversions API receives a server-side test event</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c5" data-key="c5"><label for="c5">LinkedIn Insight Tag is firing on <code>/lp/*</code> pages</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c6" data-key="c6"><label for="c6">Resend Day 0 email sends to a test address with merge tags populated</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c7" data-key="c7"><label for="c7">Resend suppresses correctly when a test user upgrades mid-trial</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c8" data-key="c8"><label for="c8">Testimonial prompt fires at the 10th-question milestone</label></div>
-    <div class="checklist-item"><input type="checkbox" id="c9" data-key="c9"><label for="c9">All four UTM source/medium/campaign/exam tags resolve to clean reports in GA4</label></div>
+    <div class="checklist-item" data-pre-launch-id="lps-deployed"><input type="checkbox" id="c1" data-key="c1"><label for="c1">All three LPs are deployed, render correctly, and the CTA works end-to-end</label></div>
+    <div class="checklist-item" data-pre-launch-id="widget-render"><input type="checkbox" id="c2" data-key="c2"><label for="c2">"Try a Question" widget renders the right question for each cert and the explanation panel opens</label></div>
+    <div class="checklist-item" data-pre-launch-id="ga4-signup-event"><input type="checkbox" id="c3" data-key="c3"><label for="c3">GA4 <code>signup_complete</code> fires on a real test signup and shows in DebugView</label></div>
+    <div class="checklist-item" data-pre-launch-id="meta-capi"><input type="checkbox" id="c4" data-key="c4"><label for="c4">Meta Conversions API receives a server-side test event</label></div>
+    <div class="checklist-item" data-pre-launch-id="linkedin-insight"><input type="checkbox" id="c5" data-key="c5"><label for="c5">LinkedIn Insight Tag is firing on <code>/lp/*</code> pages</label></div>
+    <div class="checklist-item" data-pre-launch-id="resend-day-0"><input type="checkbox" id="c6" data-key="c6"><label for="c6">Resend Day 0 email sends to a test address with merge tags populated</label></div>
+    <div class="checklist-item" data-pre-launch-id="resend-suppression"><input type="checkbox" id="c7" data-key="c7"><label for="c7">Resend suppresses correctly when a test user upgrades mid-trial</label></div>
+    <div class="checklist-item" data-pre-launch-id="testimonial-prompt"><input type="checkbox" id="c8" data-key="c8"><label for="c8">Testimonial prompt fires at the 10th-question milestone</label></div>
+    <div class="checklist-item" data-pre-launch-id="utm-attribution"><input type="checkbox" id="c9" data-key="c9"><label for="c9">All four UTM source/medium/campaign/exam tags resolve to clean reports in GA4</label></div>
   </div>
   <blockquote class="warn">If any of the above isn't done, <strong>do not start the campaign</strong> — paid spend is gated on real conversion tracking and the campaign brief assumes the data is flowing.</blockquote>
 
@@ -4577,24 +4580,82 @@ function initIndexWidget() {
 }
 
 // ---------- ENGINEERING CHECKLIST (separate localStorage scope) ----------
+// Server-driven items in the Engineering §6 checklist mirror campaign-state.json
+// → preLaunchChecklist statuses. Items marked done or na in state CANNOT be
+// overridden by local checkbox clicks — same rule as the Today page.
 function initEngineeringChecklist() {
-  document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(cb => {
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    const cb = item.querySelector('input[type="checkbox"]');
+    if (!cb) return;
     const key = cb.dataset.key;
-    if (!key) return;
-    const stored = localStorage.getItem(`ce.eng.${key}`) === '1';
-    cb.checked = stored;
-    applyChecklistStatus(cb);
-    cb.addEventListener('change', () => {
-      localStorage.setItem(`ce.eng.${key}`, cb.checked ? '1' : '0');
-      applyChecklistStatus(cb);
-    });
+    const preLaunchId = item.dataset.preLaunchId;
+
+    // Look up server-side status, if any
+    let serverEntry = null;
+    if (preLaunchId && STATE && Array.isArray(STATE.preLaunchChecklist)) {
+      serverEntry = STATE.preLaunchChecklist.find(p => p.id === preLaunchId) || null;
+    }
+
+    if (serverEntry && (serverEntry.status === 'done' || serverEntry.status === 'na')) {
+      // Server-driven: lock the checkbox and apply server-side state.
+      cb.checked  = (serverEntry.status === 'done');
+      cb.disabled = true;
+      applyChecklistStatus(cb, serverEntry.status);
+      annotateChecklistItem(item, serverEntry);
+    } else {
+      // Local-only: legacy localStorage-backed behavior.
+      const stored = key && localStorage.getItem(`ce.eng.${key}`) === '1';
+      cb.checked = !!stored;
+      cb.disabled = false;
+      applyChecklistStatus(cb, cb.checked ? 'done' : (serverEntry && serverEntry.status) || 'pending');
+      annotateChecklistItem(item, serverEntry);
+      if (key) {
+        cb.onchange = () => {
+          localStorage.setItem(`ce.eng.${key}`, cb.checked ? '1' : '0');
+          applyChecklistStatus(cb, cb.checked ? 'done' : 'pending');
+        };
+      }
+    }
   });
 }
-function applyChecklistStatus(cb) {
+
+function applyChecklistStatus(cb, status) {
   const item = cb.parentElement;
-  item.classList.toggle('done', cb.checked);
-  item.classList.toggle('status-good', cb.checked);
-  item.classList.toggle('status-bad', !cb.checked);
+  item.classList.remove('done', 'status-good', 'status-bad', 'status-warn', 'status-na');
+  if (status === 'done')         { item.classList.add('done', 'status-good'); }
+  else if (status === 'na')      { item.classList.add('status-na'); }
+  else if (status === 'in-progress' || status === 'pending-runtime') { item.classList.add('status-warn'); }
+  else                           { item.classList.add('status-bad'); }
+}
+
+function annotateChecklistItem(item, serverEntry) {
+  // Remove any previous pill/note we added so re-renders stay clean
+  item.querySelectorAll('.engineering-server-pill, .engineering-server-note').forEach(n => n.remove());
+  if (!serverEntry) return;
+  const label = item.querySelector('label');
+  if (!label) return;
+
+  const STATUS_PILLS = {
+    'done':            { text: '✓ done',           cls: 'good' },
+    'na':              { text: 'N/A',              cls: 'dim'  },
+    'in-progress':     { text: 'in progress',      cls: 'warn' },
+    'pending-runtime': { text: 'awaiting Day-1',   cls: 'warn' },
+    'pending':         { text: 'pending',          cls: 'bad'  },
+  };
+  const meta = STATUS_PILLS[serverEntry.status] || { text: serverEntry.status, cls: 'dim' };
+  const pill = document.createElement('span');
+  pill.className = 'engineering-server-pill pill ' + meta.cls;
+  pill.style.cssText = 'margin-left:8px;font-size:0.7rem;';
+  pill.textContent = meta.text;
+  label.appendChild(pill);
+
+  if (serverEntry.note) {
+    const note = document.createElement('div');
+    note.className = 'engineering-server-note';
+    note.style.cssText = 'flex-basis:100%;margin-left:28px;margin-top:4px;font-size:0.82rem;color:var(--dim);font-style:italic;';
+    note.textContent = serverEntry.note;
+    item.appendChild(note);
+  }
 }
 
 // ---------- INDEX PAGE STATE RENDERERS ----------
@@ -4660,6 +4721,13 @@ if (document.readyState === 'loading') {
           renderCommunityEngagement(ceEl, (typeof dayKey === 'function') ? dayKey(new Date()) : new Date().toISOString().slice(0,10));
         }
       } catch (e) { console.warn('[cipher] community re-render failed:', e); }
+
+      // Re-run engineering checklist init so server-driven items reflect fresh state.
+      try {
+        if (document.querySelector('.checklist-item') && typeof initEngineeringChecklist === 'function') {
+          initEngineeringChecklist();
+        }
+      } catch (e) { console.warn('[cipher] engineering checklist re-render failed:', e); }
     }, function (err) {
       console.warn('[cipher] Firestore state sync error:', err.message);
     });
