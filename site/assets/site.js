@@ -845,3 +845,35 @@ if (document.readyState === 'loading') {
     if (e.key === 'Escape') closeModal();
   });
 })();
+
+// ---- Shared grade utilities (added 2026-05-21) -------------------------------
+// Used by the Posts page (avg grade summary) and the Schedule cards (Grade
+// pill). Inline copies still exist in app.html / posts.html for cache-warm
+// renders before site.js loads; the implementations match exactly so the
+// later-declared site.js wins-but-equals when both load.
+
+// Map A/B/C/D → numeric (4 = best). Returns 0 for any unknown grade.
+function gradeToNum(g) {
+  return ({ A: 4, B: 3, C: 2, D: 1 })[g] || 0;
+}
+
+// Map a numeric avg-grade (1=D … 4=A) to the matching grade-A/B/C/D CSS
+// class. 0.5-band rounding so 1.5 lands in C, 2.5 in B, 3.5 in A.
+function avgGradeClass(n) {
+  if (n === '—' || n == null) return '';
+  var v = Number(n);
+  if (isNaN(v)) return '';
+  if (v >= 3.5) return 'grade-A';
+  if (v >= 2.5) return 'grade-B';
+  if (v >= 1.5) return 'grade-C';
+  if (v >   0)  return 'grade-D';
+  return '';
+}
+
+// Minimal HTML escaper for safely injecting user-controlled strings into
+// innerHTML.
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+  });
+}

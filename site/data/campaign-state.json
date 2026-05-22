@@ -184,8 +184,9 @@
     {
       "id": "phone-alarms-set",
       "label": "Set 3 phone alarms — Mon/Wed/Fri 8:00 AM ET — for manual posting",
-      "status": "pending",
-      "note": "Week 1 is manual posting (no Buffer/Publer). Three recurring phone alarms at 08:00 AM ET on 2026-05-18 (Mon), 2026-05-20 (Wed), 2026-05-22 (Fri). Each alarm = sit down, post LinkedIn at 08:00 ET + X at 09:00 ET, copy from posts.json. Revisit scheduler tooling only if posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
+      "status": "done",
+      "completedAt": "2026-05-18",
+      "note": "Alarms set + fired on launch Monday 2026-05-18 and Wed 2026-05-20. Posted LinkedIn + X on both days. Friday 2026-05-22 alarm is still set and pending its scheduled fire. Revisit scheduler tooling only if posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
     }
   ],
   "blockers": [
