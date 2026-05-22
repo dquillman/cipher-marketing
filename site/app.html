@@ -42,6 +42,41 @@
 .checklist-item.status-na   { border-left: 3px solid #6b7280; padding-left: 9px; opacity: 0.7; }
 .checklist-item.status-na label { color: var(--muted); }
 .checklist-item input[type="checkbox"]:disabled { cursor: default; }
+.section-status {
+  margin: 6px 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.section-status .row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--border);
+  background: rgba(255,255,255,0.025);
+  font-size: 0.85rem;
+}
+.section-status .row.good { border-left-color: #4ade80; background: rgba(74,222,128,0.05); }
+.section-status .row.na   { border-left-color: #6b7280; background: rgba(107,114,128,0.05); }
+.section-status .row.warn { border-left-color: #fbbf24; background: rgba(251,191,36,0.05); }
+.section-status .row.bad  { border-left-color: #f87171; background: rgba(248,113,113,0.05); }
+.section-status .row strong.lbl { flex-shrink: 0; }
+.section-status .row .note { color: var(--dim); }
+.section-status .row .pill {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+.section-status .row.good .pill { background: rgba(74,222,128,0.18); color: #4ade80; }
+.section-status .row.na   .pill { background: rgba(107,114,128,0.2);  color: #9ca3af; }
+.section-status .row.warn .pill { background: rgba(251,191,36,0.18); color: #fbbf24; }
+.section-status .row.bad  .pill { background: rgba(248,113,113,0.18); color: #f87171; }
 .task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
 
 
@@ -1253,7 +1288,7 @@ function cipherShow(route) {
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
-<div class="version-bar">v1.8.0</div>
+<div class="version-bar">v1.8.1</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -3346,11 +3381,17 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <div class="hero">
     <h1>Engineering handoff</h1>
-    <p class="sub"><strong>Owner:</strong> Dave (cipherexam.com / dquillman/cipher). <strong>Target:</strong> all items shipped before Week 1 of the campaign starts. Total estimated effort: ~4 days of solo-founder engineering.</p>
+    <p class="sub" id="engineering-status-sub"><strong>Owner:</strong> Dave (cipherexam.com / dquillman/cipher). <strong>Pre-launch status:</strong> all required items complete. Resend drip + Reddit pixel deferred per plan. See §6 for verification matrix.</p>
+  </div>
+
+  <div id="engineering-status-banner" class="card" style="background: rgba(74,222,128,0.08); border-left: 3px solid #4ade80; padding: 12px 16px; margin: 0 0 24px 0;">
+    <strong style="color:#4ade80;">✓ All pre-launch engineering items complete.</strong>
+    <span style="color:var(--dim);"> Campaign shipped 2026-05-18. Sections below describe the original handoff; each one is annotated with the current shipped status pulled from <code>campaign-state.json → preLaunchChecklist</code>.</span>
   </div>
 
   <!-- §1 -->
   <h2 id="s1" style="margin-top:0;">1. Stand up the three Tier 1 landing pages</h2>
+  <div class="section-status" data-pre-launch-id="lps-deployed,widget-render"></div>
   <p>Routes confirmed 2026-05-11:</p>
   <table>
     <thead><tr><th>Cert</th><th>Route</th><th>Copy source</th></tr></thead>
@@ -3372,6 +3413,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <!-- §2 -->
   <h2 id="s2">2. Wire conversion events</h2>
+  <div class="section-status" data-pre-launch-id="ga4-signup-event,meta-capi,linkedin-insight"></div>
   <p>Per MARKETING-PLAN.md §1.1–1.3. Confirm all firing before paid spend unlocks.</p>
   <table>
     <thead><tr><th>Event</th><th>Trigger</th><th>Required for</th></tr></thead>
@@ -3390,6 +3432,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <!-- §3 -->
   <h2 id="s3">3. In-app testimonial prompt</h2>
+  <div class="section-status" data-pre-launch-id="testimonial-prompt"></div>
   <p>Per MARKETING-PLAN.md §3.4. Trigger: user hits <code>activated_user</code> (10th question answered).</p>
   <blockquote>
     <strong>What surprised you most about CipherExam?</strong><br><br>
@@ -3400,6 +3443,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <!-- §4 -->
   <h2 id="s4">4. 7-day onboarding email sequence (Resend)</h2>
+  <div class="section-status" data-pre-launch-id="resend-day-0,resend-suppression"></div>
   <p>Copy in <a href="#" onclick="cipherShow('content');return false;">content § email</a>. Implementation requirements:</p>
   <ul>
     <li><strong>Days 0, 1, 2, 3, 5, 6, 7.</strong> Day 4 intentionally skipped.</li>
@@ -3412,6 +3456,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <!-- §5 -->
   <h2 id="s5">5. Reddit ad pixel (low priority)</h2>
+  <div class="section-status" data-pre-launch-id="__parked_reddit_pixel"></div>
   <p>Only if paid-spend gate hits. First paid dollar most likely goes to Reddit Promoted Posts in r/pmp / r/CompTIA / r/humanresources after 25-activated-user gate. When that happens:</p>
   <ul>
     <li>Install Reddit's conversion pixel (similar to Meta Pixel) and wire to <code>signup_complete</code>.</li>
@@ -4628,6 +4673,75 @@ function applyChecklistStatus(cb, status) {
   else                           { item.classList.add('status-bad'); }
 }
 
+// Renders one status row per checklist ID inside every .section-status block
+// on the Engineering tab. data-pre-launch-id can be a single ID or a
+// comma-separated list. Special IDs starting with __parked_ render a "Parked"
+// banner without needing a server entry.
+function renderEngineeringSectionStatuses() {
+  const PARKED_LABELS = {
+    '__parked_reddit_pixel': {
+      label: 'Reddit pixel',
+      pill:  'Parked',
+      cls:   'na',
+      note:  'Will install when the 25-activated-user paid-spend gate hits and the first Reddit ads run. Won\'t be needed weeks 1–4 since paid is off.',
+    },
+  };
+  const STATUS_META = {
+    'done':            { pill: '✓ Done',           cls: 'good' },
+    'na':              { pill: 'N/A',              cls: 'na'   },
+    'in-progress':     { pill: 'In progress',      cls: 'warn' },
+    'pending-runtime': { pill: 'Awaiting Day-1',   cls: 'warn' },
+    'pending':         { pill: 'Pending',          cls: 'bad'  },
+  };
+  const checklist = (STATE && Array.isArray(STATE.preLaunchChecklist)) ? STATE.preLaunchChecklist : [];
+
+  document.querySelectorAll('.section-status').forEach(host => {
+    host.innerHTML = '';
+    const raw = host.dataset.preLaunchId || '';
+    const ids = raw.split(',').map(s => s.trim()).filter(Boolean);
+    if (ids.length === 0) return;
+
+    ids.forEach(id => {
+      const row = document.createElement('div');
+      let entry = null;
+      let label = id;
+      let pillText = '';
+      let cls = 'bad';
+      let note = '';
+
+      if (id.startsWith('__parked_')) {
+        const p = PARKED_LABELS[id];
+        if (!p) return;
+        label = p.label;
+        pillText = p.pill;
+        cls = p.cls;
+        note = p.note;
+      } else {
+        entry = checklist.find(c => c.id === id);
+        if (!entry) {
+          label = id;
+          pillText = 'Not in checklist';
+          cls = 'bad';
+        } else {
+          label = entry.label || id;
+          const meta = STATUS_META[entry.status] || { pill: entry.status, cls: 'bad' };
+          pillText = meta.pill;
+          cls = meta.cls;
+          note = entry.note || '';
+        }
+      }
+
+      row.className = 'row ' + cls;
+      row.innerHTML =
+        '<span class="pill">' + escHtml(pillText) + '</span>' +
+        '<span><strong class="lbl">' + escHtml(label) + '</strong>' +
+        (note ? ' <span class="note">— ' + escHtml(note) + '</span>' : '') +
+        '</span>';
+      host.appendChild(row);
+    });
+  });
+}
+
 function annotateChecklistItem(item, serverEntry) {
   // Remove any previous pill/note we added so re-renders stay clean
   item.querySelectorAll('.engineering-server-pill, .engineering-server-note').forEach(n => n.remove());
@@ -4696,6 +4810,7 @@ async function boot() {
   try { if (document.getElementById('index-today-widget')) initIndexWidget(); } catch (e) { console.warn('initIndexWidget:', e); }
   try { if (document.getElementById('index-blockers') || document.getElementById('index-daily-log')) initIndexState(); } catch (e) { console.warn('initIndexState:', e); }
   try { if (document.querySelector('.checklist-item')) initEngineeringChecklist(); } catch (e) { console.warn('initEngineeringChecklist:', e); }
+  try { if (document.querySelector('.section-status')) renderEngineeringSectionStatuses(); } catch (e) { console.warn('renderEngineeringSectionStatuses:', e); }
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
@@ -4726,6 +4841,9 @@ if (document.readyState === 'loading') {
       try {
         if (document.querySelector('.checklist-item') && typeof initEngineeringChecklist === 'function') {
           initEngineeringChecklist();
+        }
+        if (document.querySelector('.section-status') && typeof renderEngineeringSectionStatuses === 'function') {
+          renderEngineeringSectionStatuses();
         }
       } catch (e) { console.warn('[cipher] engineering checklist re-render failed:', e); }
     }, function (err) {
