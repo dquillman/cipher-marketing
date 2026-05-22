@@ -151,6 +151,44 @@
   border-radius: 999px;
   font-variant-numeric: tabular-nums;
 }
+/* Collapsible "Original handoff documentation" block (§1–§5 reference) */
+.handoff-block {
+  margin: 18px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.015);
+}
+.handoff-block > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0;
+  user-select: none;
+}
+.handoff-block > summary::-webkit-details-marker { display: none; }
+.handoff-block .handoff-block-toggle {
+  display: inline-block;
+  transition: transform 0.15s;
+  color: var(--dim);
+  font-size: 0.8rem;
+  width: 12px;
+}
+.handoff-block[open] .handoff-block-toggle { transform: rotate(90deg); }
+.handoff-block .handoff-block-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+.handoff-block .handoff-block-sub {
+  font-size: 0.82rem;
+  color: var(--dim);
+  font-style: italic;
+}
+.handoff-block[open] { padding-bottom: 24px; }
+.handoff-block[open] > summary { margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 .task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
 
 
@@ -1362,7 +1400,7 @@ function cipherShow(route) {
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
-<div class="version-bar">v1.9.1</div>
+<div class="version-bar">v1.9.2</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -3470,6 +3508,14 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
     <p class="empty-state" style="color:var(--dim);">Loading deferred items…</p>
   </div>
 
+  <!-- Original handoff doc §1–§5 (collapsed by default — reference material) -->
+  <details class="handoff-block">
+    <summary>
+      <span class="handoff-block-toggle">▶</span>
+      <span class="handoff-block-title">Original handoff documentation</span>
+      <span class="handoff-block-sub">§1–§5 requirements as written before launch</span>
+    </summary>
+
   <!-- §1 -->
   <h2 id="s1" style="margin-top:0;">1. Stand up the three Tier 1 landing pages</h2>
   <div class="section-status" data-pre-launch-id="lps-deployed,widget-render"></div>
@@ -3543,6 +3589,9 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
     <li>Install Reddit's conversion pixel (similar to Meta Pixel) and wire to <code>signup_complete</code>.</li>
     <li>Won't be needed weeks 1–4 since paid is off. Park until gate hits.</li>
   </ul>
+
+  </details>
+  <!-- /Original handoff doc -->
 
   <!-- §6 — pre-launch checklist with persisted checkboxes -->
   <h2 id="s6">6. Pre-launch verification checklist</h2>
