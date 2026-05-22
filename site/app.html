@@ -113,6 +113,44 @@
   margin-top: 4px;
   line-height: 1.45;
 }
+/* Collapsible Completed-work block at bottom of Engineering tab */
+.completed-block {
+  margin-top: 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.completed-block > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  user-select: none;
+}
+.completed-block > summary::-webkit-details-marker { display: none; }
+.completed-block .completed-block-toggle {
+  display: inline-block;
+  transition: transform 0.15s;
+  color: var(--dim);
+  font-size: 0.8rem;
+  width: 12px;
+}
+.completed-block[open] .completed-block-toggle { transform: rotate(90deg); }
+.completed-block .completed-block-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #4ade80;
+}
+.completed-block .completed-block-count {
+  font-size: 0.78rem;
+  color: var(--dim);
+  padding: 2px 8px;
+  background: rgba(74,222,128,0.12);
+  border: 1px solid rgba(74,222,128,0.3);
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
 .task-row.done label { color: var(--good); text-decoration: line-through; opacity: 0.75; }
 
 
@@ -1324,7 +1362,7 @@ function cipherShow(route) {
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
 </nav>
-<div class="version-bar">v1.9.0</div>
+<div class="version-bar">v1.9.1</div>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
@@ -3425,16 +3463,9 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
     <span style="color:var(--dim);"> Campaign shipped 2026-05-18. Sections below describe the original handoff; deferred / parked items show inline status under each heading.</span>
   </div>
 
-  <!-- COMPLETED WORK (rendered from preLaunchChecklist items where status==done) -->
-  <h2 id="completed" style="margin-top:0;">✓ Completed work</h2>
-  <p style="color:var(--dim);font-size:0.9rem;margin-top:-4px;">Engineering items with a verified completion date. Sourced from <code>campaign-state.json → preLaunchChecklist</code> (status = <code>done</code>).</p>
-  <div id="engineering-completed-list" class="completed-list">
-    <p class="empty-state" style="color:var(--dim);">Loading completed items…</p>
-  </div>
-
-  <!-- DEFERRED / PARKED WORK -->
-  <h2 id="deferred">⏸ Deferred / parked</h2>
-  <p style="color:var(--dim);font-size:0.9rem;margin-top:-4px;">Engineering items intentionally not shipped pre-launch. Each has a re-activation trigger.</p>
+  <!-- DEFERRED / PARKED WORK (kept at top — these are active future TODOs) -->
+  <h2 id="deferred" style="margin-top:0;">⏸ Deferred / parked</h2>
+  <p style="color:var(--dim);font-size:0.9rem;margin-top:-4px;">Engineering items intentionally not shipped pre-launch. Each has a re-activation trigger. Completed work is at the bottom of this page.</p>
   <div id="engineering-deferred-list" class="completed-list">
     <p class="empty-state" style="color:var(--dim);">Loading deferred items…</p>
   </div>
@@ -3546,6 +3577,18 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   <p><strong>Total pre-Week-1 effort: ~4 days</strong> of solo-founder engineering.</p>
   <p>If anything in this list slips, push Week 1 — running paid without conversion tracking, or sending the onboarding sequence without merge tags, breaks the campaign's measurement foundation.</p>
 
+  <!-- COMPLETED WORK (collapsible, at the bottom of the prioritized list) -->
+  <details class="completed-block" id="completed">
+    <summary>
+      <span class="completed-block-toggle">▶</span>
+      <span class="completed-block-title">✓ Completed work</span>
+      <span class="completed-block-count" id="engineering-completed-count">—</span>
+    </summary>
+    <p style="color:var(--dim);font-size:0.9rem;margin:8px 0 12px;">Engineering items with a verified completion date. Sourced from <code>campaign-state.json → preLaunchChecklist</code> (status = <code>done</code>). Newest first.</p>
+    <div id="engineering-completed-list" class="completed-list">
+      <p class="empty-state" style="color:var(--dim);">Loading completed items…</p>
+    </div>
+  </details>
 
 </section>
 
@@ -4754,13 +4797,20 @@ function renderEngineeringSectionStatuses() {
   };
   const checklist = (STATE && Array.isArray(STATE.preLaunchChecklist)) ? STATE.preLaunchChecklist : [];
 
-  // --- 1. Completed list (top of page) ---
+  // --- 1. Completed list (collapsible block at the BOTTOM of the page) ---
   const completedHost = document.getElementById('engineering-completed-list');
+  const completedCount = document.getElementById('engineering-completed-count');
   if (completedHost) {
+    // Sort NEWEST first so recent completions are visible without scrolling.
     const completed = checklist
       .filter(c => c.status === 'done')
       .slice()
-      .sort((a, b) => (a.completedAt || '').localeCompare(b.completedAt || ''));
+      .sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
+    if (completedCount) {
+      completedCount.textContent = completed.length === 1
+        ? '1 item'
+        : completed.length + ' items';
+    }
     if (completed.length === 0) {
       completedHost.innerHTML = '<p class="empty-state" style="color:var(--dim);">No completed engineering items yet.</p>';
     } else {
