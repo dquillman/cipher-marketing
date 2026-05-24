@@ -1,7 +1,9 @@
 import React from 'react';
 import {
   AbsoluteFill,
+  Audio,
   Sequence,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
   interpolate,
@@ -83,6 +85,9 @@ export const CipherExamMotionAd: React.FC<CipherExamMotionAdProps> = ({
 }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: '#020617', overflow: 'hidden' }}>
+      {/* ─── BACKGROUND AUDIO — ambient pad, fades in/out ─── */}
+      <Audio src={staticFile('bgm.mp3')} volume={0.85} />
+
       {/* Atmospheric gradient blobs — same dual-blob feel as Landing.tsx hero */}
       <BackdropBlobs />
 

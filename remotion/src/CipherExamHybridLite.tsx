@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill,
+  Audio,
   OffthreadVideo,
   Sequence,
   staticFile,
@@ -64,6 +65,9 @@ export const CipherExamHybridLite: React.FC<CipherExamHybridLiteProps> = ({
 }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: '#020617', overflow: 'hidden' }}>
+      {/* ─── BACKGROUND AUDIO — ambient pad, fades in/out ─── */}
+      <Audio src={staticFile('bgm.mp3')} volume={0.85} />
+
       {/* ─── BEAT 1 — Cost-anchor motion graphics ─── */}
       <Sequence from={0} durationInFrames={COST_ANCHOR_DURATION}>
         <CostAnchorScene examName={examName} examPrice={examPrice} />
