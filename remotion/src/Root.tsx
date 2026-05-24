@@ -2,6 +2,16 @@ import React from 'react';
 import { Composition } from 'remotion';
 import { CipherExamAd, AD_DEFAULTS, AD_DURATION_FRAMES } from './CipherExamAd';
 import {
+  CipherExamSingleChunkAd,
+  SINGLE_CHUNK_AD_DEFAULTS,
+  SINGLE_CHUNK_AD_DURATION,
+} from './CipherExamSingleChunkAd';
+import {
+  CipherExamHybridLite,
+  HYBRID_LITE_DEFAULTS,
+  HYBRID_LITE_DURATION,
+} from './CipherExamHybridLite';
+import {
   CipherExamMotionAd,
   MOTION_AD_DURATION,
   MOTION_AD_DEFAULTS,
@@ -31,6 +41,28 @@ export const RemotionRoot: React.FC = () => (
       width={1280}
       height={720}
       defaultProps={AD_DEFAULTS}
+    />
+
+    {/* ─── HYBRID LITE (motion-graphics cost-anchor + Veo chunk2 + end card) ─── */}
+    <Composition
+      id="CipherExamHybridLite"
+      component={CipherExamHybridLite}
+      durationInFrames={HYBRID_LITE_DURATION}
+      fps={24}
+      width={1280}
+      height={720}
+      defaultProps={HYBRID_LITE_DEFAULTS}
+    />
+
+    {/* ─── SINGLE-CHUNK HYBRID (one Veo clip + Remotion polish + end card) ─── */}
+    <Composition
+      id="CipherExamSingleChunkAd"
+      component={CipherExamSingleChunkAd}
+      durationInFrames={SINGLE_CHUNK_AD_DURATION}
+      fps={24}
+      width={1280}
+      height={720}
+      defaultProps={SINGLE_CHUNK_AD_DEFAULTS}
     />
 
     {/* ─── PURE MOTION-GRAPHICS COMPOSITIONS (no Veo needed) ─── */}

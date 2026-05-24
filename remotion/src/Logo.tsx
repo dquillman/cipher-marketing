@@ -26,6 +26,8 @@ export const Logo: React.FC = () => {
         pointerEvents: 'none',
       }}
     >
+      {/* Solid pill background — guarantees coverage of any underlying video text
+          (e.g. Veo's hallucinated "$CipherExam$" mangle). */}
       <div
         style={{
           fontFamily: '"Satoshi", "General Sans", system-ui, sans-serif',
@@ -35,7 +37,13 @@ export const Logo: React.FC = () => {
           letterSpacing: '-0.02em',
           opacity,
           transform: `translateY(${translateY}px)`,
-          textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+          background: 'rgba(2, 6, 23, 0.85)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          padding: '8px 18px',
+          borderRadius: 999,
+          border: '1px solid rgba(99, 102, 241, 0.25)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
         }}
       >
         CipherExam

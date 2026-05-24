@@ -1,6 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, OffthreadVideo, Sequence, staticFile, useCurrentFrame, interpolate } from 'remotion';
-import { Logo } from './Logo';
+import { TopBar } from './TopBar';
 import { Caption } from './Caption';
 import { EndCard } from './EndCard';
 
@@ -59,9 +59,9 @@ export const CipherExamAd: React.FC<CipherExamAdProps> = ({
         <Chunk2Layer src={chunk2Src} />
       </Sequence>
 
-      {/* ─── PERSISTENT LOGO (over both clips, hidden during end card) ─── */}
+      {/* ─── PERSISTENT BRAND HEADER (covers Veo's top-corner text artifacts) ─── */}
       <Sequence from={0} durationInFrames={ENDCARD_START}>
-        <Logo />
+        <TopBar />
       </Sequence>
 
       {/* ─── CAPTION 1 (during chunk 1) ─── */}
