@@ -1,0 +1,26 @@
+{
+  "name": "cipher-marketing-remotion",
+  "version": "0.1.0",
+  "description": "Remotion compositing for CipherExam ad videos. Stitches AI-generated clips, burns captions, persists logo, renders end-card.",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render src/index.ts CipherExamAd out/cipherexam-ad.mp4",
+    "render:compressed": "remotion render src/index.ts CipherExamAd out/raw.mp4 && ffmpeg -y -i out/raw.mp4 -crf 23 -preset slow out/cipherexam-ad.mp4",
+    "motion:pmp": "remotion render src/index.ts CipherExamMotionAd-PMP out/cipherexam-motion-pmp.mp4",
+    "motion:secplus": "remotion render src/index.ts CipherExamMotionAd-SecurityPlus out/cipherexam-motion-secplus.mp4",
+    "motion:shrmcp": "remotion render src/index.ts CipherExamMotionAd-SHRMCP out/cipherexam-motion-shrmcp.mp4",
+    "motion:all": "npm run motion:pmp && npm run motion:secplus && npm run motion:shrmcp"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.220",
+    "@remotion/cli": "4.0.220"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.5.4"
+  }
+}

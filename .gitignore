@@ -1,6 +1,11 @@
 node_modules/
 videos/out/
 videos/.remotion/
+remotion/node_modules/
+remotion/out/
+remotion/.remotion/
+.tmp-vidframes/
+.tmp-motion-check/
 .DS_Store
 *.log
 

@@ -1,0 +1,281 @@
+{
+  "_meta": {
+    "purpose": "Canonical competitor list for CipherExam. The competitors.html page currently hardcodes a reference table; this file is the single source of truth going forward. When Brad adds a competitor here, also mirror it into competitors.html until that page is wired to fetch this file.",
+    "lastUpdatedAt": "2026-05-23T22:00:00Z",
+    "owner": "Brad (CipherExam marketing orchestrator)"
+  },
+  "competitors": [
+    {
+      "id": "pocket-prep",
+      "name": "Pocket Prep",
+      "category": "broad-cert mobile question bank",
+      "exams": ["PMP", "Security+", "many"],
+      "primaryStrength": "Mobile-first, huge question bank",
+      "knownWeakness": "No answer explanations; pure memorization loop",
+      "threat": "high",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "examzify",
+      "name": "Examzify",
+      "category": "static question bank",
+      "exams": ["IT certs"],
+      "primaryStrength": "Clean UI, popular for IT certs",
+      "knownWeakness": "Static questions, no AI layer, no adaptive routing",
+      "threat": "high",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "kaplan-it",
+      "name": "Kaplan IT",
+      "category": "incumbent prep brand",
+      "exams": ["Security+", "IT certs"],
+      "primaryStrength": "Brand authority, Security+ stronghold",
+      "knownWeakness": "Old-school UX, expensive, no AI",
+      "threat": "high",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "measureup",
+      "name": "MeasureUp",
+      "category": "official practice tests",
+      "exams": ["many"],
+      "primaryStrength": "Official practice tests, exam-sim feel",
+      "knownWeakness": "Expensive, no explanations, purely transactional",
+      "threat": "medium",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "magoosh",
+      "name": "Magoosh",
+      "category": "video-led prep",
+      "exams": ["GMAT", "GRE"],
+      "primaryStrength": "Video-heavy, GMAT/GRE pedigree",
+      "knownWeakness": "Thin on PMI/SHRM; wrong audience",
+      "threat": "medium",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "whizlabs",
+      "name": "Whizlabs",
+      "category": "cheap broad-cert bank",
+      "exams": ["many"],
+      "primaryStrength": "Cheap, broad cert coverage",
+      "knownWeakness": "Notoriously low question quality; outdated",
+      "threat": "low",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "pluralsight",
+      "name": "Pluralsight",
+      "category": "IT video library",
+      "exams": ["IT certs (secondary)"],
+      "primaryStrength": "Deep IT video library",
+      "knownWeakness": "Cert prep is secondary; no adaptive questioning",
+      "threat": "low",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "udemy-courses",
+      "name": "Udemy courses",
+      "category": "marketplace video courses",
+      "exams": ["many"],
+      "primaryStrength": "Huge reach, cheap",
+      "knownWeakness": "Passive video; zero practice accountability",
+      "threat": "low",
+      "addedAt": "2026-05-11"
+    },
+    {
+      "id": "brain-sensei",
+      "name": "Brain Sensei",
+      "category": "broad PMI question bank + adaptive learning",
+      "url": "https://brainsensei.com",
+      "exams": ["PMP", "CAPM", "PMI-ACP", "PMI-SP", "PgMP", "PfMP", "PMI-RMP", "PMI-PBA"],
+      "primaryStrength": "Strongest published pass-rate claim in PMI prep (99.6% first-time pass). Full PMI cert portfolio (8 certs) with consistent UX. Adaptive learning + spaced repetition + private Facebook community. 100% pass guarantee (refund if fail). Auto-updated for 2026 PMP refresh. Free 7-day trial. Story-based content (not passive video).",
+      "knownWeakness": "PMI-only — no Security+, SHRM-CP, ITIL, or non-PMI certs, so they can't capture cross-cert candidates. Pricing floor is high: $349.99/year (sale; reg $499.99) or $99/mo. No named founder or instructor — corporate-feel, lacks personality. 'Story-based' pitch is vague — no AI/ML differentiation. Pass guarantee has conditions (30-day window, limited exams).",
+      "threat": "medium-high",
+      "threatNote": "Direct overlap on PMP + PgMP (our two priority PMI certs). 99.6% pass-rate claim is CipherExam's strongest competitive vulnerability — we need to validate or counter-position (e.g., 'pass rate is a lagging metric; mastery + retention beats luck on test day'). Defensible angle: they can't follow us into Security+/SHRM-CP, so our multi-cert positioning remains intact. On PMP-only ads, they're the credible threat.",
+      "pricing": {
+        "annual": "$349.99 (sale, regular $499.99)",
+        "monthly": "$99/mo (cancel anytime)",
+        "trial": "Free 7-day"
+      },
+      "exploitableAngles": [
+        "Pass-rate claim is unverifiable — 99.6% with no methodology disclosed. CipherExam can win on 'we'll show you exactly which questions PMI is likely to test you on, and why' (Exam Lens) vs. their generic pass-rate badge.",
+        "PMI-only ceiling — they can't expand to Security+/SHRM-CP without rebuilding the engine. CipherExam already covers 11 certs. Multi-cert candidates are ours by default.",
+        "No founder voice — corporate brand with no human credibility. Dave's /story page and the Markus Kopko PMI AI Standards Core Team endorsement give CipherExam a real-person trust signal they can't match without a hire.",
+        "Story-based content is undifferentiated — feels like 'we have a learning system.' CipherExam's Exam Lens is a single ownable framework name with per-cert specificity (PMI Decision Lens, Program Governance Lens). Frameworks beat features.",
+        "$99/mo vs. our $19/mo — they're 5x the price. Comparative ad copy lands cleanly: 'Brain Sensei: $99/mo. CipherExam: $19/mo. Same explanations, broader certs.' (Verify their explanation depth before claiming parity.)"
+      ],
+      "addedAt": "2026-05-23",
+      "source": "Surfaced via Klara Profka LinkedIn investigation 2026-05-23 — she mentioned '600 questions / 6 mock sets' pattern matching Brain Sensei (and Elite Minds). Research by search-specialist agent."
+    },
+    {
+      "id": "elite-minds",
+      "name": "Elite Minds",
+      "category": "instructor-led PMI prep with simulator add-on",
+      "url": "https://eliteminds.co",
+      "founder": "Shadi (PMP-certified, 7+ years coaching), Jordan-based",
+      "exams": ["PMP", "PMI-SP", "PMI-RMP", "PfMP", "PgMP", "PMI-PBA"],
+      "primaryStrength": "Ultra-low entry ($59/yr exam simulator with 1,440 questions). Personal instructor brand (Shadi) builds trust. 6 PMI certs covered including PgMP. 24/7 WhatsApp support (+962797205176) differentiates in non-English markets. '35 contact hours' PMI credential badge. Self-paced boot camp at $199 (35+ hrs video). Money-back guarantee. ~30k students claimed since 2017.",
+      "knownWeakness": "No published pass rate (red flag in cert prep market). Single-instructor brand = scale risk. Pricing opaque for multi-cert bundles. No mention of adaptive learning, spaced repetition, or AI — feels like a 2020-era product. No Security+/SHRM-CP/non-PMI certs.",
+      "threat": "low-medium",
+      "threatNote": "Covers PMP + PgMP but the $59 simulator price undercuts CipherExam's $19/mo on initial sticker shock for a one-time buyer. Defensible because: (a) they lack pass-rate transparency, (b) one-instructor brand has scale ceiling, (c) no AI / adaptive layer means they can't match Exam Lens pedagogy. Watch their non-English-market growth — WhatsApp support is a real edge in MENA / South Asia. Not a US/EU-priority threat today.",
+      "pricing": {
+        "examSimulator": "$59/year (1,440 questions, 8 full exams)",
+        "selfPacedBootCamp": "$199 (most popular — 35+ hrs video, 8 exams, app support)",
+        "trial": "Free 14-day demo (2 exams)"
+      },
+      "exploitableAngles": [
+        "No pass-rate published — in a market where Brain Sensei advertises 99.6%, silence reads as weakness. CipherExam can own the 'transparent outcomes' position whenever we have data to share.",
+        "One-instructor dependency — Shadi is the brand. CipherExam's platform + Exam Lens framework + multi-cert breadth is the structural counter.",
+        "No AI / adaptive layer mentioned — feels like 2020 prep. CipherExam's Bloom's classification + thinking-traps detection + per-question metacognitive explanations is a generational gap.",
+        "$59/year vs. our $19/mo — they're cheaper per year IF the candidate is a one-and-done. CipherExam can counter with 'pay $19 only while you're studying, cancel anytime' — frames the subscription as flexible, not committed.",
+        "MENA / WhatsApp positioning — not a near-term CipherExam play, but flag for future EU/global expansion: regional payment + messaging support matters in non-US markets."
+      ],
+      "addedAt": "2026-05-23",
+      "source": "Surfaced via Klara Profka LinkedIn investigation 2026-05-23. Research by search-specialist agent."
+    },
+    {
+      "id": "pgmp-simulator",
+      "name": "PgMP Simulator",
+      "category": "single-exam judgment simulator",
+      "exams": ["PgMP"],
+      "primaryStrength": "Sharp positioning: 'judgment over knowledge'. 735 scenario-based questions, four practice modes (Learning, Quiz, Weakspot Training, Full Exam 170q/240min), domain analytics + Weakspot Domain Breakdown. EUR 29 entry, prorated upgrades, 100% money-back, access clock starts on first full exam (removes buyer regret), 15-question free try with no signup or credit card.",
+      "knownWeakness": "PgMP-only — single-exam product with no expansion story. Pilot tester quote (Tamisha Doublin) is the only social proof and she's instructional-design, not a sat-and-passed-it candidate. Pricing copy ('starting at') buries the actual tier structure. No explanation pedagogy mentioned — heavy on simulation, light on why-you-were-wrong. No metacognitive framework like Exam Lens. No PBQ-style item types (PgMP is MCQ-only so this is moot for them, but it means they can't expand into CompTIA without rebuilding the engine). No AI tutor.",
+      "threat": "low",
+      "threatNote": "Low direct threat to CipherExam — they only cover PgMP and we cover PgMP among 11 exams. But their LinkedIn ad copy is the strongest 'judgment over knowledge' positioning we've seen in the prep space. Watch their funnel, steal the framing, and out-execute on multi-exam + explanations.",
+      "addedAt": "2026-05-22",
+      "source": "LinkedIn ad spotted by Dave 2026-05-22",
+      "adCopy": "PgMP $800 sit fee → 'most candidates prepare by reading. Then they see the actual questions.' → judgment > knowledge → 735 scenario questions → 4 modes → analytics → pilot quote → EUR 29, prorated, money-back, 15 free questions no signup.",
+      "whyThisAdWorks": [
+        "Cost anchor in line 1 — '$800 to sit' makes the EUR 29 feel rational by contrast.",
+        "Contrast hook — 'most candidates prepare by reading. Then they see the actual questions.' is a one-line problem-agitation with a credible insight (everyone who has sat a high-stakes exam has felt this).",
+        "Reframes the category — 'PgMP does not test what you know, it tests what you do.' This is a category-creation move, not a feature pitch.",
+        "Concrete scenario in the hook — 'outputs no longer align to strategic objectives, governance board wants answers, three component PMs telling you three different things' — specific, jargon-correct, shows authorial credibility.",
+        "Specific numbers — 735 questions, 5 domains, 170/240 min, four named modes. No vague 'tons of questions'.",
+        "Named pilot-tester social proof with credentials (PMP, PMI-ACP, 20+ years). The quote itself is meta — it praises the difficulty, which is harder to fake than a 'great product!' quote.",
+        "Risk reversal stack — EUR 29 entry, access clock starts on first exam (not at purchase), prorated upgrades, 100% money-back, 15 free questions with no signup or card. Each one removes a different objection.",
+        "CTA placed in the first comment (LinkedIn organic-ad pattern) — keeps the post itself ad-policy-clean and bumps engagement."
+      ],
+      "exploitableAngles": [
+        "Single-exam ceiling — they are PgMP-only. CipherExam covers 11 certs including PgMP. The candidate who wants PgMP today wants PMP next year and Security+ for their team. We are the platform; they are a tool.",
+        "Simulator without a teacher — their pitch is 'judgment is built through repetition under realistic conditions.' True, but repetition without explanation is just expensive flashcards. CipherExam's metacognitive explanations + Exam Lens teach the *why* behind every answer. Repetition + reasoning beats repetition alone.",
+        "No framework name — they call them 'scenario-based questions across 5 ECO domains.' We have Exam Lens — a single ownable brand term across every cert, with the Program Governance Lens specifically for PgMP. Frameworks beat features in cert-prep marketing.",
+        "Pilot-tester quote is not a sat-and-passed quote — Tamisha praises the question quality, not her pass result. A real 'I sat the PgMP and passed because of this' testimonial would be 10x stronger. Gap we can fill faster with our active tester program if we collect pass-result quotes.",
+        "Pricing-clock gimmick is novel but creates ambiguity — 'access clock starts on your first full exam' is clever but adds a mental tax. CipherExam's 7-day free trial, no card, $19/mo is dead simple by comparison. We can lean into 'no clock games' framing."
+      ],
+      "counterHooks": [
+        "Judgment is the right pitch. Judgment without explanation is just expensive repetition.",
+        "Repetition builds reflexes. Reasoning builds judgment. CipherExam does both.",
+        "11 certs, one Exam Lens. The mindset that gets you through PgMP is the same mindset that gets you through PMP and CISSP.",
+        "Practice mode without the why isn't practice. It's gambling with feedback."
+      ],
+      "websiteAudit": {
+        "auditedAt": "2026-05-22",
+        "inAppAuditAt": "2026-05-23",
+        "inAppAuditMethod": "Chrome MCP pass — landed on pgmp-sim.pm-career-os.de, walked the 15-question demo end-to-end, hit the post-demo paywall, opened the in-app pricing modal (One-Time + Monthly tabs), inspected signup modal, did NOT sign up and did NOT purchase.",
+        "parentSite": "https://pm-career-os.de",
+        "simulatorSubdomain": "https://pgmp-sim.pm-career-os.de",
+        "siblings": ["cpmai.pm-career-os.de (CPMAI Exam Simulator)", "coaching.pm-career-os.de (CPMAI Coaching Program)"],
+        "founder": "Markus Kopko (markus@pmcos.de) — PgMP and CPMAI certified; pitches program leadership + AI initiatives",
+        "siteArchitecture": "Thin marketing hub (pm-career-os.de) funnels into three JS-only SPAs on subdomains. Parent site is ~110-130 words of body copy, no pricing, no testimonials surfaced at root, just a product list and newsletter capture.",
+        "conversionMechanics": {
+          "primaryCta": "Newsletter capture ('Get practical PM career tips delivered to your inbox') — NOT a trial signup. Funnel-top is email, not product trial.",
+          "trialFlow": "CONFIRMED in-app: 15-question demo loads immediately on the simulator subdomain, no signup, no email, no card. Demo state persists across navigations (localStorage). At demo completion you see a score percentage + per-domain breakdown (D1-D5) + 'View Plans - Starting at 29 EUR' CTA + 'Try Demo Again'. NO email capture at the end of the demo — this is a notable funnel gap (zero retargeting capability on demo-droppers).",
+          "demoQuestionUX_confirmed": "Questions render with domain code (e.g. 'D1') + task code (e.g. 'T2: Establish high-level road map with milestones') + difficulty tag ('Easy'). Single-answer MCQ (A/B/C/D). No timer in demo. No eliminate-options / hint affordance. Controls: Previous, Next, Flag for review, Next Unanswered, Next Flagged. 'Check Answer' button only appears AFTER an answer is selected (two-step confirm — prevents accidental reveal). After Check Answer: Correct/Incorrect banner + 4-6 sentence explanation paragraph + per-option rationale (A/B/C/D each get 1-2 sentences explaining why right/wrong) + REFERENCES block citing 'The Standard for Program Management, Chapter 5' and 'PgMP ECO March 2024, D1-T2'. Explanation depth is genuinely impressive — better than Pocket Prep, better than Examzify, on par with or better than Kaplan IT.",
+          "demoGridView": "Top-bar 'Grid' button opens a 15-cell jump-grid + 'Submit' button to end the demo early. Standard exam-sim UI.",
+          "frictionGaps": "No pricing visible anywhere on the public marketing site. In-app pricing IS reachable without auth (Free Demo → Submit → View Plans button works for anonymous users). The funnel gap is: no email capture at any point before payment — they're losing every demo-completer who isn't ready to buy today."
+        },
+        "pricingModel": {
+          "publicallyVisible": "Nothing on the marketing site. In-app pricing modal IS public (no auth required) once you complete the demo or click any locked mode — surfaced via the 'View Plans - Starting at 29 EUR' CTA on the demo-complete screen.",
+          "confirmedTiers_OneTime": {
+            "Essential": "EUR 29 / 340 questions / 2 full exam sims (170Q each) / 30 days access / domain performance tracking / detailed explanations",
+            "Advanced": "EUR 49 / 510 questions / 3 full exam sims / 60 days access / + score trend analysis (labeled 'Most Popular')",
+            "Deluxe": "EUR 79 / 1000+ questions / 4 full exam sims / 90 days access / + readiness assessment"
+          },
+          "confirmedTiers_Monthly": {
+            "Essential": "EUR 9.99/mo (cancel anytime) — same feature gates as one-time Essential",
+            "Advanced": "EUR 19.99/mo (cancel anytime, 'Most Popular') — same feature gates as one-time Advanced",
+            "Deluxe": "EUR 29.99/mo (cancel anytime) — same feature gates as one-time Deluxe"
+          },
+          "accessCodeFlow": "'Have an access code? Redeem here' link at bottom of pricing modal — suggests B2B / coaching-cohort / partner-distribution channel.",
+          "clockMechanic": "NOT confirmed in-app. The ad copy claim that the access clock 'starts on first full exam' does NOT appear in the in-app pricing modal — tier copy just says '30/60/90 days access' with no qualifier. Either the mechanic exists only on the checkout step (which I did not reach without purchasing) or the ad copy is overstated.",
+          "moneyBackGuarantee": "NOT visible in the in-app pricing modal. Ad copy claims 100% money-back, but it's not surfaced at the price-decision point.",
+          "implication": "The in-app pricing is far more granular and transparent than the marketing site suggests. Three tiers × two billing models = six price points. The Monthly option (cancel-anytime) is the real wedge against CipherExam's $19/mo — Advanced Monthly at EUR 19.99 is direct head-to-head and they cover 510 PgMP questions in that tier."
+        },
+        "productFeatures": {
+          "visible": "Three products listed by name only on parent: PgMP Exam Simulator, CPMAI Exam Simulator, CPMAI Coaching Program. No feature bullets on the marketing site.",
+          "knownFromAdCopy": "735 scenario questions, 5 ECO domains, 4 practice modes (Learning, Quiz, Weakspot Training, Full Exam 170q/240min), domain analytics, Weakspot Domain Breakdown.",
+          "confirmedInAppModes": {
+            "FreeDemo": "15 curated questions, all 5 PgMP domains, instant feedback after each answer, no signup, no card. Persistent footer banner: '25 free questions loaded. Sign in for all 1000.' (Note: footer says 1000, post-demo wall says 750, roadmap mentions 1005 for Deluxe — inconsistent question-count copy across the surface.)",
+            "LearningMode": "Self-paced, no time limit, immediate feedback, full explanations and references, all questions available. Domain + count picker shipped 2026-05-12 per roadmap. Locked behind active access.",
+            "ExamMode": "Full 170-question simulation, 240-minute timer, 75% passing score, NO explanations during exam. Locked behind active access.",
+            "QuizMode": "Custom: pick specific domains, 5-170 question count, proportional time limit, results with domain breakdown. Locked behind active access.",
+            "WeakspotTraining": "Practice only previously-wrong questions. Mastery rule: must answer correctly in 2 different sessions before a question is removed from rotation. Domain breakdown surfaced in Progress dashboard. Locked behind active access."
+          },
+          "confirmedQuestionCountDiscrepancy": "Pricing modal claims 1.000+ for Deluxe. Roadmap says 1005. Homepage footer says 1000. Post-demo paywall says 750. Ad copy says 735. Most likely truth: total bank is around 1000-1005 with tier-based slicing (340 / 510 / 1000+). The 735 number in the ad may be stale.",
+          "missing": "No public feature comparison table, no screenshots on parent marketing site, no demo video embedded.",
+          "notObservedRequiresPaidAccount": "Could not screenshot the Analytics / Domain Performance dashboard or the Weakspot Domain Breakdown view — both gated behind paid auth. The pricing-modal feature bullets are the only public signal of what they look like."
+        },
+        "positioningAndCopy": {
+          "parentTagline": "'Accelerating PM careers through certification and coaching.'",
+          "subhead": "'Certifications, coaching, and practice tools for product managers who want to advance faster.'",
+          "audience": "Product managers (singular framing — not 'PMP candidates' or 'program managers'). Notable mismatch: PgMP is a PROGRAM management cert, not product management. Either sloppy copy or intentional broad reach.",
+          "tone": "Corporate-European, restrained, GDPR-forward ('GDPR-compliant · Hosted in EU'). Zero personality. Very different from the bold LinkedIn ad voice — strong evidence the ad copy is outsourced or AI-assisted while the site copy is founder-written.",
+          "copyPatterns": ["Newsletter-first funnel", "Verb-of-motion framing ('accelerate', 'advance faster')", "Trust signals lean on GDPR/EU hosting rather than testimonials"]
+        },
+        "technicalSEO": {
+          "simulatorSubdomain": "Client-rendered SPA. No prerendering. Returns 'Loading session...' to all bots. /pricing, /trial, /sitemap.xml, /robots.txt all 404. This is catastrophic for organic search — Google won't index any product content on the subdomain.",
+          "parentSite": "Static or SSR'd HTML — readable to crawlers. Blog lives here (5 posts visible Apr 20–28 2026).",
+          "blogStrategy": "Five SEO-targeted posts in 8 days (Apr 20–28 2026) covering high-intent queries: 'how to pass pgmp first try', 'pgmp vs pmp', '5 study mistakes', 'how AI is changing PM', 'what is CPMAI'. Classic top-funnel content + middle-funnel comparison + bottom-funnel mistake posts.",
+          "i18n": "EN/DE language toggle — German market is a real audience for them.",
+          "compliance": "Impressum, Datenschutz, AGB in footer — German legal trifecta, EU SMB tell.",
+          "analyticsHints": "Not visible to WebFetch (subdomain is JS-only). Likely GA4 + a German-friendly alt like Plausible given GDPR positioning."
+        },
+        "gapsToAttack": [
+          "Zero public pricing on marketing site — CipherExam's '$19/mo, no card, 7-day free trial' on the homepage is a wedge. Buyers in cert-prep want price transparency.",
+          "Zero feature content indexable by Google on the simulator subdomain — CipherExam can outrank them on every PgMP product-comparison query just by having HTML.",
+          "No sat-and-passed testimonials anywhere on the public site — only the pilot-tester quote in the ad. CipherExam's collected pass-result quotes (when we have them) will dominate.",
+          "Product manager / program manager copy ambiguity — they're trying to be both. CipherExam can be sharper: 'built for program managers sitting the PgMP, not generalists.'",
+          "Single-cert silos (three separate subdomains, three separate apps) — friction for any candidate who wants multi-cert prep. CipherExam is one login, 11 certs.",
+          "Blog tops out at 5 posts — content thin. CipherExam's planned 4-week campaign content (especially the comparison and mistake posts) can leapfrog them on PgMP SEO if we publish 8-10 cornerstone pieces.",
+          "No demo video, no screenshots on marketing pages — CipherExam can lead with a 30s product walkthrough.",
+          "No pass-rate claim, no money-back-guarantee surfaced on the marketing site (only in ad) — CipherExam can put the guarantee in the H1."
+        ],
+        "thingsToSteal": [
+          "Blog post structure — they're targeting 'how to pass X first try', 'X vs Y', 'N mistakes that fail candidates'. These are proven SEO patterns for cert prep. CipherExam should clone for PMP, Security+, SHRM-CP.",
+          "Risk-reversal stack approach (EUR 29 + money-back + free questions + delayed clock) — multiple objection-killers layered, not one big offer.",
+          "Cost anchor in line 1 ('PMP exam costs $575 to sit') — borrow for every CipherExam ad. Anchors the $19/mo against a known number.",
+          "Category-reframe copy ('PgMP does not test what you know, it tests what you do') — adapt as 'PMP isn't a knowledge test. It's a judgment test.' Same move, same payoff.",
+          "Specificity in scenario hooks — they describe a real PgMP situation ('three component PMs telling you three different things'). CipherExam should use one concrete scenario per exam in social copy instead of abstract claims.",
+          "EU/GDPR trust badges — if CipherExam pursues EU users, mirror the 'Hosted in [region] · GDPR-compliant' badging.",
+          "Pilot-tester quote with credentials (name + cert letters + years) — even one credentialed quote beats five unnamed star reviews.",
+          "Bilingual EN/DE site for non-US PMP markets — long-tail expansion path for CipherExam once US market is proven."
+        ],
+        "redFlags": [
+          "Audience copy says 'product managers' but PgMP is for program managers. Either a positioning mistake or a deliberate-but-confused broadening. CipherExam should be precise about its audience.",
+          "Three separate subdomains and three separate apps means three separate auth, billing, and support flows. Operational drag scales linearly with cert count. CipherExam's single-platform architecture is the strategic moat against this competitor's eventual multi-cert expansion.",
+          "The marketing site doesn't reflect the LinkedIn ad's voice or claims — a buyer who sees the ad, lands on pm-career-os.de, and sees a generic 'Subscribe' newsletter form will bounce. There's a funnel leak between paid acquisition and the marketing site."
+        ],
+        "signupMechanics_confirmed": {
+          "wallTrigger": "Three triggers observed: (1) clicking any locked mode card (Learning / Exam / Quiz / Weakspot) for anonymous users; (2) the persistent footer banner '25 free questions loaded. Sign in for all 1000.'; (3) the Sign In button in the top nav. There is NO wall on the demo itself — anonymous users can complete all 15 questions and see full explanations before being asked for anything.",
+          "modalType": "Email + password + confirm-password (signup default). Toggle to 'Sign in' for existing users (email + password). NO magic link. NO SSO (no Google/LinkedIn/Apple). NO 'continue with email' single-field flow. This is friction.",
+          "passwordPolicy": "Min 6 characters. Confirmation field required on signup.",
+          "implication": "Three-field signup at the wall is a clear friction point — CipherExam's email-only / magic-link flow is a meaningful advantage on conversion-rate-from-trial-completer."
+        },
+        "surprises_and_polish": {
+          "demoCompleteCTA": "'View Plans - Starting at 29 EUR' is a single inline button on the completion screen. No secondary CTA, no 'email me my results', no 'share your score'. Aggressive single-funnel pricing push.",
+          "explanationQuality": "Per-option rationale + textbook references (Standard for Program Management chapter, PgMP ECO clause). This is BETTER than the median IT-cert prep app. CipherExam needs to match or beat this in Exam Lens explanations.",
+          "checkAnswerTwoStep": "Selecting A/B/C/D doesn't immediately reveal the answer — it surfaces a 'Check Answer' button. The user actively commits before seeing the result. Subtle but smart — forces metacognitive commitment, prevents 'click through to see the answer' gaming.",
+          "roadmapVotingMechanic": "Public /roadmap page lists 12+ feature requests with vote counts. Every signed-in user gets 5 votes per week, refreshed every Monday UTC. Submitters of shipped features receive a 'thank-you reward'. This is community-flywheel work — it surfaces real product priorities AND gives users a reason to log in weekly even when they're not actively studying. Notable feature signal: 'Quiz History and Review' is the #1 voted item (6 votes), meaning paid users currently can NOT review their past attempts question-by-question — that's a real product gap.",
+          "lostBugsAndPolish": [
+            "Question-count copy is inconsistent across surface (735 ad / 750 paywall / 1000 footer / 1005 roadmap). Suggests the bank grew and not all copy was updated.",
+            "Clicking a locked mode card silently triggers a modal (no preview, no explanation of what's behind the wall). Slightly hostile UX vs a contextual 'unlock with Essential for €29' tooltip.",
+            "The post-demo paywall mentions '750 questions across all 5 PgMP domains' but the cheapest tier only includes 340. Mild bait-and-switch — the 750 number isn't a tier they actually sell."
+          ]
+        }
+      }
+    }
+  ]
+}
