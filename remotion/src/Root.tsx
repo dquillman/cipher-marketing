@@ -12,6 +12,11 @@ import {
   HYBRID_LITE_DURATION,
 } from './CipherExamHybridLite';
 import {
+  CipherExamHybridFull,
+  HYBRID_FULL_DEFAULTS,
+  HYBRID_FULL_DURATION,
+} from './CipherExamHybridFull';
+import {
   CipherExamMotionAd,
   MOTION_AD_DURATION,
   MOTION_AD_DEFAULTS,
@@ -41,6 +46,17 @@ export const RemotionRoot: React.FC = () => (
       width={1280}
       height={720}
       defaultProps={AD_DEFAULTS}
+    />
+
+    {/* ─── HYBRID FULL (cost-anchor + Veo chunk2 + Veo chunk3 + end card) ─── */}
+    <Composition
+      id="CipherExamHybridFull"
+      component={CipherExamHybridFull}
+      durationInFrames={HYBRID_FULL_DURATION}
+      fps={24}
+      width={1280}
+      height={720}
+      defaultProps={HYBRID_FULL_DEFAULTS}
     />
 
     {/* ─── HYBRID LITE (motion-graphics cost-anchor + Veo chunk2 + end card) ─── */}
