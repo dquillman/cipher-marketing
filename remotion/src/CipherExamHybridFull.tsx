@@ -9,7 +9,7 @@ import {
   interpolate,
   spring,
 } from 'remotion';
-import { TopBar } from './TopBar';
+import { BrandLogo } from './BrandLogo';
 import { Caption } from './Caption';
 import { EndCard } from './EndCard';
 
@@ -90,12 +90,12 @@ export const CipherExamHybridFull: React.FC<CipherExamHybridFullProps> = ({
         <VideoLayer src={chunk3Src} fadeInFrames={HANDOFF_OVERLAP} fadeOutAt={CHUNK3_DURATION} />
       </Sequence>
 
-      {/* ─── PERSISTENT BRAND HEADER (only over Veo footage — cost anchor + end card own their own layout) ─── */}
+      {/* ─── PERSISTENT BRAND LOGO (covers Veo's plain-text logo — proper icon + wordmark) ─── */}
       <Sequence
         from={CHUNK2_START}
         durationInFrames={CHUNK2_DURATION + CHUNK3_DURATION - HANDOFF_OVERLAP - HANDOFF_OVERLAP}
       >
-        <TopBar />
+        <BrandLogo variant="top-left" gradient={false} />
       </Sequence>
 
       {/* ─── CAPTION 1 — over chunk 2 (pivot beat) ─── */}
@@ -183,21 +183,7 @@ const CostAnchorScene: React.FC<{ examName: string; examPrice: string }> = ({
         }}
       />
 
-      <div
-        style={{
-          position: 'absolute',
-          top: 32,
-          left: 40,
-          fontFamily: '"Satoshi", "General Sans", system-ui, sans-serif',
-          fontWeight: 700,
-          fontSize: 32,
-          color: '#ffffff',
-          letterSpacing: '-0.02em',
-          opacity: logoP,
-        }}
-      >
-        CipherExam
-      </div>
+      <BrandLogo variant="top-left" gradient={false} />
 
       <AbsoluteFill
         style={{

@@ -7,6 +7,7 @@ import {
   interpolate,
   spring,
 } from 'remotion';
+import { BrandLogo } from './BrandLogo';
 
 // ────────────────────────────────────────────────────────────────────────────
 // CipherExamMotionAd — Pure motion-graphics ad. No human-actor footage needed.
@@ -150,36 +151,8 @@ const BackdropBlobs: React.FC = () => {
   );
 };
 
-// ────────────────────────────────────────────────────────────────────────────
-const Logo: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const p = spring({ frame, fps, config: { damping: 100, stiffness: 200 } });
-  return (
-    <AbsoluteFill
-      style={{
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        padding: '32px 40px',
-        pointerEvents: 'none',
-      }}
-    >
-      <div
-        style={{
-          fontFamily: '"Satoshi", "General Sans", system-ui, -apple-system, sans-serif',
-          fontWeight: 700,
-          fontSize: 32,
-          color: '#ffffff',
-          letterSpacing: '-0.02em',
-          opacity: p,
-          transform: `translateY(${interpolate(p, [0, 1], [-8, 0])}px)`,
-        }}
-      >
-        CipherExam
-      </div>
-    </AbsoluteFill>
-  );
-};
+// Local alias — uses the shared BrandLogo with the brain icon + brand-colored wordmark.
+const Logo: React.FC = () => <BrandLogo variant="top-left" gradient={false} />;
 
 // ────────────────────────────────────────────────────────────────────────────
 // BEAT 1 — "PMP costs $425." The cost lands big, then settles.

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, spring, useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+import { AbsoluteFill, Img, spring, staticFile, useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
 
 type EndCardProps = {
   line1: string;
@@ -41,20 +41,41 @@ export const EndCard: React.FC<EndCardProps> = ({ line1, line2 }) => {
           opacity: bgOpacity,
         }}
       >
-        {/* Logo */}
+        {/* Logo — brand icon + gradient wordmark */}
         <div
           style={{
-            fontFamily: '"Satoshi", "General Sans", system-ui, sans-serif',
-            fontWeight: 700,
-            fontSize: 56,
-            color: '#ffffff',
-            letterSpacing: '-0.03em',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 16,
             opacity: logoP,
             transform: `translateY(${logoY}px)`,
             marginBottom: 16,
           }}
         >
-          CipherExam
+          <Img
+            src={staticFile('cipherexam-logo.png')}
+            style={{
+              width: 88,
+              height: 88,
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 6px 20px rgba(99, 102, 241, 0.45))',
+            }}
+          />
+          <div
+            style={{
+              fontFamily: '"Satoshi", "General Sans", system-ui, sans-serif',
+              fontWeight: 700,
+              fontSize: 56,
+              letterSpacing: '-0.03em',
+              background: 'linear-gradient(135deg, #818cf8 0%, #3b82f6 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              lineHeight: 1,
+            }}
+          >
+            CipherExam
+          </div>
         </div>
 
         {/* Headline */}

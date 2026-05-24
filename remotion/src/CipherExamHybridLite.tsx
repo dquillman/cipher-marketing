@@ -9,7 +9,7 @@ import {
   interpolate,
   spring,
 } from 'remotion';
-import { TopBar } from './TopBar';
+import { BrandLogo } from './BrandLogo';
 import { Caption } from './Caption';
 import { EndCard } from './EndCard';
 
@@ -74,10 +74,9 @@ export const CipherExamHybridLite: React.FC<CipherExamHybridLiteProps> = ({
         <Chunk2Layer src={chunk2Src} />
       </Sequence>
 
-      {/* ─── PERSISTENT BRAND HEADER (only over chunk 2 — cost-anchor scene
-            owns its own layout) ─── */}
+      {/* ─── PERSISTENT BRAND LOGO (covers Veo's plain-text logo — proper icon + wordmark) ─── */}
       <Sequence from={CHUNK2_START} durationInFrames={CHUNK2_DURATION - ENDCARD_OVERLAP}>
-        <TopBar />
+        <BrandLogo variant="top-left" gradient={false} />
       </Sequence>
 
       {/* ─── CAPTION on chunk 2 ─── */}
@@ -136,21 +135,7 @@ const CostAnchorScene: React.FC<{ examName: string; examPrice: string }> = ({
       />
 
       {/* CipherExam wordmark in the brand header position */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 32,
-          left: 40,
-          fontFamily: '"Satoshi", "General Sans", system-ui, sans-serif',
-          fontWeight: 700,
-          fontSize: 32,
-          color: '#ffffff',
-          letterSpacing: '-0.02em',
-          opacity: logoP,
-        }}
-      >
-        CipherExam
-      </div>
+      <BrandLogo variant="top-left" gradient={false} />
 
       {/* Centered cost-anchor stack */}
       <AbsoluteFill
