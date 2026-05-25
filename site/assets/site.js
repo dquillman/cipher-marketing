@@ -730,12 +730,40 @@ if (document.readyState === 'loading') {
     +     '</div>'
     +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
     +     '<form id="grade-form" class="grade-form">'
-    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
-    +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
-    +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
-    +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
-    +       '<label>Reposts / reshares <input type="number" min="0" name="reposts" value="0"></label>'
-    +       '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Discovery</div>'
+    +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
+    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section video-field">'
+    +         '<div class="grade-form-section-label">Video</div>'
+    +         '<label>Video views <input type="number" min="0" name="videoViews" value="0"></label>'
+    +         '<label class="li-field">Total watch time (sec) <input type="number" min="0" name="watchTimeSeconds" value="0" placeholder="4m 8s → 248"></label>'
+    +         '<label>Avg watch time (sec) <input type="number" min="0" name="avgWatchTimeSeconds" value="0" placeholder="10s → 10"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Engagement</div>'
+    +         '<label class="li-field">Social engagements <input type="number" min="0" name="socialEngagements" value="0"></label>'
+    +         '<label class="li-field">Reactions <input type="number" min="0" name="reactions" value="0"></label>'
+    +         '<label class="x-field">Likes <input type="number" min="0" name="likes" value="0"></label>'
+    +         '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
+    +         '<label>Reposts <input type="number" min="0" name="reposts" value="0"></label>'
+    +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
+    +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
+    +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
+    +         '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Profile activity</div>'
+    +         '<label class="li-field">Profile viewers from post <input type="number" min="0" name="profileViewers" value="0"></label>'
+    +         '<label class="li-field">Followers gained <input type="number" min="0" name="followersGained" value="0"></label>'
+    +         '<label class="x-field">Profile visits <input type="number" min="0" name="profileVisits" value="0"></label>'
+    +         '<label class="x-field">Follows gained <input type="number" min="0" name="followsGained" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Conversion</div>'
+    +         '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '</div>'
     +       '<div class="grade-form-actions">'
     +         '<button type="submit" class="btn-primary" id="grade-submit-btn">Submit grade</button>'
     +         '<button type="button" class="btn-secondary" data-grade-close>Cancel</button>'
@@ -764,7 +792,10 @@ if (document.readyState === 'loading') {
     document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
     document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
     document.getElementById('grade-form-status').textContent = '';
-    document.getElementById('grade-form').reset();
+    var form = document.getElementById('grade-form');
+    form.reset();
+    form.setAttribute('data-channel', post.channel || 'linkedin');
+    if (post.video) { form.setAttribute('data-has-video', ''); } else { form.removeAttribute('data-has-video'); }
     document.getElementById('grade-submit-btn').disabled = false;
     document.getElementById('grade-submit-btn').textContent = 'Submit grade';
     modal.classList.add('open');
@@ -786,18 +817,41 @@ if (document.readyState === 'loading') {
     var statusEl = document.getElementById('grade-form-status');
     var btn = document.getElementById('grade-submit-btn');
     var fd = new FormData(form);
-    var likes    = Number(fd.get('likes') || 0);
-    var comments = Number(fd.get('comments') || 0);
-    var reposts  = Number(fd.get('reposts') || 0);
-    var metrics = {
-      impressions:            Number(fd.get('impressions') || 0),
-      linkClicks:             Number(fd.get('linkClicks') || 0),
-      likes:                  likes,
-      comments:               comments,
-      reposts:                reposts,
-      engagementActions:      likes + comments + reposts,
-      trialSignupsAttributed: Number(fd.get('trialSignups') || 0),
-    };
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var post  = posts.find(function (p) { return p.id === currentPostId; });
+    var channel = (post && post.channel) || 'linkedin';
+    var hasVideo = !!(post && post.video);
+    var metrics = { impressions: Number(fd.get('impressions') || 0) };
+    if (channel === 'linkedin') {
+      metrics.membersReached       = Number(fd.get('membersReached') || 0);
+      metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
+      metrics.reactions            = Number(fd.get('reactions') || 0);
+      metrics.comments             = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.saves                = Number(fd.get('saves') || 0);
+      metrics.sends                = Number(fd.get('sends') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
+      metrics.followersGained      = Number(fd.get('followersGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    } else {
+      metrics.likes                = Number(fd.get('likes') || 0);
+      metrics.replies              = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.bookmarks            = Number(fd.get('bookmarks') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileVisits        = Number(fd.get('profileVisits') || 0);
+      metrics.followsGained        = Number(fd.get('followsGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    }
+    metrics.trialSignupsAttributed = Number(fd.get('trialSignups') || 0);
     statusEl.textContent = 'Brad is grading…';
     statusEl.className = 'grade-form-status';
     btn.disabled = true;
@@ -833,6 +887,80 @@ if (document.readyState === 'loading') {
     if (e.target.matches && e.target.matches('[data-grade-close]')) {
       e.preventDefault();
       closeModal();
+      return;
+    }
+
+    // Mark Posted flow — works on any tab that renders [data-sched-*] buttons.
+    // Both the Schedule tab and the Posts tab use the same publish-form markup.
+    var pubBtn = e.target.closest && e.target.closest('[data-sched-publish]');
+    if (pubBtn) {
+      e.preventDefault();
+      var pid = pubBtn.getAttribute('data-sched-publish');
+      var pform = document.getElementById('pub-form-' + pid);
+      if (pform) {
+        pform.classList.toggle('show');
+        if (pform.classList.contains('show')) {
+          var pinput = document.getElementById('pub-url-' + pid);
+          if (pinput) setTimeout(function () { pinput.focus(); }, 50);
+        }
+      }
+      return;
+    }
+
+    var cancelBtn = e.target.closest && e.target.closest('[data-sched-cancel]');
+    if (cancelBtn) {
+      e.preventDefault();
+      var cid = cancelBtn.getAttribute('data-sched-cancel');
+      var cform = document.getElementById('pub-form-' + cid);
+      if (cform) cform.classList.remove('show');
+      var cerr = document.getElementById('pub-err-' + cid);
+      if (cerr) { cerr.textContent = ''; cerr.classList.remove('show'); }
+      return;
+    }
+
+    var submitBtn = e.target.closest && e.target.closest('[data-sched-submit]');
+    if (submitBtn) {
+      e.preventDefault();
+      var sid = submitBtn.getAttribute('data-sched-submit');
+      var sInput = document.getElementById('pub-url-' + sid);
+      var sErr   = document.getElementById('pub-err-' + sid);
+      var postUrl = sInput ? sInput.value.trim() : '';
+      if (!postUrl || !postUrl.startsWith('http')) {
+        if (sErr) { sErr.textContent = 'Please enter a valid URL starting with http'; sErr.classList.add('show'); }
+        return;
+      }
+      if (sErr) { sErr.textContent = ''; sErr.classList.remove('show'); }
+      submitBtn.textContent = 'Saving…';
+      submitBtn.disabled = true;
+      var db = window._cipherDb;
+      if (!db) {
+        if (sErr) { sErr.textContent = 'Firebase not loaded — check your internet connection and refresh.'; sErr.classList.add('show'); }
+        submitBtn.textContent = 'Mark Posted';
+        submitBtn.disabled = false;
+        return;
+      }
+      var docRef = db.collection('campaign').doc('posts');
+      docRef.get()
+        .then(function (snap) {
+          var data = snap.data();
+          var postsList = data.posts;
+          var idx = postsList.findIndex(function (p) { return p.id === sid; });
+          if (idx === -1) throw new Error('Post "' + sid + '" not found in Firestore');
+          var now = new Date().toISOString();
+          postsList[idx].status   = 'posted';
+          postsList[idx].postedAt = now;
+          postsList[idx].postUrl  = postUrl;
+          data._meta = data._meta || {};
+          data._meta.lastUpdatedAt = now;
+          data._meta.lastUpdatedBy = 'dashboard mark-posted';
+          return docRef.set(data);
+        })
+        .catch(function (err) {
+          if (sErr) { sErr.textContent = 'Error: ' + (err.message || 'Firestore write failed'); sErr.classList.add('show'); }
+          submitBtn.textContent = 'Mark Posted';
+          submitBtn.disabled = false;
+        });
+      return;
     }
   });
   document.addEventListener('submit', function (e) {

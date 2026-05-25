@@ -21,6 +21,27 @@
       "linkClickRatePctGreatAtLeast": 1.5,
       "videoViewRatePctGoodAtLeast": 15,
       "videoViewRatePctGreatAtLeast": 30
+    },
+    "reddit-organic": {
+      "_note": "Reddit doesn't expose impressions for organic posts. Grading uses absolute upvotes + comment count + upvote ratio. Net score = upvotes - downvotes (Reddit only shows score, not raw votes).",
+      "upvotesGoodAtLeast": 25,
+      "upvotesGreatAtLeast": 100,
+      "commentsGoodAtLeast": 8,
+      "commentsGreatAtLeast": 25,
+      "upvoteRatioGoodAtLeast": 0.85,
+      "upvoteRatioGreatAtLeast": 0.92,
+      "autoRemovalIsAutomaticD": true
+    },
+    "reddit-ads": {
+      "_note": "Paid Reddit Ads via ads.reddit.com. Standard CTR/CVR grading like LinkedIn/X.",
+      "engagementRatePctGoodAtLeast": 1.5,
+      "engagementRatePctGreatAtLeast": 3.5,
+      "linkClickRatePctGoodAtLeast": 0.7,
+      "linkClickRatePctGreatAtLeast": 2,
+      "ctrPctGoodAtLeast": 0.5,
+      "ctrPctGreatAtLeast": 1.2,
+      "cpcUsdAcceptableAtMost": 1.5,
+      "cpcUsdGreatAtMost": 0.75
     }
   },
   "posts": [

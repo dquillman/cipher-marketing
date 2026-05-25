@@ -725,6 +725,42 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-form-status.ok  { color: #86efac; }
 .grade-form-status.err { color: #fca5a5; }
 
+/* ---- Buttons (.btn-primary / .btn-secondary / .btn-warn) ---- */
+/* Used across grade modal, schedule Mark-Posted flow, and posts page actions.
+   Previously inlined in app.html / posts.html only — consolidated 2026-05-21. */
+.btn-primary {
+  background: var(--cyan, #7ad6ff); color: #001423; border: 0; border-radius: 8px;
+  padding: 9px 16px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer;
+  letter-spacing: 0.01em; transition: filter 0.15s;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary {
+  background: transparent; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px; padding: 9px 16px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.86rem; cursor: pointer;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.06); }
+.btn-warn {
+  background: rgba(251,191,36,0.18); color: #fbbf24;
+  border: 1px solid rgba(251,191,36,0.45); border-radius: 8px;
+  padding: 9px 16px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.86rem; cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-warn:hover { background: rgba(251,191,36,0.28); }
+
+/* ---- Grade color scale: A = gold, B = green, C = yellow, D = red ---- */
+.post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
+.post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
+.post-pill.grade-C { background: rgba(250, 204, 21,  0.16); color: #facc15; border-color: rgba(250, 204, 21,  0.45); }
+.post-pill.grade-D { background: rgba(248, 113, 113, 0.16); color: #f87171; border-color: rgba(248, 113, 113, 0.45); }
+.summary-card .value.grade-A { color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,0.35); }
+.summary-card .value.grade-B { color: #4ade80; }
+.summary-card .value.grade-C { color: #facc15; }
+.summary-card .value.grade-D { color: #f87171; }
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
@@ -736,6 +772,9 @@ details[open] summary::before { transform: rotate(90deg); }
 })();
 </script>
 <!--/INLINE-ASSETS-->
+
+
+
 
 <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
 </head>
@@ -894,6 +933,9 @@ details[open] summary::before { transform: rotate(90deg); }
       <tr><td><strong>Whizlabs</strong></td><td>Cheap, broad cert coverage</td><td>Notoriously low question quality; outdated</td><td><span class="pill dim">Low</span></td></tr>
       <tr><td><strong>Pluralsight</strong></td><td>Deep IT video library</td><td>Cert prep is secondary; no adaptive questioning</td><td><span class="pill dim">Low</span></td></tr>
       <tr><td><strong>Udemy courses</strong></td><td>Huge reach, cheap</td><td>Passive video; zero practice accountability</td><td><span class="pill dim">Low</span></td></tr>
+      <tr><td><strong>Brain Sensei</strong><br><span style="font-size:0.78rem;color:var(--dim);">8 PMI certs &middot; $349/yr or $99/mo</span></td><td>99.6% published pass rate; pass guarantee (refund if fail); adaptive learning + spaced repetition; private FB community; auto-updated for 2026 PMP refresh; 7-day free trial</td><td>PMI-only (no Sec+/SHRM-CP); 5x our price ($99/mo vs $19/mo); no named founder or instructor; "story-based" pitch is undifferentiated; pass-rate methodology not disclosed</td><td><span class="pill warn">Med-High</span><br><span style="font-size:0.72rem;color:var(--dim);">credible PMP threat</span></td></tr>
+      <tr><td><strong>Elite Minds</strong><br><span style="font-size:0.78rem;color:var(--dim);">6 PMI certs &middot; $59/yr sim, $199 boot camp</span></td><td>$59/yr simulator floor (1,440 Qs); personal instructor brand (Shadi, PMP); 24/7 WhatsApp support (MENA edge); 35 contact hours badge; ~30k students claimed; money-back guarantee</td><td>No published pass rate; single-instructor brand has scale ceiling; no AI / adaptive layer; no Sec+/SHRM-CP/ITIL; pricing opaque for multi-cert bundles</td><td><span class="pill good">Low-Med</span><br><span style="font-size:0.72rem;color:var(--dim);">MENA/price-arbitrage play</span></td></tr>
+      <tr><td><strong>PgMP Simulator</strong><br><span style="font-size:0.78rem;color:var(--dim);">PgMP-only &middot; EUR 29+</span></td><td>Sharp "judgment over knowledge" pitch; 735 scenario Qs; 4 practice modes; risk-reversal stack (money-back, 15 free Qs, clock-starts-on-first-exam)</td><td>Single-exam ceiling; no explanation pedagogy; no framework brand (we have Exam Lens); pilot-tester quote isn't a sat-and-passed quote</td><td><span class="pill dim">Low</span><br><span style="font-size:0.72rem;color:var(--dim);">strongest framing in category</span></td></tr>
     </tbody>
   </table>
 
@@ -985,6 +1027,8 @@ details[open] summary::before { transform: rotate(90deg); }
   </script>
 
 </main>
+
+
 <!--INLINE-ASSETS-->
 <script>
 /* CipherExam campaign site — shared JS (vanilla, no deps) */
@@ -1822,6 +1866,80 @@ if (document.readyState === 'loading') {
     if (e.target.matches && e.target.matches('[data-grade-close]')) {
       e.preventDefault();
       closeModal();
+      return;
+    }
+
+    // Mark Posted flow — works on any tab that renders [data-sched-*] buttons.
+    // Both the Schedule tab and the Posts tab use the same publish-form markup.
+    var pubBtn = e.target.closest && e.target.closest('[data-sched-publish]');
+    if (pubBtn) {
+      e.preventDefault();
+      var pid = pubBtn.getAttribute('data-sched-publish');
+      var pform = document.getElementById('pub-form-' + pid);
+      if (pform) {
+        pform.classList.toggle('show');
+        if (pform.classList.contains('show')) {
+          var pinput = document.getElementById('pub-url-' + pid);
+          if (pinput) setTimeout(function () { pinput.focus(); }, 50);
+        }
+      }
+      return;
+    }
+
+    var cancelBtn = e.target.closest && e.target.closest('[data-sched-cancel]');
+    if (cancelBtn) {
+      e.preventDefault();
+      var cid = cancelBtn.getAttribute('data-sched-cancel');
+      var cform = document.getElementById('pub-form-' + cid);
+      if (cform) cform.classList.remove('show');
+      var cerr = document.getElementById('pub-err-' + cid);
+      if (cerr) { cerr.textContent = ''; cerr.classList.remove('show'); }
+      return;
+    }
+
+    var submitBtn = e.target.closest && e.target.closest('[data-sched-submit]');
+    if (submitBtn) {
+      e.preventDefault();
+      var sid = submitBtn.getAttribute('data-sched-submit');
+      var sInput = document.getElementById('pub-url-' + sid);
+      var sErr   = document.getElementById('pub-err-' + sid);
+      var postUrl = sInput ? sInput.value.trim() : '';
+      if (!postUrl || !postUrl.startsWith('http')) {
+        if (sErr) { sErr.textContent = 'Please enter a valid URL starting with http'; sErr.classList.add('show'); }
+        return;
+      }
+      if (sErr) { sErr.textContent = ''; sErr.classList.remove('show'); }
+      submitBtn.textContent = 'Saving…';
+      submitBtn.disabled = true;
+      var db = window._cipherDb;
+      if (!db) {
+        if (sErr) { sErr.textContent = 'Firebase not loaded — check your internet connection and refresh.'; sErr.classList.add('show'); }
+        submitBtn.textContent = 'Mark Posted';
+        submitBtn.disabled = false;
+        return;
+      }
+      var docRef = db.collection('campaign').doc('posts');
+      docRef.get()
+        .then(function (snap) {
+          var data = snap.data();
+          var postsList = data.posts;
+          var idx = postsList.findIndex(function (p) { return p.id === sid; });
+          if (idx === -1) throw new Error('Post "' + sid + '" not found in Firestore');
+          var now = new Date().toISOString();
+          postsList[idx].status   = 'posted';
+          postsList[idx].postedAt = now;
+          postsList[idx].postUrl  = postUrl;
+          data._meta = data._meta || {};
+          data._meta.lastUpdatedAt = now;
+          data._meta.lastUpdatedBy = 'dashboard mark-posted';
+          return docRef.set(data);
+        })
+        .catch(function (err) {
+          if (sErr) { sErr.textContent = 'Error: ' + (err.message || 'Firestore write failed'); sErr.classList.add('show'); }
+          submitBtn.textContent = 'Mark Posted';
+          submitBtn.disabled = false;
+        });
+      return;
     }
   });
   document.addEventListener('submit', function (e) {
@@ -1834,6 +1952,38 @@ if (document.readyState === 'loading') {
     if (e.key === 'Escape') closeModal();
   });
 })();
+
+// ---- Shared grade utilities (added 2026-05-21) -------------------------------
+// Used by the Posts page (avg grade summary) and the Schedule cards (Grade
+// pill). Inline copies still exist in app.html / posts.html for cache-warm
+// renders before site.js loads; the implementations match exactly so the
+// later-declared site.js wins-but-equals when both load.
+
+// Map A/B/C/D → numeric (4 = best). Returns 0 for any unknown grade.
+function gradeToNum(g) {
+  return ({ A: 4, B: 3, C: 2, D: 1 })[g] || 0;
+}
+
+// Map a numeric avg-grade (1=D … 4=A) to the matching grade-A/B/C/D CSS
+// class. 0.5-band rounding so 1.5 lands in C, 2.5 in B, 3.5 in A.
+function avgGradeClass(n) {
+  if (n === '—' || n == null) return '';
+  var v = Number(n);
+  if (isNaN(v)) return '';
+  if (v >= 3.5) return 'grade-A';
+  if (v >= 2.5) return 'grade-B';
+  if (v >= 1.5) return 'grade-C';
+  if (v >   0)  return 'grade-D';
+  return '';
+}
+
+// Minimal HTML escaper for safely injecting user-controlled strings into
+// innerHTML.
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+  });
+}
 
 </script>
 <!--/INLINE-ASSETS-->

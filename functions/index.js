@@ -19,6 +19,7 @@ const MODEL = "claude-sonnet-4-6";
 
 function pct(n, d) { return d > 0 ? (n / d) * 100 : 0; }
 
+// Rate-based grade (LinkedIn / X / Reddit Ads — all have impressions)
 function letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, benchmarks }) {
   const erGood   = benchmarks.engagementRatePctGoodAtLeast;
   const erGreat  = benchmarks.engagementRatePctGreatAtLeast;
@@ -46,16 +47,92 @@ function letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, ha
   return "D";
 }
 
-async function aiNotes({ apiKey, post, metrics, engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, grade, benchmarks }) {
-  const client = new Anthropic({ apiKey });
-  const videoLine = hasVideo
-    ? `- Video view rate: ${videoViewRatePct.toFixed(2)}%`
-    : `- Video view rate: n/a (no video on this post)`;
-  const videoBenchLine = hasVideo && benchmarks.videoViewRatePctGoodAtLeast != null
-    ? `- Video view rate: ${benchmarks.videoViewRatePctGoodAtLeast}% good / ${benchmarks.videoViewRatePctGreatAtLeast}% great`
-    : "";
+// Absolute-numbers grade (Reddit organic — no impressions exposed to non-authors)
+function letterGradeRedditOrganic({ upvotes, comments, upvoteRatio, autoRemoved, benchmarks }) {
+  // Hard overrides first — these short-circuit the rubric.
+  if (autoRemoved) return "D";
+  if (upvotes <= 0) return "D";                      // downvoted into oblivion
+  if (upvoteRatio != null && upvoteRatio < 0.85) return "D"; // controversial / value-mismatch
 
-  const prompt = `You are Brad, Dave's CipherExam marketing analyst. Grade this published ${post.channel.toUpperCase()} post.
+  const upGood     = benchmarks.upvotesGoodAtLeast;
+  const upGreat    = benchmarks.upvotesGreatAtLeast;
+  const cmtGood    = benchmarks.commentsGoodAtLeast;
+  const cmtGreat   = benchmarks.commentsGreatAtLeast;
+  const ratioGood  = benchmarks.upvoteRatioGoodAtLeast;
+  const ratioGreat = benchmarks.upvoteRatioGreatAtLeast;
+
+  const upBand    = upvotes        >= upGreat    ? 2 : upvotes        >= upGood    ? 1 : 0;
+  const cmtBand   = comments       >= cmtGreat   ? 2 : comments       >= cmtGood   ? 1 : 0;
+  const ratioBand = upvoteRatio    >= ratioGreat ? 2 : upvoteRatio    >= ratioGood ? 1 : 0;
+
+  const score = upBand + cmtBand + ratioBand;
+  // max = 6. A = 5-6, B = 3-4, C = 1-2, D = 0
+  if (score >= 5) return "A";
+  if (score >= 3) return "B";
+  if (score >= 1) return "C";
+  return "D";
+}
+
+// CPC penalty for Reddit Ads — pulls grade down a tier if ad spend is inefficient.
+function applyRedditAdsCpcPenalty(grade, cpcUsd, benchmarks) {
+  if (cpcUsd == null) return grade;
+  const cpcAcceptable = benchmarks.cpcUsdAcceptableAtMost;
+  if (cpcAcceptable != null && cpcUsd > cpcAcceptable) {
+    const order = ["A", "B", "C", "D"];
+    const i = order.indexOf(grade);
+    return i < order.length - 1 ? order[i + 1] : grade;
+  }
+  return grade;
+}
+
+async function aiNotes({ apiKey, post, metrics, computed, hasVideo, grade, benchmarks, isRedditOrganic }) {
+  const client = new Anthropic({ apiKey });
+
+  let computedBlock;
+  let benchmarkBlock;
+
+  if (isRedditOrganic) {
+    computedBlock = [
+      `- Upvotes: ${computed.upvotes}`,
+      `- Comments: ${computed.comments}`,
+      `- Upvote ratio: ${computed.upvoteRatio != null ? computed.upvoteRatio : "n/a"}`,
+      `- Auto-removed by AutoMod/mods: ${computed.autoRemoved ? "YES — never reached the feed" : "no"}`,
+    ].join("\n");
+    benchmarkBlock = [
+      `- Upvotes: ${benchmarks.upvotesGoodAtLeast} good / ${benchmarks.upvotesGreatAtLeast} great`,
+      `- Comments: ${benchmarks.commentsGoodAtLeast} good / ${benchmarks.commentsGreatAtLeast} great`,
+      `- Upvote ratio: ${benchmarks.upvoteRatioGoodAtLeast} good / ${benchmarks.upvoteRatioGreatAtLeast} great`,
+    ].join("\n");
+  } else {
+    const videoLine = hasVideo
+      ? `- Video view rate: ${computed.videoViewRatePct}%`
+      : `- Video view rate: n/a (no video on this post)`;
+    const cpcLine = post.channel === "reddit-ads" && computed.cpcUsd != null
+      ? `\n- CPC: $${computed.cpcUsd}`
+      : "";
+    computedBlock = [
+      `- Engagement rate: ${computed.engagementRatePct}%`,
+      `- Link click rate: ${computed.linkClickRatePct}%`,
+      videoLine,
+    ].join("\n") + cpcLine;
+
+    const videoBenchLine = hasVideo && benchmarks.videoViewRatePctGoodAtLeast != null
+      ? `\n- Video view rate: ${benchmarks.videoViewRatePctGoodAtLeast}% good / ${benchmarks.videoViewRatePctGreatAtLeast}% great`
+      : "";
+    const cpcBenchLine = post.channel === "reddit-ads" && benchmarks.cpcUsdAcceptableAtMost != null
+      ? `\n- CPC: $${benchmarks.cpcUsdGreatAtMost} great / $${benchmarks.cpcUsdAcceptableAtMost} acceptable ceiling`
+      : "";
+    benchmarkBlock = [
+      `- Engagement: ${benchmarks.engagementRatePctGoodAtLeast}% good / ${benchmarks.engagementRatePctGreatAtLeast}% great`,
+      `- Link clicks: ${benchmarks.linkClickRatePctGoodAtLeast}% good / ${benchmarks.linkClickRatePctGreatAtLeast}% great`,
+    ].join("\n") + videoBenchLine + cpcBenchLine;
+  }
+
+  const channelDescriptor = isRedditOrganic
+    ? `REDDIT ORGANIC (subreddit: ${post.subreddit || metrics.subreddit || "unknown"})`
+    : post.channel.toUpperCase();
+
+  const prompt = `You are Brad, Dave's CipherExam marketing analyst. Grade this published ${channelDescriptor} post.
 
 POST COPY:
 """${post.copy}"""
@@ -65,19 +142,15 @@ VIDEO ATTACHED: ${hasVideo ? `${post.video} (${post.videoFormat || "?"})` : "no"
 METRICS (Dave reported):
 ${JSON.stringify(metrics, null, 2)}
 
-COMPUTED RATES:
-- Engagement rate: ${engagementRatePct.toFixed(2)}%
-- Link click rate: ${linkClickRatePct.toFixed(2)}%
-${videoLine}
+COMPUTED:
+${computedBlock}
 
 CHANNEL BENCHMARKS (${post.channel}):
-- Engagement: ${benchmarks.engagementRatePctGoodAtLeast}% good / ${benchmarks.engagementRatePctGreatAtLeast}% great
-- Link clicks: ${benchmarks.linkClickRatePctGoodAtLeast}% good / ${benchmarks.linkClickRatePctGreatAtLeast}% great
-${videoBenchLine}
+${benchmarkBlock}
 
 MECHANICAL GRADE: ${grade}
 
-Return JSON with exactly these fields, no prose:
+${isRedditOrganic ? "REDDIT NOTES: This is organic Reddit. There are no impressions. Engagement = upvotes + comments. Auto-removal is fatal — if metrics.autoRemoved is true, the post never reached the feed and any analysis of content is moot. Subreddit culture matters: r/CompTIA strictest on self-promo, r/pmp tolerates prep-tool mentions if value-first, r/humanresources engages on policy threads.\n\n" : ""}Return JSON with exactly these fields, no prose:
 {
   "gradeNotes": "<2-4 sentences: what worked, what didn't, anchored to the metrics>",
   "recommendation": "<1 sentence: the single highest-leverage change for the next post in this slot>"
@@ -122,28 +195,82 @@ export const gradePost = onRequest(
       const benchmarks = data.benchmarks?.[post.channel];
       if (!benchmarks) { res.status(500).json({ error: `no benchmarks for channel "${post.channel}"` }); return; }
 
-      const impressions       = Number(metrics.impressions || 0);
-      const engagementActions = Number(metrics.engagementActions || 0); // likes+comments+reposts+replies
-      const linkClicks        = Number(metrics.linkClicks || 0);
-      const videoViews        = Number(metrics.videoViews || 0);
-      const hasVideo          = !!post.video;
+      const hasVideo = !!post.video;
+      const isRedditOrganic = post.channel === "reddit-organic";
 
-      const engagementRatePct = pct(engagementActions, impressions);
-      const linkClickRatePct  = pct(linkClicks, impressions);
-      const videoViewRatePct  = pct(videoViews, impressions);
+      let grade;
+      let computed = {}; // computed rates / scores to persist + show in AI prompt
 
-      const grade = letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, benchmarks });
+      if (isRedditOrganic) {
+        // Reddit organic: no impressions, grade on absolute numbers.
+        const upvotes     = Number(metrics.upvotes || 0);
+        const comments    = Number(metrics.comments || 0);
+        const upvoteRatio = metrics.upvoteRatio != null ? Number(metrics.upvoteRatio) : null;
+        const autoRemoved = !!metrics.autoRemoved;
+
+        grade = letterGradeRedditOrganic({ upvotes, comments, upvoteRatio, autoRemoved, benchmarks });
+
+        // Conversion bump (only when post wasn't auto-removed)
+        if (!autoRemoved && Number(metrics.trialSignupsAttributed || 0) > 0) {
+          const order = ["D", "C", "B", "A"];
+          const i = order.indexOf(grade);
+          if (i >= 0 && i < order.length - 1) grade = order[i + 1];
+        }
+
+        computed = { upvotes, comments, upvoteRatio, autoRemoved };
+      } else {
+        // Impression-based: LI, X, reddit-ads
+        const impressions       = Number(metrics.impressions || 0);
+        const engagementActions = Number(metrics.engagementActions || 0); // likes+comments+reposts+replies
+        const linkClicks        = Number(metrics.linkClicks || 0);
+        const videoViews        = Number(metrics.videoViews || 0);
+
+        const engagementRatePct = pct(engagementActions, impressions);
+        const linkClickRatePct  = pct(linkClicks, impressions);
+        const videoViewRatePct  = pct(videoViews, impressions);
+
+        grade = letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, benchmarks });
+
+        // Reddit Ads: penalize over-budget CPC by one tier
+        if (post.channel === "reddit-ads") {
+          const spend = Number(metrics.totalSpendUsd || 0);
+          const cpcUsd = linkClicks > 0 ? spend / linkClicks : null;
+          grade = applyRedditAdsCpcPenalty(grade, cpcUsd, benchmarks);
+          computed.cpcUsd = cpcUsd != null ? Number(cpcUsd.toFixed(2)) : null;
+        }
+
+        // Conversion bump
+        if (Number(metrics.trialSignupsAttributed || 0) > 0) {
+          const order = ["D", "C", "B", "A"];
+          const i = order.indexOf(grade);
+          if (i >= 0 && i < order.length - 1) grade = order[i + 1];
+        }
+
+        // Tiny-reach penalty for organic LI/X
+        if (post.channel === "linkedin" && impressions < 200) {
+          const order = ["A", "B", "C", "D"];
+          const i = order.indexOf(grade);
+          if (i >= 0 && i < order.length - 1) grade = order[i + 1];
+        } else if (post.channel === "x" && impressions < 500) {
+          const order = ["A", "B", "C", "D"];
+          const i = order.indexOf(grade);
+          if (i >= 0 && i < order.length - 1) grade = order[i + 1];
+        }
+
+        computed.engagementRatePct = Number(engagementRatePct.toFixed(2));
+        computed.linkClickRatePct  = Number(linkClickRatePct.toFixed(2));
+        if (hasVideo) computed.videoViewRatePct = Number(videoViewRatePct.toFixed(2));
+      }
 
       const ai = await aiNotes({
         apiKey: ANTHROPIC_API_KEY.value(),
         post,
         metrics,
-        engagementRatePct,
-        linkClickRatePct,
-        videoViewRatePct,
+        computed,
         hasVideo,
         grade,
         benchmarks,
+        isRedditOrganic,
       });
 
       const now = new Date().toISOString();
@@ -151,9 +278,7 @@ export const gradePost = onRequest(
         ...post,
         metrics: {
           ...metrics,
-          engagementRatePct: Number(engagementRatePct.toFixed(2)),
-          linkClickRatePct:  Number(linkClickRatePct.toFixed(2)),
-          ...(hasVideo ? { videoViewRatePct: Number(videoViewRatePct.toFixed(2)) } : {}),
+          ...computed,
           gradedAt: now,
         },
         grade,
@@ -168,9 +293,7 @@ export const gradePost = onRequest(
         ok: true,
         postId,
         grade,
-        engagementRatePct: Number(engagementRatePct.toFixed(2)),
-        linkClickRatePct: Number(linkClickRatePct.toFixed(2)),
-        ...(hasVideo ? { videoViewRatePct: Number(videoViewRatePct.toFixed(2)) } : {}),
+        ...computed,
         gradeNotes: ai.gradeNotes,
         recommendation: ai.recommendation,
       });
