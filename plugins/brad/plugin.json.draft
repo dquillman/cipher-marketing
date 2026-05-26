@@ -1,0 +1,58 @@
+{
+  "_comment": "DRAFT manifest. Do not install. Final schema per Anthropic Cowork plugin spec — verify against claude.com/plugins docs at install time (post 2026-06-15 gate).",
+  "name": "brad",
+  "version": "0.1.0-draft",
+  "description": "Marketing orchestrator that drafts, schedules, grades, and learns across social channels. Designed to install per product.",
+  "author": "Dave Quillman",
+  "config": {
+    "_comment": "Per-product config supplied at install time.",
+    "product": {
+      "name": "string (e.g. 'CipherExam')",
+      "domain": "string (e.g. 'cipherexam.com')",
+      "repoRoot": "path (e.g. 'G:/Users/daveq/Cipher')",
+      "dataRoot": "path (e.g. 'G:/Users/daveq/cipher-marketing/site/data')",
+      "brandVoiceFile": "path relative to dataRoot (default 'brand-voice.md')",
+      "postsFile": "path relative to dataRoot (default 'posts.json')",
+      "lessonsFile": "path relative to dataRoot (default 'grading-lessons.md')",
+      "competitorsFile": "path relative to dataRoot (default 'competitors.json')"
+    }
+  },
+  "agents": [
+    {
+      "name": "brad",
+      "file": "agents/brad.md",
+      "description": "Marketing orchestrator. Delegates to grader + drafter."
+    },
+    {
+      "name": "post-performance-grader",
+      "file": "agents/post-performance-grader.md",
+      "description": "Per-post grader. Computes letter grade, writes back to posts.json, appends durable lessons."
+    }
+  ],
+  "skills": [
+    {
+      "name": "draft-week-posts",
+      "file": "skills/draft-week-posts/SKILL.md",
+      "description": "Drafts a week of social posts. Reads brand-voice + lessons + competitors."
+    },
+    {
+      "name": "weekly-performance-report",
+      "file": "skills/weekly-performance-report/SKILL.md",
+      "description": "End-of-week synthesis. Reads posts.json, writes weekly marker to lessons file."
+    }
+  ],
+  "connectors": [
+    {
+      "name": "canva-mcp",
+      "type": "mcp",
+      "description": "Used by draft-week-posts Step 7.5 to generate branded visuals.",
+      "required": false
+    }
+  ],
+  "_todo_post_gate": [
+    "Replace every hardcoded 'CipherExam' / 'cipherexam.com' in agents/ and skills/ with {{product.name}} / {{product.domain}} template tokens",
+    "Add a {product}-context skill template that new installs copy + fill",
+    "Verify final manifest schema against claude.com/plugins docs",
+    "Test install end-to-end on Admin-Core as Product #2 before generalizing further"
+  ]
+}

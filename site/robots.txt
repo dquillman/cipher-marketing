@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+
+# Operator dashboard. Should never be indexed.
+# Contains campaign internals, post drafts, performance metrics, and competitive analysis.
+# All public-facing marketing lives at https://cipherexam.com.

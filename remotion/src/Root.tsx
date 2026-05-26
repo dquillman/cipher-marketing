@@ -24,6 +24,14 @@ import {
   SECURITY_PLUS_VARIANT,
   SHRM_CP_VARIANT,
 } from './CipherExamMotionAd';
+import {
+  OGCard,
+  OG_DEFAULT,
+  OG_PMP,
+  OG_SECURITY_PLUS,
+  OG_SHRM_CP,
+  OG_STORY,
+} from './OGCard';
 
 // ────────────────────────────────────────────────────────────────────────────
 // COMPOSITIONS
@@ -118,6 +126,53 @@ export const RemotionRoot: React.FC = () => (
       width={1920}
       height={1080}
       defaultProps={MOTION_AD_DEFAULTS}
+    />
+
+    {/* ─── OG SOCIAL CARDS (1200×630 stills) ─── */}
+    <Composition
+      id="OGCard-Default"
+      component={OGCard}
+      durationInFrames={1}
+      fps={1}
+      width={1200}
+      height={630}
+      defaultProps={OG_DEFAULT}
+    />
+    <Composition
+      id="OGCard-PMP"
+      component={OGCard}
+      durationInFrames={1}
+      fps={1}
+      width={1200}
+      height={630}
+      defaultProps={OG_PMP}
+    />
+    <Composition
+      id="OGCard-SecurityPlus"
+      component={OGCard}
+      durationInFrames={1}
+      fps={1}
+      width={1200}
+      height={630}
+      defaultProps={OG_SECURITY_PLUS}
+    />
+    <Composition
+      id="OGCard-SHRMCP"
+      component={OGCard}
+      durationInFrames={1}
+      fps={1}
+      width={1200}
+      height={630}
+      defaultProps={OG_SHRM_CP}
+    />
+    <Composition
+      id="OGCard-Story"
+      component={OGCard}
+      durationInFrames={1}
+      fps={1}
+      width={1200}
+      height={630}
+      defaultProps={OG_STORY}
     />
   </>
 );
