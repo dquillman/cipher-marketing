@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "lastUpdatedBy": "cipher-trend-scout",
+    "lastUpdatedAt": "2026-05-25T20:00:00.000Z",
+    "schemaVersion": 1,
+    "instructions": "Latest Trend Scout output. Brad/Scout writes this when the cipher-trend-scout subagent runs. app.html fetches and renders on Today tab."
+  },
+  "scanDate": "2026-05-25",
+  "examsScanned": ["PMP", "Security+", "SHRM-CP"],
+  "angles": [
+    {
+      "rank": 1,
+      "label": "PMP July 9 exam flip to 60% agile",
+      "source": "PMI announcement + cert-prep coverage (PM Mastery, ProjectManagementAcademy, examcert)",
+      "outlierSignal": "Topic-hot (Reddit/X metrics not verifiable via search). Business Environment domain tripling 8% → 26%.",
+      "whyHot": "6 weeks until cutoff; experienced predictive PMs are spooked by agile-weighted scenarios.",
+      "angleForBrad": "Walk through one Business Environment scenario where the \"obvious PM answer\" is wrong under agile framing — AI shows why.",
+      "suggestedHook": "exam-trap",
+      "exam": "PMP"
+    },
+    {
+      "rank": 2,
+      "label": "SHRM 2026 BASK adds AI governance questions",
+      "source": "SHRM BASK PDF + Pocket Prep blog (⚠ competitor authored — handoff)",
+      "outlierSignal": "New \"Inclusive Mindset\" competency consolidates two old ones; AI risk-tradeoff scenarios now testable.",
+      "whyHot": "HR candidates feel blindsided by AI-evaluation questions outside their daily work.",
+      "angleForBrad": "Show a SHRM-CP AI governance scenario with three plausible answers — AI explains which \"defensible\" choice the rubric rewards.",
+      "suggestedHook": "worked-question",
+      "exam": "SHRM-CP"
+    },
+    {
+      "rank": 3,
+      "label": "Security+ 701 vs SY0-801 decision fatigue",
+      "source": "CompTIA roadmap (StationX, Training Camp, CertBlaster)",
+      "outlierSignal": "SY0-801 preview ~Oct 2026; 701 retires mid-2027. New objectives 2.4 (LLMs) and 2.6 (AI threats).",
+      "whyHot": "Candidates debating \"test now on 701 vs. study 801 from scratch\" — decision fatigue.",
+      "angleForBrad": "Frame CipherExam as the bridge — same reasoning engine works on 701 today, 801 when it drops; no re-buying a study tool.",
+      "suggestedHook": "tool-builder",
+      "exam": "Security+"
+    }
+  ],
+  "skipThese": "Generic \"I passed the PMP!\" celebration posts — high reach, zero nerve, no opening for the reasoning angle.",
+  "handoffNote": "Pocket Prep is actively publishing on the 2026 SHRM BASK changes. cipher-competitor-analyst should review their angle before Brad drafts Angle 2.",
+  "honestyCaveat": "WebSearch did not surface Reddit/X posts with verifiable upvote/repost counts for the 7-day window. Angles are confirmed topic-hot via PMI/CompTIA/SHRM official announcements and cert-prep publishers — not metric-confirmed Reddit outliers."
+}

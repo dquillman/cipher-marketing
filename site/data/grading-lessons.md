@@ -11,6 +11,7 @@ Durable lessons learned from grading CipherExam marketing posts. Appended by the
 ## LinkedIn — timing & format
 
 <!-- e.g. "Tue 8:30 MT outperforms Fri 10:30 MT by ~3x impressions (3 graded posts, 2026-05). Prefer Tue/Wed for LI." -->
+- Video view rate is stuck at 21-28% across all Week 1 video posts — below the 30% "good" threshold (3 graded posts, 2026-05). The first 2-3s of the video isn't stopping the scroll. Next videos must open on a single concrete number or a visible "wrong-answer trap" frame, not a logo or talking head.
 
 ## LinkedIn — copy & hook
 
@@ -19,10 +20,12 @@ Durable lessons learned from grading CipherExam marketing posts. Appended by the
 ## LinkedIn — links & CTA
 
 <!-- e.g. "Link in first comment outperforms link in body — LI reach-caps link-in-body posts." -->
+- Link in post body is suppressing reach — every Week 1 LinkedIn post with the LP URL in the body topped out at 64-119 impressions and 14-44 members reached (3 graded posts, 2026-05). Drop the URL from `copy` entirely; post it as the FIRST reply comment immediately after publishing. Keep the `cta` field populated so the dashboard still shows the destination.
 
 ## X — timing & format
 
 <!-- e.g. "Single-tweet posts outperform threads at <100 followers — algorithm-cold accounts get throttled on threads." -->
+- X account is cold-start — Week 1 X posts hit 2-39 impressions despite identical-quality copy to LinkedIn (3 graded posts, 2026-05). The account has no audience to surface to. Until follower base + 10+ relevant reply-engagements per day are established, treat solo X posts as throwaway distribution. Reply-into-conversations (PMP / Sec+ / SHRM threads from accounts with reach) before publishing standalone posts.
 
 ## X — copy & hook
 
@@ -31,6 +34,7 @@ Durable lessons learned from grading CipherExam marketing posts. Appended by the
 ## X — links & CTA
 
 <!-- (empty until a pattern emerges) -->
+- X URLs must include the full `https://` scheme — bare domains don't auto-link reliably (3 graded posts, 2026-05). Already enforced in `brand-voice.md`; surfaced here as a drafting reminder.
 
 ## Reddit (organic) — global rules
 
@@ -67,3 +71,4 @@ Durable lessons learned from grading CipherExam marketing posts. Appended by the
 ## Cross-channel — video
 
 <!-- e.g. "1:1 video on LinkedIn outperforms 9:16 in-feed; 9:16 only when the post explicitly reads as a Reel/Short." -->
+- Distribution problem is gating creative learning — across 6 Week 1 posts (4 D's on LinkedIn, 1 D / 1 C on X) zero engagement actions and zero attributed trials mean the audience never showed up, so we cannot grade copy or hook on persuasion yet. Until LinkedIn link-in-body fix and X seeding deliver baseline reach (≥500 impressions LI, ≥500 X), treat every "D" as a distribution D, not a copy D. Don't rewrite hooks chasing a copy problem we haven't actually seen evidence of.

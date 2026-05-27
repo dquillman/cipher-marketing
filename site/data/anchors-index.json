@@ -1,0 +1,9 @@
+{
+  "_meta": {
+    "lastUpdatedBy": "init",
+    "lastUpdatedAt": "2026-05-25T00:00:00.000Z",
+    "schemaVersion": 1,
+    "instructions": "Index of A-grade anchor posts living in ~/.claude/skills/draft-week-posts/examples/. post-performance-grader updates this when it copies a new anchor. Keyed by '{channel}-{examSlug}'."
+  },
+  "anchors": {}
+}

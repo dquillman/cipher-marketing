@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
+    "lastUpdatedBy": "brad",
+    "lastUpdatedAt": "2026-05-26T23:45:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -352,6 +352,10 @@
     {
       "date": "2026-05-18",
       "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
+    },
+    {
+      "date": "2026-05-26",
+      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     }
   ]
 }

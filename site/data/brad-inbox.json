@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "lastUpdatedBy": "brad",
+    "lastUpdatedAt": "2026-05-26T23:45:00.000Z",
+    "schemaVersion": 1,
+    "instructions": "Brad's pending questions for Dave. Brad writes here when he pauses mid-pipeline; the dashboard renders them with answer buttons. When Dave clicks an answer, the resumePhrase is copied to his clipboard and he pastes into Claude Code chat to resume Brad. Questions persist until Brad marks them answered (status='answered') or skipped."
+  },
+  "questions": [
+    {
+      "id": "q-2026-05-26-001-approve-drafts",
+      "askedAt": "2026-05-26T19:15:00.000Z",
+      "context": "Drafting Security+ Week 2 — 6 drafts complete, awaiting sign-off",
+      "question": "Ready to flip the 6 Security+ drafts to scheduled?",
+      "details": "Wed 5/27, Fri 5/29, Mon 6/1 × LinkedIn + X. Trend scout angle applied (701→801 bridge). 0 humanizer tells stripped. Anchor library empty. Sec+ videos rendering in background.",
+      "options": [
+        {
+          "key": "yes",
+          "label": "Yes — flip all 6 to scheduled",
+          "resumePhrase": "Brad, yes — flip the 6 Sec+ drafts to scheduled. Also generate Canva visuals for the 2 LI candidates (Fri worked-question + Mon domain-weights).",
+          "primary": true
+        },
+        {
+          "key": "edit",
+          "label": "Let me edit a draft first",
+          "resumePhrase": "Brad, hold the approval — I want to edit a draft. Open the Posts tab so I can see them."
+        },
+        {
+          "key": "discard",
+          "label": "Discard and re-draft",
+          "resumePhrase": "Brad, discard the 6 Sec+ drafts and re-draft with a different angle."
+        }
+      ],
+      "status": "answered",
+      "answer": "yes",
+      "answeredAt": "2026-05-26T23:45:00.000Z"
+    }
+  ]
+}
