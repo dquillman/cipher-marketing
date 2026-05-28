@@ -5460,20 +5460,47 @@ if (document.readyState === 'loading') {
     });
     if (todayUnposted.length > 0) {
       var p = todayUnposted[0];
-      var copyEsc = (p.copy || '').replace(/`/g, '\\`').replace(/\\/g, '\\\\');
+      var isLI = (p.channel || '').toLowerCase() === 'linkedin';
+      // Per Week 1 lessons: LinkedIn = link in first comment (not body). X = include URL in body.
+      var ctaPlacement = isLI
+        ? 'Post body alone — no URL in body. Drop the CTA URL as the <strong>first reply comment</strong> after publishing (Week 1 lesson — body links suppress reach).'
+        : 'Include the CTA URL inside the post body. X collapses URLs to t.co.';
       return {
         type: 'post',
         title: 'POST: ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
-        sub: 'Copy the text below, attach the video, post it. Then come back and click Mark Posted.',
+        sub: 'Two clipboard buttons below — one for the body, one for the specific CTA URL with the right UTM. Use both; never paste a URL from memory or from a different post.',
         detail:
-          '<div class="cc-detail-label">Copy</div>' +
+          '<div class="cc-detail-label">Post body (copy → paste in composer)</div>' +
           '<pre id="cc-copy-text">' + esc(p.copy || '') + '</pre>' +
-          (p.video ? '<div style="margin-top:10px;"><div class="cc-detail-label">Video</div><code>' + esc(p.video) + '</code> · <code>' + esc(p.videoFormat || '?') + '</code></div>' : '') +
-          (p.cta ? '<div style="margin-top:10px;"><div class="cc-detail-label">CTA URL (include this in the post)</div><code>' + esc(p.cta) + '</code></div>' : ''),
+          '<div style="margin-top:10px;font-size:0.82rem;color:var(--dim);">' + ctaPlacement + '</div>' +
+          (p.cta ? '<div style="margin-top:12px;"><div class="cc-detail-label">CTA URL — unique to THIS post</div><code id="cc-cta-url" style="font-size:0.78rem;word-break:break-all;display:block;padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:4px;">' + esc(p.cta) + '</code></div>' : '') +
+          (p.video ? '<div style="margin-top:10px;"><div class="cc-detail-label">Video to attach</div><code>' + esc(p.video) + '</code> · <code>' + esc(p.videoFormat || '?') + '</code></div>' : ''),
         buttons: [
-          { label: 'Copy post text', onclick: "navigator.clipboard.writeText(document.getElementById('cc-copy-text').innerText); this.innerText='Copied ✓'; setTimeout(()=>this.innerText='Copy post text',1500);" },
-          { label: 'Open Schedule tab', cls: 'secondary', onclick: "cipherShow('schedule')" }
-        ]
+          {
+            label: 'Copy post body',
+            onclick: function () {
+              var el = document.getElementById('cc-copy-text');
+              if (el) navigator.clipboard.writeText(el.innerText);
+              var btn = this;
+              btn.innerText = 'Copied ✓';
+              setTimeout(function () { btn.innerText = 'Copy post body'; }, 1500);
+            }
+          },
+          (p.cta ? {
+            label: isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body',
+            onclick: (function (cta, label) { return function () {
+              navigator.clipboard.writeText(cta);
+              var btn = this;
+              btn.innerText = 'Copied ✓';
+              setTimeout(function () { btn.innerText = label; }, 1500);
+            }; })(p.cta, isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body')
+          } : null),
+          {
+            label: 'Open Schedule tab',
+            cls: 'secondary',
+            onclick: function () { if (typeof cipherShow === 'function') cipherShow('schedule'); }
+          }
+        ].filter(Boolean)
       };
     }
 
