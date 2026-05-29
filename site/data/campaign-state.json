@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "brad",
-    "lastUpdatedAt": "2026-05-26T23:45:00.000Z",
+    "lastUpdatedBy": "claude",
+    "lastUpdatedAt": "2026-05-28T21:00:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -36,6 +36,56 @@
         "activated": 0,
         "target": 10
       }
+    },
+    "funnel": {
+      "asOf": "2026-05-28T17:30:00.000Z",
+      "windowDays": 7,
+      "instructions": "Hand-entered daily. Five arrows: impressions -> lpVisits -> signups -> examPicked -> activated. Sources: GA4 + Meta Pixel for top-of-funnel, posts.json impressions, internal Firestore for signups/exam-picked/activated. 'aggregate' is the rolling N-day sum across all clusters; 'perCluster' is the same window scoped to that exam's LP traffic. Update windowDays + asOf together; bump _meta.lastUpdatedAt on save.",
+      "aggregate": {
+        "impressions": 0,
+        "lpVisits": 0,
+        "signups": 0,
+        "examPicked": 0,
+        "activated": 0
+      },
+      "perCluster": {
+        "PMP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "Security+": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "SHRM-CP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        }
+      }
+    }
+  },
+  "activationSprint": {
+    "instructions": "Manual activation sprint tracker (playbook: 15-activation-sprint.md). Hand-edit candidates[] as you recruit. sprint.html renders this. 'activated' = signup + exam picked + >=10 questions. 'day2Return' = came back the next day (the real proof). Update totals to match candidates[] and bump _meta.lastUpdatedAt.",
+    "startedAt": "2026-05-28",
+    "exam": "PMP",
+    "targetActivated": 5,
+    "gate": 25,
+    "dailyInteractionTarget": 9,
+    "candidates": [],
+    "totals": {
+      "contacted": 0,
+      "signedUp": 0,
+      "activated": 0,
+      "day2Returned": 0
     }
   },
   "communityEngagement": {
@@ -281,6 +331,10 @@
     }
   ],
   "dailyLog": [
+    {
+      "date": "2026-05-28",
+      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
+    },
     {
       "date": "2026-05-11",
       "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
