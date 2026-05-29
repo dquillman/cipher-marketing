@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- Operator dashboard — DO NOT INDEX. Public marketing lives at cipherexam.com. -->
-<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 <title>CipherExam Campaign</title>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
@@ -715,17 +713,27 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-modal-x { background: transparent; color: #e6e8ee; border: 0; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
 .grade-modal-x:hover { background: rgba(255,255,255,0.08); }
 .grade-modal-sub { color: #98a0b3; font-size: 0.88rem; margin: 6px 0 14px; }
-.grade-form { display: grid; gap: 10px; }
+.grade-form { display: grid; gap: 0; }
 .grade-form label { display: grid; gap: 4px; font-size: 0.85rem; color: #cbd0dc; }
 .grade-form input[type="number"] {
   background: #0b0d13; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.1);
   border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-variant-numeric: tabular-nums;
 }
 .grade-form input[type="number"]:focus { outline: 2px solid #5b8def; outline-offset: 1px; }
-.grade-form-actions { display: flex; gap: 8px; margin-top: 6px; }
+.grade-form-actions { display: flex; gap: 8px; margin-top: 14px; }
 .grade-form-status { font-size: 0.85rem; min-height: 1.1em; margin-top: 4px; color: #98a0b3; }
 .grade-form-status.ok  { color: #86efac; }
 .grade-form-status.err { color: #fca5a5; }
+/* Sectioned layout */
+.grade-form-section { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.grade-form-section:last-of-type { border-bottom: none; }
+.grade-form-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: #4a5270; font-weight: 600; margin-bottom: 2px; }
+/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal() */
+#grade-form:not([data-channel="linkedin"]) .li-field { display: none; }
+#grade-form:not([data-channel="x"]) .x-field { display: none; }
+#grade-form:not([data-has-video]) .video-field { display: none; }
+/* Scrollable modal body when many fields visible */
+.grade-modal-body { max-height: 88vh; overflow-y: auto; }
 
 /* ---- Buttons (.btn-primary / .btn-secondary / .btn-warn) ---- */
 /* Used across grade modal, schedule Mark-Posted flow, and posts page actions.
@@ -763,351 +771,12 @@ details[open] summary::before { transform: rotate(90deg); }
 .summary-card .value.grade-C { color: #facc15; }
 .summary-card .value.grade-D { color: #f87171; }
 
-/* ---- New-features CSS (Outlier badge, Humanizer note, Cooldown widget, Anchor library, Trend Scout panel) ---- */
-.outlier-badge {
-  display: inline-flex; align-items: baseline; gap: 4px;
-  padding: 2px 8px; border-radius: 6px;
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-weight: 700; font-size: 0.75rem;
-  border: 1px solid transparent;
-}
-.outlier-badge .outlier-num { font-variant-numeric: tabular-nums; }
-.outlier-badge .outlier-label { font-weight: 500; opacity: 0.85; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
-.outlier-badge.winner  { background: rgba( 74,222,128,0.14); color: #4ade80; border-color: rgba( 74,222,128,0.45); }
-.outlier-badge.loser   { background: rgba(248,113,113,0.14); color: #f87171; border-color: rgba(248,113,113,0.45); }
-.outlier-badge.neutral { background: rgba(148,163,184,0.10); color: #94a3b8; border-color: rgba(148,163,184,0.30); }
-
-.humanizer-note {
-  display: inline-flex; align-items: center; gap: 6px;
-  margin: 8px 0 0;
-  padding: 4px 10px; border-radius: 6px;
-  background: rgba(34,211,238,0.08); color: var(--cyan, #22d3ee);
-  border: 1px solid rgba(34,211,238,0.28);
-  font-size: 0.78rem; font-family: 'General Sans', system-ui, sans-serif;
-}
-.humanizer-note::before { content: '✓'; font-weight: 700; }
-
-.cooldown-widget {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 20px;
-}
-.cooldown-cell { display: flex; flex-direction: column; gap: 4px; }
-.cooldown-cell .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.cooldown-cell .value { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700; font-size: 1.1rem; }
-.cooldown-cell.ok    .value { color: var(--good); }
-.cooldown-cell.near  .value { color: var(--warn); }
-.cooldown-cell.over  .value { color: var(--bad);  }
-.cooldown-cell .sub  { font-size: 0.78rem; color: var(--dim); }
-
-.anchor-library {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 20px;
-}
-.anchor-library h3 { margin: 0 0 8px; font-family: 'Satoshi', system-ui, sans-serif; font-size: 1rem; }
-.anchor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
-.anchor-cell {
-  display: flex; flex-direction: column; gap: 2px;
-  padding: 8px 10px; border-radius: 8px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.02);
-  font-size: 0.85rem;
-}
-.anchor-cell.has    { border-color: rgba( 74,222,128,0.45); background: rgba( 74,222,128,0.06); }
-.anchor-cell.empty  { opacity: 0.55; }
-.anchor-cell .slot  { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 600; font-size: 0.82rem; }
-.anchor-cell .meta  { font-size: 0.74rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-
-.trend-scout-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 18px;
-  margin-bottom: 24px;
-}
-.trend-scout-panel header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.trend-scout-panel header h3 { margin: 0; font-family: 'Satoshi', system-ui, sans-serif; font-size: 1.05rem; }
-.trend-scout-panel header .scan-meta { font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-.trend-angle {
-  border-left: 3px solid var(--cyan, #22d3ee);
-  padding: 8px 0 8px 12px;
-  margin-bottom: 12px;
-}
-.trend-angle.rank-1 { border-left-color: #ffd700; }
-.trend-angle.rank-2 { border-left-color: #4ade80; }
-.trend-angle.rank-3 { border-left-color: #22d3ee; }
-.trend-angle .label   { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.trend-angle .rank-num { color: var(--muted); font-size: 0.8rem; }
-.trend-angle .hook-pill {
-  display: inline-block; padding: 1px 8px; border-radius: 999px;
-  background: rgba(168,85,247,0.16); color: #c4b5fd;
-  border: 1px solid rgba(168,85,247,0.45);
-  font-size: 0.72rem; font-weight: 600; font-family: 'General Sans', system-ui, sans-serif;
-}
-.trend-angle .row { font-size: 0.86rem; margin: 2px 0; }
-.trend-angle .row .k { color: var(--muted); margin-right: 6px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
-.trend-scout-skip, .trend-scout-handoff, .trend-scout-caveat {
-  margin-top: 10px; padding: 8px 10px; border-radius: 6px;
-  font-size: 0.84rem;
-}
-.trend-scout-skip    { background: rgba(148,163,184,0.08); color: var(--dim); border-left: 3px solid var(--muted); }
-.trend-scout-handoff { background: rgba(251,191,36,0.10); color: var(--warn); border-left: 3px solid var(--warn); }
-.trend-scout-caveat  { background: rgba(148,163,184,0.06); color: var(--muted); font-style: italic; font-size: 0.78rem; }
-.trend-scout-empty { color: var(--dim); font-style: italic; padding: 8px 0; }
-
-/* ---- Command center (top of Today tab — "what to do right now") ---- */
-.command-center {
-  background: linear-gradient(135deg, rgba(34,211,238,0.08) 0%, rgba(168,85,247,0.06) 100%);
-  border: 1px solid rgba(34,211,238,0.35);
-  border-radius: 14px;
-  padding: 22px 24px;
-  margin: 0 0 28px;
-}
-.command-center .cc-eyebrow {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
-  letter-spacing: 0.14em; color: var(--cyan, #22d3ee);
-  margin-bottom: 8px;
-}
-.command-center .cc-title {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 1.45rem; font-weight: 800; line-height: 1.2;
-  margin: 0 0 6px; color: var(--text);
-}
-.command-center .cc-sub {
-  color: var(--muted); font-size: 0.92rem; margin: 0 0 14px;
-}
-.command-center .cc-action-detail {
-  background: rgba(0,0,0,0.20);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin: 12px 0;
-  font-size: 0.92rem;
-}
-.command-center .cc-action-detail .cc-detail-label {
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--muted); font-weight: 700; margin-bottom: 4px;
-}
-.command-center .cc-action-detail pre {
-  white-space: pre-wrap; word-wrap: break-word;
-  margin: 4px 0 0; font-family: 'General Sans', system-ui, sans-serif;
-  color: var(--text); font-size: 0.94rem; line-height: 1.55;
-}
-.command-center .cc-action-detail code {
-  background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem;
-}
-.command-center .cc-buttons {
-  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;
-}
-.command-center .cc-btn {
-  background: var(--cyan, #22d3ee); color: #001423; border: 0;
-  border-radius: 8px; padding: 10px 18px;
-  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700;
-  font-size: 0.88rem; cursor: pointer; transition: filter 0.15s;
-}
-.command-center .cc-btn:hover { filter: brightness(1.1); }
-.command-center .cc-btn.secondary {
-  background: transparent; color: var(--text);
-  border: 1px solid var(--border);
-}
-.command-center .cc-btn.secondary:hover { border-color: var(--cyan); color: var(--cyan); }
-
-/* Today's sequence — numbered checklist */
-.today-sequence {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-bottom: 24px;
-}
-.today-sequence h3 {
-  margin: 0 0 4px;
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 1.05rem;
-}
-.today-sequence .seq-sub {
-  color: var(--dim); font-size: 0.85rem; margin: 0 0 14px;
-}
-.seq-step {
-  display: grid; grid-template-columns: 32px 1fr; gap: 12px;
-  padding: 10px 0; border-top: 1px solid var(--border);
-  align-items: start;
-}
-.seq-step:first-of-type { border-top: 0; }
-.seq-step .seq-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: rgba(148,163,184,0.12); color: var(--muted);
-  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700;
-  font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.seq-step.done .seq-num    { background: rgba( 74,222,128,0.20); color: var(--good); }
-.seq-step.current .seq-num { background: var(--cyan, #22d3ee); color: #001423; }
-.seq-step.done .seq-title  { text-decoration: line-through; color: var(--muted); }
-.seq-step.current .seq-title { color: var(--cyan, #22d3ee); }
-.seq-step .seq-title {
-  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 600;
-  font-size: 0.95rem; line-height: 1.3;
-}
-.seq-step .seq-desc {
-  color: var(--dim); font-size: 0.85rem; margin-top: 2px;
-}
-
-/* Playbook (how the daily routine works) */
-.daily-playbook {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0;
-  margin-bottom: 28px;
-}
-.daily-playbook > summary {
-  list-style: none; cursor: pointer;
-  padding: 14px 18px;
-  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700;
-  font-size: 1rem; display: flex; align-items: center; justify-content: space-between;
-}
-.daily-playbook > summary::-webkit-details-marker { display: none; }
-.daily-playbook > summary::after { content: '›'; color: var(--muted); font-size: 1.4rem; transition: transform 0.2s; }
-.daily-playbook[open] > summary::after { transform: rotate(90deg); }
-.daily-playbook .pb-body { padding: 4px 20px 18px; }
-.daily-playbook h4 {
-  font-family: 'Satoshi', system-ui, sans-serif; font-size: 0.86rem;
-  text-transform: uppercase; letter-spacing: 0.07em; color: var(--cyan, #22d3ee);
-  margin: 14px 0 6px;
-}
-.daily-playbook ol, .daily-playbook ul { margin: 0; padding-left: 22px; }
-.daily-playbook li { margin: 6px 0; font-size: 0.92rem; line-height: 1.5; }
-.daily-playbook code {
-  background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem;
-}
-
-/* ---- Status strip (top-of-Today control-center state at a glance) ---- */
-.status-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-bottom: 18px;
-}
-.status-chip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
-  display: flex; flex-direction: column; gap: 2px;
-  border-left: 3px solid var(--muted);
-}
-.status-chip.ok    { border-left-color: var(--good); }
-.status-chip.warn  { border-left-color: var(--warn); }
-.status-chip.bad   { border-left-color: var(--bad); }
-.status-chip.info  { border-left-color: var(--cyan, #22d3ee); }
-.status-chip .chip-label {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.07em; color: var(--muted);
-}
-.status-chip .chip-value {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 1.05rem; font-weight: 700;
-  font-variant-numeric: tabular-nums; color: var(--text);
-}
-.status-chip.ok    .chip-value { color: var(--good); }
-.status-chip.warn  .chip-value { color: var(--warn); }
-.status-chip.bad   .chip-value { color: var(--bad); }
-.status-chip .chip-sub {
-  font-size: 0.74rem; color: var(--dim); margin-top: 1px;
-}
-
-/* ---- Brad inbox (questions waiting for Dave's answer) ---- */
-.brad-inbox {
-  background: linear-gradient(135deg, rgba(251,191,36,0.10) 0%, rgba(251,191,36,0.04) 100%);
-  border: 1px solid rgba(251,191,36,0.45);
-  border-radius: 14px;
-  padding: 18px 22px;
-  margin-bottom: 22px;
-}
-.brad-inbox .bi-eyebrow {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
-  letter-spacing: 0.14em; color: var(--warn);
-  margin-bottom: 6px;
-  display: flex; align-items: center; gap: 8px;
-}
-.brad-inbox .bi-eyebrow .bi-count {
-  background: var(--warn); color: #001423;
-  border-radius: 999px; padding: 1px 8px; font-size: 0.7rem;
-}
-.bi-question {
-  background: rgba(0,0,0,0.18);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-top: 10px;
-}
-.bi-question .bi-context {
-  font-size: 0.78rem; color: var(--muted); margin-bottom: 4px;
-}
-.bi-question .bi-q {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-size: 1.05rem; font-weight: 700; color: var(--text);
-  margin: 0 0 6px;
-}
-.bi-question .bi-details {
-  font-size: 0.85rem; color: var(--dim); line-height: 1.5;
-  margin-bottom: 12px;
-}
-.bi-options {
-  display: flex; flex-direction: column; gap: 8px;
-}
-.bi-btn {
-  background: transparent; color: var(--text);
-  border: 1px solid var(--border); border-radius: 8px;
-  padding: 10px 14px;
-  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 600;
-  font-size: 0.9rem; cursor: pointer;
-  text-align: left; transition: all 0.15s;
-  display: flex; align-items: center; gap: 10px;
-}
-.bi-btn:hover { border-color: var(--cyan); background: rgba(34,211,238,0.05); color: var(--cyan); }
-.bi-btn.primary {
-  background: var(--cyan); color: #001423; border-color: var(--cyan);
-}
-.bi-btn.primary:hover { filter: brightness(1.1); color: #001423; }
-.bi-btn .bi-key {
-  background: rgba(255,255,255,0.10); color: var(--text);
-  border-radius: 4px; padding: 1px 6px; font-size: 0.7rem;
-  font-family: ui-monospace, monospace;
-  font-weight: 700; text-transform: uppercase;
-}
-.bi-btn.primary .bi-key { background: rgba(0,0,0,0.20); color: #001423; }
-.bi-after-click {
-  display: none; margin-top: 12px; padding: 10px 12px;
-  background: rgba(74,222,128,0.10); border: 1px solid rgba(74,222,128,0.40);
-  border-radius: 8px; font-size: 0.88rem; color: var(--good);
-}
-.bi-after-click.show { display: block; }
-.bi-after-click code {
-  background: rgba(0,0,0,0.25); color: var(--text);
-  padding: 2px 6px; border-radius: 4px;
-  font-family: ui-monospace, monospace; font-size: 0.85rem;
-}
-
 </style>
 <!--INLINE-STATE-->
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
+    "lastUpdatedBy": "brad",
+    "lastUpdatedAt": "2026-05-28T17:30:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -1141,6 +810,41 @@ details[open] summary::before { transform: rotate(90deg); }
         "signups": 0,
         "activated": 0,
         "target": 10
+      }
+    },
+    "funnel": {
+      "asOf": "2026-05-28T17:30:00.000Z",
+      "windowDays": 7,
+      "instructions": "Hand-entered daily. Five arrows: impressions -> lpVisits -> signups -> examPicked -> activated. Sources: GA4 + Meta Pixel for top-of-funnel, posts.json impressions, internal Firestore for signups/exam-picked/activated. 'aggregate' is the rolling N-day sum across all clusters; 'perCluster' is the same window scoped to that exam's LP traffic. Update windowDays + asOf together; bump _meta.lastUpdatedAt on save.",
+      "aggregate": {
+        "impressions": 0,
+        "lpVisits": 0,
+        "signups": 0,
+        "examPicked": 0,
+        "activated": 0
+      },
+      "perCluster": {
+        "PMP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "Security+": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "SHRM-CP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        }
       }
     }
   },
@@ -1388,6 +1092,10 @@ details[open] summary::before { transform: rotate(90deg); }
   ],
   "dailyLog": [
     {
+      "date": "2026-05-28",
+      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
+    },
+    {
       "date": "2026-05-11",
       "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
     },
@@ -1458,114 +1166,337 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-18",
       "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
+    },
+    {
+      "date": "2026-05-26",
+      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     }
   ]
 }
 ;</script>
 <script>window.__POSTS__ = {
-  "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
-    "schemaVersion": 1,
-    "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit."
-  },
-  "benchmarks": {
-    "linkedin": {
-      "engagementRatePctGoodAtLeast": 2,
-      "engagementRatePctGreatAtLeast": 5,
-      "linkClickRatePctGoodAtLeast": 1,
-      "linkClickRatePctGreatAtLeast": 2.5,
-      "videoViewRatePctGoodAtLeast": 30,
-      "videoViewRatePctGreatAtLeast": 50
-    },
-    "x": {
-      "engagementRatePctGoodAtLeast": 1,
-      "engagementRatePctGreatAtLeast": 3,
-      "linkClickRatePctGoodAtLeast": 0.5,
-      "linkClickRatePctGreatAtLeast": 1.5,
-      "videoViewRatePctGoodAtLeast": 15,
-      "videoViewRatePctGreatAtLeast": 30
-    },
-    "reddit-organic": {
-      "_note": "Reddit doesn't expose impressions for organic posts. Grading uses absolute upvotes + comment count + upvote ratio. Net score = upvotes - downvotes (Reddit only shows score, not raw votes).",
-      "upvotesGoodAtLeast": 25,
-      "upvotesGreatAtLeast": 100,
-      "commentsGoodAtLeast": 8,
-      "commentsGreatAtLeast": 25,
-      "upvoteRatioGoodAtLeast": 0.85,
-      "upvoteRatioGreatAtLeast": 0.92,
-      "autoRemovalIsAutomaticD": true
-    },
-    "reddit-ads": {
-      "_note": "Paid Reddit Ads via ads.reddit.com. Standard CTR/CVR grading like LinkedIn/X.",
-      "engagementRatePctGoodAtLeast": 1.5,
-      "engagementRatePctGreatAtLeast": 3.5,
-      "linkClickRatePctGoodAtLeast": 0.7,
-      "linkClickRatePctGreatAtLeast": 2,
-      "ctrPctGoodAtLeast": 0.5,
-      "ctrPctGreatAtLeast": 1.2,
-      "cpcUsdAcceptableAtMost": 1.5,
-      "cpcUsdGreatAtMost": 0.75
-    }
-  },
   "posts": [
     {
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
+      "postedAt": "2026-05-18T16:30:00.000Z",
+      "metrics": {
+        "impressions": 173,
+        "membersReached": 16,
+        "videoViews": 36,
+        "watchTimeSeconds": 645,
+        "avgWatchTimeSeconds": 17,
+        "socialEngagements": 0,
+        "reactions": 0,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "saves": 0,
+        "sends": 0,
+        "linkClicks": 1,
+        "profileViewers": 1,
+        "followersGained": 0,
+        "trialSignupsAttributed": null,
+        "engagementRatePct": 0,
+        "linkClickRatePct": 0.58,
+        "videoViewRatePct": 20.81,
+        "impressionsToReachPct": 9.25,
+        "gradedAt": "2026-05-28T00:00:00.000Z"
+      },
+      "channelAccount": "personal",
       "id": "li-mon-2026-05-11-launch",
+      "grade": "D",
+      "outlierScore": 105,
+      "outlierPattern": null,
+      "gradeNotes": "Regraded on long-tail metrics: 173 impressions is below the LI 200 floor (auto bump-down), engagement rate 0% fails the 2% good floor, link click rate 0.58% (1/173) fails the 1% good floor, video view rate 20.8% (36/173) fails the 30% good floor. All three rates fail → D earned on substance, not just distribution. The buried positive: 17s avg watch on 36 views is the BEST of the 3 Week 1 LI posts — once viewers commit, they finish. The damning number is impressions→reach: 16 unique humans out of 173 impressions (9.2%) — the WORST conversion of the 3 posts (Wed 18%, Fri 44%). LinkedIn served the post repeatedly to the same small set of feeds without expanding to new humans, consistent with algorithmic deprioritization of category-adversarial framing ('Cert prep tools haven't changed since 2010' reads as attacking an established category). Outlier 105% of channel 7-day avg (164.3) — neutral, neither winner nor loser. Trial attribution unrecoverable (Week 1 UTM collision).",
+      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
+      "recommendations": "Kill the category-adversarial opener pattern. 'Cert prep tools haven't changed since 2010' likely triggered LinkedIn's impressions→reach throttle (9% vs Fri domain post's 44%). Lead with a candidate-pain number or a domain-stat opener like Friday's post ('Process is 50% of the exam') — workmanlike beats clever for cert audiences. Hook ranking by long-tail reach was the inverse of intuition: domain-weights > tool-builder > exam-trap.",
+      "channel": "linkedin",
       "scheduled": "2026-05-18",
-      "scheduledTime": "2026-05-18T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
+      "video": "launch-teaser-pmp.mp4",
       "scheduledTimeLocal": "2026-05-18 10:30 MT",
+      "scheduledTime": "2026-05-18T16:30:00.000Z",
+      "videoFormat": "1:1",
+      "status": "posted",
+      "hook": "tool-builder"
+    },
+    {
+      "scheduledTime": "2026-05-18T17:30:00.000Z",
+      "status": "posted",
+      "hook": "tool-builder",
+      "videoFormat": "1:1",
+      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
+      "video": "launch-teaser-pmp.mp4",
+      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
+      "channel": "x",
+      "recommendations": "Before publishing the next post, seed the account with at least 10–20 targeted follows/replies in the PMP and project management community so the algorithm has a relevance signal, and consider boosting this exact post for $20–$50 targeting PMP exam candidates — the creative is ready, the audience just never showed up.",
+      "scheduled": "2026-05-18",
+      "scheduledTimeLocal": "2026-05-18 11:30 MT",
+      "metrics": {
+        "engagementActions": 0,
+        "linkClicks": 0,
+        "gradedAt": "2026-05-21T23:29:18.637Z",
+        "comments": 0,
+        "reposts": 0,
+        "videoViews": 0,
+        "likes": 0,
+        "trialSignupsAttributed": 0,
+        "linkClickRatePct": 0,
+        "videoViewRatePct": 0,
+        "engagementRatePct": 0,
+        "impressions": 39
+      },
+      "postedAt": "2026-05-18T17:30:00.000Z",
+      "channelHandle": "@QuillmanDavid",
+      "gradeNotes": "39 impressions with zero engagement, zero video views, and zero link clicks means this post effectively didn't exist — the mechanical D is generous. The copy itself is solid: the provocative hook, clear value prop, and frictionless CTA (7 days, no card) are all above average, so the copy is not the culprit. The failure is almost certainly a distribution problem — a brand-new account with no follower base and no amplification means 39 impressions went to nobody who cared, and the video never autoplay-triggered because the feed scroll never happened at meaningful scale. One hashtag (#PMP) on a zero-authority account does nothing at this volume.",
+      "channelAccount": "personal",
+      "id": "x-mon-2026-05-11-launch",
+      "grade": "D",
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch"
+    },
+    {
+      "scheduledTimeLocal": "2026-05-20 10:30 MT",
+      "scheduled": "2026-05-20",
+      "channel": "linkedin",
+      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
+      "video": "ai-tutor-demo-pmp.mp4",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462888356549586944/",
+      "videoFormat": "9:16",
+      "hook": "why-B-is-a-trap",
+      "status": "posted",
+      "scheduledTime": "2026-05-20T16:30:00.000Z",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "examFocus": "PMP",
+      "grade": "D",
+      "outlierScore": 67,
+      "outlierPattern": null,
+      "channelAccount": "personal",
+      "id": "li-wed-2026-05-13-trap",
+      "gradeNotes": "Regraded on long-tail metrics: 98 impressions is still below the LI <200 floor, so reach is the headline problem — and notably WORSE than Friday's domain post (222 imps) despite a catchier trap hook. That's an inversion of the hook-strength prediction: long-tail distribution is driven by sustained engagement signals, not opener wit, and a flat-engagement Wed video gets no compounding lift. Engagement rate 0% (0/98) fails the 2% good floor; link click rate 1.02% (1/98) just barely clears 1% good; video view rate 16.3% (16/98) fails the 30% good floor. The buried positive signal: 16s avg watch time on 16 views means viewers who started the video mostly finished it — the creative holds attention once a scroll stops, the thumbnail just isn't earning the stop. Trial attribution unknown — Week 1 UTMs were mis-tagged with `mon_launch` across all 3 LI posts (wed_tutor / fri_domains both collapsed into mon_launch in GA4), so per-post conversion is unrecoverable for Week 1. Outlier 67% of channel 7-day avg (146.3) — neither winner nor loser.",
+      "postedAt": "2026-05-22T00:12:54.273Z",
+      "metrics": {
+        "impressions": 98,
+        "membersReached": 18,
+        "videoViews": 16,
+        "watchTimeSeconds": 261,
+        "avgWatchTimeSeconds": 16,
+        "socialEngagements": 0,
+        "reactions": 0,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "saves": 0,
+        "sends": 0,
+        "linkClicks": 1,
+        "profileViewers": 0,
+        "followersGained": 0,
+        "trialSignupsAttributed": null,
+        "engagementRatePct": 0,
+        "linkClickRatePct": 1.02,
+        "videoViewRatePct": 16.33,
+        "gradedAt": "2026-05-27T00:00:00.000Z",
+        "utmAttributionNote": "Week 1 UTMs mis-tagged — utm_content=mon_launch used across all 3 LI Week 1 posts; per-post GA4 attribution collapsed and unrecoverable."
+      },
+      "recommendations": "Open the video on a single concrete trap frame — show a 4-option question with one wrong answer highlighted in red and the word 'PLAUSIBLE' across it — within the first 1.5s. The 16s avg watch proves the content holds once viewers commit; the 16.3% view rate proves the thumbnail isn't earning the commit. Fix the cold-open, not the copy."
+    },
+    {
+      "postedAt": "2026-05-22T00:13:59.370Z",
+      "metrics": {
+        "audienceRetentionPct": 0,
+        "profileVisits": 0,
+        "videoUniqueViews": 1,
+        "impressions": 2,
+        "membersReached": 0,
+        "detailExpands": 1,
+        "gradedAt": "2026-05-22T16:34:46.510Z",
+        "trialSignupsAttributed": 0,
+        "videoViewRatePct": 100,
+        "linkClickRatePct": 0,
+        "engagementRatePct": 0,
+        "engagementActions": 0,
+        "linkClicks": 0,
+        "videoViews": 2,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0
+      },
+      "grade": "C",
+      "id": "x-wed-2026-05-13-trap",
+      "channelAccount": "personal",
+      "gradeNotes": "With only 2 impressions and 0 members reached, this post essentially didn't leave the launch pad — the metrics reflect a distribution failure, not a creative failure. The copy itself is sharp: the 'wrong answers look right' hook is a genuine insight that differentiates CipherExam from commodity drill-and-kill prep. Video view rate hit 100% but on a sample of 1 unique viewer, so that number is statistically meaningless. Zero engagement actions, zero link clicks, and zero attributed trials confirm the audience simply wasn't there to respond.",
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "scheduledTime": "2026-05-20T17:30:00.000Z",
+      "videoFormat": "9:16",
+      "hook": "why-B-is-a-trap",
+      "status": "posted",
+      "scheduled": "2026-05-20",
+      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
+      "recommendations": "Before optimizing copy or creative, fix distribution — boost this exact post with $20–50 in paid spend targeting PMP exam takers, or repost it from an account with an established follower base, to get at least 500 impressions before drawing any performance conclusions.",
+      "channel": "x",
+      "postUrl": "https://x.com/QuillmanDavid/status/2057128902842307041",
+      "video": "ai-tutor-demo-pmp.mp4",
+      "scheduledTimeLocal": "2026-05-20 11:30 MT"
+    },
+    {
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
+      "metrics": {
+        "impressions": 238,
+        "membersReached": 105,
+        "videoViews": 63,
+        "watchTimeSeconds": 804,
+        "avgWatchTimeSeconds": 12,
+        "socialEngagements": 0,
+        "reactions": 0,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "saves": 0,
+        "sends": 0,
+        "linkClicks": 1,
+        "profileViewers": 1,
+        "followersGained": 1,
+        "trialSignupsAttributed": 0,
+        "engagementRatePct": 0,
+        "linkClickRatePct": 0.45,
+        "videoViewRatePct": 28.38,
+        "gradedAt": "2026-05-27T00:00:00.000Z"
+      },
+      "postedAt": "2026-05-22T16:00:40.075Z",
+      "gradeNotes": "Regraded on updated metrics: 222 impressions clears the <200 LI floor, so the rubric now grades on substance instead of distribution. Engagement rate is 0% (0 reactions/comments/reposts/saves/sends across 222 impressions) — well below the 2% 'good' floor. Link click rate is 0.45% (1 click) — below the 1% 'good' floor. Both rates fail → D earned on substance. Video view rate 28.4% (63/222) still just under the 30% 'good' threshold, and 12s avg watch time on a launch-teaser video means viewers tapped out before the hook landed. Outlier score ~243% of the channel 7-day avg (91.5) — reach recovered via long-tail algorithmic distribution, but with zero engagement that's just the channel average moving up, not a winner pattern. The post got seen and nobody cared.",
+      "grade": "D",
+      "outlierScore": 243,
+      "outlierPattern": null,
+      "channelAccount": "personal",
+      "id": "li-fri-2026-05-15-domains",
+      "video": "domain-weights-pmp.mp4",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7463574409774084096/",
+      "scheduled": "2026-05-22",
+      "recommendations": "Reach is no longer the bottleneck — engagement is. Next domain-weights post: cut the explainer paragraph and lead with the closing question itself ('PMPs — which domain tripped you up hardest, Process, People, or Business Environment?') as line one. Force the reply before the pitch. The current opener buries the only thing that could earn a comment.",
+      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\nPMPs — which domain tripped you up hardest? Process, People, or Business Environment? Curious where most people get stuck.\n\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
+      "channel": "linkedin",
+      "scheduledTimeLocal": "2026-05-22 10:30 MT",
+      "scheduledTime": "2026-05-22T16:30:00.000Z",
+      "hook": "domain-weights",
+      "status": "posted",
+      "videoFormat": "1:1"
+    },
+    {
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
+      "examFocus": "PMP",
+      "grade": "D",
+      "channelAccount": "personal",
+      "id": "x-fri-2026-05-15-domains",
+      "gradeNotes": "With only 2 impressions, this post essentially wasn't seen by anyone, making all engagement metrics meaningless for creative evaluation — the D grade reflects near-zero distribution, not necessarily a content failure. The 200% video view rate (4 views on 2 impressions) and the 1 follow gained are the only bright spots, suggesting the video format has some pull when it does reach people. Zero link clicks and zero replies indicate the CTA and question prompt had no opportunity to convert given the reach problem. This post needs an audience before it can be graded on persuasion.",
+      "postedAt": "2026-05-22T16:01:53.248Z",
+      "metrics": {
+        "avgWatchTimeSeconds": 11,
+        "linkClicks": 0,
+        "replies": 0,
+        "reposts": 0,
+        "videoViews": 4,
+        "followsGained": 1,
+        "likes": 0,
+        "engagementRatePct": 0,
+        "bookmarks": 0,
+        "trialSignupsAttributed": 0,
+        "linkClickRatePct": 0,
+        "videoViewRatePct": 200,
+        "gradedAt": "2026-05-25T23:54:22.996Z",
+        "impressions": 2,
+        "profileVisits": 1
+      },
+      "scheduledTimeLocal": "2026-05-22 11:30 MT",
+      "scheduled": "2026-05-22",
+      "recommendations": "Prioritize seeding this content to a small targeted PMP study community or reply thread before publishing standalone to dramatically increase baseline impressions above single digits.",
+      "channel": "x",
+      "copy": "Process is 50% of the PMP exam.\n\nMost candidates split study time evenly across all 3 domains.\n\nCipherExam routes adaptively to your weakest.\n\nWhich domain tripped YOU up hardest?\n\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
+      "video": "domain-weights-pmp.mp4",
+      "postUrl": "https://x.com/QuillmanDavid/status/2057802657029562464",
+      "videoFormat": "1:1",
+      "hook": "domain-weights",
+      "status": "posted",
+      "scheduledTime": "2026-05-22T17:30:00.000Z"
+    },
+    {
+      "id": "li-wed-2026-05-27-bridge",
+      "scheduled": "2026-05-27",
+      "scheduledTime": "2026-05-27T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-27 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "posted",
-      "examFocus": "PMP",
+      "examFocus": "Security+",
       "hook": "tool-builder",
-      "video": "launch-teaser-pmp.mp4",
+      "video": "launch-teaser-secplus.mp4",
       "videoFormat": "1:1",
-      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": "2026-05-18T16:30:00.000Z",
-      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "CompTIA is flipping Security+ from SY0-701 to SY0-801 around October.\n\nIf you're studying now, you've probably already heard the question: do I rush to test on 701, or restart on 801?\n\nWrong question.\n\nMost prep tools train you to memorize the version-specific answer key. When the objectives shift, the question bank goes stale and you re-buy the tool.\n\nI built CipherExam differently. The product teaches the *reasoning* CompTIA tests — the Security Triad applied to scenarios, the troubleshooting model, the way they construct distractors. That reasoning survives the version change. Same engine on 701 today. Same engine on 801 when it drops.\n\nMarkus Kopko, PMI AI Standards Core Team Member, put it this way during beta: \"What you have built is differentiated by the coaching lens approach, the exam-specific reasoning frameworks, and the feedback loop you ran with real testers.\"\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=wed_bridge",
+      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
+      "postedAt": "2026-05-27T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7465378855944458240/",
+      "postedAtNote": "Backfilled 2026-05-28 — postUrl had been set, status was still 'scheduled'. Actual posting time approximated to scheduledTime; correct if real posted time is known.",
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
       "recommendations": null
     },
     {
-      "id": "x-mon-2026-05-11-launch",
-      "scheduled": "2026-05-18",
-      "scheduledTime": "2026-05-18T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-18 11:30 MT",
+      "id": "x-wed-2026-05-27-bridge",
+      "scheduled": "2026-05-27",
+      "scheduledTime": "2026-05-27T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-27 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
       "channelHandle": "@QuillmanDavid",
-      "status": "posted",
-      "examFocus": "PMP",
+      "status": "skipped",
+      "skippedReason": "1+ day stale at 2026-05-28. Tool-builder hook recyclable for a later week. Decision per board todo #3 — clear drift; the LinkedIn variant already shipped its version of the hook so re-posting on X would just dilute the same beat.",
+      "skippedAt": "2026-05-28T17:30:00.000Z",
+      "examFocus": "Security+",
       "hook": "tool-builder",
-      "video": "launch-teaser-pmp.mp4",
-      "videoFormat": "1:1",
-      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": "2026-05-18T17:30:00.000Z",
-      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
+      "video": "launch-teaser-secplus.mp4",
+      "videoFormat": "9:16",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "CompTIA flips Security+ to SY0-801 this October.\n\nMost prep tools go stale at the flip. Question banks shift, you re-buy.\n\nCipherExam teaches CompTIA's reasoning — works on 701 today and 801 when it drops.\n\n7-day free trial: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=wed_bridge\n\n#SecurityPlus",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=wed_bridge",
+      "postingNote": "Reply into 3-5 active Sec+ / r/CompTIA-adjacent threads on X BEFORE posting this standalone — Week 1 X lesson (cold-start account needs warm signal).",
+      "postedAt": null,
+      "postUrl": null,
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
       "recommendations": null
     },
     {
-      "id": "li-wed-2026-05-13-trap",
-      "scheduled": "2026-05-20",
-      "scheduledTime": "2026-05-20T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-20 10:30 MT",
+      "id": "li-fri-2026-05-29-scenario",
+      "scheduled": "2026-05-29",
+      "scheduledTime": "2026-05-29T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-29 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "scheduled",
-      "examFocus": "PMP",
-      "hook": "why-B-is-a-trap",
-      "video": "ai-tutor-demo-pmp.mp4",
-      "videoFormat": "9:16",
-      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "examFocus": "Security+",
+      "hook": "worked-question",
+      "video": "ai-tutor-demo-secplus.mp4",
+      "videoFormat": "1:1",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaStatus": "candidates-ready",
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Quick Security+ scenario.\n\nA junior admin emails you: \"Production database server's been compromised. I'm isolating it from the network now — should I also shut it down?\"\n\nThe instinct answer is yes. Pull the plug, contain the threat.\n\nMost Sec+ prep tools mark \"shut down\" as correct because it sounds like containment.\n\nThe exam doesn't.\n\nCompTIA writes this scenario to test whether you understand that shutting down a live system destroys volatile memory — running processes, network connections, decryption keys — which is exactly what an incident responder needs to capture first. Availability is one leg of the CIA triad, but so is the integrity of forensic evidence.\n\nThe right answer under exam reasoning: isolate, image, then power off. Order matters.\n\nCipherExam walks through every question this way. Not just which option is right, but why the obvious-but-wrong options were written to bait you.\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=fri_scenario",
+      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1574,19 +1505,25 @@ details[open] summary::before { transform: rotate(90deg); }
       "recommendations": null
     },
     {
-      "id": "x-wed-2026-05-13-trap",
-      "scheduled": "2026-05-20",
-      "scheduledTime": "2026-05-20T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-20 11:30 MT",
+      "id": "x-fri-2026-05-29-scenario",
+      "scheduled": "2026-05-29",
+      "scheduledTime": "2026-05-29T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-29 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
+      "channelHandle": "@QuillmanDavid",
       "status": "scheduled",
-      "examFocus": "PMP",
-      "hook": "why-B-is-a-trap",
-      "video": "ai-tutor-demo-pmp.mp4",
+      "examFocus": "Security+",
+      "hook": "worked-question",
+      "video": "ai-tutor-demo-secplus.mp4",
       "videoFormat": "9:16",
-      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Sec+ scenario.\n\nCompromised prod DB. Isolate AND shut down?\n\nCompTIA says no — shutdown wipes volatile memory (processes, keys) forensics needs.\n\nIsolate. Image. Power off.\n\nReasoning, not just answers: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=fri_scenario\n\n#SecurityPlus",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=fri_scenario",
+      "postingNote": "Reply into 3-5 active Sec+ threads on X BEFORE posting this standalone — Week 1 X lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1595,19 +1532,25 @@ details[open] summary::before { transform: rotate(90deg); }
       "recommendations": null
     },
     {
-      "id": "li-fri-2026-05-15-domains",
-      "scheduled": "2026-05-22",
-      "scheduledTime": "2026-05-22T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-22 10:30 MT",
+      "id": "li-mon-2026-06-01-domains",
+      "scheduled": "2026-06-01",
+      "scheduledTime": "2026-06-01T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-06-01 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "scheduled",
-      "examFocus": "PMP",
+      "examFocus": "Security+",
       "hook": "domain-weights",
-      "video": "domain-weights-pmp.mp4",
+      "video": "domain-weights-secplus.mp4",
       "videoFormat": "1:1",
-      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\nPMPs — which domain tripped you up hardest? Process, People, or Business Environment? Curious where most people get stuck.\n\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaStatus": "candidates-ready",
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Security+ domain weighting, by exam percentage:\n\nGeneral Security Concepts — 12%\nThreats, Vulnerabilities, and Mitigations — 22%\nSecurity Architecture — 18%\nSecurity Operations — 28%\nSecurity Program Management and Oversight — 20%\n\nMost candidates study these evenly. Then their practice scores plateau in the low 70s and they can't figure out why.\n\nOperations is over a quarter of the test. Threats is more than a fifth. Together, half the exam is the day-to-day reactive work: IR, monitoring, vulnerability response, patch management. Architecture and Governance get the same study hours but test less.\n\nCipherExam routes you adaptively. If your last 30 questions on Operations were shaky, the next one comes from Operations. Not random. Not the next chapter in the book. Where you're actually weak.\n\nSec+ candidates — which domain has been the hardest for you so far? Curious where most people get stuck.\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=mon_domains",
+      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1616,19 +1559,25 @@ details[open] summary::before { transform: rotate(90deg); }
       "recommendations": null
     },
     {
-      "id": "x-fri-2026-05-15-domains",
-      "scheduled": "2026-05-22",
-      "scheduledTime": "2026-05-22T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-22 11:30 MT",
+      "id": "x-mon-2026-06-01-domains",
+      "scheduled": "2026-06-01",
+      "scheduledTime": "2026-06-01T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-06-01 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
+      "channelHandle": "@QuillmanDavid",
       "status": "scheduled",
-      "examFocus": "PMP",
+      "examFocus": "Security+",
       "hook": "domain-weights",
-      "video": "domain-weights-pmp.mp4",
+      "video": "domain-weights-secplus.mp4",
       "videoFormat": "1:1",
-      "copy": "Process is 50% of the PMP exam.\n\nMost candidates split study time evenly across all 3 domains.\n\nCipherExam routes adaptively to your weakest.\n\nWhich domain tripped YOU up hardest?\n\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Security+ domain weights:\n\nOperations 28%\nThreats 22%\nProgram Mgmt 20%\nArchitecture 18%\nConcepts 12%\n\nMost study evenly. Operations + Threats = half the exam.\n\nCipherExam routes to your weakest: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=mon_domains\n\n#SecurityPlus",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=mon_domains",
+      "postingNote": "Reply into 3-5 active Sec+ threads on X BEFORE posting this standalone — Week 1 X lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1636,9 +1585,32 @@ details[open] summary::before { transform: rotate(90deg); }
       "gradeNotes": null,
       "recommendations": null
     }
-  ]
-}
-;</script>
+  ],
+  "benchmarks": {
+    "x": {
+      "engagementRatePctGoodAtLeast": 1,
+      "videoViewRatePctGreatAtLeast": 30,
+      "linkClickRatePctGreatAtLeast": 1.5,
+      "videoViewRatePctGoodAtLeast": 15,
+      "linkClickRatePctGoodAtLeast": 0.5,
+      "engagementRatePctGreatAtLeast": 3
+    },
+    "linkedin": {
+      "engagementRatePctGreatAtLeast": 5,
+      "videoViewRatePctGoodAtLeast": 30,
+      "linkClickRatePctGoodAtLeast": 1,
+      "linkClickRatePctGreatAtLeast": 2.5,
+      "videoViewRatePctGreatAtLeast": 50,
+      "engagementRatePctGoodAtLeast": 2
+    }
+  },
+  "_meta": {
+    "lastUpdatedBy": "postUrl-fill",
+    "lastUpdatedAt": "2026-05-28T02:18:07.797Z",
+    "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
+    "schemaVersion": 1
+  }
+};</script>
 <!--/INLINE-STATE-->
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
@@ -1711,6 +1683,8 @@ function cipherShow(route) {
       <button class="nav-link" type="button" data-route="engineering" onclick="cipherShow('engineering')">Engineering</button>
       <button class="nav-link" type="button" data-route="voice" onclick="cipherShow('voice')">Voice</button>
       <button class="nav-link" type="button" data-route="competitors" onclick="cipherShow('competitors')">Competitors</button>
+      <a class="nav-link" href="funnel.html">Funnel</a>
+      <a class="nav-link" href="sprint.html">Sprint</a>
     </div>
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
   </div>
@@ -1719,83 +1693,6 @@ function cipherShow(route) {
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
-
-
-  <!-- Brad inbox — pending questions from Brad waiting for your answer -->
-  <div id="brad-inbox" class="brad-inbox" style="display:none;"></div>
-
-  <!-- Status strip — current state of the campaign at a glance -->
-  <div class="status-strip" id="status-strip">
-    <div class="status-chip info"><span class="chip-label">When</span><span class="chip-value">Loading…</span><span class="chip-sub">campaign day</span></div>
-    <div class="status-chip"><span class="chip-label">Pipeline (next 7d)</span><span class="chip-value">—</span><span class="chip-sub">posts scheduled</span></div>
-    <div class="status-chip"><span class="chip-label">Drafts pending</span><span class="chip-value">—</span><span class="chip-sub">awaiting approval</span></div>
-    <div class="status-chip"><span class="chip-label">Trend scout</span><span class="chip-value">—</span><span class="chip-sub">last scan</span></div>
-    <div class="status-chip"><span class="chip-label">Lessons file</span><span class="chip-value">—</span><span class="chip-sub">patterns learned</span></div>
-    <div class="status-chip"><span class="chip-label">Activation gate</span><span class="chip-value">—</span><span class="chip-sub">/ 25 = paid unlock</span></div>
-  </div>
-
-  <!-- Command center — "what to do right now" + today's sequence + daily playbook -->
-  <div class="command-center" id="command-center">
-    <div class="cc-eyebrow">Right now</div>
-    <h2 class="cc-title" id="cc-title">Loading…</h2>
-    <p class="cc-sub" id="cc-sub"></p>
-    <div id="cc-action-detail"></div>
-    <div class="cc-buttons" id="cc-buttons"></div>
-  </div>
-
-  <div class="today-sequence">
-    <h3>Today's sequence</h3>
-    <p class="seq-sub">Step-by-step order. Do them top to bottom. Items grey-out as they're complete.</p>
-    <div id="today-sequence-steps"><div class="trend-scout-empty">Computing…</div></div>
-  </div>
-
-  <details class="daily-playbook">
-    <summary>Daily playbook — how this works</summary>
-    <div class="pb-body">
-      <p style="margin-top:0;color:var(--dim);font-size:0.92rem;">The repeatable routine. ~30 min/day total. Open this if you're new, lost, or starting your day cold.</p>
-
-      <h4>Every weekday morning (7-10 AM MT)</h4>
-      <ol>
-        <li><strong>Check today's scheduled posts.</strong> The Right Now card above tells you which post + which video + the exact copy to paste. Copy → paste → schedule (or post immediately) → paste the live URL back into the dashboard. Status flips to <em>posted</em>.</li>
-        <li><strong>Grade yesterday's post</strong> (if 24+ hours have passed). Open the platform's analytics, copy the numbers (impressions, likes, comments, link clicks, trial signups), then say to Brad: <code>grade my [Monday/Tuesday/Wednesday] post</code>. Brad delegates to <code>post-performance-grader</code> which writes the grade + recommendations.</li>
-        <li><strong>Engage</strong> (10-15 min). Reply to comments on your last 3 posts. Skim r/pmp, r/CompTIA, r/humanresources for questions you can answer authentically. Value-first replies; mention CipherExam only if directly asked.</li>
-        <li><strong>Founder email</strong> (only when applicable). If you have a new signup, send the matching template from <code>07-founder-1to1-emails.md</code> (Day 0 / Day 3 / Day 6). Brad surfaces which template during the walkthrough.</li>
-      </ol>
-
-      <h4>Weekly rhythms — and when to generate posts</h4>
-      <ul>
-        <li><strong>Sundays = DRAFT DAY.</strong> This is the most important habit. Say <code>Brad, draft next week's [PMP / Sec+ / SHRM] posts</code>. Brad runs trend scout first, then drafts 6 posts (Mon/Wed/Fri × LinkedIn + X). You approve before they flip to <em>scheduled</em>. <strong>Miss this and the dashboard goes empty by Monday.</strong></li>
-        <li><strong>If you ever land here and the Right Now card says "NO POSTS IN PIPELINE"</strong> — that means you missed Sunday. Draft immediately or you'll lose a posting week. The dashboard will keep nagging until you do.</li>
-        <li><strong>Mondays</strong> — say <code>Brad, run trend scout</code>. Quick weekly trend scan; Brad surfaces 3 angles. (Skip if you already ran it Sunday before drafting.)</li>
-        <li><strong>End of week</strong> — Brad can produce a weekly performance report: <code>Brad, weekly performance report</code>.</li>
-      </ul>
-
-      <h4>What "stale scheduled" means (and how to clear it)</h4>
-      <ul>
-        <li>A post stuck in <em>scheduled</em> status with a past date = it was due but never posted. The Right Now card surfaces these first because the calendar is broken until they're resolved.</li>
-        <li>Three ways to clear: (a) <strong>Post it late</strong> if still relevant — paste the copy, post on the platform, click Mark Posted with the URL. (b) <strong>Repurpose</strong> for an upcoming day — tell Brad "move the Wed post to tomorrow." (c) <strong>Skip</strong> — tell Brad "skip the stale posts" and they move to <em>skipped</em> status, out of the way.</li>
-      </ul>
-
-      <h4>Hard rules — don't break these</h4>
-      <ul>
-        <li><strong>Don't post before 7 AM MT.</strong> The scheduler accepts earlier times; you should not.</li>
-        <li><strong>Don't grade a post less than 24h old.</strong> Metrics aren't stable yet — early signal is misleading.</li>
-        <li><strong>Don't post on weekends</strong> (LinkedIn engagement collapses Sat/Sun; X is OK but quiet).</li>
-        <li><strong>Don't claim you took an exam.</strong> You haven't — use builder POV, tool-builder framings.</li>
-        <li><strong>Don't run <code>node site/build-app.mjs</code></strong> — it wipes load-bearing direct edits to <code>app.html</code>.</li>
-      </ul>
-
-      <h4>Talking to Brad — useful phrases</h4>
-      <ul>
-        <li><code>walk me through today</code> — full conversational walkthrough of the day's tasks</li>
-        <li><code>grade my [day] post</code> — when reporting metrics</li>
-        <li><code>Brad, run trend scout</code> — weekly trend scan before drafting</li>
-        <li><code>Brad, draft next week's [exam] posts</code> — kicks off draft-week-posts</li>
-        <li><code>any new signups since yesterday?</code> — Brad walks you through founder emails</li>
-        <li><code>analyze last week's posts</code> — Brad surfaces patterns across all graded posts</li>
-      </ul>
-    </div>
-  </details>
 
 
   <!-- 1. Stage banner -->
@@ -1819,11 +1716,6 @@ function cipherShow(route) {
   <h2>Today's creative</h2>
   <p style="color:var(--dim);font-size:0.92rem;">Which video to attach to today's scheduled post. Mapped from the 4-week calendar to the rendered Remotion videos in <code>videos/out/</code>.</p>
   <div id="today-creative" class="card">Loading…</div>
-
-  <!-- Trend Scout latest scan -->
-  <h2>Trend Scout — latest scan</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">3 ranked angles from the most recent <code>cipher-trend-scout</code> run. Brad uses these before <code>draft-week-posts</code>. Re-scan: <em>"Brad, run trend scout"</em>.</p>
-  <div id="trend-scout-panel" class="trend-scout-panel"><div class="trend-scout-empty">Loading latest scan…</div></div>
 
   <!-- Scratchpad + copy-for-Claude -->
   <h2>Today's scratchpad</h2>
@@ -2003,77 +1895,6 @@ function cipherShow(route) {
 .sched-card.tonight  { border-left: 4px solid var(--warn); }
 .sched-card.upcoming { border-left: 4px solid var(--cyan); }
 .sched-card.posted   { border-left: 4px solid var(--good); opacity: 0.65; }
-
-/* --- Collapsed-row layout (default state on Schedule feed) --- */
-.sched-row {
-  display: grid;
-  grid-template-columns: 110px 90px 70px 70px 1fr auto;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 8px;
-  font-size: 0.86rem;
-  transition: background 0.15s;
-}
-.sched-row:hover { background: rgba(255,255,255,0.03); }
-.sched-row.row-posted    { border-left: 4px solid var(--good); }
-.sched-row.row-tonight   { border-left: 4px solid var(--warn); }
-.sched-row.row-upcoming  { border-left: 4px solid var(--cyan); }
-.sched-row .row-date {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  color: var(--dim); font-size: 0.82rem;
-}
-.sched-row .row-channel { font-weight: 700; font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; }
-.sched-row .row-channel.ch-linkedin { color: #7eb8ff; }
-.sched-row .row-channel.ch-x { color: #cbd0dc; }
-.sched-row .row-channel.ch-reddit-organic { color: #ff8b60; }
-.sched-row .row-channel.ch-reddit-ads { color: #ffb88a; }
-.sched-row .row-status {
-  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  padding: 2px 8px; border-radius: 100px; border: 1px solid var(--border);
-  text-align: center;
-}
-.sched-row .row-status.s-posted    { background: rgba(74,222,128,0.16); color: #86efac; border-color: rgba(74,222,128,0.45); }
-.sched-row .row-status.s-scheduled { background: rgba(125,211,252,0.12); color: #7dd3fc; border-color: rgba(125,211,252,0.4); }
-.sched-row .row-status.s-draft     { background: rgba(251,191,36,0.14); color: #fbbf24; border-color: rgba(251,191,36,0.4); }
-.sched-row .row-grade {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-weight: 800; font-size: 1rem; text-align: center;
-  padding: 2px 0;
-}
-.sched-row .row-grade.g-A { color: #86efac; }
-.sched-row .row-grade.g-B { color: #7dd3fc; }
-.sched-row .row-grade.g-C { color: #fbbf24; }
-.sched-row .row-grade.g-D { color: #fca5a5; }
-.sched-row .row-grade.g-none { color: var(--dim); font-weight: 600; font-size: 0.82rem; }
-.sched-row .row-hint {
-  color: var(--dim); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.sched-row .row-open-btn {
-  background: rgba(125,211,252,0.12); border: 1px solid rgba(125,211,252,0.4);
-  color: var(--cyan); padding: 5px 12px; border-radius: 6px;
-  font-weight: 700; font-size: 0.78rem; cursor: pointer; white-space: nowrap;
-}
-.sched-row .row-open-btn:hover { background: rgba(125,211,252,0.22); }
-.sched-card-wrap.is-open .sched-row { display: none; }
-.sched-card-wrap .sched-card { display: none; }
-.sched-card-wrap.is-open .sched-card { display: block; }
-.sched-card .row-close-btn {
-  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-  color: var(--dim); padding: 4px 10px; border-radius: 6px;
-  font-weight: 600; font-size: 0.75rem; cursor: pointer; margin-left: auto;
-}
-.sched-card .row-close-btn:hover { color: var(--text); background: rgba(255,255,255,0.1); }
-@media (max-width: 700px) {
-  .sched-row { grid-template-columns: 1fr auto; gap: 6px; }
-  .sched-row .row-date { grid-column: 1; }
-  .sched-row .row-channel, .sched-row .row-status, .sched-row .row-grade { display: inline-block; margin-right: 8px; }
-  .sched-row .row-hint { grid-column: 1 / -1; }
-  .sched-row .row-open-btn { grid-row: 1; grid-column: 2; }
-}
 .sched-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
 .sched-title {
   font-family: 'Satoshi', system-ui, sans-serif;
@@ -2252,13 +2073,9 @@ function cipherShow(route) {
 </div>
 
 <div id="sched-banner-zone"></div>
-
-<!-- Topic cooldown widget — surfaces per-exam-per-channel post density for the last 7 days -->
-<h2 style="margin-top:0;">Topic cooldown — last 7 days</h2>
-<p style="color:var(--dim);font-size:0.92rem;">Guard: max 2 posts per (exam, channel) per rolling 7 days. Drafter blocks a 3rd unless campaign plan overrides. Green = headroom, yellow = at limit, red = over.</p>
-<div id="cooldown-widget" class="cooldown-widget"><div class="trend-scout-empty">Computing…</div></div>
-
-<div id="sched-feed-section"></div>
+<div id="sched-tonight-section"></div>
+<div id="sched-upcoming-section"></div>
+<div id="sched-posted-section"></div>
 
 <script>
 (function renderSchedulePage() {
@@ -2360,51 +2177,57 @@ function cipherShow(route) {
     // survive — otherwise the wireup loop below double-attaches click handlers
     // to leftover buttons and Mark-as-Posted toggles itself off mid-click.
     var bannerEl   = document.getElementById('sched-banner-zone');
-    var feedEl = document.getElementById('sched-feed-section');
+    var tonightEl  = document.getElementById('sched-tonight-section');
+    var upcomingEl = document.getElementById('sched-upcoming-section');
+    var postedEl   = document.getElementById('sched-posted-section');
     bannerEl.innerHTML = '';
-    feedEl.innerHTML = '';
+    tonightEl.innerHTML = '';
+    upcomingEl.innerHTML = '';
+    postedEl.innerHTML = '';
 
     var data = window.__POSTS__;
     if (!data || !Array.isArray(data.posts)) {
-      feedEl.innerHTML = '<p class="empty-state">No posts data loaded.</p>';
+      upcomingEl.innerHTML = '<p class="empty-state">No posts data loaded.</p>';
       return;
     }
 
     var today     = todayInMT();
     var tomorrow  = tomorrowInMT();
-
-    // "Effective date" = postedAt for posted posts, scheduledTime otherwise.
-    // Used both for sorting (most recent first) and the row date label.
-    function effectiveDateIso(p) {
-      return p.status === 'posted' ? (p.postedAt || p.scheduledTime || '') : (p.scheduledTime || '');
-    }
-    function variantFor(p) {
-      if (p.status === 'posted') return 'posted';
-      var d = scheduledDateMT(p.scheduledTime);
-      if (d === today || d === tomorrow) return 'tonight';
-      return 'upcoming';
-    }
-
-    var posts = data.posts.slice().sort(function (a, b) {
-      // Most recent first — descending by effective date
-      return effectiveDateIso(b).localeCompare(effectiveDateIso(a));
+    var posts     = data.posts.slice().sort(function(a,b){
+      return (a.scheduledTime||'').localeCompare(b.scheduledTime||'');
     });
 
-    var tonightPosts = posts.filter(function (p) { return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === tomorrow; });
-    var todayPosts   = posts.filter(function (p) { return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === today; });
+    var tonightPosts  = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === tomorrow; });
+    var upcomingPosts = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) > tomorrow; });
+    var todayPosts    = posts.filter(function(p){ return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === today; });
+    var postedPosts   = posts.filter(function(p){ return p.status === 'posted'; });
 
     // Banner: show if there are posts due today or tomorrow
     if (todayPosts.length > 0) {
-      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🔔</div><div class="sched-banner-body"><strong>' + todayPosts.length + ' post' + (todayPosts.length > 1 ? 's' : '') + ' scheduled for today.</strong> Click any row\'s Open button to see the copy, then "Mark as Posted" once it\'s live.</div></div>';
+      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🔔</div><div class="sched-banner-body"><strong>' + todayPosts.length + ' post' + (todayPosts.length > 1 ? 's' : '') + ' scheduled for today.</strong> Check that they were posted, then click "Mark as Posted" on each one to record the live URL.</div></div>';
     } else if (tonightPosts.length > 0) {
-      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🌙</div><div class="sched-banner-body"><strong>Prep tonight:</strong> ' + tonightPosts.length + ' post' + (tonightPosts.length > 1 ? 's are' : ' is') + ' due tomorrow (' + toMTDateOnly(tonightPosts[0].scheduledTime) + '). Open each row to copy the text and schedule it.</div></div>';
+      bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🌙</div><div class="sched-banner-body"><strong>Prep tonight:</strong> ' + tonightPosts.length + ' post' + (tonightPosts.length > 1 ? 's are' : ' is') + ' due tomorrow (' + toMTDateOnly(tonightPosts[0].scheduledTime) + '). Copy the text below and schedule it in LinkedIn/X before bed.</div></div>';
     }
 
-    if (posts.length === 0) {
-      feedEl.innerHTML = '<p class="empty-state">No posts yet.</p>';
-    } else {
-      feedEl.innerHTML = '<div class="section-label">All posts — most recent first (' + posts.length + ')</div>' +
-        posts.map(function (p) { return renderWrap(p, variantFor(p)); }).join('');
+    // Tonight section
+    var allSoon = todayPosts.concat(tonightPosts);
+    if (allSoon.length > 0) {
+      tonightEl.innerHTML = '<div class="section-label">' + (todayPosts.length > 0 ? 'Today' : 'Up Next — Prep Tonight') + '</div>' +
+        allSoon.map(function(p){ return renderCard(p, todayPosts.includes(p) ? 'tonight' : 'tonight'); }).join('');
+    }
+
+    // Upcoming section
+    if (upcomingPosts.length > 0) {
+      upcomingEl.innerHTML = '<div class="section-label">Upcoming</div>' +
+        upcomingPosts.map(function(p){ return renderCard(p, 'upcoming'); }).join('');
+    } else if (allSoon.length === 0) {
+      upcomingEl.innerHTML = '<p class="empty-state">No upcoming scheduled posts.</p>';
+    }
+
+    // Posted section
+    if (postedPosts.length > 0) {
+      postedEl.innerHTML = '<div class="section-label">Posted</div>' +
+        postedPosts.map(function(p){ return renderCard(p, 'posted'); }).join('');
     }
 
     // Wire up buttons after render
@@ -2468,49 +2291,6 @@ function cipherShow(route) {
     // listener fights the delegated one and the form briefly opens then closes.
   }
 
-  // Short MT date — "May 18" — for the row label.
-  function shortMTDate(isoStr) {
-    if (!isoStr) return '';
-    try {
-      var d = new Date(isoStr);
-      return new Intl.DateTimeFormat('en-US', {
-        timeZone: TZ, month: 'short', day: 'numeric'
-      }).format(d);
-    } catch (e) { return isoStr.slice(0, 10); }
-  }
-
-  // Compact one-line row shown by default for every post on the feed.
-  // Shows: date · channel · status · grade · hook hint · Open button.
-  function renderRow(p, variant) {
-    var grade = p.grade || '';
-    var gradeClass = grade ? ('g-' + grade) : 'g-none';
-    var gradeLabel = grade || '—';
-    var status = (p.status || 'draft').toLowerCase();
-    var statusClass = 's-' + status;
-    var statusLabel = status === 'posted' ? '✓ posted' : status;
-    var dateIso = p.status === 'posted' ? (p.postedAt || p.scheduledTime || '') : (p.scheduledTime || '');
-    var dateLabel = dateIso ? shortMTDate(dateIso) : '—';
-    var channel = p.channel || 'other';
-    var channelLbl = channel.toUpperCase();
-    var hint = p.hook || (p.examFocus ? p.examFocus : '');
-    return '<div class="sched-row row-' + esc(variant) + '">' +
-      '<div class="row-date">' + esc(dateLabel) + '</div>' +
-      '<div class="row-channel ch-' + esc(channel) + '">' + esc(channelLbl) + '</div>' +
-      '<div class="row-status ' + esc(statusClass) + '">' + esc(statusLabel) + '</div>' +
-      '<div class="row-grade ' + esc(gradeClass) + '">' + esc(gradeLabel) + '</div>' +
-      '<div class="row-hint">' + esc(hint) + '</div>' +
-      '<button type="button" class="row-open-btn" data-sched-toggle="' + esc(p.id) + '">Open</button>' +
-    '</div>';
-  }
-
-  // Wraps the collapsed row + the full detail card. Toggled by data-sched-toggle handler.
-  function renderWrap(p, variant) {
-    return '<div class="sched-card-wrap" id="sched-wrap-' + esc(p.id) + '" data-post-id="' + esc(p.id) + '">' +
-      renderRow(p, variant) +
-      renderCard(p, variant) +
-    '</div>';
-  }
-
   function renderCard(p, variant) {
     var mtTime = toMT(p.scheduledTime);
     var channelLabel = (p.channel || 'other').toUpperCase();
@@ -2562,7 +2342,6 @@ function cipherShow(route) {
           ' <span style="color:var(--dim);font-size:0.88rem;margin-left:4px;">' + esc(p.hook || '') + '</span>' +
         '</div>' +
         '<div class="sched-time-mt">' + esc(mtTime) + '</div>' +
-        '<button type="button" class="row-close-btn" data-sched-toggle="' + esc(p.id) + '">▲ Close</button>' +
       '</div>' +
       videoBlock +
       '<div class="sched-text-label">Step 2 — Paste this text below the video</div>' +
@@ -2604,17 +2383,6 @@ function cipherShow(route) {
 .post-card.status-posted    { border-left: 3px solid var(--good); }
 .post-card.status-scheduled { border-left: 3px solid var(--accent); }
 .post-card.status-draft     { border-left: 3px solid var(--warn); }
-/* Collapsible details cards */
-details.post-card { padding: 0; }
-details.post-card > summary {
-  list-style: none; cursor: pointer;
-  padding: 14px 22px; margin-bottom: 0; user-select: none;
-}
-details.post-card > summary::-webkit-details-marker { display: none; }
-details.post-card > summary::marker { display: none; }
-details.post-card > .post-body { padding: 0 22px 18px; border-top: 1px solid var(--border); padding-top: 14px; }
-.post-toggle { margin-left: 6px; color: var(--dim); font-size: 1rem; transition: transform 0.15s; display: inline-block; }
-details.post-card[open] .post-toggle { transform: rotate(90deg); }
 .post-head {
   display: flex;
   align-items: baseline;
@@ -2622,7 +2390,6 @@ details.post-card[open] .post-toggle { transform: rotate(90deg); }
   gap: 12px;
   margin-bottom: 10px;
 }
-details.post-card > summary .post-head { margin-bottom: 0; }
 .post-pill {
   font-size: 0.7rem;
   font-weight: 700;
@@ -2871,27 +2638,6 @@ details.post-card > summary .post-head { margin-bottom: 0; }
     var gradePill = p.grade ? '<span class="post-pill grade-' + esc(p.grade) + '">Grade ' + esc(p.grade) + '</span>' : '';
     var channelLabel = (p.channel || 'other').toUpperCase();
 
-    // Outlier badge (only renders if grader has written outlierScore)
-    var outlierBadge = '';
-    if (p.outlierScore != null) {
-      var oCls = p.outlierPattern === 'winner' ? 'winner'
-               : p.outlierPattern === 'loser'  ? 'loser'
-               : 'neutral';
-      var oLabel = p.outlierPattern === 'winner' ? 'winner'
-                 : p.outlierPattern === 'loser'  ? 'loser'
-                 : 'outlier';
-      outlierBadge = '<span class="outlier-badge ' + oCls + '" title="Post impressions vs. channel 7-day avg">' +
-        '<span class="outlier-num">' + Math.round(p.outlierScore) + '</span>' +
-        '<span class="outlier-label">' + oLabel + '</span>' +
-      '</span>';
-    }
-
-    // Humanizer note (only renders if drafter has written humanizerTellsStripped)
-    var humanizerNote = '';
-    if (p.humanizerTellsStripped != null) {
-      humanizerNote = '<div class="humanizer-note">Humanizer: ' + Math.max(0, p.humanizerTellsStripped|0) + ' tell' + (p.humanizerTellsStripped === 1 ? '' : 's') + ' stripped</div>';
-    }
-
     var fields = '<div class="post-fields">';
     if (p.video) fields += '<span>Video</span><code>' + esc(p.video) + ' (' + esc(p.videoFormat || '?') + ')</code>';
     if (p.hook)  fields += '<span>Hook</span><code>' + esc(p.hook) + '</code>';
@@ -2951,7 +2697,6 @@ details.post-card > summary .post-head { margin-bottom: 0; }
         (p.examFocus ? '<span class="post-pill exam">' + esc(p.examFocus) + '</span>' : '') +
         '<span class="post-pill">' + esc(p.status || 'draft') + '</span>' +
         gradePill +
-        outlierBadge +
         '<span class="post-meta">' + esc(p.scheduled || '') + '</span>' +
         '<span class="post-toggle">›</span>' +
       '</div>' +
@@ -2960,7 +2705,6 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       summaryHead +
       '<div class="post-body">' +
         '<div class="post-copy">' + esc(p.copy || '') + '</div>' +
-        humanizerNote +
         '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
         gradeBtn +
         fields +
@@ -3984,13 +3728,6 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   <div class="hero">
     <h1>Engineering handoff</h1>
     <p class="sub"><strong>Owner:</strong> Dave (cipherexam.com / dquillman/cipher). <strong>Target:</strong> all items shipped before Week 1 of the campaign starts. Total estimated effort: ~4 days of solo-founder engineering.</p>
-  </div>
-
-  <!-- A-grade anchor library — few-shot examples the drafter uses to imitate winning structure -->
-  <div class="anchor-library" id="anchor-library">
-    <h3>A-grade anchor library</h3>
-    <p style="color:var(--dim);font-size:0.88rem;margin:0 0 10px;"><code>draft-week-posts</code> reads these as structural references (never lifts text). Per (channel × exam) slot — one anchor each. <code>post-performance-grader</code> auto-populates when a post grades A. Stored under <code>~/.claude/skills/draft-week-posts/examples/</code>.</p>
-    <div class="anchor-grid" id="anchor-grid"><div class="trend-scout-empty">Loading…</div></div>
   </div>
 
   <!-- §1 -->
@@ -5203,838 +4940,6 @@ if (document.readyState === 'loading') {
   }
 })();
 
-// ---- Trend Scout panel, Anchor library, Topic cooldown widget ----
-(function () {
-  function esc(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // -- Trend Scout panel (Today tab) --
-  function renderTrendScout(data) {
-    var el = document.getElementById('trend-scout-panel');
-    if (!el) return;
-    if (!data || !data.angles || data.angles.length === 0) {
-      el.innerHTML = '<div class="trend-scout-empty">No scan yet. Ask Brad to <em>"run trend scout"</em>.</div>';
-      return;
-    }
-    var html = '<header><h3>' + esc(data.examsScanned ? data.examsScanned.join(' · ') : '') + '</h3>'
-             + '<span class="scan-meta">scanned ' + esc(data.scanDate || '—') + '</span></header>';
-    data.angles.slice(0, 3).forEach(function (a) {
-      html += '<div class="trend-angle rank-' + esc(a.rank || 0) + '">'
-            +   '<div class="label"><span class="rank-num">#' + esc(a.rank) + '</span>' + esc(a.label || '')
-            +     (a.suggestedHook ? ' <span class="hook-pill">' + esc(a.suggestedHook) + '</span>' : '')
-            +     (a.exam ? ' <span class="hook-pill">' + esc(a.exam) + '</span>' : '')
-            +   '</div>'
-            +   '<div class="row"><span class="k">Source</span>' + esc(a.source || '—') + '</div>'
-            +   (a.outlierSignal ? '<div class="row"><span class="k">Signal</span>' + esc(a.outlierSignal) + '</div>' : '')
-            +   (a.whyHot ? '<div class="row"><span class="k">Why hot</span>' + esc(a.whyHot) + '</div>' : '')
-            +   '<div class="row"><span class="k">Angle</span>' + esc(a.angleForBrad || '—') + '</div>'
-            + '</div>';
-    });
-    if (data.skipThese)    html += '<div class="trend-scout-skip"><strong>Skip these:</strong> ' + esc(data.skipThese) + '</div>';
-    if (data.handoffNote)  html += '<div class="trend-scout-handoff"><strong>⚠ Handoff:</strong> ' + esc(data.handoffNote) + '</div>';
-    if (data.honestyCaveat) html += '<div class="trend-scout-caveat">' + esc(data.honestyCaveat) + '</div>';
-    el.innerHTML = html;
-  }
-
-  // -- Anchor library (Engineering tab) --
-  function renderAnchorLibrary(data) {
-    var el = document.getElementById('anchor-grid');
-    if (!el) return;
-    var channels = ['linkedin', 'x', 'reddit-organic', 'reddit-ads'];
-    var exams = [{slug:'pmp', label:'PMP'}, {slug:'secplus', label:'Sec+'}, {slug:'shrm', label:'SHRM-CP'}];
-    var anchors = (data && data.anchors) || {};
-    var cells = [];
-    channels.forEach(function (ch) {
-      exams.forEach(function (ex) {
-        var key = ch + '-' + ex.slug;
-        var a = anchors[key];
-        if (a) {
-          cells.push('<div class="anchor-cell has" title="' + esc(a.id) + '">'
-            + '<span class="slot">' + esc(ch) + ' · ' + esc(ex.label) + '</span>'
-            + '<span class="meta">outlier ' + (a.outlierScore != null ? Math.round(a.outlierScore) : '—') + ' · ' + esc(a.scheduledTimeLocal || '—') + '</span>'
-            + '</div>');
-        } else {
-          cells.push('<div class="anchor-cell empty">'
-            + '<span class="slot">' + esc(ch) + ' · ' + esc(ex.label) + '</span>'
-            + '<span class="meta">no anchor yet</span>'
-            + '</div>');
-        }
-      });
-    });
-    el.innerHTML = cells.join('');
-  }
-
-  // -- Topic cooldown widget (Schedule tab) -- computes from posts.json
-  function renderCooldown() {
-    var el = document.getElementById('cooldown-widget');
-    if (!el) return;
-    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
-    var now = new Date();
-    var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    var counts = {}; // key = 'exam|channel'
-    posts.forEach(function (p) {
-      if (!p.scheduled) return;
-      var d = new Date(p.scheduled + 'T00:00:00Z');
-      if (isNaN(d.getTime()) || d < weekAgo || d > now) return;
-      var key = (p.examFocus || '?') + '|' + (p.channel || 'other');
-      counts[key] = (counts[key] || 0) + 1;
-    });
-    var exams = ['PMP', 'Security+', 'SHRM-CP'];
-    var channels = ['linkedin', 'x', 'reddit-organic'];
-    var cells = [];
-    exams.forEach(function (ex) {
-      channels.forEach(function (ch) {
-        var n = counts[ex + '|' + ch] || 0;
-        var cls = n >= 3 ? 'over' : (n === 2 ? 'near' : 'ok');
-        var sub = n >= 3 ? 'over cap' : (n === 2 ? 'at cap' : (2 - n) + ' left');
-        cells.push('<div class="cooldown-cell ' + cls + '">'
-          + '<span class="label">' + esc(ex) + ' · ' + esc(ch) + '</span>'
-          + '<span class="value">' + n + ' / 2</span>'
-          + '<span class="sub">' + esc(sub) + '</span>'
-          + '</div>');
-      });
-    });
-    el.innerHTML = cells.join('');
-  }
-
-  function loadAndRender() {
-    fetch('data/trend-scout.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(renderTrendScout)
-      .catch(function () { renderTrendScout(null); });
-
-    fetch('data/anchors-index.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(renderAnchorLibrary)
-      .catch(function () { renderAnchorLibrary(null); });
-
-    renderCooldown();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAndRender);
-  } else {
-    loadAndRender();
-  }
-  // Re-compute cooldown whenever posts update
-  document.addEventListener('cipher:posts-updated', renderCooldown);
-})();
-
-// ---- Command center: "Right now" action + Today's sequence ----
-(function () {
-  function esc(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function mtTodayStr() {
-    // Approximate MT day boundary (UTC-6 / -7 depending on DST). Cheap heuristic: use local-time YYYY-MM-DD.
-    var d = new Date();
-    var off = -d.getTimezoneOffset();
-    var local = new Date(d.getTime() + (off + (-7) * 60) * 60 * 1000); // shift so MT-relative
-    return d.toISOString().slice(0, 10); // simpler: scheduled fields use YYYY-MM-DD; treat browser-local as proxy
-  }
-
-  function mtHour() {
-    // Browser-local hour as MT proxy. Dave runs this from his own machine in MT, so local time == MT.
-    return new Date().getHours();
-  }
-
-  function dayOfWeek() {
-    return new Date().getDay(); // 0=Sun, 6=Sat
-  }
-
-  function hoursAgo(iso) {
-    if (!iso) return Infinity;
-    var t = new Date(iso).getTime();
-    if (isNaN(t)) return Infinity;
-    return (Date.now() - t) / 36e5;
-  }
-
-  function getPosts() {
-    return (window.__POSTS__ && window.__POSTS__.posts) || [];
-  }
-
-  // Pick which exam Brad should draft this week based on:
-  //  1) Campaign plan (CALENDAR.weeks[N].label) — primary signal
-  //  2) Prior week's grade pattern — if planned exam underperformed, note it
-  //  3) Activated cluster gaps — which cluster is furthest behind target
-  //  4) Trend scout — does a hot angle make a different exam time-urgent
-  function recommendExam(posts, trendData) {
-    // 1. Compute current campaign week (0-indexed) from campaign-state.json
-    var cs = window.__CAMPAIGN_STATE__ || {};
-    var startStr = (cs.campaign && cs.campaign.start) || '2026-05-18';
-    var startMs = new Date(startStr + 'T00:00:00').getTime();
-    var weekIdx = Math.max(0, Math.floor((Date.now() - startMs) / (7 * 86400000)));
-
-    // 2. Per-week primary exam from CALENDAR labels (parsed once, hardcoded since CALENDAR is in same file)
-    var WEEK_PRIMARY = ['PMP', 'Security+', 'PMP', 'Security+']; // index = weekIdx
-    var WEEK_LABEL = {
-      0: 'Week 1 — PMP cornerstone',
-      1: 'Week 2 — Security+ + Reddit value',
-      2: 'Week 3 — PMP X-threads + warm outreach',
-      3: 'Week 4 — Security+/SHRM-CP retro'
-    };
-    var plannedExam = WEEK_PRIMARY[weekIdx] || 'PMP';
-    var planLabel = WEEK_LABEL[weekIdx] || 'Campaign week ' + (weekIdx + 1);
-
-    // 3. Reasoning string — start with the plan
-    var reasons = [];
-    reasons.push('<strong>Campaign plan</strong>: ' + esc(planLabel) + '. Primary exam = <strong>' + esc(plannedExam) + '</strong>.');
-
-    // 4. Look at prior week's posts (already-graded) — was the planned exam tested already?
-    var priorWeekStart = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
-    var priorPosts = posts.filter(function (p) {
-      return p.scheduled && p.scheduled >= priorWeekStart && p.grade;
-    });
-    var perExamGrades = {};
-    priorPosts.forEach(function (p) {
-      var k = p.examFocus || '?';
-      perExamGrades[k] = perExamGrades[k] || [];
-      perExamGrades[k].push(p.grade);
-    });
-    var examsTested = Object.keys(perExamGrades);
-    if (examsTested.length > 0) {
-      var notes = examsTested.map(function (ex) {
-        var gs = perExamGrades[ex];
-        var avg = gs.map(function (g) { return ({A:4,B:3,C:2,D:1})[g] || 0; }).reduce(function (a, b) { return a + b; }, 0) / gs.length;
-        return ex + ': ' + gs.join('/') + ' (' + gs.length + ' post' + (gs.length === 1 ? '' : 's') + ')';
-      });
-      reasons.push('<strong>Prior 14 days</strong>: ' + notes.join('; ') + '.');
-    }
-
-    // 5. Activated cluster gaps
-    var perCluster = (cs.metrics && cs.metrics.perCluster) || {};
-    var gaps = Object.keys(perCluster).map(function (k) {
-      var c = perCluster[k];
-      var pct = c.target ? Math.round(100 * (c.activated || 0) / c.target) : 0;
-      return { exam: k, pct: pct, gap: (c.target || 0) - (c.activated || 0) };
-    }).sort(function (a, b) { return b.gap - a.gap; });
-    if (gaps.length > 0 && gaps[0].gap > 0) {
-      reasons.push('<strong>Cluster gaps</strong>: ' + gaps.map(function (g) { return esc(g.exam) + ' ' + g.pct + '% of target'; }).join(' · ') + '.');
-    }
-
-    // 6. Trend scout time-urgency override
-    if (trendData && trendData.angles && trendData.angles.length > 0) {
-      var topAngle = trendData.angles[0];
-      if (topAngle.exam && topAngle.exam !== plannedExam) {
-        // Top trend angle is for a DIFFERENT exam — flag but don't override the plan
-        reasons.push('<strong>Trend scout note</strong>: top angle is for ' + esc(topAngle.exam) + ' (' + esc(topAngle.label || '') + '). Plan says ' + esc(plannedExam) + '; consider override if the angle is time-critical.');
-      } else if (topAngle.exam) {
-        reasons.push('<strong>Trend scout</strong>: top angle (' + esc(topAngle.label || '') + ') aligns with planned ' + esc(plannedExam) + '.');
-      }
-    }
-
-    var alternates = ['PMP', 'Security+', 'SHRM-CP'].filter(function (e) { return e !== plannedExam; });
-
-    return {
-      exam: plannedExam,
-      reason: reasons.join('<br>'),
-      alternates: alternates
-    };
-  }
-
-  function computeNextAction(posts, trendData) {
-    var todayStr = mtTodayStr();
-    var hour = mtHour();
-    var dow = dayOfWeek();
-
-    // Rule 0: Too early (before 7 AM MT) → standby
-    if (hour < 7) {
-      return {
-        type: 'standby',
-        title: 'Too early to post',
-        sub: "Don't post before 7 AM MT — algorithms penalize 5-6 AM posts. Have coffee. Read the playbook below if you want a head start.",
-        detail: null,
-        buttons: [
-          { label: 'Open Daily Playbook', onclick: "document.querySelector('.daily-playbook').open = true; window.scrollTo({top:document.querySelector('.daily-playbook').offsetTop - 20, behavior:'smooth'});" }
-        ]
-      };
-    }
-
-    // Rule 1: Scheduled-for-today, not yet posted
-    var todayUnposted = posts.filter(function (p) {
-      return p.scheduled === todayStr && p.status !== 'posted';
-    });
-    if (todayUnposted.length > 0) {
-      var p = todayUnposted[0];
-      var isLI = (p.channel || '').toLowerCase() === 'linkedin';
-      // Per Week 1 lessons: LinkedIn = link in first comment (not body). X = include URL in body.
-      var ctaPlacement = isLI
-        ? 'Post body alone — no URL in body. Drop the CTA URL as the <strong>first reply comment</strong> after publishing (Week 1 lesson — body links suppress reach).'
-        : 'Include the CTA URL inside the post body. X collapses URLs to t.co.';
-      return {
-        type: 'post',
-        title: 'POST: ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
-        sub: 'Two clipboard buttons below — one for the body, one for the specific CTA URL with the right UTM. Use both; never paste a URL from memory or from a different post.',
-        detail:
-          '<div class="cc-detail-label">Post body (copy → paste in composer)</div>' +
-          '<pre id="cc-copy-text">' + esc(p.copy || '') + '</pre>' +
-          '<div style="margin-top:10px;font-size:0.82rem;color:var(--dim);">' + ctaPlacement + '</div>' +
-          (p.cta ? '<div style="margin-top:12px;"><div class="cc-detail-label">CTA URL — unique to THIS post</div><code id="cc-cta-url" style="font-size:0.78rem;word-break:break-all;display:block;padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:4px;">' + esc(p.cta) + '</code></div>' : '') +
-          (p.video ? '<div style="margin-top:10px;"><div class="cc-detail-label">Video to attach</div><code>' + esc(p.video) + '</code> · <code>' + esc(p.videoFormat || '?') + '</code></div>' : ''),
-        buttons: [
-          {
-            label: 'Copy post body',
-            onclick: function () {
-              var el = document.getElementById('cc-copy-text');
-              if (el) navigator.clipboard.writeText(el.innerText);
-              var btn = this;
-              btn.innerText = 'Copied ✓';
-              setTimeout(function () { btn.innerText = 'Copy post body'; }, 1500);
-            }
-          },
-          (p.cta ? {
-            label: isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body',
-            onclick: (function (cta, label) { return function () {
-              navigator.clipboard.writeText(cta);
-              var btn = this;
-              btn.innerText = 'Copied ✓';
-              setTimeout(function () { btn.innerText = label; }, 1500);
-            }; })(p.cta, isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body')
-          } : null),
-          {
-            label: 'Open Schedule tab',
-            cls: 'secondary',
-            onclick: function () { if (typeof cipherShow === 'function') cipherShow('schedule'); }
-          }
-        ].filter(Boolean)
-      };
-    }
-
-    // Rule 1.3: Drafts pending review (Brad created drafts — Dave needs to approve)
-    var pendingDrafts = posts.filter(function (p) { return p.status === 'draft'; });
-    if (pendingDrafts.length > 0) {
-      var draftList = pendingDrafts.slice(0, 8).map(function (d) {
-        return '<div style="margin:6px 0;font-size:0.9rem;"><strong>' + esc((d.channel || '?').toUpperCase()) + ' · ' + esc(d.examFocus || '?') + '</strong> — <code>' + esc(d.scheduled || '?') + '</code> · hook: <code>' + esc(d.hook || '?') + '</code></div>';
-      }).join('');
-      return {
-        type: 'review-drafts',
-        title: 'REVIEW ' + pendingDrafts.length + ' DRAFT' + (pendingDrafts.length === 1 ? '' : 'S') + ' — Brad is waiting for sign-off',
-        sub: 'Brad drafted these and wrote them to posts.json with status: "draft". Review the copy on the Posts tab, then approve to flip them to scheduled.',
-        detail:
-          '<div class="cc-detail-label">Drafts awaiting your review</div>' + draftList +
-          '<div class="cc-detail-label" style="margin-top:14px;">To approve</div>' +
-          '<pre>Brad, approve the drafts</pre>' +
-          '<p style="color:var(--dim);margin-top:8px;font-size:0.85rem;">Or open the Posts tab and review them one by one. Edits welcome before sign-off.</p>',
-        buttons: [
-          { label: 'Open Posts tab', onclick: function () { if (typeof cipherShow === 'function') cipherShow('posts'); } },
-          { label: 'Copy approval phrase', cls: 'secondary', onclick: function () {
-            navigator.clipboard.writeText('Brad, approve the drafts');
-            var btn = this; btn.innerText = 'Copied ✓';
-            setTimeout(function () { btn.innerText = 'Copy approval phrase'; }, 1800);
-          }}
-        ]
-      };
-    }
-
-    // Rule 1.5: Stale scheduled (status='scheduled' but the date is in the past)
-    var stale = posts.filter(function (p) {
-      return p.status === 'scheduled' && p.scheduled && p.scheduled < todayStr;
-    });
-    if (stale.length > 0) {
-      var staleList = stale.slice(0, 5).map(function (sp) {
-        var daysOld = Math.floor((Date.now() - new Date(sp.scheduled + 'T00:00:00').getTime()) / 86400000);
-        return '<div style="margin:4px 0;font-size:0.9rem;"><strong>' + esc((sp.channel || '?').toUpperCase()) + ' · ' + esc(sp.examFocus || '?') + '</strong> — was due <code>' + esc(sp.scheduled) + '</code> (' + daysOld + ' day' + (daysOld === 1 ? '' : 's') + ' stale) · hook: <code>' + esc(sp.hook || '?') + '</code></div>';
-      }).join('');
-      return {
-        type: 'stale',
-        title: stale.length + ' stale scheduled post' + (stale.length === 1 ? '' : 's') + ' — decide what to do',
-        sub: 'These were scheduled for past dates but never posted. Three options: post late (only if still relevant), repurpose for this week, or mark as skipped.',
-        detail:
-          '<div class="cc-detail-label">Backlog</div>' + staleList +
-          '<p style="color:var(--dim);margin-top:10px;font-size:0.85rem;">Tell Brad what you want to do — e.g. "Brad, skip the stale posts" or "Brad, repurpose Wednesday\'s trap post for tomorrow."</p>',
-        buttons: [
-          { label: 'Open Schedule tab', onclick: "cipherShow('schedule')" },
-          { label: 'Open Posts tab', cls: 'secondary', onclick: "cipherShow('posts')" }
-        ]
-      };
-    }
-
-    // Rule 2: Posted >24h ago, ungraded
-    var ungraded = posts.filter(function (p) {
-      return p.status === 'posted' && !p.grade && p.postedAt && hoursAgo(p.postedAt) >= 24;
-    });
-    if (ungraded.length > 0) {
-      var pg = ungraded[0];
-      return {
-        type: 'grade',
-        title: 'GRADE: ' + (pg.channel || '?').toUpperCase() + ' — ' + (pg.examFocus || '?') + ' from ' + (pg.scheduled || '?'),
-        sub: 'Open ' + (pg.channel || 'the platform') + ' analytics for this post. Copy the metrics, then tell Brad: "grade my ' + (pg.scheduled || '?') + ' post".',
-        detail:
-          (pg.postUrl ? '<div class="cc-detail-label">Live post</div><code>' + esc(pg.postUrl) + '</code><br><br>' : '') +
-          '<div class="cc-detail-label">What to grab from analytics</div>' +
-          '<pre>Impressions · Reactions/Likes · Comments · Reposts · Link clicks · Trial signups (UTM)</pre>',
-        buttons: [
-          {
-            label: 'Grade this post',
-            onclick: (function (postId) { return function () {
-              var trigger = document.querySelector('[data-grade-open="' + postId + '"]');
-              if (trigger) { trigger.click(); }
-              else if (typeof cipherShow === 'function') { cipherShow('posts'); }
-            }; })(pg.id)
-          },
-          (pg.postUrl ? {
-            label: 'Open live post',
-            cls: 'secondary',
-            onclick: (function (url) { return function () { window.open(url, '_blank'); }; })(pg.postUrl)
-          } : null)
-        ].filter(Boolean)
-      };
-    }
-
-    // Rule 2.5: Empty pipeline — no posts in next 7 days (draft URGENTLY)
-    var weekAheadIso = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
-    var upcoming = posts.filter(function (p) {
-      return (p.status === 'scheduled' || p.status === 'draft') &&
-             p.scheduled && p.scheduled >= todayStr && p.scheduled <= weekAheadIso;
-    });
-    if (upcoming.length === 0) {
-      var rec = recommendExam(posts, trendData);
-
-      // Pipeline status: what's ready, what isn't?
-      var trendFreshDays = trendData && trendData.scanDate
-        ? Math.floor((Date.now() - new Date(trendData.scanDate + 'T00:00:00').getTime()) / 86400000)
-        : null;
-      var trendStatus = trendFreshDays === null
-        ? { mark: '⚠', text: 'never run — Brad will run it first', cls: 'warn' }
-        : trendFreshDays <= 7
-          ? { mark: '✓', text: 'ran ' + trendFreshDays + ' day' + (trendFreshDays === 1 ? '' : 's') + ' ago (' + trendData.scanDate + ') — Brad will reuse', cls: 'ok' }
-          : { mark: '⚠', text: 'stale (' + trendFreshDays + ' days old) — Brad will refresh', cls: 'warn' };
-      var lessonsCount = window.__LESSONS_COUNT__ != null ? window.__LESSONS_COUNT__ : '?';
-      var lessonsStatus = lessonsCount === 0 || lessonsCount === '?'
-        ? { mark: '⚠', text: 'empty — drafts won\'t inherit Week 1 patterns. Consider running "Brad, analyze last week\'s posts" first.', cls: 'warn' }
-        : { mark: '✓', text: lessonsCount + ' lesson' + (lessonsCount === 1 ? '' : 's') + ' available — drafter will apply them', cls: 'ok' };
-
-      function pipelineRow(num, title, desc, status) {
-        return '<div style="display:grid;grid-template-columns:24px 1fr;gap:10px;padding:6px 0;border-top:1px solid var(--border);align-items:start;">' +
-          '<div style="color:var(--muted);font-weight:700;font-size:0.85rem;">' + num + '</div>' +
-          '<div>' +
-            '<div style="font-weight:600;font-size:0.9rem;">' + esc(title) + '</div>' +
-            '<div style="color:var(--dim);font-size:0.82rem;line-height:1.4;">' + desc + '</div>' +
-            (status ? '<div style="margin-top:4px;font-size:0.82rem;color:var(--' + (status.cls === 'ok' ? 'good' : 'warn') + ');">' + status.mark + ' ' + esc(status.text) + '</div>' : '') +
-          '</div>' +
-        '</div>';
-      }
-
-      return {
-        type: 'draft-urgent',
-        title: 'DRAFT NOW: this week\'s ' + rec.exam + ' posts',
-        sub: 'Pipeline is empty for the next 7 days. Brad recommends ' + rec.exam + '. Copy the phrase below → paste in Claude Code chat → Brad runs the pipeline shown below.',
-        detail:
-          // 1) Why
-          '<div class="cc-detail-label">Why ' + esc(rec.exam) + '?</div>' +
-          '<div style="font-size:0.9rem;line-height:1.5;">' + rec.reason + '</div>' +
-          // 2) The phrase
-          '<div class="cc-detail-label" style="margin-top:14px;">Step 1 — say to Brad</div>' +
-          '<pre>Brad, draft this week\'s ' + esc(rec.exam) + ' posts</pre>' +
-          (rec.alternates && rec.alternates.length ?
-            '<div style="margin-top:6px;color:var(--dim);font-size:0.8rem;">Override: ' +
-            rec.alternates.map(function (a) { return '<code>' + esc(a) + '</code>'; }).join(' · ') +
-            '</div>' : '') +
-          // 3) What happens next — the pipeline
-          '<div class="cc-detail-label" style="margin-top:18px;">What Brad does after you paste that</div>' +
-          '<div style="background:rgba(0,0,0,0.15);border:1px solid var(--border);border-radius:8px;padding:4px 14px;margin-top:6px;">' +
-            pipelineRow('A', 'Reads the campaign plan', 'Looks up Week ' + (Math.floor((Date.now() - new Date(((window.__CAMPAIGN_STATE__||{}).campaign||{start:'2026-05-18'}).start + 'T00:00:00').getTime()) / (7 * 86400000)) + 1) + ' from <code>00-campaign-brief.md</code>. Already done — ' + esc(rec.exam) + ' confirmed.', { mark: '✓', text: 'ready', cls: 'ok' }) +
-            pipelineRow('B', 'Reads the lessons file', '<code>site/data/grading-lessons.md</code> — patterns from prior weeks the drafter applies as constraints.', lessonsStatus) +
-            pipelineRow('C', 'Runs Trend Scout (if stale)', 'Scans Reddit/LinkedIn/X for hot angles in ' + esc(rec.exam) + ' space. Output written to <code>site/data/trend-scout.json</code>.', trendStatus) +
-            pipelineRow('D', 'Calls <code>draft-week-posts</code> skill', 'Writes 6 post drafts (Mon/Wed/Fri × LinkedIn + X) to <code>posts.json</code> with <strong>status: "draft"</strong>. Topic cooldown + humanizer pass + A-grade anchors applied automatically.', null) +
-            pipelineRow('E', 'Shows you the 6 drafts here', 'Right Now card flips to "REVIEW 6 DRAFTS". You read the copy on the Posts tab, edit if needed, then approve.', null) +
-            pipelineRow('F', 'You approve → drafts go live in the schedule', 'Status flips draft → scheduled. The Schedule tab shows them. Mon/Wed/Fri morning the Right Now card surfaces each one for posting.', null) +
-          '</div>',
-        buttons: [
-          {
-            label: 'Copy phrase to clipboard',
-            onclick: (function (exam) { return function () {
-              var phrase = "Brad, draft this week's " + exam + " posts";
-              navigator.clipboard.writeText(phrase);
-              var btn = this;
-              btn.innerText = 'Copied ✓';
-              setTimeout(function () { btn.innerText = 'Copy phrase to clipboard'; }, 1800);
-            }; })(rec.exam)
-          },
-          {
-            label: 'See latest trend scout',
-            cls: 'secondary',
-            onclick: function () {
-              var el = document.getElementById('trend-scout-panel');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }
-          }
-        ]
-      };
-    }
-
-    // Rule 3: Sunday → draft next week
-    if (dow === 0) {
-      return {
-        type: 'draft',
-        title: 'DRAFT NEXT WEEK',
-        sub: "It's Sunday — time to prep next week's content. Brad will run trend scout first, then draft 6 posts (Mon/Wed/Fri × LinkedIn + X).",
-        detail:
-          '<div class="cc-detail-label">Say to Brad</div>' +
-          '<pre>Brad, draft next week\'s PMP posts</pre>' +
-          '<p style="color:var(--dim);margin-top:8px;font-size:0.85rem;">Substitute PMP with Security+ or SHRM-CP if needed. Brad will surface trend scout angles first.</p>',
-        buttons: [
-          { label: 'Open Schedule tab', onclick: "cipherShow('schedule')" }
-        ]
-      };
-    }
-
-    // Rule 4: Monday morning → run trend scout (if last scan is stale or doesn't exist)
-    var staleTrends = !trendData || !trendData.scanDate || (
-      trendData.scanDate && ((Date.now() - new Date(trendData.scanDate + 'T00:00:00').getTime()) / 36e5 / 24 > 7)
-    );
-    if (dow === 1 && staleTrends) {
-      return {
-        type: 'trend',
-        title: 'RUN TREND SCOUT',
-        sub: 'Monday morning — scan the past 7 days for trending angles before this week\'s content cycle.',
-        detail:
-          '<div class="cc-detail-label">Say to Brad</div>' +
-          '<pre>Brad, run trend scout</pre>',
-        buttons: [
-          { label: 'See latest scan', onclick: "document.getElementById('trend-scout-panel').scrollIntoView({behavior:'smooth'})" }
-        ]
-      };
-    }
-
-    // Rule 5: Weekend (Saturday) → quiet day
-    if (dow === 6) {
-      return {
-        type: 'weekend',
-        title: 'SATURDAY — light day',
-        sub: 'LinkedIn engagement collapses on weekends. X is OK but quiet. Reply to comments if any, otherwise rest.',
-        detail: null,
-        buttons: [
-          { label: 'Check comments on Posts tab', onclick: "cipherShow('posts')" }
-        ]
-      };
-    }
-
-    // Default: engagement window
-    return {
-      type: 'engage',
-      title: 'ENGAGE',
-      sub: 'No urgent posts or grading. Spend 15 min on engagement — biggest under-leveraged channel.',
-      detail:
-        '<div class="cc-detail-label">15-min routine</div>' +
-        '<pre>1. Reply to all comments on your last 3 posts (5 min)\n' +
-        '2. Skim r/pmp / r/CompTIA / r/humanresources for questions you can answer (5 min)\n' +
-        '3. Drop 1-2 high-effort value-first replies — don\'t mention CipherExam unless directly asked (5 min)</pre>',
-      buttons: [
-        { label: 'Open Posts tab', onclick: "cipherShow('posts')" },
-        { label: 'Daily Playbook', cls: 'secondary', onclick: "document.querySelector('.daily-playbook').open = true; window.scrollTo({top:document.querySelector('.daily-playbook').offsetTop - 20, behavior:'smooth'});" }
-      ]
-    };
-  }
-
-  function computeTodaySequence(posts, trendData) {
-    var todayStr = mtTodayStr();
-    var dow = dayOfWeek();
-    var steps = [];
-
-    // Step: today's scheduled posts (one step per post)
-    var todayPosts = posts.filter(function (p) { return p.scheduled === todayStr; });
-    todayPosts.forEach(function (p) {
-      steps.push({
-        title: 'Post to ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
-        desc: p.status === 'posted'
-          ? 'Posted at ' + (p.postedAt ? new Date(p.postedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'unknown time')
-          : (p.scheduledTimeLocal || 'scheduled today'),
-        done: p.status === 'posted'
-      });
-    });
-
-    // Step: grade any post >24h old and ungraded
-    var ungraded = posts.filter(function (p) {
-      return p.status === 'posted' && !p.grade && p.postedAt && hoursAgo(p.postedAt) >= 24;
-    });
-    ungraded.forEach(function (p) {
-      steps.push({
-        title: 'Grade ' + (p.channel || '?').toUpperCase() + ' post from ' + (p.scheduled || '?'),
-        desc: 'Tell Brad: "grade my ' + (p.scheduled || '?') + ' post" with metrics',
-        done: false
-      });
-    });
-
-    // Step: trend scout (Monday or if stale)
-    var staleTrends = !trendData || !trendData.scanDate || (
-      trendData.scanDate && ((Date.now() - new Date(trendData.scanDate + 'T00:00:00').getTime()) / 36e5 / 24 > 7)
-    );
-    if (dow === 1 || staleTrends) {
-      steps.push({
-        title: 'Run trend scout',
-        desc: staleTrends ? 'Last scan stale — say "Brad, run trend scout"' : 'Already fresh — checked',
-        done: !staleTrends
-      });
-    }
-
-    // Step: draft next week (Sunday)
-    if (dow === 0) {
-      steps.push({
-        title: "Draft next week's posts",
-        desc: 'Tell Brad: "draft next week\'s [exam] posts"',
-        done: false
-      });
-    }
-
-    // Step: engagement (always)
-    steps.push({
-      title: '15 min engagement',
-      desc: 'Reply to comments + value-first replies in r/pmp · r/CompTIA · r/humanresources',
-      done: false
-    });
-
-    // Step: founder emails (always — Brad surfaces specifics during walkthrough)
-    steps.push({
-      title: 'Check for new signups',
-      desc: 'If any new signups → match against Day 0/3/6 templates in 07-founder-1to1-emails.md',
-      done: false
-    });
-
-    // Mark the first non-done step as "current"
-    var firstUndone = steps.findIndex(function (s) { return !s.done; });
-    if (firstUndone >= 0) steps[firstUndone].current = true;
-
-    return steps;
-  }
-
-  function renderCommandCenter(posts, trendData) {
-    var action = computeNextAction(posts, trendData);
-    var titleEl = document.getElementById('cc-title');
-    var subEl = document.getElementById('cc-sub');
-    var detailEl = document.getElementById('cc-action-detail');
-    var buttonsEl = document.getElementById('cc-buttons');
-    if (!titleEl) return;
-
-    titleEl.textContent = action.title;
-    subEl.textContent = action.sub;
-    detailEl.innerHTML = action.detail
-      ? '<div class="cc-action-detail">' + action.detail + '</div>'
-      : '';
-    // Build buttons without inline onclick (avoids nested-quote rendering bugs)
-    buttonsEl.innerHTML = (action.buttons || []).map(function (b, i) {
-      return '<button class="cc-btn' + (b.cls ? ' ' + b.cls : '') + '" data-cc-btn="' + i + '">' + esc(b.label) + '</button>';
-    }).join('');
-    // Bind click handlers programmatically — supports function or string onclick payloads
-    buttonsEl.querySelectorAll('[data-cc-btn]').forEach(function (btnEl) {
-      var idx = parseInt(btnEl.getAttribute('data-cc-btn'), 10);
-      var b = (action.buttons || [])[idx];
-      if (!b) return;
-      btnEl.addEventListener('click', function (e) {
-        if (typeof b.onclick === 'function') {
-          b.onclick.call(btnEl, e);
-        } else if (typeof b.onclick === 'string') {
-          try { (new Function(b.onclick)).call(btnEl); }
-          catch (err) { console.error('[command-center] button handler error:', err); }
-        }
-      });
-    });
-  }
-
-  function renderTodaySequence(posts, trendData) {
-    var steps = computeTodaySequence(posts, trendData);
-    var el = document.getElementById('today-sequence-steps');
-    if (!el) return;
-    if (steps.length === 0) {
-      el.innerHTML = '<div class="trend-scout-empty">Nothing scheduled. Rest day or catch-up day.</div>';
-      return;
-    }
-    el.innerHTML = steps.map(function (s, i) {
-      var cls = s.done ? 'done' : (s.current ? 'current' : '');
-      return '<div class="seq-step ' + cls + '">' +
-        '<div class="seq-num">' + (s.done ? '✓' : (i + 1)) + '</div>' +
-        '<div>' +
-          '<div class="seq-title">' + esc(s.title) + '</div>' +
-          '<div class="seq-desc">' + esc(s.desc) + '</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  var _trendData = null;
-  function loadTrend() {
-    return fetch('data/trend-scout.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { _trendData = d; return d; })
-      .catch(function () { _trendData = null; return null; });
-  }
-
-  var _inboxData = null;
-  function loadInbox() {
-    return fetch('data/brad-inbox.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { _inboxData = d; return d; })
-      .catch(function () { _inboxData = null; return null; });
-  }
-
-  function renderBradInbox() {
-    var el = document.getElementById('brad-inbox');
-    if (!el) return;
-    var inbox = _inboxData;
-    var pending = (inbox && inbox.questions || []).filter(function (q) { return q.status === 'pending'; });
-    if (pending.length === 0) {
-      el.style.display = 'none';
-      el.innerHTML = '';
-      return;
-    }
-    el.style.display = 'block';
-    var html = '<div class="bi-eyebrow">🔔 Brad is waiting <span class="bi-count">' + pending.length + '</span></div>';
-    pending.forEach(function (q, qi) {
-      html += '<div class="bi-question" data-qid="' + esc(q.id) + '">' +
-        (q.context ? '<div class="bi-context">' + esc(q.context) + '</div>' : '') +
-        '<h4 class="bi-q">' + esc(q.question) + '</h4>' +
-        (q.details ? '<div class="bi-details">' + esc(q.details) + '</div>' : '') +
-        '<div class="bi-options">';
-      (q.options || []).forEach(function (opt, oi) {
-        html += '<button class="bi-btn ' + (opt.primary ? 'primary' : '') + '" data-qix="' + qi + '" data-oix="' + oi + '">' +
-          '<span class="bi-key">' + esc(opt.key || (oi + 1)) + '</span>' +
-          '<span>' + esc(opt.label || '') + '</span>' +
-        '</button>';
-      });
-      html += '</div>';
-      html += '<div class="bi-after-click" id="bi-after-' + qi + '"></div>';
-      html += '</div>';
-    });
-    el.innerHTML = html;
-    // Bind clicks
-    el.querySelectorAll('.bi-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var qi = parseInt(btn.getAttribute('data-qix'), 10);
-        var oi = parseInt(btn.getAttribute('data-oix'), 10);
-        var q = pending[qi];
-        var opt = q && q.options && q.options[oi];
-        if (!opt) return;
-        var phrase = opt.resumePhrase || ('Brad, continue: ' + opt.key);
-        // Copy phrase to clipboard
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(phrase);
-        }
-        // Show confirmation with the phrase + next step
-        var after = document.getElementById('bi-after-' + qi);
-        if (after) {
-          after.innerHTML = '✓ Copied to clipboard:<br><code>' + esc(phrase) + '</code><br>' +
-            '<strong>Now:</strong> switch to Claude Code chat (Alt+Tab) → paste → press Enter. Brad will resume.';
-          after.classList.add('show');
-        }
-        // Optimistically dim the question
-        var qEl = btn.closest('.bi-question');
-        if (qEl) qEl.style.opacity = '0.55';
-      });
-    });
-  }
-
-  function loadLessons() {
-    return fetch('data/grading-lessons.md', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.text() : ''; })
-      .then(function (md) {
-        // Count non-comment bullets: lines starting with "- " (not "<!--")
-        var lines = (md || '').split(/\r?\n/);
-        var count = 0;
-        lines.forEach(function (ln) {
-          var t = ln.trim();
-          if (t.indexOf('- ') === 0 && t.indexOf('<!--') < 0) count++;
-        });
-        window.__LESSONS_COUNT__ = count;
-        return count;
-      })
-      .catch(function () { window.__LESSONS_COUNT__ = 0; return 0; });
-  }
-
-  function renderStatusStrip(posts, trendData) {
-    var strip = document.getElementById('status-strip');
-    if (!strip) return;
-    var cs = window.__CAMPAIGN_STATE__ || {};
-
-    // Chip 1: Campaign week + day
-    var startStr = (cs.campaign && cs.campaign.start) || '2026-05-18';
-    var startMs = new Date(startStr + 'T00:00:00').getTime();
-    var dayNum = Math.max(0, Math.floor((Date.now() - startMs) / 86400000)) + 1;
-    var weekIdx = Math.max(0, Math.floor((dayNum - 1) / 7)) + 1;
-    var dowName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
-    var weekLabel = 'Wk ' + weekIdx + ' · ' + dowName;
-
-    // Chip 2: Pipeline (next 7 days)
-    var todayStr = new Date().toISOString().slice(0,10);
-    var weekAheadStr = new Date(Date.now() + 7*86400000).toISOString().slice(0,10);
-    var upcomingPosts = posts.filter(function (p) {
-      return (p.status === 'scheduled' || p.status === 'draft') &&
-             p.scheduled && p.scheduled >= todayStr && p.scheduled <= weekAheadStr;
-    });
-    var pipelineN = upcomingPosts.length;
-    var pipelineCls = pipelineN === 0 ? 'bad' : (pipelineN < 3 ? 'warn' : 'ok');
-    var pipelineSub = pipelineN === 0 ? 'EMPTY — draft now' : (pipelineN < 3 ? 'thin — draft soon' : 'healthy');
-
-    // Chip 3: Drafts pending review
-    var draftN = posts.filter(function (p) { return p.status === 'draft'; }).length;
-    var draftCls = draftN > 0 ? 'info' : '';
-    var draftSub = draftN > 0 ? 'review on Posts tab' : 'none waiting';
-
-    // Chip 4: Trend scout freshness
-    var scoutDays = trendData && trendData.scanDate
-      ? Math.floor((Date.now() - new Date(trendData.scanDate + 'T00:00:00').getTime()) / 86400000)
-      : null;
-    var scoutValue = scoutDays === null ? 'never' : (scoutDays === 0 ? 'today' : scoutDays + 'd old');
-    var scoutCls = scoutDays === null ? 'bad' : (scoutDays > 7 ? 'warn' : 'ok');
-    var scoutSub = scoutDays === null ? 'run "Brad, run trend scout"' : (trendData && trendData.scanDate) || '—';
-
-    // Chip 5: Lessons file count
-    var lessons = window.__LESSONS_COUNT__;
-    var lessonsValue = (lessons == null) ? '—' : String(lessons);
-    var lessonsCls = (lessons == null) ? '' : (lessons === 0 ? 'warn' : 'ok');
-    var lessonsSub = lessons === 0 ? 'analyze graded posts to build' : 'in grading-lessons.md';
-
-    // Chip 6: Activation gate
-    var activatedTotal = (cs.metrics && cs.metrics.activatedUsersTotal) || 0;
-    var gate = (cs.campaign && cs.campaign.activationGate) || 25;
-    var gatePct = Math.round(100 * activatedTotal / gate);
-    var gateCls = activatedTotal >= gate ? 'ok' : (gatePct >= 50 ? 'warn' : 'bad');
-    var gateSub = activatedTotal >= gate ? '✓ paid spend unlocked' : (gate - activatedTotal) + ' to unlock paid';
-
-    strip.innerHTML =
-      chip('When',           weekLabel,                  'day ' + dayNum + ' of 28',     'info') +
-      chip('Pipeline (next 7d)', pipelineN + ' post' + (pipelineN === 1 ? '' : 's'), pipelineSub, pipelineCls) +
-      chip('Drafts pending', String(draftN),             draftSub,                       draftCls) +
-      chip('Trend scout',    scoutValue,                 scoutSub,                       scoutCls) +
-      chip('Lessons file',   lessonsValue,               lessonsSub,                     lessonsCls) +
-      chip('Activation gate',activatedTotal + ' / ' + gate, gateSub,                     gateCls);
-
-    function chip(label, value, sub, cls) {
-      return '<div class="status-chip ' + (cls || '') + '">' +
-        '<span class="chip-label">' + esc(label) + '</span>' +
-        '<span class="chip-value">' + esc(value) + '</span>' +
-        '<span class="chip-sub">' + esc(sub) + '</span>' +
-      '</div>';
-    }
-  }
-
-  function reRender() {
-    var posts = getPosts();
-    renderStatusStrip(posts, _trendData);
-    renderCommandCenter(posts, _trendData);
-    renderTodaySequence(posts, _trendData);
-    renderBradInbox();
-  }
-
-  function init() {
-    Promise.all([loadTrend(), loadLessons(), loadInbox()]).then(reRender);
-    // Re-render + re-poll inbox every 60s so questions show up quickly
-    setInterval(function () { loadInbox().then(renderBradInbox); }, 60 * 1000);
-    // Full re-render every 5 min so time-based rules update
-    setInterval(reRender, 5 * 60 * 1000);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-  document.addEventListener('cipher:posts-updated', reRender);
-})();
-
 // ---- Grade modal (shared across schedule + posts pages) ----
 (function () {
   var MODAL_HTML = ''
@@ -6204,23 +5109,6 @@ if (document.readyState === 'loading') {
     if (e.target.matches && e.target.matches('[data-grade-close]')) {
       e.preventDefault();
       closeModal();
-      return;
-    }
-
-    // Schedule feed: Open/Close button on each collapsed row.
-    var toggleBtn = e.target.closest && e.target.closest('[data-sched-toggle]');
-    if (toggleBtn) {
-      e.preventDefault();
-      var tid = toggleBtn.getAttribute('data-sched-toggle');
-      var wrap = document.getElementById('sched-wrap-' + tid);
-      if (wrap) {
-        var willOpen = !wrap.classList.contains('is-open');
-        wrap.classList.toggle('is-open');
-        if (willOpen) {
-          // Scroll into view so the user sees what just expanded.
-          setTimeout(function () { wrap.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 30);
-        }
-      }
       return;
     }
 
