@@ -1,45 +1,45 @@
 {
   "_meta": {
     "lastUpdatedBy": "cipher-trend-scout",
-    "lastUpdatedAt": "2026-05-25T20:00:00.000Z",
+    "lastUpdatedAt": "2026-05-28T00:00:00.000Z",
     "schemaVersion": 1,
     "instructions": "Latest Trend Scout output. Brad/Scout writes this when the cipher-trend-scout subagent runs. app.html fetches and renders on Today tab."
   },
-  "scanDate": "2026-05-25",
+  "scanDate": "2026-05-28",
   "examsScanned": ["PMP", "Security+", "SHRM-CP"],
   "angles": [
     {
       "rank": 1,
-      "label": "PMP July 9 exam flip to 60% agile",
-      "source": "PMI announcement + cert-prep coverage (PM Mastery, ProjectManagementAcademy, examcert)",
-      "outlierSignal": "Topic-hot (Reddit/X metrics not verifiable via search). Business Environment domain tripling 8% → 26%.",
-      "whyHot": "6 weeks until cutoff; experienced predictive PMs are spooked by agile-weighted scenarios.",
-      "angleForBrad": "Walk through one Business Environment scenario where the \"obvious PM answer\" is wrong under agile framing — AI shows why.",
-      "suggestedHook": "exam-trap",
+      "label": "PMP grouped case-study scenarios (3-5 questions per project)",
+      "source": "PMI exam-format announcement + cert-prep blogs (PM Mastery, ExamCert, OpenExamPrep) covering July 9 launch",
+      "outlierSignal": "Format change is the freshest angle hitting cert-prep blogs this week — case sets replace standalone Qs. Topic-hot across PMP prep publishers.",
+      "whyHot": "Six weeks out, candidates realize a wrong call on Q1 of a set poisons Q2-5. Anxiety spike on r/pmp study threads.",
+      "angleForBrad": "Run one fake PMI case set live — AI shows how the reasoning chain compounds: if you mis-frame the project as predictive, you fail all 4 follow-ups.",
+      "suggestedHook": "worked-question",
       "exam": "PMP"
     },
     {
       "rank": 2,
-      "label": "SHRM 2026 BASK adds AI governance questions",
-      "source": "SHRM BASK PDF + Pocket Prep blog (⚠ competitor authored — handoff)",
-      "outlierSignal": "New \"Inclusive Mindset\" competency consolidates two old ones; AI risk-tradeoff scenarios now testable.",
-      "whyHot": "HR candidates feel blindsided by AI-evaluation questions outside their daily work.",
-      "angleForBrad": "Show a SHRM-CP AI governance scenario with three plausible answers — AI explains which \"defensible\" choice the rubric rewards.",
-      "suggestedHook": "worked-question",
+      "label": "SHRM kills remote proctoring for 2026 — Prometric centers only",
+      "source": "SHRM 2026 BASK + Pocket Prep / CriticalThinkHR coverage (competitor authored — handoff flag)",
+      "outlierSignal": "Format shock: candidates who planned home testing now scrambling for Prometric slots. AI governance questions still expanding across 5 functional areas.",
+      "whyHot": "Logistics panic + content-scope anxiety stacked together. Plays into the 'one shot, get it right' angle.",
+      "angleForBrad": "Lead with the Prometric-only headline, pivot: if you only get one shot in a testing center, reasoning under pressure beats memorization. Demo AI Tutor on an Inclusive Mindset scenario.",
+      "suggestedHook": "ai-tutor-demo",
       "exam": "SHRM-CP"
     },
     {
       "rank": 3,
-      "label": "Security+ 701 vs SY0-801 decision fatigue",
-      "source": "CompTIA roadmap (StationX, Training Camp, CertBlaster)",
-      "outlierSignal": "SY0-801 preview ~Oct 2026; 701 retires mid-2027. New objectives 2.4 (LLMs) and 2.6 (AI threats).",
-      "whyHot": "Candidates debating \"test now on 701 vs. study 801 from scratch\" — decision fatigue.",
-      "angleForBrad": "Frame CipherExam as the bridge — same reasoning engine works on 701 today, 801 when it drops; no re-buying a study tool.",
+      "label": "CompTIA SecAI+ launch reshapes the Security+ ladder",
+      "source": "CompTIA 2026 reshape announcement (SecAI+, Security+ refresh, Xpert series) + Training Camp SY0-801 preview ~Oct 20",
+      "outlierSignal": "New cert tier (SecAI+) plus SY0-801 preview window both 2026. Candidates ask 'is Security+ still the right starting cert?' in r/CompTIA threads.",
+      "whyHot": "Decision fatigue: 701 now, 801 later, or wait for SecAI+. Brad can own the 'reasoning skills transfer across all three' position.",
+      "angleForBrad": "Stop chasing the cert calendar. Show CipherExam reasoning a 701 LLM-threat question the same way it'll reason an 801 or SecAI+ question — the engine doesn't care which version you sit for.",
       "suggestedHook": "tool-builder",
       "exam": "Security+"
     }
   ],
-  "skipThese": "Generic \"I passed the PMP!\" celebration posts — high reach, zero nerve, no opening for the reasoning angle.",
-  "handoffNote": "Pocket Prep is actively publishing on the 2026 SHRM BASK changes. cipher-competitor-analyst should review their angle before Brad drafts Angle 2.",
-  "honestyCaveat": "WebSearch did not surface Reddit/X posts with verifiable upvote/repost counts for the 7-day window. Angles are confirmed topic-hot via PMI/CompTIA/SHRM official announcements and cert-prep publishers — not metric-confirmed Reddit outliers."
+  "skipThese": "Generic SHRM AI+HI specialty credential hype — supplementary cert, not exam prep, no opening for the reasoning engine.",
+  "handoffNote": "Pocket Prep and CriticalThinkHR are both publishing on 2026 SHRM BASK changes this week. cipher-competitor-analyst should review Pocket Prep's framing before Brad drafts Angle 2 — risk of echoing competitor copy.",
+  "honestyCaveat": "WebSearch did not return verifiable Reddit upvote counts or X repost metrics for the 7-day window. Angles are topic-hot via official PMI/CompTIA/SHRM announcements and active cert-prep publisher coverage — not metric-confirmed Reddit outliers. Treat as 'what cert-prep publishers are pushing this week,' not 'what went viral on Reddit.'"
 }

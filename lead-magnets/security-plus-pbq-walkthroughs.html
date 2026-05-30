@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>security-plus-pbq-walkthroughs</title>
+<style>
+@page { size: letter; margin: 0.75in 0.65in; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11pt; line-height: 1.55; color: #0f172a;
+  max-width: 7.1in; margin: 0 auto; padding: 0;
+}
+h1 { font-size: 28pt; line-height: 1.15; margin: 0 0 0.25in 0; color: #0b1220; }
+h2 { font-size: 16pt; line-height: 1.25; margin: 0.35in 0 0.12in 0; color: #0b1220; page-break-after: avoid; }
+h3 { font-size: 13pt; margin: 0.25in 0 0.08in 0; color: #0b1220; page-break-after: avoid; }
+p  { margin: 0 0 0.12in 0; }
+ul, ol { margin: 0 0 0.14in 0.3in; padding: 0; }
+li { margin: 0 0 0.05in 0; }
+blockquote {
+  border-left: 3px solid #94a3b8;
+  margin: 0 0 0.18in 0; padding: 0.04in 0 0.04in 0.18in;
+  color: #1f2937; font-style: italic;
+}
+table { border-collapse: collapse; width: 100%; margin: 0 0 0.18in 0; font-size: 10pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 6px 9px; text-align: left; vertical-align: top; }
+th { background: #f1f5f9; font-weight: 600; }
+code { font-family: "Consolas","Courier New",monospace; font-size: 10pt; background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
+pre  { background: #0f172a; color: #e2e8f0; padding: 10pt; border-radius: 4pt; font-size: 9.5pt; line-height: 1.45; overflow-wrap: break-word; page-break-inside: avoid; }
+pre code { background: transparent; color: inherit; padding: 0; }
+hr { border: 0; border-top: 1px solid #cbd5e1; margin: 0.25in 0; }
+a { color: #1e3a8a; text-decoration: none; }
+a:hover { text-decoration: underline; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+.byline { color: #475569; margin-bottom: 0.3in; }
+</style>
+</head>
+<body>
+<h1>10 Security+ PBQ Walkthroughs</h1>
+<blockquote>
+<p><strong>The CIA Triad applied to performance-based questions — with the reasoning CompTIA grades on.</strong></p>
+</blockquote>
+<p>By Dave, founder of <a href="https://cipherexam.com">CipherExam</a></p>
+<hr>
+<h2>Why this sheet exists</h2>
+<p>You can pass every Security+ practice quiz at 90% and still walk out of the testing center shaken. The reason isn't a knowledge gap. It's that <strong>PBQs (Performance-Based Questions) test whether you can <em>operate</em>, not whether you can <em>recognize</em>.</strong></p>
+<p>Flashcards drill facts. PBQs drill judgment. Three or four PBQs at the start of the exam can sink the rest of your score before you've answered a single MCQ.</p>
+<p>This sheet gives you:</p>
+<ol>
+<li><strong>The CIA Triad lens</strong> — the single question CompTIA grades against</li>
+<li><strong>10 worked PBQ scenarios</strong> covering drag-drop, topology, and CLI-emulation formats</li>
+<li><strong>The 3 PBQ traps</strong> CompTIA plants in nearly every performance item</li>
+</ol>
+<p>If you internalize the lens, the PBQs stop feeling like trick questions.</p>
+<hr>
+<h2>The Lens, in one sentence</h2>
+<blockquote>
+<p><strong>CIA triad — which principle is being protected?</strong></p>
+</blockquote>
+<p>That's it.</p>
+<p>Every Security+ scenario is testing one of three principles:</p>
+<ul>
+<li><strong>Confidentiality</strong> — keeping the right eyes off the data</li>
+<li><strong>Integrity</strong> — keeping the data unaltered or detecting alteration</li>
+<li><strong>Availability</strong> — keeping the system reachable when needed</li>
+</ul>
+<p>Before you read the options on any PBQ, name the principle. The control that protects <em>that</em> principle is the right answer. The wrong answers usually protect a <em>different</em> principle correctly — which is why they feel plausible.</p>
+<p>That last sentence is the most important one in this sheet. Read it twice. <strong>Wrong PBQ answers are almost always controls that protect the wrong principle.</strong></p>
+<hr>
+<h2>The 3 PBQ trap types</h2>
+<p>After the lens, the second-biggest unlock is recognizing how CompTIA constructs wrong answers:</p>
+<h3>Trap 1 — Right control, wrong principle</h3>
+<p>The option is a real, well-known security control — but it protects a different CIA principle than the scenario actually tests. Example: choosing TLS (a confidentiality-leaning control) when the scenario is testing integrity (an HMAC or digital signature is the right answer).</p>
+<h3>Trap 2 — Newer control over correct control</h3>
+<p>The option introduces a buzzword-shiny technology (zero trust, SASE, EDR) when the scenario is asking about a fundamental control. Newer isn't wronger, but it often isn't <em>what's being tested</em>. Check whether the older, simpler control would also solve the stated problem — usually that's the right answer.</p>
+<h3>Trap 3 — Over-scoped response</h3>
+<p>The option fixes the symptom by deploying a multi-million-dollar enterprise platform when the question gives you one workstation. Scope-match the answer to the situation. If the scenario describes a small office, the answer probably isn't "deploy a SIEM cluster."</p>
+<hr>
+<h2>Scenario 1 — Drag-drop: pair the control to the threat</h2>
+<blockquote>
+<p><strong>Setup:</strong> You're given six security controls and six threats. Drag each control to the threat it most directly mitigates.</p>
+<p><strong>Threats:</strong> SQL injection, sniffed credentials over Wi-Fi, ransomware encrypting backups, expired TLS certificate, USB drop in the parking lot, account takeover from a leaked password</p>
+<p><strong>Controls:</strong> Parameterized queries, WPA3, immutable/offline backups, certificate auto-renewal, USB device control policy + tamper-evident labels, MFA on all accounts</p>
+</blockquote>
+<p><strong>Applying the lens</strong> (one pairing at a time):</p>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Principle attacked</th>
+<th>Right control</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQL injection</td>
+<td>Integrity (and Confidentiality)</td>
+<td>Parameterized queries</td>
+<td>Input validation at the boundary — addresses the cause, not the symptom</td>
+</tr>
+<tr>
+<td>Sniffed credentials over Wi-Fi</td>
+<td>Confidentiality</td>
+<td>WPA3</td>
+<td>Modern over-the-air encryption</td>
+</tr>
+<tr>
+<td>Ransomware encrypting backups</td>
+<td>Availability (and Integrity of the backup)</td>
+<td>Immutable/offline backups</td>
+<td>The whole point of offline = ransomware can't reach it</td>
+</tr>
+<tr>
+<td>Expired TLS certificate</td>
+<td>Availability (users locked out)</td>
+<td>Certificate auto-renewal</td>
+<td>Prevents recurrence, not the symptom</td>
+</tr>
+<tr>
+<td>USB drop in parking lot</td>
+<td>Multiple — but Integrity/Confidentiality risk is highest</td>
+<td>USB device control policy</td>
+<td>Removes the attack vector entirely</td>
+</tr>
+<tr>
+<td>Account takeover from leaked password</td>
+<td>Confidentiality (and Integrity)</td>
+<td>MFA on all accounts</td>
+<td>Defeats password-only auth</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Top wrong-answer trap on this kind of drag-drop:</strong> matching SQL injection to "Web Application Firewall." A WAF <em>helps</em> but parameterized queries <em>fix</em>. CompTIA grades for the root-cause fix, not the perimeter mitigation.</p>
+<hr>
+<h2>Scenario 2 — Topology: where do you put the IDS?</h2>
+<blockquote>
+<p><strong>Setup:</strong> A network diagram shows: Internet → Edge Router → Firewall → Switch → 3 zones: DMZ (web servers), Internal LAN (workstations), Database Subnet. You're asked to drag IDS sensors onto the topology to detect malicious activity reaching the internal network.</p>
+</blockquote>
+<p><strong>Applying the lens:</strong> This is asking what <em>visibility</em> (an Integrity/Detection control) gets you the most signal at the lowest cost.</p>
+<p>The right placements:</p>
+<ol>
+<li><strong>Between the firewall and the switch</strong> — catches anything that made it past the firewall</li>
+<li><strong>On the internal LAN switch span port</strong> — catches lateral movement between workstations</li>
+<li><strong>On the database subnet</strong> — catches direct attacks on the data tier</li>
+</ol>
+<p><strong>The trap:</strong> placing IDS at the edge router (outside the firewall). The internet is constantly noisy; an IDS there generates so much alert volume that the real signals drown. CompTIA grades for <em>useful</em> placements, not maximum coverage.</p>
+<p><strong>Bonus:</strong> placing IDS in the DMZ is debatable. If the question specifically mentions PCI or compliance, yes. Otherwise the firewall logs cover the DMZ adequately.</p>
+<hr>
+<h2>Scenario 3 — CLI emulation: triage a suspected compromise</h2>
+<blockquote>
+<p><strong>Setup:</strong> A terminal opens. You're told a user reported strange behavior on their workstation. Triage the host in this order: (1) confirm the user, (2) list logged-in sessions, (3) identify suspicious processes, (4) check recent network connections.</p>
+</blockquote>
+<p><strong>The right commands (Linux example — Windows variants exist):</strong></p>
+<pre><code>whoami                          # confirm your identity
+who                             # who is currently logged in
+ps -ef | grep -v root           # processes not owned by root
+netstat -anp | grep ESTABLISHED # active connections with PIDs
+ss -tnp                         # modern netstat alternative
+last -a                         # recent login history
+</code></pre>
+<p><strong>Applying the lens:</strong> This is testing whether you can preserve <strong>Integrity of the investigation</strong>. The order matters — you confirm scope before taking action.</p>
+<p><strong>The trap:</strong> running <code>systemctl stop suspicious-service</code> or <code>kill -9 &lt;pid&gt;</code> before you've documented the state. CompTIA grades for evidence preservation. Acting before documenting destroys evidence.</p>
+<hr>
+<h2>Scenario 4 — Drag-drop: classify the malware</h2>
+<blockquote>
+<p><strong>Setup:</strong> Six malware behaviors. Classify each as virus, worm, trojan, ransomware, rootkit, or spyware.</p>
+<p><strong>Behaviors:</strong>
+- Replicates by attaching to executable files
+- Spreads autonomously across a network with no user action
+- Disguises itself as a legitimate utility a user installs
+- Encrypts user files and demands payment
+- Hides at the kernel level to maintain persistence
+- Logs keystrokes and screenshots silently</p>
+</blockquote>
+<p><strong>The mappings:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Behavior</th>
+<th>Type</th>
+<th>What CIA principle it attacks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Replicates via executable files</td>
+<td>Virus</td>
+<td>Integrity (the host binary)</td>
+</tr>
+<tr>
+<td>Autonomous network spread</td>
+<td>Worm</td>
+<td>Availability (network resources)</td>
+</tr>
+<tr>
+<td>Disguised legitimate utility</td>
+<td>Trojan</td>
+<td>Integrity (user trust)</td>
+</tr>
+<tr>
+<td>Encrypts files for ransom</td>
+<td>Ransomware</td>
+<td>Availability (data)</td>
+</tr>
+<tr>
+<td>Kernel-level persistence</td>
+<td>Rootkit</td>
+<td>Integrity (the OS itself)</td>
+</tr>
+<tr>
+<td>Silent key/screen logging</td>
+<td>Spyware</td>
+<td>Confidentiality</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Applying the lens:</strong> the principle-attacked column is what CompTIA <em>really</em> grades. The malware-type label is just a name. If you know which principle is broken, the right defense follows.</p>
+<p><strong>The trap:</strong> confusing virus with worm. The clean line: viruses need a host file and (usually) user action; worms self-propagate. If the scenario says "spread without user interaction," it's a worm.</p>
+<hr>
+<h2>Scenario 5 — CLI emulation: configure a firewall rule</h2>
+<blockquote>
+<p><strong>Setup:</strong> You have a small office firewall. A web server (10.0.1.50) needs to accept HTTPS from the internet. Configure the minimum-necessary rules.</p>
+</blockquote>
+<p><strong>The minimum rules (iptables-style example):</strong></p>
+<pre><code># Allow inbound HTTPS to the web server
+iptables -A FORWARD -p tcp --dport 443 -d 10.0.1.50 -j ACCEPT
+
+# Allow related/established traffic (return packets)
+iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Drop everything else
+iptables -A FORWARD -j DROP
+</code></pre>
+<p><strong>Applying the lens:</strong> This is testing the principle of <strong>least privilege</strong> — a Confidentiality/Integrity protection.</p>
+<p><strong>The trap:</strong> adding rules that open more ports "just in case" — opening 80, 22, and 3306 to the web server because "the web server uses those internally." CompTIA grades for <em>necessary</em> rules only. If the scenario doesn't mention SSH or MySQL needing external access, don't open them.</p>
+<hr>
+<h2>Scenario 6 — Drag-drop: incident response phase</h2>
+<blockquote>
+<p><strong>Setup:</strong> Six actions during an incident. Place each in the correct IR phase: Preparation, Identification, Containment, Eradication, Recovery, Lessons Learned.</p>
+<p><strong>Actions:</strong>
+- Run a tabletop exercise quarterly
+- Discover unusual outbound traffic on a workstation
+- Disable the user's account and isolate the host from the network
+- Reimage the host from a known-good baseline
+- Restore data from the most recent verified-clean backup
+- Update the runbook based on what went wrong</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Phase</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tabletop exercise quarterly</td>
+<td>Preparation</td>
+<td>Pre-incident, builds muscle memory</td>
+</tr>
+<tr>
+<td>Discover unusual outbound traffic</td>
+<td>Identification</td>
+<td>Recognition of "this is real"</td>
+</tr>
+<tr>
+<td>Disable account + isolate host</td>
+<td>Containment</td>
+<td>Stop the bleeding, don't fix yet</td>
+</tr>
+<tr>
+<td>Reimage from baseline</td>
+<td>Eradication</td>
+<td>Remove the cause</td>
+</tr>
+<tr>
+<td>Restore from verified-clean backup</td>
+<td>Recovery</td>
+<td>Return to operations</td>
+</tr>
+<tr>
+<td>Update runbook</td>
+<td>Lessons Learned</td>
+<td>Close the loop</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The trap:</strong> confusing Containment with Eradication. Containment is "stop it from spreading"; Eradication is "remove the cause from the system." Both involve action — the test is whether you can name the <em>intent</em>.</p>
+<hr>
+<h2>Scenario 7 — Topology: VLAN segmentation for a small clinic</h2>
+<blockquote>
+<p><strong>Setup:</strong> A small clinic has: 5 admin workstations, 10 clinical workstations accessing patient records, 3 medical IoT devices, 1 guest Wi-Fi network. Segment the network to minimize PHI exposure.</p>
+</blockquote>
+<p><strong>The right segmentation:</strong></p>
+<table>
+<thead>
+<tr>
+<th>VLAN</th>
+<th>Devices</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VLAN 10 — Admin</td>
+<td>5 admin workstations</td>
+<td>Can reach internet; cannot reach Clinical VLAN</td>
+</tr>
+<tr>
+<td>VLAN 20 — Clinical</td>
+<td>10 clinical workstations</td>
+<td>Can reach EHR + internet; cannot reach IoT or Guest</td>
+</tr>
+<tr>
+<td>VLAN 30 — Medical IoT</td>
+<td>3 medical devices</td>
+<td>Can reach only required management endpoints; no internet</td>
+</tr>
+<tr>
+<td>VLAN 40 — Guest</td>
+<td>Wi-Fi clients</td>
+<td>Internet only; cannot reach any internal VLAN</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Applying the lens:</strong> This is a <strong>Confidentiality</strong> problem (PHI) crossed with an <strong>Availability</strong> problem (medical IoT must not be DDoSed by guest traffic).</p>
+<p><strong>The trap:</strong> flattening everything into "internal vs. external." Modern Security+ exams test multi-VLAN segmentation explicitly. If the scenario gives you four distinct device types, the answer probably involves four (or more) VLANs.</p>
+<hr>
+<h2>Scenario 8 — CLI emulation: log analysis</h2>
+<blockquote>
+<p><strong>Setup:</strong> You're given a snippet of access logs and asked to identify suspicious patterns.</p>
+</blockquote>
+<pre><code>2026-05-28 03:14:22 GET /login.php — 200 — 192.168.1.100
+2026-05-28 03:14:24 POST /login.php — 401 — 192.168.1.100
+2026-05-28 03:14:25 POST /login.php — 401 — 192.168.1.100
+2026-05-28 03:14:26 POST /login.php — 401 — 192.168.1.100
+2026-05-28 03:14:27 POST /login.php — 401 — 192.168.1.100
+[continues for 4,000 entries from the same IP]
+2026-05-28 03:18:11 POST /login.php — 200 — 192.168.1.100
+2026-05-28 03:18:12 GET /admin/users.php — 200 — 192.168.1.100
+</code></pre>
+<p><strong>The pattern:</strong> brute-force followed by successful login. Then immediate access to <code>/admin/users.php</code>.</p>
+<p><strong>Applying the lens:</strong> <strong>Confidentiality</strong> breach (account compromise) and the start of a <strong>Privilege Escalation</strong> path.</p>
+<p><strong>The right action:</strong> Lock the account, force a password reset, audit <code>/admin/users.php</code> for changes during the active session window, and check for any new admin accounts created from that IP.</p>
+<p><strong>The trap:</strong> the question may offer "block 192.168.1.100." That's helpful but insufficient — the attacker is already in. Containment requires both blocking the IP <em>and</em> invalidating the session.</p>
+<hr>
+<h2>Scenario 9 — Drag-drop: cryptographic primitives</h2>
+<blockquote>
+<p><strong>Setup:</strong> Match each cryptographic need to the right primitive.</p>
+<p><strong>Needs:</strong> Verify a downloaded file is unaltered · Encrypt data at rest · Secure web traffic · Verify a digital signature · Hash passwords for storage · Exchange a session key over an untrusted channel</p>
+<p><strong>Primitives:</strong> SHA-256, AES-256, TLS 1.3, RSA/ECDSA, Argon2 / bcrypt, Diffie-Hellman / ECDH</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Right primitive</th>
+<th>CIA principle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Verify file unaltered</td>
+<td>SHA-256</td>
+<td>Integrity</td>
+</tr>
+<tr>
+<td>Encrypt data at rest</td>
+<td>AES-256</td>
+<td>Confidentiality</td>
+</tr>
+<tr>
+<td>Secure web traffic</td>
+<td>TLS 1.3</td>
+<td>Confidentiality + Integrity (in transit)</td>
+</tr>
+<tr>
+<td>Verify a digital signature</td>
+<td>RSA/ECDSA</td>
+<td>Integrity + Authentication</td>
+</tr>
+<tr>
+<td>Hash passwords for storage</td>
+<td>Argon2 / bcrypt</td>
+<td>Confidentiality (stored credentials)</td>
+</tr>
+<tr>
+<td>Exchange session key</td>
+<td>Diffie-Hellman / ECDH</td>
+<td>Confidentiality</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The trap:</strong> using SHA-256 for password storage. SHA is <em>fast</em> — designed for it. Password hashing should be <em>slow</em> (Argon2, bcrypt). Speed is a feature for one and an attack vector for the other.</p>
+<p><strong>Bonus trap:</strong> using AES for hashing or SHA for encryption. Encryption is reversible (with a key). Hashing is one-way. Mixing them on the exam is automatic-wrong.</p>
+<hr>
+<h2>Scenario 10 — Topology + CLI: zero-trust verification</h2>
+<blockquote>
+<p><strong>Setup:</strong> A user on the marketing team needs to access a financial reporting dashboard. The company is moving to zero-trust. Describe the verification flow.</p>
+</blockquote>
+<p><strong>The right flow:</strong></p>
+<ol>
+<li><strong>Identity verification</strong> — user authenticates (SSO + MFA)</li>
+<li><strong>Device posture check</strong> — endpoint compliance (patched, encrypted, EDR running)</li>
+<li><strong>Context evaluation</strong> — time of day, geolocation, network reputation</li>
+<li><strong>Authorization</strong> — does this user-role need access to <em>this</em> dashboard?</li>
+<li><strong>Continuous re-verification</strong> — re-evaluate on session refresh, not just at login</li>
+</ol>
+<p><strong>Applying the lens:</strong> Zero trust protects <strong>Confidentiality</strong> (data) by replacing "are you on the network?" with "are you, with this device, in this context, authorized for <em>this</em> resource right now?"</p>
+<p><strong>The trap:</strong> assuming zero trust = VPN. It's the opposite. VPN says "if you're inside the perimeter, you're trusted." Zero trust says "the perimeter doesn't exist; verify every request." Picking the VPN answer on a zero-trust question is automatic-wrong.</p>
+<hr>
+<h2>Your next move</h2>
+<p>You now have:</p>
+<ol>
+<li><strong>The Lens.</strong> Before reading any option, name the CIA principle being protected.</li>
+<li><strong>The 3 PBQ traps.</strong> Right-control-wrong-principle, newer-over-correct, over-scoped.</li>
+<li><strong>10 worked PBQ scenarios</strong> across drag-drop, topology, and CLI formats.</li>
+</ol>
+<p>Reading this sheet is step one. <strong>Building the reflex is step two</strong>, and that takes reps on PBQ-format items specifically — not just MCQs.</p>
+<p>That's what CipherExam is built for.</p>
+<p>Every Security+ question in CipherExam:
+- Supports the real PBQ formats (drag-drop, matching, network topology) — not just text approximations
+- Comes with a CIA Triad Lens walkthrough on every answer (right and wrong)
+- Surfaces your personal "thinking traps" — where you keep falling into Trap 1, 2, or 3
+- Builds toward a 90-question Full Mock with PBQ support — same length and pacing as SY0-701</p>
+<p><strong>Start your 7-day free trial. No credit card.</strong></p>
+<p>→ <strong><a href="https://cipherexam.com/lp/security-plus?utm_source=lead-magnet&amp;utm_campaign=secplus-pbq-walkthroughs&amp;utm_content=cta">cipherexam.com/lp/security-plus</a></strong></p>
+<hr>
+<p><em>The PBQs stop feeling like trick questions.</em></p>
+<p>— Dave, founder of CipherExam</p>
+</body>
+</html>

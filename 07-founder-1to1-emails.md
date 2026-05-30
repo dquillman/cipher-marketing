@@ -34,6 +34,31 @@ Quick question: what made you check us out? I'm trying to understand who CipherE
 
 ---
 
+## Day 0 — community-signup variant (they came from an Exam-Lens breakdown)
+
+**Use when:** the signup traces to a community breakdown post (r/pmp, #PMP LinkedIn, a PMP FB group — see `16-exam-lens-community-breakdowns.md`) rather than a cold LP visit. Warmer; references where they came from. **Still a listening email — no CTA** (Rule 4).
+
+**Subject:** glad the {examName} breakdown landed
+
+```
+Hey {firstName} —
+
+Dave here — founder of CipherExam, and the person behind that {examName} question breakdown you saw.
+
+Thanks for giving it a shot. Quick question while it's fresh: what's the part of {examName} that trips you up the most right now? I'm trying to understand exactly where people get stuck so I build the right thing.
+
+(Just hit reply — a sentence is plenty.)
+
+— Dave
+```
+
+**Why this works:**
+- References the exact thing that earned the click (the breakdown) — continuity, not a cold welcome.
+- Still listening-first, one question, no CTA — consistent with the Day 0 rule. The "do your first 10 questions" activation nudge belongs in-app or a Day-1 touch, not here.
+- "What trips you up" surfaces the pain you can answer with — and the reply is often a question you can turn into the next community breakdown.
+
+---
+
 ## Day 3 — only if user has activated (`activated_user` event fired)
 
 **Subject:** Saw you hit question 10 — what's the gut take?
@@ -75,7 +100,7 @@ The question — when is your {examName} exam? Trying to map our content roadmap
 
 — Dave
 
-P.S. Trial ends in {daysLeft}. $99 lifetime is still on if you want it: cipherexam.com/lp/{examSlug}
+P.S. Trial ends in {daysLeft} days — Pro is $19/mo (or save 17% with yearly), cancel anytime, no card needed to keep going: cipherexam.com/lp/{examSlug}
 ```
 
 **Why this works:**

@@ -713,17 +713,27 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-modal-x { background: transparent; color: #e6e8ee; border: 0; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
 .grade-modal-x:hover { background: rgba(255,255,255,0.08); }
 .grade-modal-sub { color: #98a0b3; font-size: 0.88rem; margin: 6px 0 14px; }
-.grade-form { display: grid; gap: 10px; }
+.grade-form { display: grid; gap: 0; }
 .grade-form label { display: grid; gap: 4px; font-size: 0.85rem; color: #cbd0dc; }
 .grade-form input[type="number"] {
   background: #0b0d13; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.1);
   border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-variant-numeric: tabular-nums;
 }
 .grade-form input[type="number"]:focus { outline: 2px solid #5b8def; outline-offset: 1px; }
-.grade-form-actions { display: flex; gap: 8px; margin-top: 6px; }
+.grade-form-actions { display: flex; gap: 8px; margin-top: 14px; }
 .grade-form-status { font-size: 0.85rem; min-height: 1.1em; margin-top: 4px; color: #98a0b3; }
 .grade-form-status.ok  { color: #86efac; }
 .grade-form-status.err { color: #fca5a5; }
+/* Sectioned layout */
+.grade-form-section { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.grade-form-section:last-of-type { border-bottom: none; }
+.grade-form-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: #4a5270; font-weight: 600; margin-bottom: 2px; }
+/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal() */
+#grade-form:not([data-channel="linkedin"]) .li-field { display: none; }
+#grade-form:not([data-channel="x"]) .x-field { display: none; }
+#grade-form:not([data-has-video]) .video-field { display: none; }
+/* Scrollable modal body when many fields visible */
+.grade-modal-body { max-height: 88vh; overflow-y: auto; }
 
 /* ---- Buttons (.btn-primary / .btn-secondary / .btn-warn) ---- */
 /* Used across grade modal, schedule Mark-Posted flow, and posts page actions.
@@ -772,6 +782,7 @@ details[open] summary::before { transform: rotate(90deg); }
 })();
 </script>
 <!--/INLINE-ASSETS-->
+
 
 
 
@@ -1763,12 +1774,40 @@ if (document.readyState === 'loading') {
     +     '</div>'
     +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
     +     '<form id="grade-form" class="grade-form">'
-    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
-    +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
-    +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
-    +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
-    +       '<label>Reposts / reshares <input type="number" min="0" name="reposts" value="0"></label>'
-    +       '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Discovery</div>'
+    +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
+    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section video-field">'
+    +         '<div class="grade-form-section-label">Video</div>'
+    +         '<label>Video views <input type="number" min="0" name="videoViews" value="0"></label>'
+    +         '<label class="li-field">Total watch time (sec) <input type="number" min="0" name="watchTimeSeconds" value="0" placeholder="4m 8s → 248"></label>'
+    +         '<label>Avg watch time (sec) <input type="number" min="0" name="avgWatchTimeSeconds" value="0" placeholder="10s → 10"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Engagement</div>'
+    +         '<label class="li-field">Social engagements <input type="number" min="0" name="socialEngagements" value="0"></label>'
+    +         '<label class="li-field">Reactions <input type="number" min="0" name="reactions" value="0"></label>'
+    +         '<label class="x-field">Likes <input type="number" min="0" name="likes" value="0"></label>'
+    +         '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
+    +         '<label>Reposts <input type="number" min="0" name="reposts" value="0"></label>'
+    +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
+    +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
+    +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
+    +         '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Profile activity</div>'
+    +         '<label class="li-field">Profile viewers from post <input type="number" min="0" name="profileViewers" value="0"></label>'
+    +         '<label class="li-field">Followers gained <input type="number" min="0" name="followersGained" value="0"></label>'
+    +         '<label class="x-field">Profile visits <input type="number" min="0" name="profileVisits" value="0"></label>'
+    +         '<label class="x-field">Follows gained <input type="number" min="0" name="followsGained" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Conversion</div>'
+    +         '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '</div>'
     +       '<div class="grade-form-actions">'
     +         '<button type="submit" class="btn-primary" id="grade-submit-btn">Submit grade</button>'
     +         '<button type="button" class="btn-secondary" data-grade-close>Cancel</button>'
@@ -1797,7 +1836,10 @@ if (document.readyState === 'loading') {
     document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
     document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
     document.getElementById('grade-form-status').textContent = '';
-    document.getElementById('grade-form').reset();
+    var form = document.getElementById('grade-form');
+    form.reset();
+    form.setAttribute('data-channel', post.channel || 'linkedin');
+    if (post.video) { form.setAttribute('data-has-video', ''); } else { form.removeAttribute('data-has-video'); }
     document.getElementById('grade-submit-btn').disabled = false;
     document.getElementById('grade-submit-btn').textContent = 'Submit grade';
     modal.classList.add('open');
@@ -1819,18 +1861,41 @@ if (document.readyState === 'loading') {
     var statusEl = document.getElementById('grade-form-status');
     var btn = document.getElementById('grade-submit-btn');
     var fd = new FormData(form);
-    var likes    = Number(fd.get('likes') || 0);
-    var comments = Number(fd.get('comments') || 0);
-    var reposts  = Number(fd.get('reposts') || 0);
-    var metrics = {
-      impressions:            Number(fd.get('impressions') || 0),
-      linkClicks:             Number(fd.get('linkClicks') || 0),
-      likes:                  likes,
-      comments:               comments,
-      reposts:                reposts,
-      engagementActions:      likes + comments + reposts,
-      trialSignupsAttributed: Number(fd.get('trialSignups') || 0),
-    };
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var post  = posts.find(function (p) { return p.id === currentPostId; });
+    var channel = (post && post.channel) || 'linkedin';
+    var hasVideo = !!(post && post.video);
+    var metrics = { impressions: Number(fd.get('impressions') || 0) };
+    if (channel === 'linkedin') {
+      metrics.membersReached       = Number(fd.get('membersReached') || 0);
+      metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
+      metrics.reactions            = Number(fd.get('reactions') || 0);
+      metrics.comments             = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.saves                = Number(fd.get('saves') || 0);
+      metrics.sends                = Number(fd.get('sends') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
+      metrics.followersGained      = Number(fd.get('followersGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    } else {
+      metrics.likes                = Number(fd.get('likes') || 0);
+      metrics.replies              = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.bookmarks            = Number(fd.get('bookmarks') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileVisits        = Number(fd.get('profileVisits') || 0);
+      metrics.followsGained        = Number(fd.get('followsGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    }
+    metrics.trialSignupsAttributed = Number(fd.get('trialSignups') || 0);
     statusEl.textContent = 'Brad is grading…';
     statusEl.className = 'grade-form-status';
     btn.disabled = true;

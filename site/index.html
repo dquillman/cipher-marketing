@@ -713,17 +713,27 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-modal-x { background: transparent; color: #e6e8ee; border: 0; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
 .grade-modal-x:hover { background: rgba(255,255,255,0.08); }
 .grade-modal-sub { color: #98a0b3; font-size: 0.88rem; margin: 6px 0 14px; }
-.grade-form { display: grid; gap: 10px; }
+.grade-form { display: grid; gap: 0; }
 .grade-form label { display: grid; gap: 4px; font-size: 0.85rem; color: #cbd0dc; }
 .grade-form input[type="number"] {
   background: #0b0d13; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.1);
   border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-variant-numeric: tabular-nums;
 }
 .grade-form input[type="number"]:focus { outline: 2px solid #5b8def; outline-offset: 1px; }
-.grade-form-actions { display: flex; gap: 8px; margin-top: 6px; }
+.grade-form-actions { display: flex; gap: 8px; margin-top: 14px; }
 .grade-form-status { font-size: 0.85rem; min-height: 1.1em; margin-top: 4px; color: #98a0b3; }
 .grade-form-status.ok  { color: #86efac; }
 .grade-form-status.err { color: #fca5a5; }
+/* Sectioned layout */
+.grade-form-section { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.grade-form-section:last-of-type { border-bottom: none; }
+.grade-form-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: #4a5270; font-weight: 600; margin-bottom: 2px; }
+/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal() */
+#grade-form:not([data-channel="linkedin"]) .li-field { display: none; }
+#grade-form:not([data-channel="x"]) .x-field { display: none; }
+#grade-form:not([data-has-video]) .video-field { display: none; }
+/* Scrollable modal body when many fields visible */
+.grade-modal-body { max-height: 88vh; overflow-y: auto; }
 
 /* ---- Buttons (.btn-primary / .btn-secondary / .btn-warn) ---- */
 /* Used across grade modal, schedule Mark-Posted flow, and posts page actions.
@@ -765,8 +775,8 @@ details[open] summary::before { transform: rotate(90deg); }
 <!--INLINE-STATE-->
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
+    "lastUpdatedBy": "brad",
+    "lastUpdatedAt": "2026-05-28T17:30:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -800,6 +810,41 @@ details[open] summary::before { transform: rotate(90deg); }
         "signups": 0,
         "activated": 0,
         "target": 10
+      }
+    },
+    "funnel": {
+      "asOf": "2026-05-28T17:30:00.000Z",
+      "windowDays": 7,
+      "instructions": "Hand-entered daily. Five arrows: impressions -> lpVisits -> signups -> examPicked -> activated. Sources: GA4 + Meta Pixel for top-of-funnel, posts.json impressions, internal Firestore for signups/exam-picked/activated. 'aggregate' is the rolling N-day sum across all clusters; 'perCluster' is the same window scoped to that exam's LP traffic. Update windowDays + asOf together; bump _meta.lastUpdatedAt on save.",
+      "aggregate": {
+        "impressions": 0,
+        "lpVisits": 0,
+        "signups": 0,
+        "examPicked": 0,
+        "activated": 0
+      },
+      "perCluster": {
+        "PMP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "Security+": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "SHRM-CP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        }
       }
     }
   },
@@ -1047,6 +1092,10 @@ details[open] summary::before { transform: rotate(90deg); }
   ],
   "dailyLog": [
     {
+      "date": "2026-05-28",
+      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
+    },
+    {
       "date": "2026-05-11",
       "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
     },
@@ -1117,6 +1166,10 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-18",
       "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
+    },
+    {
+      "date": "2026-05-26",
+      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     }
   ]
 }
@@ -1999,12 +2052,40 @@ if (document.readyState === 'loading') {
     +     '</div>'
     +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
     +     '<form id="grade-form" class="grade-form">'
-    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
-    +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
-    +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
-    +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
-    +       '<label>Reposts / reshares <input type="number" min="0" name="reposts" value="0"></label>'
-    +       '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Discovery</div>'
+    +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
+    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section video-field">'
+    +         '<div class="grade-form-section-label">Video</div>'
+    +         '<label>Video views <input type="number" min="0" name="videoViews" value="0"></label>'
+    +         '<label class="li-field">Total watch time (sec) <input type="number" min="0" name="watchTimeSeconds" value="0" placeholder="4m 8s → 248"></label>'
+    +         '<label>Avg watch time (sec) <input type="number" min="0" name="avgWatchTimeSeconds" value="0" placeholder="10s → 10"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Engagement</div>'
+    +         '<label class="li-field">Social engagements <input type="number" min="0" name="socialEngagements" value="0"></label>'
+    +         '<label class="li-field">Reactions <input type="number" min="0" name="reactions" value="0"></label>'
+    +         '<label class="x-field">Likes <input type="number" min="0" name="likes" value="0"></label>'
+    +         '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
+    +         '<label>Reposts <input type="number" min="0" name="reposts" value="0"></label>'
+    +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
+    +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
+    +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
+    +         '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Profile activity</div>'
+    +         '<label class="li-field">Profile viewers from post <input type="number" min="0" name="profileViewers" value="0"></label>'
+    +         '<label class="li-field">Followers gained <input type="number" min="0" name="followersGained" value="0"></label>'
+    +         '<label class="x-field">Profile visits <input type="number" min="0" name="profileVisits" value="0"></label>'
+    +         '<label class="x-field">Follows gained <input type="number" min="0" name="followsGained" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Conversion</div>'
+    +         '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '</div>'
     +       '<div class="grade-form-actions">'
     +         '<button type="submit" class="btn-primary" id="grade-submit-btn">Submit grade</button>'
     +         '<button type="button" class="btn-secondary" data-grade-close>Cancel</button>'
@@ -2033,7 +2114,10 @@ if (document.readyState === 'loading') {
     document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
     document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
     document.getElementById('grade-form-status').textContent = '';
-    document.getElementById('grade-form').reset();
+    var form = document.getElementById('grade-form');
+    form.reset();
+    form.setAttribute('data-channel', post.channel || 'linkedin');
+    if (post.video) { form.setAttribute('data-has-video', ''); } else { form.removeAttribute('data-has-video'); }
     document.getElementById('grade-submit-btn').disabled = false;
     document.getElementById('grade-submit-btn').textContent = 'Submit grade';
     modal.classList.add('open');
@@ -2055,18 +2139,41 @@ if (document.readyState === 'loading') {
     var statusEl = document.getElementById('grade-form-status');
     var btn = document.getElementById('grade-submit-btn');
     var fd = new FormData(form);
-    var likes    = Number(fd.get('likes') || 0);
-    var comments = Number(fd.get('comments') || 0);
-    var reposts  = Number(fd.get('reposts') || 0);
-    var metrics = {
-      impressions:            Number(fd.get('impressions') || 0),
-      linkClicks:             Number(fd.get('linkClicks') || 0),
-      likes:                  likes,
-      comments:               comments,
-      reposts:                reposts,
-      engagementActions:      likes + comments + reposts,
-      trialSignupsAttributed: Number(fd.get('trialSignups') || 0),
-    };
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var post  = posts.find(function (p) { return p.id === currentPostId; });
+    var channel = (post && post.channel) || 'linkedin';
+    var hasVideo = !!(post && post.video);
+    var metrics = { impressions: Number(fd.get('impressions') || 0) };
+    if (channel === 'linkedin') {
+      metrics.membersReached       = Number(fd.get('membersReached') || 0);
+      metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
+      metrics.reactions            = Number(fd.get('reactions') || 0);
+      metrics.comments             = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.saves                = Number(fd.get('saves') || 0);
+      metrics.sends                = Number(fd.get('sends') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
+      metrics.followersGained      = Number(fd.get('followersGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    } else {
+      metrics.likes                = Number(fd.get('likes') || 0);
+      metrics.replies              = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.bookmarks            = Number(fd.get('bookmarks') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileVisits        = Number(fd.get('profileVisits') || 0);
+      metrics.followsGained        = Number(fd.get('followsGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    }
+    metrics.trialSignupsAttributed = Number(fd.get('trialSignups') || 0);
     statusEl.textContent = 'Brad is grading…';
     statusEl.className = 'grade-form-status';
     btn.disabled = true;

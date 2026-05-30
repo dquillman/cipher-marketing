@@ -125,3 +125,43 @@ All four items below are **`[CONFIRMED 2026-05-11 by Dave]`** and locked as work
 ## Summary
 
 Five assets reviewed, zero BLOCK-severity findings, zero WARN-severity findings, six NOTE-severity flags (most positive — documenting deliberate-and-defensible choices). The campaign passes brand-voice review and is ready for founder pass + LP standup.
+
+---
+
+## Addendum — 2026-05-29 — Activation-sprint assets (`16-`, `17-`)
+
+> **New assets reviewed** (post-launch, for the zero-distribution activation sprint):
+> - `16-exam-lens-community-breakdowns.md` (10 PMP + 5 Security+ value posts, positioning, soft close)
+> - `17-founder-bios.md` (LinkedIn / X / Reddit founder bios — personal-brand Distribution layer)
+
+### 16-exam-lens-community-breakdowns.md
+
+| # | Severity | Finding | Action |
+|---|---|---|---|
+| 1 | WARN → FIXED | Worked questions only carried the "original / not from any real exam" note in the file header — it would NOT travel with a copy-pasted post, unlike `02-#5`/`04-#4` which tag each question inline. | **Patched inline:** every breakdown must be posted with *"(Illustrative question — I wrote it to show the pattern, not from any real exam.)"* |
+| 2 | PASS | No forbidden words ("crush/dominate/smash," "guaranteed pass," "game-changer/revolutionary/unleash"). | — |
+| 3 | PASS | Approved frames lead ("how the exam thinks," "judgment not memory" = "Understand how exams think" / "Reasoning, not memorization"). | — |
+| 4 | PASS | Founder voice on community surfaces (LinkedIn/X/Reddit). | — |
+| 5 | PASS | Reddit close = **no link in body** (matches `02-#3`). | — |
+| 6 | PASS | No invented pricing/urgency/scarcity/lifetime; no named-competitor comparisons. | — |
+| 7 | PASS | "Cipher/decode" pun not used — campaign's single allowed use stays in `02-` only. | — |
+| 8 | NOTE | Soft free-offer close instead of universal "Start Free Trial" CTA — correct; that CTA governs ads/LPs/in-app, community founder posts use a softer offer. | None. |
+
+### 17-founder-bios.md
+
+| # | Severity | Finding | Action |
+|---|---|---|---|
+| 1 | PASS | Founder voice ("I built CipherExam") — correct for LinkedIn/X/Reddit. | — |
+| 2 | PASS | Positioning line "PMP isn't a memory test — it's a judgment test" = approved "Reasoning, not memorization" frame. | — |
+| 3 | PASS | No forbidden words; "Free" used, never "guaranteed." | — |
+| 4 | PASS | No pricing claims; no cipher/decode pun. | — |
+| 5 | PASS | Reddit bio low-key, no link-spam — respects no-promo norm. | — |
+| 6 | NOTE | Reading level ~8th–10th grade; concrete cert names. | None. |
+
+### Addendum summary
+
+2 assets reviewed · **0 BLOCK · 1 WARN (fixed inline) · 2 NOTE (positive).** Both pass. The lone substantive gap — the copyright disclaimer not traveling with copy-pasted posts — is patched so every posted breakdown carries the inline illustrative-question line.
+
+### Related pricing fix (same review pass)
+
+`07-founder-1to1-emails.md` Day-6 P.S. previously offered a non-existent **"$99 lifetime"** tier (contradicts canonical pricing). Corrected to **"$19/mo (or save 17% yearly), cancel anytime, no card."** Full `cipher-marketing/` scan confirmed this was the only stray instance (other `$99`/`lifetime` hits are competitor pricing or the guardrail rules themselves).

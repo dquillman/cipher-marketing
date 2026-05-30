@@ -62,6 +62,7 @@ const STATE_KIND = {
   "index.html":    "campaign",
   "posts.html":    "posts",
   "schedule.html": "posts",
+  "funnel.html":   "campaign",
 };
 
 // Skip files that already have their own self-contained styles

@@ -252,7 +252,7 @@
       "scheduledTimeLocal": "2026-05-27 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "status": "scheduled",
+      "status": "posted",
       "examFocus": "Security+",
       "hook": "tool-builder",
       "video": "launch-teaser-secplus.mp4",
@@ -264,8 +264,9 @@
       "copy": "CompTIA is flipping Security+ from SY0-701 to SY0-801 around October.\n\nIf you're studying now, you've probably already heard the question: do I rush to test on 701, or restart on 801?\n\nWrong question.\n\nMost prep tools train you to memorize the version-specific answer key. When the objectives shift, the question bank goes stale and you re-buy the tool.\n\nI built CipherExam differently. The product teaches the *reasoning* CompTIA tests — the Security Triad applied to scenarios, the troubleshooting model, the way they construct distractors. That reasoning survives the version change. Same engine on 701 today. Same engine on 801 when it drops.\n\nMarkus Kopko, PMI AI Standards Core Team Member, put it this way during beta: \"What you have built is differentiated by the coaching lens approach, the exam-specific reasoning frameworks, and the feedback loop you ran with real testers.\"\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
       "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=wed_bridge",
       "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
-      "postedAt": null,
-      "postUrl": null,
+      "postedAt": "2026-05-27T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7465378855944458240/",
+      "postedAtNote": "Backfilled 2026-05-28 — postUrl had been set, status was still 'scheduled'. Actual posting time approximated to scheduledTime; correct if real posted time is known.",
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
@@ -279,7 +280,9 @@
       "channel": "x",
       "channelAccount": "personal",
       "channelHandle": "@QuillmanDavid",
-      "status": "scheduled",
+      "status": "skipped",
+      "skippedReason": "1+ day stale at 2026-05-28. Tool-builder hook recyclable for a later week. Decision per board todo #3 — clear drift; the LinkedIn variant already shipped its version of the hook so re-posting on X would just dilute the same beat.",
+      "skippedAt": "2026-05-28T17:30:00.000Z",
       "examFocus": "Security+",
       "hook": "tool-builder",
       "video": "launch-teaser-secplus.mp4",
@@ -426,8 +429,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "post-performance-grader",
-    "lastUpdatedAt": "2026-05-28T01:30:00.000Z",
+    "lastUpdatedBy": "postUrl-fill",
+    "lastUpdatedAt": "2026-05-28T02:18:07.797Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1
   }

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The PMP Exam Lens Cheat Sheet — CipherExam</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: Letter; margin: 0.75in 0.85in; }
+  :root {
+    --ink: #0f172a;
+    --ink-soft: #334155;
+    --ink-faint: #64748b;
+    --rule: #cbd5e1;
+    --accent: #0e7490;
+    --accent-soft: #ecfeff;
+    --brand: #134e4a;
+  }
+  html, body { background: #fff; color: var(--ink); }
+  body {
+    font-family: "General Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    margin: 0; padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  h1, h2, h3 { font-family: "Satoshi", system-ui, sans-serif; color: var(--ink); margin-top: 0; }
+  h1 { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.01em; margin-top: 1.8em; padding-bottom: 0.35em; border-bottom: 1px solid var(--rule); }
+  h3 { font-size: 1.05rem; font-weight: 700; margin-top: 1.4em; color: var(--brand); }
+  p, ul, ol { margin: 0.7em 0; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: 0.3em 0; }
+  strong { color: var(--ink); font-weight: 700; }
+  em { color: var(--ink-soft); }
+  blockquote {
+    margin: 1em 0; padding: 0.8em 1.2em;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--ink);
+    font-size: 1.05em;
+  }
+  blockquote p { margin: 0; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+  hr {
+    border: 0; border-top: 1px solid var(--rule); margin: 2em 0;
+  }
+  code {
+    font-family: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+    background: #f1f5f9; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.92em;
+  }
+  table {
+    border-collapse: collapse; width: 100%; margin: 1em 0;
+    font-size: 0.95rem;
+  }
+  th, td { padding: 0.6em 0.8em; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  th { background: #f1f5f9; font-weight: 700; }
+
+  /* --- Cover page --- */
+  .cover {
+    page-break-after: always;
+    min-height: 9in;
+    display: flex; flex-direction: column; justify-content: center;
+    text-align: center;
+  }
+  .cover .kicker { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1.5em; }
+  .cover h1 { font-size: 3.2rem; margin-bottom: 0.3em; }
+  .cover .sub { font-size: 1.3rem; color: var(--ink-soft); font-weight: 500; max-width: 5.5in; margin: 0.5em auto; }
+  .cover .byline { margin-top: 4em; font-size: 1rem; color: var(--ink-soft); }
+  .cover .byline a { font-weight: 600; }
+
+  /* --- Section break helpers --- */
+  .page-break { page-break-before: always; }
+  .keep-together { page-break-inside: avoid; }
+
+  /* --- Scenario card --- */
+  .scenario {
+    page-break-inside: avoid;
+    margin: 1.5em 0;
+  }
+  .scenario .q {
+    background: #f8fafc; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 1em 1.2em; margin: 0.8em 0;
+  }
+  .scenario .q strong { display: block; margin-bottom: 0.4em; color: var(--brand); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .scenario ul.options { list-style: none; padding-left: 0; margin: 0.6em 0; }
+  .scenario ul.options li { margin: 0.4em 0; padding-left: 2.2em; position: relative; }
+  .scenario ul.options li .letter {
+    position: absolute; left: 0; top: 0;
+    font-family: "Satoshi", system-ui, sans-serif; font-weight: 800; color: var(--accent); width: 1.6em;
+  }
+  .scenario .answer {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 0.6em 1em; margin-top: 0.8em; font-weight: 700;
+  }
+
+  /* --- Trap card --- */
+  .trap {
+    page-break-inside: avoid;
+    margin: 0.9em 0; padding: 0.8em 1em;
+    border: 1px solid var(--rule); border-radius: 8px;
+  }
+  .trap h3 { margin: 0 0 0.3em; }
+
+  /* --- CTA --- */
+  .cta {
+    page-break-inside: avoid;
+    background: linear-gradient(135deg, var(--accent), var(--brand));
+    color: #fff;
+    border-radius: 12px;
+    padding: 2em 2em 2.2em;
+    margin: 2em 0 1em;
+    text-align: center;
+  }
+  .cta * { color: #fff !important; }
+  .cta h2 { border-bottom-color: rgba(255,255,255,0.3); }
+  .cta a {
+    display: inline-block; margin-top: 1em;
+    background: #fff; color: var(--accent) !important;
+    font-weight: 800; font-size: 1.1rem; padding: 0.8em 2em;
+    border-radius: 6px; border: none;
+  }
+  .cta .small { font-size: 0.9rem; opacity: 0.9; margin-top: 0.6em; }
+
+  /* --- Footer --- */
+  .footer { font-size: 0.85rem; color: var(--ink-faint); text-align: center; margin-top: 3em; padding-top: 1em; border-top: 1px solid var(--rule); }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="kicker">CipherExam · Free Resource</div>
+  <h1>The PMP Exam Lens<br>Cheat Sheet</h1>
+  <p class="sub">How PMI actually grades your thinking — with 5 worked scenarios.</p>
+  <div class="byline">
+    By <strong>Dave</strong>, founder of <a href="https://cipherexam.com">CipherExam</a>
+  </div>
+</section>
+
+<!-- INTRO -->
+<h2>Why this sheet exists</h2>
+<p>Most candidates plateau at ~80% on practice tests and never break through to the real exam.</p>
+<p>The reason isn't a knowledge gap. It's a <strong>frame gap</strong>.</p>
+<p>PMI doesn't grade whether you know every ITTO. They grade whether you reason about a project the way a PMI-certified project manager would. Three of the four options on most PMP questions are <em>defensible</em> answers. The "right" one is the one that aligns with how PMI wants you to think.</p>
+<p>This cheat sheet gives you the <strong>lens</strong> — the question you should ask before reading any option on the PMP — and 5 worked scenarios that show the lens in action.</p>
+<p>If you internalize the lens, the exam stops feeling like a trick.</p>
+
+<h2>The Lens, in one sentence</h2>
+<blockquote><p><strong>What would PMI want you to do?</strong></p></blockquote>
+<p>That's it.</p>
+<p>Not "what would I do," not "what does the PMBOK technically say," and not "what's the cheapest option." PMI grades against a specific posture:</p>
+<ol>
+  <li><strong>Stakeholders are the project.</strong> Decisions that bring stakeholders in beat decisions that leave them out.</li>
+  <li><strong>Process exists to serve the project, not the other way around.</strong> Skipping process to escape a problem is wrong; bending process to serve stakeholders is sometimes right.</li>
+  <li><strong>A good PM understands impact before acting.</strong> Acting before analyzing is the most common wrong-answer pattern.</li>
+  <li><strong>Conflict is information, not a fire.</strong> "Escalate immediately" is rarely right. "Understand, then decide" almost always is.</li>
+</ol>
+<p>When you read a PMP question, your first move is to ask: <em>which of these answers most embodies that posture?</em></p>
+<p>That's the lens.</p>
+
+<h2>The Bloom's layer</h2>
+<p>PMP questions sit at different cognitive levels. Memorizers fail at the higher levels because they pattern-match against keywords. The Lens works because it's a <em>reasoning</em> tool — it scales up the Bloom's ladder cleanly.</p>
+<table>
+  <thead><tr><th>Bloom's level</th><th>What you do</th><th>What PMP tests at this level</th></tr></thead>
+  <tbody>
+    <tr><td>Remember</td><td>Recall facts</td><td>Definitions, formulas, process inputs/outputs</td></tr>
+    <tr><td>Understand</td><td>Explain in your own words</td><td>"What is the purpose of X?"</td></tr>
+    <tr><td>Apply</td><td>Use a method on a new problem</td><td>EMV math, schedule arithmetic</td></tr>
+    <tr><td><strong>Analyze</strong></td><td>Break a situation into parts</td><td>"What is the root cause?"</td></tr>
+    <tr><td><strong>Evaluate</strong></td><td>Judge between defensible options</td><td><strong>Most PMP situational questions live here</strong></td></tr>
+    <tr><td>Create</td><td>Synthesize a new approach</td><td>Rare on PMP, common on PgMP</td></tr>
+  </tbody>
+</table>
+<p><strong>The Lens primarily helps at Evaluate</strong> — exactly where the test concentrates and exactly where memorization-only prep fails.</p>
+
+<!-- SCENARIO 1 -->
+<div class="page-break"></div>
+<h2>Scenario 1 — Stakeholder pressure on Friday afternoon</h2>
+<div class="scenario">
+  <div class="q">
+    <strong>Question</strong>
+    A senior stakeholder approaches you at 4pm Friday demanding a scope change to be in next week's sprint. The team's planning meeting is Monday at 9am. What do you do first?
+  </div>
+  <ul class="options">
+    <li><span class="letter">A.</span> Tell the stakeholder to submit a formal change request through the change control process.</li>
+    <li><span class="letter">B.</span> Prepare an impact analysis over the weekend and schedule a stakeholder discussion Monday before planning.</li>
+    <li><span class="letter">C.</span> Refuse — scope was signed off; reopening invites scope creep.</li>
+    <li><span class="letter">D.</span> Adjust the next sprint backlog to fit the change in.</li>
+  </ul>
+  <p><strong>Applying the lens — what would PMI want you to do?</strong></p>
+  <ul>
+    <li><strong>A</strong> is the "textbook" answer. But it puts process between you and a stakeholder who is signalling something matters. Process-first responses are PMI-cold.</li>
+    <li><strong>C</strong> is brittle. PMI does not want a PM who treats scope baselines as immutable in the face of real stakeholder need.</li>
+    <li><strong>D</strong> <em>acts before analyzing</em> — the most common wrong-answer pattern in PMP situational questions. You don't know yet if the change is worth the disruption.</li>
+    <li><strong>B</strong> prepares the impact analysis (analyze before acting), schedules the stakeholder discussion (stakeholders are the project), and times it before planning (process serves the project).</li>
+  </ul>
+  <div class="answer">Right answer: B.</div>
+  <p><em>Why this is a great example of the lens:</em> A is technically correct — there <em>is</em> a change-request process. But the question isn't "what's the procedure?" It's "what would PMI want you to do?" PMI wants the PM who engages the stakeholder, understands the impact, and brings the change into the process <em>with context</em>. The procedure is a tool, not the answer.</p>
+</div>
+
+<!-- SCENARIO 2 -->
+<h2>Scenario 2 — Vendor missed a milestone</h2>
+<div class="scenario">
+  <div class="q">
+    <strong>Question</strong>
+    A vendor delivering a critical integration component missed their committed milestone by two weeks. Your project is now at risk of slipping. What is your <strong>first</strong> action?
+  </div>
+  <ul class="options">
+    <li><span class="letter">A.</span> Trigger the contract's penalty clause.</li>
+    <li><span class="letter">B.</span> Update the risk register and re-baseline the schedule.</li>
+    <li><span class="letter">C.</span> Meet with the vendor to understand the cause and renegotiate the timeline.</li>
+    <li><span class="letter">D.</span> Escalate to your sponsor and request additional internal resources.</li>
+  </ul>
+  <p><strong>Applying the lens:</strong></p>
+  <ul>
+    <li><strong>A</strong> acts before understanding. The lens says "understand impact before acting." Penalty clauses are also adversarial; PMI's frame on procurement is collaborative-first.</li>
+    <li><strong>B</strong> updates documents but doesn't address the source of the variance. PMI wants the PM to deal with the underlying cause, not just record it.</li>
+    <li><strong>D</strong> escalates before understanding what's wrong. The lens says "conflict is information, not a fire." Escalation without context wastes the sponsor's authority.</li>
+    <li><strong>C</strong> engages the stakeholder (the vendor <em>is</em> a project stakeholder), seeks to understand cause before acting, and uses the relationship to find a renegotiation path. This is PMI's posture.</li>
+  </ul>
+  <div class="answer">Right answer: C.</div>
+  <p><em>The lens at work:</em> This question is testing whether you reach for <em>understanding</em> or for <em>protection</em>. Memorization-prep candidates pattern-match "missed milestone" → "penalty / escalate." The lens tells you to engage first.</p>
+</div>
+
+<!-- SCENARIO 3 -->
+<div class="page-break"></div>
+<h2>Scenario 3 — A small EMV math problem with a lens twist</h2>
+<div class="scenario">
+  <div class="q">
+    <strong>Question</strong>
+    Your project has a 30% chance of an unrecoverable schedule slip that would cost $500,000 in delay penalties. You can buy schedule insurance for $120,000 that would fully cover that loss. Should you buy the insurance?
+  </div>
+  <ul class="options">
+    <li><span class="letter">A.</span> Yes — the loss is large and uncertain.</li>
+    <li><span class="letter">B.</span> No — the expected loss is less than the insurance cost.</li>
+    <li><span class="letter">C.</span> Yes — and update the risk register to reflect the residual risk.</li>
+    <li><span class="letter">D.</span> No — the team can absorb the slip with overtime.</li>
+  </ul>
+  <p><strong>Applying the lens:</strong></p>
+  <p>First, the math:</p>
+  <ul>
+    <li>Expected monetary value (EMV) of the risk = 30% × $500,000 = <strong>$150,000</strong></li>
+    <li>Insurance cost = $120,000</li>
+    <li>Buying insurance saves $30,000 in expected value → <strong>economically rational to buy.</strong></li>
+  </ul>
+  <p>That eliminates B and D.</p>
+  <p>Now the lens. Between A and C, both buy insurance. C <em>also</em> updates the risk register to reflect that you've transferred (not eliminated) the risk. PMI wants the PM who treats risk response as a process step that gets documented and tracked, not a one-time decision.</p>
+  <div class="answer">Right answer: C.</div>
+  <p><em>The lens at work:</em> EMV is an Apply-level question. The lens pushes it to Evaluate by adding the "what should the PM <em>also</em> do?" layer. PMI questions often hide a process expectation behind a math problem.</p>
+</div>
+
+<!-- SCENARIO 4 -->
+<h2>Scenario 4 — A team member is missing meetings</h2>
+<div class="scenario">
+  <div class="q">
+    <strong>Question</strong>
+    A senior team member has missed the last three daily standups. The team is starting to notice. What is your first action?
+  </div>
+  <ul class="options">
+    <li><span class="letter">A.</span> Replace them on the team — performance issues degrade team trust.</li>
+    <li><span class="letter">B.</span> Bring it up in the next standup so the team can address it together.</li>
+    <li><span class="letter">C.</span> Have a private conversation with the team member to understand the reason.</li>
+    <li><span class="letter">D.</span> Document the absences and notify their functional manager.</li>
+  </ul>
+  <p><strong>Applying the lens:</strong></p>
+  <ul>
+    <li><strong>A</strong> acts before understanding. Replacing a senior member because of three missed meetings is disproportionate.</li>
+    <li><strong>B</strong> is <em>public conflict management</em>, which violates PMI's "conflict is information, handle it where it lives" posture. The team member should be addressed privately before the team is involved.</li>
+    <li><strong>D</strong> bypasses the relationship and routes around the team member to authority. PMI doesn't want a PM who escalates personnel issues without a direct conversation first.</li>
+    <li><strong>C</strong> engages the stakeholder privately (the team member <em>is</em> a stakeholder), seeks to understand before acting, and respects the relationship.</li>
+  </ul>
+  <div class="answer">Right answer: C.</div>
+  <p><em>The lens at work:</em> "First action" questions are a tell. PMI uses them to test whether you reach for the relationship before the process or the authority. Almost always: relationship first.</p>
+</div>
+
+<!-- SCENARIO 5 -->
+<div class="page-break"></div>
+<h2>Scenario 5 — A risk you thought was minor just escalated</h2>
+<div class="scenario">
+  <div class="q">
+    <strong>Question</strong>
+    A previously low-probability, low-impact risk has just had a triggering event and is now realized. You discover the actual impact is 5× larger than originally estimated. What is your first action?
+  </div>
+  <ul class="options">
+    <li><span class="letter">A.</span> Activate the risk response plan that was already documented.</li>
+    <li><span class="letter">B.</span> Re-assess the risk's current impact and select the appropriate response based on the new information.</li>
+    <li><span class="letter">C.</span> Notify the sponsor of the new variance immediately.</li>
+    <li><span class="letter">D.</span> Reopen the risk identification step for the entire project to find similar mis-estimated risks.</li>
+  </ul>
+  <p><strong>Applying the lens:</strong></p>
+  <ul>
+    <li><strong>A</strong> acts before re-analyzing. The risk has changed character — applying yesterday's plan to today's realities ignores new information.</li>
+    <li><strong>C</strong> escalates before understanding. The sponsor will ask "what's the impact and what's your plan?" — you need to know before you escalate.</li>
+    <li><strong>D</strong> is over-correction. Reopening risk identification across the whole project because one risk was mis-estimated is disproportionate and PMI-cold.</li>
+    <li><strong>B</strong> re-analyzes given new information, selects the appropriate response based on the new picture, and <em>then</em> you can escalate with context.</li>
+  </ul>
+  <div class="answer">Right answer: B.</div>
+  <p><em>The lens at work:</em> This is a textbook "analyze before acting" question. Memorization candidates jump to the documented response (A) because the formula says "execute the risk response plan." The lens says: the plan was based on assumptions that have now broken. Re-analyze first.</p>
+</div>
+
+<!-- TRAPS -->
+<h2>The 4 PMP trap types</h2>
+<p>After the lens, the second-biggest unlock is recognizing the wrong-answer <strong>patterns</strong> PMI uses. Almost every wrong answer on a PMP situational question falls into one of these four buckets:</p>
+
+<div class="trap">
+  <h3>Trap 1 — Act-before-analyze</h3>
+  <p>The answer takes an action (escalate, replace, penalize, decide) without first understanding the situation. <strong>Almost always wrong on PMP.</strong> Examples from this sheet: 1D, 2A/D, 4A, 5A/C.</p>
+</div>
+<div class="trap">
+  <h3>Trap 2 — Process-as-shield</h3>
+  <p>The answer hides behind a procedure ("submit a formal change request," "refer to the contract," "use the escalation matrix"). <strong>Often wrong when the situation calls for engagement.</strong> Examples: 1A, 2A.</p>
+</div>
+<div class="trap">
+  <h3>Trap 3 — Skip-the-stakeholder</h3>
+  <p>The answer bypasses a stakeholder who should be involved — escalates over them, decides without them, routes around them. <strong>Always wrong on PMP.</strong> Examples: 1C, 2D, 4D, 5C.</p>
+</div>
+<div class="trap">
+  <h3>Trap 4 — Disproportionate response</h3>
+  <p>The answer is too big or too small for the situation — "replace the team member" for three missed meetings, "reopen risk identification for the whole project" for one mis-estimated risk. <strong>Wrong when the situation has a calibrated middle-ground option.</strong> Examples: 4A, 5D.</p>
+</div>
+
+<p>When you read a PMP option, ask: <em>does this fall into one of these traps?</em> If yes, it's almost certainly wrong.</p>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>Your next move</h2>
+  <p>You now have:</p>
+  <ol style="text-align:left; max-width:5.5in; margin:0.7em auto;">
+    <li><strong>The Lens.</strong> A single question — <em>what would PMI want you to do?</em> — that reframes any PMP situational question.</li>
+    <li><strong>The 4 traps.</strong> Pattern-recognition for the wrong answers PMI plants.</li>
+    <li><strong>Worked examples.</strong> Five scenarios across stakeholders, vendors, EMV, team management, and risk re-analysis.</li>
+  </ol>
+  <p>Reading this sheet is step one. <strong>Building the reflex is step two</strong>, and that takes reps. You need to apply the lens to 50–100 PMP questions before it stops being a conscious step.</p>
+  <p>That's exactly what CipherExam is built for. Every PMP question is Bloom's-classified, walked through the Exam Lens, and surfaces your personal thinking traps.</p>
+  <p><a href="https://cipherexam.com/lp/pmp?utm_source=lead-magnet&utm_campaign=pmp-cheat-sheet&utm_content=cta">Start Your 7-Day Free Trial →</a></p>
+  <p class="small">No credit card. Cancel anytime.</p>
+</div>
+
+<div class="footer">
+  The exam stops feeling like a trick. — Dave, founder of CipherExam · cipherexam.com
+</div>
+
+</body>
+</html>

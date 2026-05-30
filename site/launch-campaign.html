@@ -713,17 +713,27 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-modal-x { background: transparent; color: #e6e8ee; border: 0; font-size: 24px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
 .grade-modal-x:hover { background: rgba(255,255,255,0.08); }
 .grade-modal-sub { color: #98a0b3; font-size: 0.88rem; margin: 6px 0 14px; }
-.grade-form { display: grid; gap: 10px; }
+.grade-form { display: grid; gap: 0; }
 .grade-form label { display: grid; gap: 4px; font-size: 0.85rem; color: #cbd0dc; }
 .grade-form input[type="number"] {
   background: #0b0d13; color: #e6e8ee; border: 1px solid rgba(255,255,255,0.1);
   border-radius: 6px; padding: 8px 10px; font-size: 0.95rem; font-variant-numeric: tabular-nums;
 }
 .grade-form input[type="number"]:focus { outline: 2px solid #5b8def; outline-offset: 1px; }
-.grade-form-actions { display: flex; gap: 8px; margin-top: 6px; }
+.grade-form-actions { display: flex; gap: 8px; margin-top: 14px; }
 .grade-form-status { font-size: 0.85rem; min-height: 1.1em; margin-top: 4px; color: #98a0b3; }
 .grade-form-status.ok  { color: #86efac; }
 .grade-form-status.err { color: #fca5a5; }
+/* Sectioned layout */
+.grade-form-section { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.grade-form-section:last-of-type { border-bottom: none; }
+.grade-form-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: #4a5270; font-weight: 600; margin-bottom: 2px; }
+/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal() */
+#grade-form:not([data-channel="linkedin"]) .li-field { display: none; }
+#grade-form:not([data-channel="x"]) .x-field { display: none; }
+#grade-form:not([data-has-video]) .video-field { display: none; }
+/* Scrollable modal body when many fields visible */
+.grade-modal-body { max-height: 88vh; overflow-y: auto; }
 
 /* ---- Buttons (.btn-primary / .btn-secondary / .btn-warn) ---- */
 /* Used across grade modal, schedule Mark-Posted flow, and posts page actions.
@@ -765,8 +775,8 @@ details[open] summary::before { transform: rotate(90deg); }
 <!--INLINE-STATE-->
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
+    "lastUpdatedBy": "brad",
+    "lastUpdatedAt": "2026-05-28T17:30:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -800,6 +810,41 @@ details[open] summary::before { transform: rotate(90deg); }
         "signups": 0,
         "activated": 0,
         "target": 10
+      }
+    },
+    "funnel": {
+      "asOf": "2026-05-28T17:30:00.000Z",
+      "windowDays": 7,
+      "instructions": "Hand-entered daily. Five arrows: impressions -> lpVisits -> signups -> examPicked -> activated. Sources: GA4 + Meta Pixel for top-of-funnel, posts.json impressions, internal Firestore for signups/exam-picked/activated. 'aggregate' is the rolling N-day sum across all clusters; 'perCluster' is the same window scoped to that exam's LP traffic. Update windowDays + asOf together; bump _meta.lastUpdatedAt on save.",
+      "aggregate": {
+        "impressions": 0,
+        "lpVisits": 0,
+        "signups": 0,
+        "examPicked": 0,
+        "activated": 0
+      },
+      "perCluster": {
+        "PMP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "Security+": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        },
+        "SHRM-CP": {
+          "impressions": 0,
+          "lpVisits": 0,
+          "signups": 0,
+          "examPicked": 0,
+          "activated": 0
+        }
       }
     }
   },
@@ -1047,6 +1092,10 @@ details[open] summary::before { transform: rotate(90deg); }
   ],
   "dailyLog": [
     {
+      "date": "2026-05-28",
+      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
+    },
+    {
       "date": "2026-05-11",
       "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
     },
@@ -1117,114 +1166,337 @@ details[open] summary::before { transform: rotate(90deg); }
     {
       "date": "2026-05-18",
       "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
+    },
+    {
+      "date": "2026-05-26",
+      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     }
   ]
 }
 ;</script>
 <script>window.__POSTS__ = {
-  "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-18T17:35:00.000Z",
-    "schemaVersion": 1,
-    "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit."
-  },
-  "benchmarks": {
-    "linkedin": {
-      "engagementRatePctGoodAtLeast": 2,
-      "engagementRatePctGreatAtLeast": 5,
-      "linkClickRatePctGoodAtLeast": 1,
-      "linkClickRatePctGreatAtLeast": 2.5,
-      "videoViewRatePctGoodAtLeast": 30,
-      "videoViewRatePctGreatAtLeast": 50
-    },
-    "x": {
-      "engagementRatePctGoodAtLeast": 1,
-      "engagementRatePctGreatAtLeast": 3,
-      "linkClickRatePctGoodAtLeast": 0.5,
-      "linkClickRatePctGreatAtLeast": 1.5,
-      "videoViewRatePctGoodAtLeast": 15,
-      "videoViewRatePctGreatAtLeast": 30
-    },
-    "reddit-organic": {
-      "_note": "Reddit doesn't expose impressions for organic posts. Grading uses absolute upvotes + comment count + upvote ratio. Net score = upvotes - downvotes (Reddit only shows score, not raw votes).",
-      "upvotesGoodAtLeast": 25,
-      "upvotesGreatAtLeast": 100,
-      "commentsGoodAtLeast": 8,
-      "commentsGreatAtLeast": 25,
-      "upvoteRatioGoodAtLeast": 0.85,
-      "upvoteRatioGreatAtLeast": 0.92,
-      "autoRemovalIsAutomaticD": true
-    },
-    "reddit-ads": {
-      "_note": "Paid Reddit Ads via ads.reddit.com. Standard CTR/CVR grading like LinkedIn/X.",
-      "engagementRatePctGoodAtLeast": 1.5,
-      "engagementRatePctGreatAtLeast": 3.5,
-      "linkClickRatePctGoodAtLeast": 0.7,
-      "linkClickRatePctGreatAtLeast": 2,
-      "ctrPctGoodAtLeast": 0.5,
-      "ctrPctGreatAtLeast": 1.2,
-      "cpcUsdAcceptableAtMost": 1.5,
-      "cpcUsdGreatAtMost": 0.75
-    }
-  },
   "posts": [
     {
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
+      "postedAt": "2026-05-18T16:30:00.000Z",
+      "metrics": {
+        "impressions": 173,
+        "membersReached": 16,
+        "videoViews": 36,
+        "watchTimeSeconds": 645,
+        "avgWatchTimeSeconds": 17,
+        "socialEngagements": 0,
+        "reactions": 0,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "saves": 0,
+        "sends": 0,
+        "linkClicks": 1,
+        "profileViewers": 1,
+        "followersGained": 0,
+        "trialSignupsAttributed": null,
+        "engagementRatePct": 0,
+        "linkClickRatePct": 0.58,
+        "videoViewRatePct": 20.81,
+        "impressionsToReachPct": 9.25,
+        "gradedAt": "2026-05-28T00:00:00.000Z"
+      },
+      "channelAccount": "personal",
       "id": "li-mon-2026-05-11-launch",
+      "grade": "D",
+      "outlierScore": 105,
+      "outlierPattern": null,
+      "gradeNotes": "Regraded on long-tail metrics: 173 impressions is below the LI 200 floor (auto bump-down), engagement rate 0% fails the 2% good floor, link click rate 0.58% (1/173) fails the 1% good floor, video view rate 20.8% (36/173) fails the 30% good floor. All three rates fail → D earned on substance, not just distribution. The buried positive: 17s avg watch on 36 views is the BEST of the 3 Week 1 LI posts — once viewers commit, they finish. The damning number is impressions→reach: 16 unique humans out of 173 impressions (9.2%) — the WORST conversion of the 3 posts (Wed 18%, Fri 44%). LinkedIn served the post repeatedly to the same small set of feeds without expanding to new humans, consistent with algorithmic deprioritization of category-adversarial framing ('Cert prep tools haven't changed since 2010' reads as attacking an established category). Outlier 105% of channel 7-day avg (164.3) — neutral, neither winner nor loser. Trial attribution unrecoverable (Week 1 UTM collision).",
+      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
+      "recommendations": "Kill the category-adversarial opener pattern. 'Cert prep tools haven't changed since 2010' likely triggered LinkedIn's impressions→reach throttle (9% vs Fri domain post's 44%). Lead with a candidate-pain number or a domain-stat opener like Friday's post ('Process is 50% of the exam') — workmanlike beats clever for cert audiences. Hook ranking by long-tail reach was the inverse of intuition: domain-weights > tool-builder > exam-trap.",
+      "channel": "linkedin",
       "scheduled": "2026-05-18",
-      "scheduledTime": "2026-05-18T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
+      "video": "launch-teaser-pmp.mp4",
       "scheduledTimeLocal": "2026-05-18 10:30 MT",
+      "scheduledTime": "2026-05-18T16:30:00.000Z",
+      "videoFormat": "1:1",
+      "status": "posted",
+      "hook": "tool-builder"
+    },
+    {
+      "scheduledTime": "2026-05-18T17:30:00.000Z",
+      "status": "posted",
+      "hook": "tool-builder",
+      "videoFormat": "1:1",
+      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
+      "video": "launch-teaser-pmp.mp4",
+      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
+      "channel": "x",
+      "recommendations": "Before publishing the next post, seed the account with at least 10–20 targeted follows/replies in the PMP and project management community so the algorithm has a relevance signal, and consider boosting this exact post for $20–$50 targeting PMP exam candidates — the creative is ready, the audience just never showed up.",
+      "scheduled": "2026-05-18",
+      "scheduledTimeLocal": "2026-05-18 11:30 MT",
+      "metrics": {
+        "engagementActions": 0,
+        "linkClicks": 0,
+        "gradedAt": "2026-05-21T23:29:18.637Z",
+        "comments": 0,
+        "reposts": 0,
+        "videoViews": 0,
+        "likes": 0,
+        "trialSignupsAttributed": 0,
+        "linkClickRatePct": 0,
+        "videoViewRatePct": 0,
+        "engagementRatePct": 0,
+        "impressions": 39
+      },
+      "postedAt": "2026-05-18T17:30:00.000Z",
+      "channelHandle": "@QuillmanDavid",
+      "gradeNotes": "39 impressions with zero engagement, zero video views, and zero link clicks means this post effectively didn't exist — the mechanical D is generous. The copy itself is solid: the provocative hook, clear value prop, and frictionless CTA (7 days, no card) are all above average, so the copy is not the culprit. The failure is almost certainly a distribution problem — a brand-new account with no follower base and no amplification means 39 impressions went to nobody who cared, and the video never autoplay-triggered because the feed scroll never happened at meaningful scale. One hashtag (#PMP) on a zero-authority account does nothing at this volume.",
+      "channelAccount": "personal",
+      "id": "x-mon-2026-05-11-launch",
+      "grade": "D",
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch"
+    },
+    {
+      "scheduledTimeLocal": "2026-05-20 10:30 MT",
+      "scheduled": "2026-05-20",
+      "channel": "linkedin",
+      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
+      "video": "ai-tutor-demo-pmp.mp4",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462888356549586944/",
+      "videoFormat": "9:16",
+      "hook": "why-B-is-a-trap",
+      "status": "posted",
+      "scheduledTime": "2026-05-20T16:30:00.000Z",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "examFocus": "PMP",
+      "grade": "D",
+      "outlierScore": 67,
+      "outlierPattern": null,
+      "channelAccount": "personal",
+      "id": "li-wed-2026-05-13-trap",
+      "gradeNotes": "Regraded on long-tail metrics: 98 impressions is still below the LI <200 floor, so reach is the headline problem — and notably WORSE than Friday's domain post (222 imps) despite a catchier trap hook. That's an inversion of the hook-strength prediction: long-tail distribution is driven by sustained engagement signals, not opener wit, and a flat-engagement Wed video gets no compounding lift. Engagement rate 0% (0/98) fails the 2% good floor; link click rate 1.02% (1/98) just barely clears 1% good; video view rate 16.3% (16/98) fails the 30% good floor. The buried positive signal: 16s avg watch time on 16 views means viewers who started the video mostly finished it — the creative holds attention once a scroll stops, the thumbnail just isn't earning the stop. Trial attribution unknown — Week 1 UTMs were mis-tagged with `mon_launch` across all 3 LI posts (wed_tutor / fri_domains both collapsed into mon_launch in GA4), so per-post conversion is unrecoverable for Week 1. Outlier 67% of channel 7-day avg (146.3) — neither winner nor loser.",
+      "postedAt": "2026-05-22T00:12:54.273Z",
+      "metrics": {
+        "impressions": 98,
+        "membersReached": 18,
+        "videoViews": 16,
+        "watchTimeSeconds": 261,
+        "avgWatchTimeSeconds": 16,
+        "socialEngagements": 0,
+        "reactions": 0,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "saves": 0,
+        "sends": 0,
+        "linkClicks": 1,
+        "profileViewers": 0,
+        "followersGained": 0,
+        "trialSignupsAttributed": null,
+        "engagementRatePct": 0,
+        "linkClickRatePct": 1.02,
+        "videoViewRatePct": 16.33,
+        "gradedAt": "2026-05-27T00:00:00.000Z",
+        "utmAttributionNote": "Week 1 UTMs mis-tagged — utm_content=mon_launch used across all 3 LI Week 1 posts; per-post GA4 attribution collapsed and unrecoverable."
+      },
+      "recommendations": "Open the video on a single concrete trap frame — show a 4-option question with one wrong answer highlighted in red and the word 'PLAUSIBLE' across it — within the first 1.5s. The 16s avg watch proves the content holds once viewers commit; the 16.3% view rate proves the thumbnail isn't earning the commit. Fix the cold-open, not the copy."
+    },
+    {
+      "postedAt": "2026-05-22T00:13:59.370Z",
+      "metrics": {
+        "audienceRetentionPct": 0,
+        "profileVisits": 0,
+        "videoUniqueViews": 1,
+        "impressions": 2,
+        "membersReached": 0,
+        "detailExpands": 1,
+        "gradedAt": "2026-05-22T16:34:46.510Z",
+        "trialSignupsAttributed": 0,
+        "videoViewRatePct": 100,
+        "linkClickRatePct": 0,
+        "engagementRatePct": 0,
+        "engagementActions": 0,
+        "linkClicks": 0,
+        "videoViews": 2,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0
+      },
+      "grade": "C",
+      "id": "x-wed-2026-05-13-trap",
+      "channelAccount": "personal",
+      "gradeNotes": "With only 2 impressions and 0 members reached, this post essentially didn't leave the launch pad — the metrics reflect a distribution failure, not a creative failure. The copy itself is sharp: the 'wrong answers look right' hook is a genuine insight that differentiates CipherExam from commodity drill-and-kill prep. Video view rate hit 100% but on a sample of 1 unique viewer, so that number is statistically meaningless. Zero engagement actions, zero link clicks, and zero attributed trials confirm the audience simply wasn't there to respond.",
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "scheduledTime": "2026-05-20T17:30:00.000Z",
+      "videoFormat": "9:16",
+      "hook": "why-B-is-a-trap",
+      "status": "posted",
+      "scheduled": "2026-05-20",
+      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
+      "recommendations": "Before optimizing copy or creative, fix distribution — boost this exact post with $20–50 in paid spend targeting PMP exam takers, or repost it from an account with an established follower base, to get at least 500 impressions before drawing any performance conclusions.",
+      "channel": "x",
+      "postUrl": "https://x.com/QuillmanDavid/status/2057128902842307041",
+      "video": "ai-tutor-demo-pmp.mp4",
+      "scheduledTimeLocal": "2026-05-20 11:30 MT"
+    },
+    {
+      "examFocus": "PMP",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
+      "metrics": {
+        "impressions": 238,
+        "membersReached": 105,
+        "videoViews": 63,
+        "watchTimeSeconds": 804,
+        "avgWatchTimeSeconds": 12,
+        "socialEngagements": 0,
+        "reactions": 0,
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "saves": 0,
+        "sends": 0,
+        "linkClicks": 1,
+        "profileViewers": 1,
+        "followersGained": 1,
+        "trialSignupsAttributed": 0,
+        "engagementRatePct": 0,
+        "linkClickRatePct": 0.45,
+        "videoViewRatePct": 28.38,
+        "gradedAt": "2026-05-27T00:00:00.000Z"
+      },
+      "postedAt": "2026-05-22T16:00:40.075Z",
+      "gradeNotes": "Regraded on updated metrics: 222 impressions clears the <200 LI floor, so the rubric now grades on substance instead of distribution. Engagement rate is 0% (0 reactions/comments/reposts/saves/sends across 222 impressions) — well below the 2% 'good' floor. Link click rate is 0.45% (1 click) — below the 1% 'good' floor. Both rates fail → D earned on substance. Video view rate 28.4% (63/222) still just under the 30% 'good' threshold, and 12s avg watch time on a launch-teaser video means viewers tapped out before the hook landed. Outlier score ~243% of the channel 7-day avg (91.5) — reach recovered via long-tail algorithmic distribution, but with zero engagement that's just the channel average moving up, not a winner pattern. The post got seen and nobody cared.",
+      "grade": "D",
+      "outlierScore": 243,
+      "outlierPattern": null,
+      "channelAccount": "personal",
+      "id": "li-fri-2026-05-15-domains",
+      "video": "domain-weights-pmp.mp4",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7463574409774084096/",
+      "scheduled": "2026-05-22",
+      "recommendations": "Reach is no longer the bottleneck — engagement is. Next domain-weights post: cut the explainer paragraph and lead with the closing question itself ('PMPs — which domain tripped you up hardest, Process, People, or Business Environment?') as line one. Force the reply before the pitch. The current opener buries the only thing that could earn a comment.",
+      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\nPMPs — which domain tripped you up hardest? Process, People, or Business Environment? Curious where most people get stuck.\n\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
+      "channel": "linkedin",
+      "scheduledTimeLocal": "2026-05-22 10:30 MT",
+      "scheduledTime": "2026-05-22T16:30:00.000Z",
+      "hook": "domain-weights",
+      "status": "posted",
+      "videoFormat": "1:1"
+    },
+    {
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
+      "examFocus": "PMP",
+      "grade": "D",
+      "channelAccount": "personal",
+      "id": "x-fri-2026-05-15-domains",
+      "gradeNotes": "With only 2 impressions, this post essentially wasn't seen by anyone, making all engagement metrics meaningless for creative evaluation — the D grade reflects near-zero distribution, not necessarily a content failure. The 200% video view rate (4 views on 2 impressions) and the 1 follow gained are the only bright spots, suggesting the video format has some pull when it does reach people. Zero link clicks and zero replies indicate the CTA and question prompt had no opportunity to convert given the reach problem. This post needs an audience before it can be graded on persuasion.",
+      "postedAt": "2026-05-22T16:01:53.248Z",
+      "metrics": {
+        "avgWatchTimeSeconds": 11,
+        "linkClicks": 0,
+        "replies": 0,
+        "reposts": 0,
+        "videoViews": 4,
+        "followsGained": 1,
+        "likes": 0,
+        "engagementRatePct": 0,
+        "bookmarks": 0,
+        "trialSignupsAttributed": 0,
+        "linkClickRatePct": 0,
+        "videoViewRatePct": 200,
+        "gradedAt": "2026-05-25T23:54:22.996Z",
+        "impressions": 2,
+        "profileVisits": 1
+      },
+      "scheduledTimeLocal": "2026-05-22 11:30 MT",
+      "scheduled": "2026-05-22",
+      "recommendations": "Prioritize seeding this content to a small targeted PMP study community or reply thread before publishing standalone to dramatically increase baseline impressions above single digits.",
+      "channel": "x",
+      "copy": "Process is 50% of the PMP exam.\n\nMost candidates split study time evenly across all 3 domains.\n\nCipherExam routes adaptively to your weakest.\n\nWhich domain tripped YOU up hardest?\n\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
+      "video": "domain-weights-pmp.mp4",
+      "postUrl": "https://x.com/QuillmanDavid/status/2057802657029562464",
+      "videoFormat": "1:1",
+      "hook": "domain-weights",
+      "status": "posted",
+      "scheduledTime": "2026-05-22T17:30:00.000Z"
+    },
+    {
+      "id": "li-wed-2026-05-27-bridge",
+      "scheduled": "2026-05-27",
+      "scheduledTime": "2026-05-27T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-27 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "posted",
-      "examFocus": "PMP",
+      "examFocus": "Security+",
       "hook": "tool-builder",
-      "video": "launch-teaser-pmp.mp4",
+      "video": "launch-teaser-secplus.mp4",
       "videoFormat": "1:1",
-      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": "2026-05-18T16:30:00.000Z",
-      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "CompTIA is flipping Security+ from SY0-701 to SY0-801 around October.\n\nIf you're studying now, you've probably already heard the question: do I rush to test on 701, or restart on 801?\n\nWrong question.\n\nMost prep tools train you to memorize the version-specific answer key. When the objectives shift, the question bank goes stale and you re-buy the tool.\n\nI built CipherExam differently. The product teaches the *reasoning* CompTIA tests — the Security Triad applied to scenarios, the troubleshooting model, the way they construct distractors. That reasoning survives the version change. Same engine on 701 today. Same engine on 801 when it drops.\n\nMarkus Kopko, PMI AI Standards Core Team Member, put it this way during beta: \"What you have built is differentiated by the coaching lens approach, the exam-specific reasoning frameworks, and the feedback loop you ran with real testers.\"\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=wed_bridge",
+      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
+      "postedAt": "2026-05-27T16:30:00.000Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7465378855944458240/",
+      "postedAtNote": "Backfilled 2026-05-28 — postUrl had been set, status was still 'scheduled'. Actual posting time approximated to scheduledTime; correct if real posted time is known.",
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
       "recommendations": null
     },
     {
-      "id": "x-mon-2026-05-11-launch",
-      "scheduled": "2026-05-18",
-      "scheduledTime": "2026-05-18T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-18 11:30 MT",
+      "id": "x-wed-2026-05-27-bridge",
+      "scheduled": "2026-05-27",
+      "scheduledTime": "2026-05-27T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-27 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
       "channelHandle": "@QuillmanDavid",
-      "status": "posted",
-      "examFocus": "PMP",
+      "status": "skipped",
+      "skippedReason": "1+ day stale at 2026-05-28. Tool-builder hook recyclable for a later week. Decision per board todo #3 — clear drift; the LinkedIn variant already shipped its version of the hook so re-posting on X would just dilute the same beat.",
+      "skippedAt": "2026-05-28T17:30:00.000Z",
+      "examFocus": "Security+",
       "hook": "tool-builder",
-      "video": "launch-teaser-pmp.mp4",
-      "videoFormat": "1:1",
-      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": "2026-05-18T17:30:00.000Z",
-      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
+      "video": "launch-teaser-secplus.mp4",
+      "videoFormat": "9:16",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "CompTIA flips Security+ to SY0-801 this October.\n\nMost prep tools go stale at the flip. Question banks shift, you re-buy.\n\nCipherExam teaches CompTIA's reasoning — works on 701 today and 801 when it drops.\n\n7-day free trial: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=wed_bridge\n\n#SecurityPlus",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=wed_bridge",
+      "postingNote": "Reply into 3-5 active Sec+ / r/CompTIA-adjacent threads on X BEFORE posting this standalone — Week 1 X lesson (cold-start account needs warm signal).",
+      "postedAt": null,
+      "postUrl": null,
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
       "recommendations": null
     },
     {
-      "id": "li-wed-2026-05-13-trap",
-      "scheduled": "2026-05-20",
-      "scheduledTime": "2026-05-20T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-20 10:30 MT",
+      "id": "li-fri-2026-05-29-scenario",
+      "scheduled": "2026-05-29",
+      "scheduledTime": "2026-05-29T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-29 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "scheduled",
-      "examFocus": "PMP",
-      "hook": "why-B-is-a-trap",
-      "video": "ai-tutor-demo-pmp.mp4",
-      "videoFormat": "9:16",
-      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "examFocus": "Security+",
+      "hook": "worked-question",
+      "video": "ai-tutor-demo-secplus.mp4",
+      "videoFormat": "1:1",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaStatus": "candidates-ready",
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Quick Security+ scenario.\n\nA junior admin emails you: \"Production database server's been compromised. I'm isolating it from the network now — should I also shut it down?\"\n\nThe instinct answer is yes. Pull the plug, contain the threat.\n\nMost Sec+ prep tools mark \"shut down\" as correct because it sounds like containment.\n\nThe exam doesn't.\n\nCompTIA writes this scenario to test whether you understand that shutting down a live system destroys volatile memory — running processes, network connections, decryption keys — which is exactly what an incident responder needs to capture first. Availability is one leg of the CIA triad, but so is the integrity of forensic evidence.\n\nThe right answer under exam reasoning: isolate, image, then power off. Order matters.\n\nCipherExam walks through every question this way. Not just which option is right, but why the obvious-but-wrong options were written to bait you.\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=fri_scenario",
+      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1233,19 +1505,25 @@ details[open] summary::before { transform: rotate(90deg); }
       "recommendations": null
     },
     {
-      "id": "x-wed-2026-05-13-trap",
-      "scheduled": "2026-05-20",
-      "scheduledTime": "2026-05-20T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-20 11:30 MT",
+      "id": "x-fri-2026-05-29-scenario",
+      "scheduled": "2026-05-29",
+      "scheduledTime": "2026-05-29T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-05-29 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
+      "channelHandle": "@QuillmanDavid",
       "status": "scheduled",
-      "examFocus": "PMP",
-      "hook": "why-B-is-a-trap",
-      "video": "ai-tutor-demo-pmp.mp4",
+      "examFocus": "Security+",
+      "hook": "worked-question",
+      "video": "ai-tutor-demo-secplus.mp4",
       "videoFormat": "9:16",
-      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Sec+ scenario.\n\nCompromised prod DB. Isolate AND shut down?\n\nCompTIA says no — shutdown wipes volatile memory (processes, keys) forensics needs.\n\nIsolate. Image. Power off.\n\nReasoning, not just answers: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=fri_scenario\n\n#SecurityPlus",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=fri_scenario",
+      "postingNote": "Reply into 3-5 active Sec+ threads on X BEFORE posting this standalone — Week 1 X lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1254,19 +1532,25 @@ details[open] summary::before { transform: rotate(90deg); }
       "recommendations": null
     },
     {
-      "id": "li-fri-2026-05-15-domains",
-      "scheduled": "2026-05-22",
-      "scheduledTime": "2026-05-22T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-22 10:30 MT",
+      "id": "li-mon-2026-06-01-domains",
+      "scheduled": "2026-06-01",
+      "scheduledTime": "2026-06-01T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-06-01 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "status": "scheduled",
-      "examFocus": "PMP",
+      "examFocus": "Security+",
       "hook": "domain-weights",
-      "video": "domain-weights-pmp.mp4",
+      "video": "domain-weights-secplus.mp4",
       "videoFormat": "1:1",
-      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\nPMPs — which domain tripped you up hardest? Process, People, or Business Environment? Curious where most people get stuck.\n\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaStatus": "candidates-ready",
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Security+ domain weighting, by exam percentage:\n\nGeneral Security Concepts — 12%\nThreats, Vulnerabilities, and Mitigations — 22%\nSecurity Architecture — 18%\nSecurity Operations — 28%\nSecurity Program Management and Oversight — 20%\n\nMost candidates study these evenly. Then their practice scores plateau in the low 70s and they can't figure out why.\n\nOperations is over a quarter of the test. Threats is more than a fifth. Together, half the exam is the day-to-day reactive work: IR, monitoring, vulnerability response, patch management. Architecture and Governance get the same study hours but test less.\n\nCipherExam routes you adaptively. If your last 30 questions on Operations were shaky, the next one comes from Operations. Not random. Not the next chapter in the book. Where you're actually weak.\n\nSec+ candidates — which domain has been the hardest for you so far? Curious where most people get stuck.\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=mon_domains",
+      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1275,19 +1559,25 @@ details[open] summary::before { transform: rotate(90deg); }
       "recommendations": null
     },
     {
-      "id": "x-fri-2026-05-15-domains",
-      "scheduled": "2026-05-22",
-      "scheduledTime": "2026-05-22T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-22 11:30 MT",
+      "id": "x-mon-2026-06-01-domains",
+      "scheduled": "2026-06-01",
+      "scheduledTime": "2026-06-01T17:30:00.000Z",
+      "scheduledTimeLocal": "2026-06-01 11:30 MT",
       "channel": "x",
       "channelAccount": "personal",
+      "channelHandle": "@QuillmanDavid",
       "status": "scheduled",
-      "examFocus": "PMP",
+      "examFocus": "Security+",
       "hook": "domain-weights",
-      "video": "domain-weights-pmp.mp4",
+      "video": "domain-weights-secplus.mp4",
       "videoFormat": "1:1",
-      "copy": "Process is 50% of the PMP exam.\n\nMost candidates split study time evenly across all 3 domains.\n\nCipherExam routes adaptively to your weakest.\n\nWhich domain tripped YOU up hardest?\n\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "canvaCandidate": false,
+      "humanizerTellsStripped": 0,
+      "copy": "Security+ domain weights:\n\nOperations 28%\nThreats 22%\nProgram Mgmt 20%\nArchitecture 18%\nConcepts 12%\n\nMost study evenly. Operations + Threats = half the exam.\n\nCipherExam routes to your weakest: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=mon_domains\n\n#SecurityPlus",
+      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=mon_domains",
+      "postingNote": "Reply into 3-5 active Sec+ threads on X BEFORE posting this standalone — Week 1 X lesson.",
       "postedAt": null,
       "postUrl": null,
       "metrics": null,
@@ -1295,9 +1585,32 @@ details[open] summary::before { transform: rotate(90deg); }
       "gradeNotes": null,
       "recommendations": null
     }
-  ]
-}
-;</script>
+  ],
+  "benchmarks": {
+    "x": {
+      "engagementRatePctGoodAtLeast": 1,
+      "videoViewRatePctGreatAtLeast": 30,
+      "linkClickRatePctGreatAtLeast": 1.5,
+      "videoViewRatePctGoodAtLeast": 15,
+      "linkClickRatePctGoodAtLeast": 0.5,
+      "engagementRatePctGreatAtLeast": 3
+    },
+    "linkedin": {
+      "engagementRatePctGreatAtLeast": 5,
+      "videoViewRatePctGoodAtLeast": 30,
+      "linkClickRatePctGoodAtLeast": 1,
+      "linkClickRatePctGreatAtLeast": 2.5,
+      "videoViewRatePctGreatAtLeast": 50,
+      "engagementRatePctGoodAtLeast": 2
+    }
+  },
+  "_meta": {
+    "lastUpdatedBy": "postUrl-fill",
+    "lastUpdatedAt": "2026-05-28T02:18:07.797Z",
+    "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
+    "schemaVersion": 1
+  }
+};</script>
 <!--/INLINE-STATE-->
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
@@ -2241,7 +2554,7 @@ details[open] summary::before { transform: rotate(90deg); }
     }
 
     var posts = data.posts.slice();
-    posts.sort(function(a,b){ return (a.scheduled||'').localeCompare(b.scheduled||''); });
+    posts.sort(function(a,b){ return (b.scheduled||'').localeCompare(a.scheduled||''); }); // newest first
 
     var drafts   = posts.filter(function(p){ return p.status === 'draft' || p.status === 'scheduled'; });
     var awaiting = posts.filter(function(p){ return p.status === 'posted' && !p.grade; });
@@ -2323,21 +2636,33 @@ details[open] summary::before { transform: rotate(90deg); }
 
     var metrics = '';
     if (p.metrics) {
-      var rows = '' +
-        metricRow('Impressions', p.metrics.impressions) +
-        metricRow('Engagements', p.metrics.engagements) +
-        metricRow('Likes', p.metrics.likes) +
-        metricRow('Comments', p.metrics.comments) +
-        metricRow('Shares / Reposts', p.metrics.shares) +
-        metricRow('Profile visits', p.metrics.profileVisits) +
-        metricRow('Link clicks', p.metrics.linkClicks) +
-        metricRow('Trial signups attributed', p.metrics.trialSignupsAttributed);
-      if (p.video || p.metrics.videoViews) {
-        rows += metricRow('Video views', p.metrics.videoViews);
-        if (p.metrics.videoViewRatePct != null) {
-          rows += metricRow('View rate', p.metrics.videoViewRatePct + '%');
-        }
-      }
+      var m = p.metrics;
+      var rows = '';
+      // Discovery
+      rows += metricRow('Impressions', m.impressions);
+      if (m.membersReached != null) rows += metricRow('Members reached', m.membersReached);
+      // Video
+      if (m.videoViews != null) rows += metricRow('Video views', m.videoViews);
+      if (m.watchTimeSeconds != null) rows += metricRow('Total watch time', Math.floor(m.watchTimeSeconds / 60) + 'm ' + (m.watchTimeSeconds % 60) + 's');
+      if (m.avgWatchTimeSeconds != null) rows += metricRow('Avg watch time', m.avgWatchTimeSeconds + 's');
+      // Engagement
+      if (m.socialEngagements != null) rows += metricRow('Social engagements', m.socialEngagements);
+      if (m.reactions != null) rows += metricRow('Reactions', m.reactions);
+      if (m.likes != null) rows += metricRow('Likes', m.likes);
+      if (m.comments != null) rows += metricRow('Comments', m.comments);
+      if (m.replies != null) rows += metricRow('Replies', m.replies);
+      if (m.reposts != null) rows += metricRow('Reposts', m.reposts);
+      if (m.saves != null) rows += metricRow('Saves', m.saves);
+      if (m.sends != null) rows += metricRow('Sends', m.sends);
+      if (m.bookmarks != null) rows += metricRow('Bookmarks', m.bookmarks);
+      if (m.linkClicks != null) rows += metricRow('Link clicks', m.linkClicks);
+      // Profile
+      if (m.profileViewers != null) rows += metricRow('Profile viewers', m.profileViewers);
+      if (m.profileVisits != null) rows += metricRow('Profile visits', m.profileVisits);
+      if (m.followersGained != null) rows += metricRow('Followers gained', m.followersGained);
+      if (m.followsGained != null) rows += metricRow('Follows gained', m.followsGained);
+      // Conversion
+      if (m.trialSignupsAttributed != null) rows += metricRow('Trial signups', m.trialSignupsAttributed);
       metrics = '<table class="metrics-table"><tbody>' + rows + '</tbody></table>';
     }
 
@@ -2354,21 +2679,28 @@ details[open] summary::before { transform: rotate(90deg); }
       ? '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '" style="margin-left:8px;">Grade this post</button>'
       : '';
 
-    return '<div class="post-card ' + statusClass + '">' +
+    var isGraded = !!p.grade;
+    var summaryHead = '<summary>' +
       '<div class="post-head">' +
         '<span class="post-pill channel-' + esc(p.channel || 'other') + '">' + esc(channelLabel) + '</span>' +
         (p.examFocus ? '<span class="post-pill exam">' + esc(p.examFocus) + '</span>' : '') +
         '<span class="post-pill">' + esc(p.status || 'draft') + '</span>' +
         gradePill +
         '<span class="post-meta">' + esc(p.scheduled || '') + '</span>' +
+        '<span class="post-toggle">›</span>' +
       '</div>' +
-      '<div class="post-copy">' + esc(p.copy || '') + '</div>' +
-      '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
-      gradeBtn +
-      fields +
-      metrics +
-      gradeBlock +
-    '</div>';
+    '</summary>';
+    return '<details class="post-card ' + statusClass + '"' + (isGraded ? '' : ' open') + '>' +
+      summaryHead +
+      '<div class="post-body">' +
+        '<div class="post-copy">' + esc(p.copy || '') + '</div>' +
+        '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
+        gradeBtn +
+        fields +
+        metrics +
+        gradeBlock +
+      '</div>' +
+    '</details>';
   }
 
   function metricRow(label, val) {
@@ -4645,12 +4977,40 @@ if (document.readyState === 'loading') {
     +     '</div>'
     +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
     +     '<form id="grade-form" class="grade-form">'
-    +       '<label>Impressions / views <input type="number" min="0" name="impressions" required></label>'
-    +       '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
-    +       '<label>Likes / reactions <input type="number" min="0" name="likes" value="0"></label>'
-    +       '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
-    +       '<label>Reposts / reshares <input type="number" min="0" name="reposts" value="0"></label>'
-    +       '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Discovery</div>'
+    +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
+    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section video-field">'
+    +         '<div class="grade-form-section-label">Video</div>'
+    +         '<label>Video views <input type="number" min="0" name="videoViews" value="0"></label>'
+    +         '<label class="li-field">Total watch time (sec) <input type="number" min="0" name="watchTimeSeconds" value="0" placeholder="4m 8s → 248"></label>'
+    +         '<label>Avg watch time (sec) <input type="number" min="0" name="avgWatchTimeSeconds" value="0" placeholder="10s → 10"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Engagement</div>'
+    +         '<label class="li-field">Social engagements <input type="number" min="0" name="socialEngagements" value="0"></label>'
+    +         '<label class="li-field">Reactions <input type="number" min="0" name="reactions" value="0"></label>'
+    +         '<label class="x-field">Likes <input type="number" min="0" name="likes" value="0"></label>'
+    +         '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
+    +         '<label>Reposts <input type="number" min="0" name="reposts" value="0"></label>'
+    +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
+    +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
+    +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
+    +         '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Profile activity</div>'
+    +         '<label class="li-field">Profile viewers from post <input type="number" min="0" name="profileViewers" value="0"></label>'
+    +         '<label class="li-field">Followers gained <input type="number" min="0" name="followersGained" value="0"></label>'
+    +         '<label class="x-field">Profile visits <input type="number" min="0" name="profileVisits" value="0"></label>'
+    +         '<label class="x-field">Follows gained <input type="number" min="0" name="followsGained" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section">'
+    +         '<div class="grade-form-section-label">Conversion</div>'
+    +         '<label>Trial signups attributed <input type="number" min="0" name="trialSignups" value="0"></label>'
+    +       '</div>'
     +       '<div class="grade-form-actions">'
     +         '<button type="submit" class="btn-primary" id="grade-submit-btn">Submit grade</button>'
     +         '<button type="button" class="btn-secondary" data-grade-close>Cancel</button>'
@@ -4679,7 +5039,10 @@ if (document.readyState === 'loading') {
     document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
     document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
     document.getElementById('grade-form-status').textContent = '';
-    document.getElementById('grade-form').reset();
+    var form = document.getElementById('grade-form');
+    form.reset();
+    form.setAttribute('data-channel', post.channel || 'linkedin');
+    if (post.video) { form.setAttribute('data-has-video', ''); } else { form.removeAttribute('data-has-video'); }
     document.getElementById('grade-submit-btn').disabled = false;
     document.getElementById('grade-submit-btn').textContent = 'Submit grade';
     modal.classList.add('open');
@@ -4701,18 +5064,41 @@ if (document.readyState === 'loading') {
     var statusEl = document.getElementById('grade-form-status');
     var btn = document.getElementById('grade-submit-btn');
     var fd = new FormData(form);
-    var likes    = Number(fd.get('likes') || 0);
-    var comments = Number(fd.get('comments') || 0);
-    var reposts  = Number(fd.get('reposts') || 0);
-    var metrics = {
-      impressions:            Number(fd.get('impressions') || 0),
-      linkClicks:             Number(fd.get('linkClicks') || 0),
-      likes:                  likes,
-      comments:               comments,
-      reposts:                reposts,
-      engagementActions:      likes + comments + reposts,
-      trialSignupsAttributed: Number(fd.get('trialSignups') || 0),
-    };
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var post  = posts.find(function (p) { return p.id === currentPostId; });
+    var channel = (post && post.channel) || 'linkedin';
+    var hasVideo = !!(post && post.video);
+    var metrics = { impressions: Number(fd.get('impressions') || 0) };
+    if (channel === 'linkedin') {
+      metrics.membersReached       = Number(fd.get('membersReached') || 0);
+      metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
+      metrics.reactions            = Number(fd.get('reactions') || 0);
+      metrics.comments             = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.saves                = Number(fd.get('saves') || 0);
+      metrics.sends                = Number(fd.get('sends') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
+      metrics.followersGained      = Number(fd.get('followersGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    } else {
+      metrics.likes                = Number(fd.get('likes') || 0);
+      metrics.replies              = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.bookmarks            = Number(fd.get('bookmarks') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.profileVisits        = Number(fd.get('profileVisits') || 0);
+      metrics.followsGained        = Number(fd.get('followsGained') || 0);
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
+    }
+    metrics.trialSignupsAttributed = Number(fd.get('trialSignups') || 0);
     statusEl.textContent = 'Brad is grading…';
     statusEl.className = 'grade-form-status';
     btn.disabled = true;
