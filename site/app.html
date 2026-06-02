@@ -1701,6 +1701,33 @@ function cipherShow(route) {
   <!-- 5. Week strip -->
   <div class="week-strip" id="week-strip"></div>
 
+  <!-- Reports hub — every report reachable from the command center -->
+  <div class="card" style="margin-bottom:18px;">
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <h2 style="margin:0;font-size:1rem;">Reports</h2>
+      <span style="color:var(--dim);font-size:0.82rem;">Every report, one place.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;">
+      <a href="#" onclick="cipherShow('competitors');return false;" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
+        <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Competitor Intel</span>
+        <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">Landscape · Pocket Prep deep dive · battlecard</span>
+      </a>
+      <a href="funnel.html" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
+        <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Funnel Diagnostic</span>
+        <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">5-arrow funnel + auto-bottleneck detection</span>
+      </a>
+      <a href="sprint.html" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
+        <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Activation Sprint</span>
+        <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">Manual sprint tracker — candidates &amp; Day-2 returns</span>
+      </a>
+      <a href="#" onclick="cipherShow('posts');return false;" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
+        <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Post Performance</span>
+        <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">Per-post grades &amp; metrics on the Posts tab</span>
+      </a>
+    </div>
+    <p style="color:var(--muted);font-size:0.78rem;font-style:italic;margin:10px 0 0;">Weekly performance report is generated on request — ask Brad "weekly performance report" and it pulls live from posts.json + campaign-state.json.</p>
+  </div>
+
   <!-- 2. Today's tasks -->
   <h2 style="margin-top:0;">Today's tasks</h2>
   <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Active-week tasks come from 00-campaign-brief.md §3. Pre-launch checklist comes from <code>data/campaign-state.json → preLaunchChecklist</code> (status set by Brad; source list mirrors 06-engineering-handoff.md §7). Items marked <em>done</em> or <em>N/A</em> are server-driven — local checkboxes can't override them.</p>
@@ -1860,6 +1887,9 @@ function cipherShow(route) {
     <a href="#" onclick="cipherShow('landing');return false;"><span class="qlabel">Landing pages</span><span class="qdesc">3 LP drafts (PMP / Sec+ / SHRM-CP)</span></a>
     <a href="#" onclick="cipherShow('engineering');return false;"><span class="qlabel">Engineering</span><span class="qdesc">Handoff + pre-launch checklist</span></a>
     <a href="#" onclick="cipherShow('voice');return false;"><span class="qlabel">Voice</span><span class="qdesc">Brand voice review</span></a>
+    <a href="#" onclick="cipherShow('competitors');return false;"><span class="qlabel">Competitor Intel</span><span class="qdesc">Landscape · deep dive · battlecard (live)</span></a>
+    <a href="funnel.html"><span class="qlabel">Funnel</span><span class="qdesc">5-arrow funnel + bottleneck detection</span></a>
+    <a href="sprint.html"><span class="qlabel">Sprint</span><span class="qdesc">Activation sprint tracker</span></a>
   </div>
 
 
@@ -3979,81 +4009,55 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
 
   <style>
-  .agent-launcher {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-  .agent-card {
+  .ci-report-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+  details.ci-report {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 18px 18px 14px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .agent-card.primary { border-color: rgba(125,211,252,0.4); }
-  .agent-card h3 { margin: 0; font-size: 0.95rem; color: var(--cyan); }
-  .agent-card p { margin: 0; font-size: 0.85rem; color: var(--dim); line-height: 1.45; flex: 1; }
-  .agent-card button.view-btn {
-    width: 100%; padding: 10px 14px; font-size: 0.9rem;
-    background: var(--cyan); color: #001423;
-  }
-  .agent-card:not(.primary) button.view-btn {
-    background: var(--surface-2); color: var(--dim);
-    border: 1px solid var(--border);
-  }
-  .agent-card:not(.primary) button.view-btn:hover {
-    background: var(--surface); color: var(--text);
-    border-color: var(--cyan); filter: none;
-  }
-  button.view-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
-
-  #ci-results {
-    display: none;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 24px;
     overflow: hidden;
   }
-  #ci-results-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px;
+  details.ci-report[open] { border-color: rgba(125,211,252,0.4); }
+  details.ci-report > summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 14px 18px;
     background: var(--surface-2);
-    border-bottom: 1px solid var(--border);
-  }
-  #ci-results-title {
     font-family: 'Satoshi', system-ui, sans-serif;
-    font-weight: 700; font-size: 0.85rem;
-    color: var(--cyan);
   }
-  #ci-results-meta { font-size: 0.75rem; color: var(--dim); }
-  #ci-results-head button {
-    background: none; border: 1px solid var(--border);
-    color: var(--muted); font-size: 0.78rem; padding: 3px 8px; border-radius: 5px;
+  details.ci-report > summary::-webkit-details-marker { display: none; }
+  details.ci-report > summary::before {
+    content: '▸'; color: var(--cyan); font-size: 0.9rem;
+    transition: transform 0.15s ease;
   }
-  #ci-results-head button:hover { color: var(--text); border-color: var(--cyan); filter: none; }
-  #ci-results-body {
+  details.ci-report[open] > summary::before { transform: rotate(90deg); }
+  .ci-rep-name { font-weight: 700; font-size: 0.95rem; color: var(--cyan); }
+  .ci-rep-tag { font-size: 0.78rem; color: var(--dim); }
+  .ci-rep-meta { margin-left: auto; font-size: 0.74rem; color: var(--muted); }
+  .ci-report-body {
     padding: 18px 20px;
     font-size: 0.92rem; line-height: 1.65; color: var(--text);
-    min-height: 60px;
+    min-height: 40px;
   }
-  #ci-results-body h2 {
+  .ci-report-body h2 {
     font-size: 1.15rem; color: var(--cyan);
     border-bottom: 1px solid var(--border);
     padding-bottom: 6px; margin: 1.4em 0 0.6em;
   }
-  #ci-results-body h2:first-child { margin-top: 0; }
-  #ci-results-body h3 { font-size: 1rem; color: var(--purple); margin: 1.2em 0 0.4em; }
-  #ci-results-body hr { border: none; border-top: 1px solid var(--border); margin: 1.4em 0; }
-  #ci-results-body ul { padding-left: 1.3em; margin: 0.4em 0 0.8em; }
-  #ci-results-body li { margin-bottom: 0.3em; }
-  #ci-results-body blockquote {
+  .ci-report-body h2:first-child { margin-top: 0; }
+  .ci-report-body h3 { font-size: 1rem; color: var(--purple); margin: 1.2em 0 0.4em; }
+  .ci-report-body hr { border: none; border-top: 1px solid var(--border); margin: 1.4em 0; }
+  .ci-report-body ul { padding-left: 1.3em; margin: 0.4em 0 0.8em; }
+  .ci-report-body li { margin-bottom: 0.3em; }
+  .ci-report-body blockquote {
     border-left: 3px solid var(--cyan); background: var(--surface-2);
     margin: 0.8em 0; padding: 8px 14px; border-radius: 0 6px 6px 0;
     color: var(--text); font-style: italic;
   }
+  .ci-refresh-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    font-size: 0.74rem; padding: 2px 8px; border-radius: 5px; margin-left: 6px;
+  }
+  .ci-refresh-btn:hover { color: var(--text); border-color: var(--cyan); filter: none; }
   .ci-spinner {
     display: inline-block; width: 14px; height: 14px;
     border: 2px solid var(--border); border-top-color: var(--cyan);
@@ -4064,37 +4068,35 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   </style>
 
   <div class="hero">
-    <h1>Competitors</h1>
-    <p class="sub">Generated by Brad on the 1st of each month. <span id="ci-last-generated" style="color:var(--dim)"></span></p>
+    <h1>Competitor Intel</h1>
+    <p class="sub">Refreshed by Brad on the 1st of each month. All three reports load below. <span id="ci-last-generated" style="color:var(--dim)"></span><button type="button" class="ci-refresh-btn" onclick="loadAllReports(true)">↻ Reload</button></p>
   </div>
 
-  <div class="agent-launcher">
-    <div class="agent-card primary">
-      <h3>Full Landscape Scan</h3>
-      <p>Top 5 competitors ranked by threat level. Ranked list + 3 positioning moves to act on this week.</p>
-      <button class="view-btn" id="btn-landscape" onclick="showReport('landscape', 'Full Landscape Scan', this)">View report</button>
-    </div>
-    <div class="agent-card">
-      <h3>Deep Dive: Pocket Prep</h3>
-      <p>3 weaknesses to exploit + a post hook you can use this week.</p>
-      <button class="view-btn" id="btn-deepdive" onclick="showReport('deepdive', 'Deep Dive: Pocket Prep', this)">View deep dive</button>
-    </div>
-    <div class="agent-card">
-      <h3>Positioning Battlecard</h3>
-      <p>3-point battlecard vs. the memorization-loop category + a category-creation angle.</p>
-      <button class="view-btn" id="btn-battlecard" onclick="showReport('battlecard', 'Positioning Battlecard', this)">View battlecard</button>
-    </div>
-  </div>
-
-  <div id="ci-results">
-    <div id="ci-results-head">
-      <div>
-        <span id="ci-results-title">Report</span>
-        <span id="ci-results-meta"></span>
-      </div>
-      <button onclick="document.getElementById('ci-results').style.display='none'">Close</button>
-    </div>
-    <div id="ci-results-body"></div>
+  <div class="ci-report-grid">
+    <details class="ci-report" id="rep-landscape" open>
+      <summary>
+        <span class="ci-rep-name">Full Landscape Scan</span>
+        <span class="ci-rep-tag">Top-5 threats ranked + 3 positioning moves</span>
+        <span class="ci-rep-meta" data-meta></span>
+      </summary>
+      <div class="ci-report-body" data-body><span class="ci-spinner"></span>Loading…</div>
+    </details>
+    <details class="ci-report" id="rep-deepdive">
+      <summary>
+        <span class="ci-rep-name">Deep Dive: Pocket Prep</span>
+        <span class="ci-rep-tag">Weaknesses to exploit + a post hook</span>
+        <span class="ci-rep-meta" data-meta></span>
+      </summary>
+      <div class="ci-report-body" data-body><span class="ci-spinner"></span>Loading…</div>
+    </details>
+    <details class="ci-report" id="rep-battlecard">
+      <summary>
+        <span class="ci-rep-name">Positioning Battlecard</span>
+        <span class="ci-rep-tag">3-point + category-creation angle</span>
+        <span class="ci-rep-meta" data-meta></span>
+      </summary>
+      <div class="ci-report-body" data-body><span class="ci-spinner"></span>Loading…</div>
+    </details>
   </div>
 
   <hr>
@@ -4145,27 +4147,28 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
     return cache[docId];
   }
 
-  async function showReport(docId, label, btn) {
-    var panel   = document.getElementById('ci-results');
-    var body    = document.getElementById('ci-results-body');
-    var titleEl = document.getElementById('ci-results-title');
-    var metaEl  = document.getElementById('ci-results-meta');
+  var REPORTS = ['landscape', 'deepdive', 'battlecard'];
 
-    titleEl.innerHTML = '<span class="ci-spinner"></span>' + label;
-    metaEl.textContent = '';
-    body.innerHTML = '';
-    panel.style.display = 'block';
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    try {
-      var doc = await fetchDoc(docId);
-      titleEl.textContent = label;
-      metaEl.textContent = ' — ' + fmtDate(doc.generated_at);
-      body.innerHTML = mdToHtml(doc.content);
-    } catch(e) {
-      body.innerHTML = '<p style="color:var(--bad)">Failed to load: ' + e.message + '</p>';
-      titleEl.textContent = label;
-    }
+  function loadAllReports(force) {
+    if (force) { cache = {}; }
+    REPORTS.forEach(function (docId) {
+      var det  = document.getElementById('rep-' + docId);
+      if (!det) return;
+      var body = det.querySelector('[data-body]');
+      var meta = det.querySelector('[data-meta]');
+      body.innerHTML = '<span class="ci-spinner"></span>Loading…';
+      meta.textContent = '';
+      fetchDoc(docId).then(function (doc) {
+        body.innerHTML = mdToHtml(doc.content);
+        meta.textContent = fmtDate(doc.generated_at);
+        if (docId === 'landscape') {
+          var el = document.getElementById('ci-last-generated');
+          if (el) el.textContent = 'Last updated ' + fmtDate(doc.generated_at) + '. ';
+        }
+      }).catch(function (e) {
+        body.innerHTML = '<p style="color:var(--bad)">Failed to load: ' + e.message + '</p>';
+      });
+    });
   }
 
   function mdToHtml(text) {
@@ -4202,11 +4205,8 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
             .replace(/`(.+?)`/g, '<code>$1</code>');
   }
 
-  // Show last-generated date in subtitle on load
-  fetchDoc('landscape').then(function(doc) {
-    var el = document.getElementById('ci-last-generated');
-    if (el) el.textContent = 'Last updated ' + fmtDate(doc.generated_at) + '.';
-  }).catch(function(){});
+  // Auto-load all three reports inline on first render.
+  loadAllReports();
   </script>
 
 

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-05-28T21:00:00.000Z",
+    "lastUpdatedAt": "2026-06-01T16:14:52.605Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -331,6 +331,10 @@
     }
   ],
   "dailyLog": [
+    {
+      "date": "2026-06-01",
+      "entry": "Competitor intel refreshed (monthly automated run). Rewrote all three competitor_intel docs in Firestore — battlecard (loop-vs-lens 3-point + 'exam reasoning trainer' category angle + 3 ad hooks), Pocket Prep deepdive (explanation-ceiling wedge + 'dissect the trap' organic play), landscape (top-5 ranked; Brain Sensei elevated to a PMP-specific HIGH threat alongside Pocket Prep; SHRM-CP flagged as least-contested reasoning cluster). Recurring action across all three: standardize a reusable 'reasoning trainer vs. [their format]' comparison block on the 3 Tier-1 LPs. Live gap surfaced: SHRM-CP lead-magnet PDF still 404s and is blocking that funnel."
+    },
     {
       "date": "2026-05-28",
       "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
