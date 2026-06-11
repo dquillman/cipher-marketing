@@ -1,9 +1,9 @@
 {
   "name": "cipher-marketing",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
-  "description": "Marketing campaign for CipherExam (cipherexam.com) — strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
+  "description": "Marketing campaign for CipherExam (cipherexam.com) â€” strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
   "scripts": {
     "serve": "node serve.mjs",
     "serve:lan": "cross-env-shell HOST=0.0.0.0 node serve.mjs",
