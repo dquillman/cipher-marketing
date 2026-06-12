@@ -716,9 +716,16 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-form-section { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .grade-form-section:last-of-type { border-bottom: none; }
 .grade-form-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: #4a5270; font-weight: 600; margin-bottom: 2px; }
-/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal() */
+/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal().
+   li-field = LinkedIn-only, x-field = X-only, ro-field = Reddit-organic-only,
+   ra-field = Reddit-Ads-only, imp-field/not-ro = hidden for Reddit organic
+   (organic Reddit exposes no impressions and value posts carry no links). */
 #grade-form:not([data-channel="linkedin"]) .li-field { display: none; }
 #grade-form:not([data-channel="x"]) .x-field { display: none; }
+#grade-form:not([data-channel="reddit-organic"]) .ro-field { display: none; }
+#grade-form:not([data-channel="reddit-ads"]) .ra-field { display: none; }
+#grade-form[data-channel="reddit-organic"] .imp-field,
+#grade-form[data-channel="reddit-organic"] .not-ro { display: none; }
 #grade-form:not([data-has-video]) .video-field { display: none; }
 /* Scrollable modal body when many fields visible */
 .grade-modal-body { max-height: 88vh; overflow-y: auto; }

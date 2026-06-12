@@ -732,9 +732,16 @@ details[open] summary::before { transform: rotate(90deg); }
 .grade-form-section { display: grid; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .grade-form-section:last-of-type { border-bottom: none; }
 .grade-form-section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: #4a5270; font-weight: 600; margin-bottom: 2px; }
-/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal() */
+/* Channel-aware field visibility — set data-channel + data-has-video on the form in openModal().
+   li-field = LinkedIn-only, x-field = X-only, ro-field = Reddit-organic-only,
+   ra-field = Reddit-Ads-only, imp-field/not-ro = hidden for Reddit organic
+   (organic Reddit exposes no impressions and value posts carry no links). */
 #grade-form:not([data-channel="linkedin"]) .li-field { display: none; }
 #grade-form:not([data-channel="x"]) .x-field { display: none; }
+#grade-form:not([data-channel="reddit-organic"]) .ro-field { display: none; }
+#grade-form:not([data-channel="reddit-ads"]) .ra-field { display: none; }
+#grade-form[data-channel="reddit-organic"] .imp-field,
+#grade-form[data-channel="reddit-organic"] .not-ro { display: none; }
 #grade-form:not([data-has-video]) .video-field { display: none; }
 /* Scrollable modal body when many fields visible */
 .grade-modal-body { max-height: 88vh; overflow-y: auto; }
@@ -2169,10 +2176,16 @@ if (document.readyState === 'loading') {
     +     '</div>'
     +     '<p class="grade-modal-sub" id="grade-modal-sub"></p>'
     +     '<form id="grade-form" class="grade-form">'
-    +       '<div class="grade-form-section">'
+    +       '<div class="grade-form-section imp-field">'
     +         '<div class="grade-form-section-label">Discovery</div>'
     +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
     +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section ro-field">'
+    +         '<div class="grade-form-section-label">Reddit post</div>'
+    +         '<label>Upvotes <input type="number" min="0" name="upvotes" value="0"></label>'
+    +         '<label>Upvote ratio (0–1) <input type="number" min="0" max="1" step="0.01" name="upvoteRatio" placeholder="e.g. 0.92 — leave blank if unknown"></label>'
+    +         '<label style="grid-template-columns:auto 1fr;align-items:center;">Auto-removed by mods? <input type="checkbox" name="autoRemoved" style="width:16px;height:16px;justify-self:start;"></label>'
     +       '</div>'
     +       '<div class="grade-form-section video-field">'
     +         '<div class="grade-form-section-label">Video</div>'
@@ -2186,11 +2199,15 @@ if (document.readyState === 'loading') {
     +         '<label class="li-field">Reactions <input type="number" min="0" name="reactions" value="0"></label>'
     +         '<label class="x-field">Likes <input type="number" min="0" name="likes" value="0"></label>'
     +         '<label>Comments / replies <input type="number" min="0" name="comments" value="0"></label>'
-    +         '<label>Reposts <input type="number" min="0" name="reposts" value="0"></label>'
+    +         '<label class="not-ro">Reposts <input type="number" min="0" name="reposts" value="0"></label>'
     +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
     +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
     +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
-    +         '<label>Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +         '<label class="not-ro">Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +       '</div>'
+    +       '<div class="grade-form-section ra-field">'
+    +         '<div class="grade-form-section-label">Ad spend</div>'
+    +         '<label>Total ad spend (USD) <input type="number" min="0" step="0.01" name="totalSpendUsd" value="0" placeholder="used for CPC penalty"></label>'
     +       '</div>'
     +       '<div class="grade-form-section">'
     +         '<div class="grade-form-section-label">Profile activity</div>'
@@ -2229,17 +2246,26 @@ if (document.readyState === 'loading') {
     currentPostId = postId;
     var modal = document.getElementById('grade-modal');
     document.getElementById('grade-modal-title').textContent = 'Grade post — ' + (post.channel || '').toUpperCase() + ' · ' + (post.scheduled || '');
-    document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + (post.channel === 'linkedin' ? 'LinkedIn analytics' : 'X analytics') + '. Brad will grade it and write notes.';
+    var sourceLabel = ({
+      'linkedin':       'LinkedIn analytics',
+      'x':              'X analytics',
+      'reddit-organic': 'the Reddit post (upvotes, comments, upvote ratio from the post page)',
+      'reddit-ads':     'the Reddit Ads dashboard'
+    })[post.channel] || 'the platform\'s analytics';
+    document.getElementById('grade-modal-sub').textContent = 'Enter the metrics from ' + sourceLabel + '. Brad will grade it and write notes.';
     document.getElementById('grade-form-status').textContent = '';
     var form = document.getElementById('grade-form');
     form.reset();
     form.setAttribute('data-channel', post.channel || 'linkedin');
     if (post.video) { form.setAttribute('data-has-video', ''); } else { form.removeAttribute('data-has-video'); }
+    // Reddit organic exposes no impressions — drop the required flag so the form can submit.
+    var impInput = form.querySelector('input[name="impressions"]');
+    if (impInput) impInput.required = (post.channel !== 'reddit-organic');
     document.getElementById('grade-submit-btn').disabled = false;
     document.getElementById('grade-submit-btn').textContent = 'Submit grade';
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
-    var first = modal.querySelector('input[name="impressions"]');
+    var first = modal.querySelector(post.channel === 'reddit-organic' ? 'input[name="upvotes"]' : 'input[name="impressions"]');
     if (first) setTimeout(function () { first.focus(); }, 50);
   }
 
@@ -2260,8 +2286,16 @@ if (document.readyState === 'loading') {
     var post  = posts.find(function (p) { return p.id === currentPostId; });
     var channel = (post && post.channel) || 'linkedin';
     var hasVideo = !!(post && post.video);
-    var metrics = { impressions: Number(fd.get('impressions') || 0) };
-    if (channel === 'linkedin') {
+    var metrics = {};
+    if (channel === 'reddit-organic') {
+      // No impressions on organic Reddit — the API grades on absolute numbers.
+      metrics.upvotes              = Number(fd.get('upvotes') || 0);
+      metrics.comments             = Number(fd.get('comments') || 0);
+      var ratioRaw = fd.get('upvoteRatio');
+      if (ratioRaw !== null && String(ratioRaw).trim() !== '') metrics.upvoteRatio = Number(ratioRaw);
+      metrics.autoRemoved          = fd.get('autoRemoved') === 'on';
+    } else if (channel === 'linkedin') {
+      metrics.impressions          = Number(fd.get('impressions') || 0);
       metrics.membersReached       = Number(fd.get('membersReached') || 0);
       metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
       metrics.reactions            = Number(fd.get('reactions') || 0);
@@ -2272,12 +2306,28 @@ if (document.readyState === 'loading') {
       metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
       metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
       metrics.followersGained      = Number(fd.get('followersGained') || 0);
+      // The grading API reads engagementActions for the engagement-rate component.
+      metrics.engagementActions    = metrics.socialEngagements > 0
+        ? metrics.socialEngagements
+        : metrics.reactions + metrics.comments + metrics.reposts;
       if (hasVideo) {
         metrics.videoViews         = Number(fd.get('videoViews') || 0);
         metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
         metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
       }
+    } else if (channel === 'reddit-ads') {
+      metrics.impressions          = Number(fd.get('impressions') || 0);
+      metrics.comments             = Number(fd.get('comments') || 0);
+      metrics.reposts              = Number(fd.get('reposts') || 0);
+      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
+      metrics.totalSpendUsd        = Number(fd.get('totalSpendUsd') || 0);
+      metrics.engagementActions    = metrics.comments + metrics.reposts;
+      if (hasVideo) {
+        metrics.videoViews         = Number(fd.get('videoViews') || 0);
+        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+      }
     } else {
+      metrics.impressions          = Number(fd.get('impressions') || 0);
       metrics.likes                = Number(fd.get('likes') || 0);
       metrics.replies              = Number(fd.get('comments') || 0);
       metrics.reposts              = Number(fd.get('reposts') || 0);
@@ -2285,6 +2335,7 @@ if (document.readyState === 'loading') {
       metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
       metrics.profileVisits        = Number(fd.get('profileVisits') || 0);
       metrics.followsGained        = Number(fd.get('followsGained') || 0);
+      metrics.engagementActions    = metrics.likes + metrics.replies + metrics.reposts;
       if (hasVideo) {
         metrics.videoViews         = Number(fd.get('videoViews') || 0);
         metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);

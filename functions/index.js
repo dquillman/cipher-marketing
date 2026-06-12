@@ -221,7 +221,15 @@ export const gradePost = onRequest(
       } else {
         // Impression-based: LI, X, reddit-ads
         const impressions       = Number(metrics.impressions || 0);
-        const engagementActions = Number(metrics.engagementActions || 0); // likes+comments+reposts+replies
+        // likes+comments+reposts+replies. Fall back to summing the parts when
+        // the client didn't send the rollup — dashboard builds before v1.5.0
+        // never did, which made every modal-submitted grade compute 0% engagement.
+        const engagementActions = metrics.engagementActions != null
+          ? Number(metrics.engagementActions)
+          : Number(metrics.socialEngagements || 0) ||
+            (Number(metrics.reactions ?? metrics.likes ?? 0) +
+             Number(metrics.comments ?? metrics.replies ?? 0) +
+             Number(metrics.reposts ?? 0));
         const linkClicks        = Number(metrics.linkClicks || 0);
         const videoViews        = Number(metrics.videoViews || 0);
 

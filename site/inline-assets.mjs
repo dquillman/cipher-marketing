@@ -67,7 +67,16 @@ const STATE_KIND = {
 
 // Skip files that already have their own self-contained styles
 // (the legacy single-page rollup uses different class names).
-const SKIP = new Set(["launch-campaign.html"]);
+//
+// app.html is also skipped by default: it is HAND-EDITED and its INLINE-ASSETS
+// blocks carry load-bearing direct edits (verified 2026-06-01: processing it
+// deleted ~838 lines). Use scripts/refresh-inline-state.mjs to refresh only its
+// state block. --force includes it — only for an intentional rebuild.
+const FORCE = process.argv.includes("--force");
+const SKIP = new Set(["launch-campaign.html", ...(FORCE ? [] : ["app.html"])]);
+if (!FORCE) {
+  console.log("note: skipping app.html (hand-edited — processing it deletes direct edits; --force overrides)");
+}
 
 const files = readdirSync(HERE).filter(
   (f) => f.endsWith(".html") && statSync(join(HERE, f)).isFile() && !SKIP.has(f)

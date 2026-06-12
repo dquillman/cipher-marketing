@@ -147,6 +147,31 @@ let out = tpl
   .replace(/<main class="wrap">[\s\S]*?<\/main>/, newMain)
   .replace(/<title>[^<]*<\/title>/, "<title>CipherExam Campaign</title>");
 
+// ---- WIPE GUARD ------------------------------------------------------------
+// app.html is HAND-EDITED and holds load-bearing direct edits that do not
+// exist in the operator pages (Right Now command center, collapsed schedule
+// feed, Reddit grading, hash routing). Rebuilding from the operator pages
+// deletes them — this shipped broken once (commit 4fb1bea wiped 1,569 lines;
+// restored in a91404a / v1.5.0). If the rebuilt output would drop any of the
+// sentinel features still present in the current file, abort unless --force.
+const SENTINELS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp"];
+const FORCE = process.argv.includes("--force");
+let existingApp = "";
+try { existingApp = readFileSync(join(HERE, "app.html"), "utf8"); } catch {}
+const wouldLose = SENTINELS.filter(s => existingApp.includes(s) && !out.includes(s));
+if (wouldLose.length > 0 && !FORCE) {
+  console.error("ABORT: rebuilding app.html would delete hand-made direct edits.");
+  console.error("These features exist in the current app.html but not in the rebuilt output:");
+  console.error("  " + wouldLose.join(", "));
+  console.error("app.html is the deployed dashboard and is edited directly — the operator");
+  console.error("pages lag behind it. Re-run with --force ONLY for an intentional rebuild");
+  console.error("after porting the direct edits into the operator pages.");
+  process.exit(1);
+}
+if (wouldLose.length > 0) {
+  console.warn("WARNING (--force): overwriting app.html and deleting: " + wouldLose.join(", "));
+}
+
 writeFileSync(join(HERE, "app.html"), out);
 console.log("built app.html (" + out.length + " bytes, " + ROUTES.length + " routes)");
 
