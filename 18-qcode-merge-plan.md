@@ -4,6 +4,8 @@
 > **Ask:** "Develop a plan to merge cipher-marketing with qcode — remove all duplicate items."
 > **Recommendation in one line:** Dedup now (done), physically merge **after the Week 4 retro (2026-06-15)** as `qcode/marketing/`, keep both Firebase projects through the merge, and gate any *unified dashboard* work on the board's traction condition.
 
+> **UPDATE 2026-06-12 (same day):** Dave's actual goal was data sharing, which shipped WITHOUT the merge — qcode v2.26.0 (`9eaea652`) reads CipherExam KPIs and competitors from Firestore (`firestore://cipher-marketing-daveq/campaign/state` and `campaign/competitors`) instead of local file paths into this repo. That removes the path coupling that made Phase 2 risky and makes the physical merge pure housekeeping — optional, any time, or never. §3d's "project metadata" row and the registry kpiSource/competitorSource concerns are resolved. `scripts/push-competitors-doc.mjs` mirrors competitors.json → Firestore; the monthly intel task knows to re-run it.
+
 ---
 
 ## 1. What the two repos actually are (verified 2026-06-12)
