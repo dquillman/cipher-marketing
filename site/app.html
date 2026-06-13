@@ -280,6 +280,51 @@ li { margin-bottom: 0.3em; }
   background: var(--border);
   flex-shrink: 0;
 }
+/* Board priorities strip (Today tab) — monthly compass from the codeq board */
+.board-priorities {
+  background: var(--surface);
+  border: 1px solid rgba(167,139,250,0.35);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+}
+.bp-head {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--purple);
+  margin-bottom: 8px;
+}
+.bp-cycle {
+  color: var(--muted);
+  font-weight: 600;
+  margin-left: 6px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.bp-item {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 3px 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.bp-pri {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 0.68rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(167,139,250,0.15);
+  color: #c4b5fd;
+  flex-shrink: 0;
+}
+.bp-pri.p0 { background: rgba(248,113,113,0.15); color: var(--bad); }
+.bp-pri.p1 { background: rgba(251,191,36,0.15); color: var(--warn); }
 .nav-rollup {
   font-size: 0.82rem;
   color: var(--muted);
@@ -1128,7 +1173,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-06-01T16:14:52.605Z",
+    "lastUpdatedAt": "2026-06-13T00:25:16.100Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -1654,7 +1699,34 @@ details[open] summary::before { transform: rotate(90deg); }
       "date": "2026-05-26",
       "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     }
-  ]
+  ],
+  "boardPriorities": {
+    "cycleDate": "2026-06-02",
+    "mirroredAt": "2026-06-13T00:25:16.100Z",
+    "source": "qcode ops-board.json (codeq-board cycle)",
+    "items": [
+      {
+        "priority": "P0",
+        "text": "Start an email list + capture every CipherExam signup into it."
+      },
+      {
+        "priority": "P0",
+        "text": "Concentrate on LinkedIn — right audience (PM/IT/HR/cert); grow from <500, route readers to the email list."
+      },
+      {
+        "priority": "P0",
+        "text": "CipherExam: validate the Grand Slam Offer on 5 real PMP candidates (offer + frames already written → positioning/01-one-pager.md)."
+      },
+      {
+        "priority": "P1",
+        "text": "CipherExam: pick ONE distribution channel (r/PMP, r/CompTIA…) and run it 30 days."
+      },
+      {
+        "priority": "P1",
+        "text": "Goal: CipherExam's first 10 paying users — make it the visible scoreboard."
+      }
+    ]
+  }
 };</script>
 <script>window.__POSTS__ = {
   "posts": [
@@ -2226,6 +2298,12 @@ function cipherHelp() {
     <div id="cc-action-detail"></div>
     <div class="cc-buttons" id="cc-buttons"></div>
   </div>
+
+  <!-- Board priorities — read-only mirror of the CipherExam items from the
+       monthly codeq-board cycle (campaign/state → boardPriorities, refreshed
+       by scripts/push-board-priorities.mjs). The month's compass above the
+       day's checklist. -->
+  <div class="board-priorities" id="board-priorities" style="display:none;"></div>
 
   <div class="today-sequence">
     <h3>Today's sequence</h3>
@@ -6499,11 +6577,36 @@ if (document.readyState === 'loading') {
     }
   }
 
+  // Read-only mirror of the CipherExam items from the monthly codeq-board
+  // cycle. Data: campaign/state → boardPriorities (live-synced from Firestore;
+  // refreshed each cycle by scripts/push-board-priorities.mjs). No checkboxes —
+  // the board owns these; this strip only keeps the month's compass visible.
+  function renderBoardPriorities() {
+    var el = document.getElementById('board-priorities');
+    if (!el) return;
+    var bp = (window.__CAMPAIGN_STATE__ || {}).boardPriorities;
+    var items = (bp && bp.items) || [];
+    if (items.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
+    el.style.display = 'block';
+    el.innerHTML =
+      '<div class="bp-head">This month\'s priorities — board' +
+        (bp.cycleDate ? '<span class="bp-cycle">cycle ' + esc(bp.cycleDate) + '</span>' : '') +
+      '</div>' +
+      items.map(function (it) {
+        var pri = String(it.priority || '');
+        return '<div class="bp-item">' +
+          '<span class="bp-pri ' + esc(pri.toLowerCase()) + '">' + esc(pri) + '</span>' +
+          '<span>' + esc(it.text || '') + '</span>' +
+        '</div>';
+      }).join('');
+  }
+
   function reRender() {
     var posts = getPosts();
     renderStatusStrip(posts, _trendData);
     renderCommandCenter(posts, _trendData);
     renderTodaySequence(posts, _trendData);
+    renderBoardPriorities();
     renderBradInbox();
   }
 
