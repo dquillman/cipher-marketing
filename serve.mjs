@@ -11,7 +11,7 @@ import http from "node:http";
 import { readFile, stat, writeFile } from "node:fs/promises";
 import { join, dirname, extname, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "site");
@@ -192,5 +192,20 @@ server.listen(PORT, HOST, () => {
   }
   console.log(`\n  Press Ctrl-C to stop.\n`);
 });
+
+// Keep published testimonials fresh automatically — no manual pull needed.
+// Runs the read-only pull script on startup and every 10 min while the server
+// is up, refreshing site/data/testimonials.json from the public CipherExam
+// collection. Non-blocking; failures are ignored (panel falls back to last good
+// data / empty state). Run `node scripts/pull-testimonials.mjs` for an instant
+// refresh between intervals.
+function refreshTestimonials() {
+  try {
+    const child = spawn(process.execPath, [join(HERE, "scripts/pull-testimonials.mjs")], { stdio: "ignore" });
+    child.on("error", () => {});
+  } catch { /* ignore */ }
+}
+refreshTestimonials();
+setInterval(refreshTestimonials, 10 * 60 * 1000).unref?.();
 
 process.on("SIGINT", () => { console.log("\n  Server stopped."); process.exit(0); });
