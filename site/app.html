@@ -2186,14 +2186,18 @@ details[open] summary::before { transform: rotate(90deg); }
 <style id="fx-styles">
 /* ---- Ambient WebGL + GSAP motion layer (progressive enhancement) ----
    Adds depth + premium micro-motion without touching the data layer. Activated
-   only when body.fx-on is set (default on; user-toggleable; auto-off under
-   prefers-reduced-motion). Cards stay opaque so text is never less legible. */
+   when body.fx-on is set (default on; controlled by the ✦ FX nav toggle).
+   Reduced-motion calms the snappy UI motion but keeps the slow ambient aurora. */
 #fx-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.6s ease}
-body.fx-on{background:transparent}
+/* Animated gradient is the guaranteed-visible fallback. The WebGL canvas (when
+   three.js loads) renders on top of it; if the CDN/WebGL is unavailable this
+   still gives an ambient moving background. */
+body.fx-on{background:linear-gradient(135deg,#020617 0%,#0a1432 36%,#0c1026 64%,#020617 100%);background-size:300% 300%;animation:fx-grad 34s ease-in-out infinite}
 body.fx-on #fx-canvas{opacity:1}
-/* Aurora breathes in the gutters + behind the glass nav; the content column
-   keeps a calm translucent backing so text is always on a settled surface. */
-body.fx-on main.wrap{position:relative;z-index:1;background:rgba(3,7,20,0.66)}
+@keyframes fx-grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* Frosted-glass content column floats over the aurora — soft glow behind, crisp
+   text on its own surface. */
+body.fx-on main.wrap{position:relative;z-index:1;background:rgba(8,13,32,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 /* Premium card depth + lift on hover */
 .card,.kpi-card,.summary-card,.command-center{transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s ease,box-shadow .28s ease}
 .card:hover,.kpi-card:hover,.summary-card:hover{transform:translateY(-3px);box-shadow:0 16px 46px -20px rgba(125,211,252,.32)}
@@ -2213,6 +2217,7 @@ body.fx-on .command-center::before{opacity:.9;animation:halo-spin 7s linear infi
 @media (prefers-reduced-motion: reduce){
   .card,.kpi-card,.summary-card,.command-center{transition:none}
   .card:hover,.kpi-card:hover,.summary-card:hover{transform:none}
+  body.fx-on{animation:none}
   body.fx-on .command-center::before{animation:none;opacity:.5}
 }
 </style>
@@ -2305,7 +2310,7 @@ function cipherHelp() {
     <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the daily playbook — how to use this dashboard">? Help</a>
     <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle the ambient visual effects">✦ FX</button>
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
-    <span class="version-bar" title="Dashboard version">v1.7.0</span>
+    <span class="version-bar" title="Dashboard version">v1.7.1</span>
   </div>
 </nav>
 
@@ -7217,7 +7222,10 @@ function escHtml(s) {
   })();
 
   // ---- three.js ambient aurora (dynamic import → optional) ----
-  if (REDUCED) return;
+  // Gated only on the FX toggle (already passed), NOT on reduced-motion: the
+  // ambient drift is slow and non-vestibular, and this is an opt-in personal
+  // dashboard. Reduced-motion still calms the snappy UI motion above + the
+  // gradient-position animation via CSS.
   (async function aurora() {
     try {
       var canvas = document.createElement('canvas');
@@ -7249,10 +7257,10 @@ function escHtml(s) {
           '  vec2 q = vec2(fbm(p+t+m), fbm(p+vec2(5.2,1.3)-t));',
           '  float n = fbm(p + 1.6*q + t*0.6);',
           '  vec3 cyan=vec3(0.49,0.83,0.99), purple=vec3(0.655,0.545,0.98), deep=vec3(0.008,0.024,0.090);',
-          '  vec3 col = mix(deep, purple, smoothstep(0.25,0.85,n)*0.45);',
-          '  col = mix(col, cyan, smoothstep(0.55,1.0,n)*0.30);',
-          '  float vig = smoothstep(1.25,0.15,length(uv-0.5));',
-          '  col *= 0.45 + 0.55*vig; col *= 0.85;',
+          '  vec3 col = mix(deep, purple, smoothstep(0.20,0.85,n)*0.60);',
+          '  col = mix(col, cyan, smoothstep(0.50,1.0,n)*0.42);',
+          '  float vig = smoothstep(1.4,0.1,length(uv-0.5));',
+          '  col *= 0.55 + 0.45*vig; col *= 1.08;',
           '  gl_FragColor = vec4(col,1.0);',
           '}'
         ].join('\n')
