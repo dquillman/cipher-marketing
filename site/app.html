@@ -2218,7 +2218,8 @@ function cipherShow(route) {
     landing:     'Landing — CipherExam Campaign',
     engineering: 'Engineering — CipherExam Campaign',
     voice:       'Voice — CipherExam Campaign',
-    competitors: 'Competitors — CipherExam Campaign'
+    competitors: 'Competitors — CipherExam Campaign',
+    testimonials:'Testimonials — CipherExam Campaign'
   })[route] || 'CipherExam Campaign';
   // Keep the URL hash in sync so refresh / back / bookmarks restore the tab.
   if (('#' + route) !== location.hash) {
@@ -2257,6 +2258,7 @@ function cipherHelp() {
       <!-- Performance & reports -->
       <button class="nav-link" type="button" data-route="dashboard" onclick="cipherShow('dashboard')" title="Campaign KPIs and blockers">Dashboard</button>
       <button class="nav-link" type="button" data-route="competitors" onclick="cipherShow('competitors')" title="Monthly competitor intel reports">Competitors</button>
+      <button class="nav-link" type="button" data-route="testimonials" onclick="cipherShow('testimonials')" title="Real user quotes — copy into posts/ads">Testimonials</button>
       <a class="nav-link" href="funnel.html" title="Opens the funnel diagnostic page">Funnel&thinsp;↗</a>
       <a class="nav-link" href="sprint.html" title="Opens the activation sprint tracker">Sprint&thinsp;↗</a>
       <span class="nav-sep" aria-hidden="true"></span>
@@ -5039,6 +5041,160 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   </script>
 
 
+</section>
+
+<section class="route-section" data-route="testimonials">
+  <style>
+  .tm-head { margin-bottom: 18px; }
+  .tm-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.6; max-width: 70ch; }
+  .tm-sub code { font-size: 0.82rem; }
+  .tm-grid { display: flex; flex-direction: column; gap: 14px; }
+  .tm-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .tm-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .tm-stars { color: #fbbf24; font-size: 0.95rem; letter-spacing: 1px; white-space: nowrap; }
+  .tm-stars .tm-star-empty { color: var(--border); }
+  .tm-quote { font-size: 1rem; line-height: 1.6; color: var(--text); margin: 8px 0 12px; }
+  .tm-attrib { font-size: 0.84rem; color: var(--dim); font-weight: 600; }
+  .tm-attrib .tm-exam { color: var(--cyan); }
+  .tm-copy {
+    font-family: 'Satoshi', system-ui, sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    background: var(--surface-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 12px; cursor: pointer; white-space: nowrap;
+  }
+  .tm-copy:hover { border-color: rgba(125,211,252,0.5); }
+  .tm-empty {
+    background: var(--surface); border: 1px dashed var(--border);
+    border-radius: var(--radius); padding: 28px 22px; text-align: center;
+    color: var(--muted); font-size: 0.92rem; line-height: 1.6;
+  }
+  .tm-meta { margin-top: 16px; font-size: 0.76rem; color: var(--muted); }
+  </style>
+
+  <div class="tm-head">
+    <h1>Testimonials</h1>
+    <p class="tm-sub">
+      Real, admin-approved, consent-cleared CipherExam user quotes pulled from the public
+      <code>published_testimonials</code> collection. These are safe to quote publicly with
+      first-name + exam attribution. Click <strong>Copy quote</strong> to drop one into a post or ad.
+      Refresh the data with <code>node scripts/pull-testimonials.mjs</code>.
+    </p>
+  </div>
+
+  <div id="tm-grid" class="tm-grid">
+    <div class="tm-empty">Loading testimonials…</div>
+  </div>
+
+  <p id="tm-meta" class="tm-meta"></p>
+
+  <script>
+  (function () {
+    var gridEl = document.getElementById('tm-grid');
+    var metaEl = document.getElementById('tm-meta');
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function stars(rating) {
+      var n = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+      var full = '★★★★★'.slice(0, n);
+      var empty = '★★★★★'.slice(0, 5 - n);
+      return '<span class="tm-stars">' + full +
+        '<span class="tm-star-empty">' + empty + '</span></span>';
+    }
+
+    // Self-contained clipboard copy (works in secure + sandboxed contexts).
+    function copyText(text, onOk, onFail) {
+      function fb() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text; ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed'; ta.style.opacity = '0'; ta.style.pointerEvents = 'none';
+          document.body.appendChild(ta); ta.focus(); ta.select();
+          var ok = false;
+          try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+          document.body.removeChild(ta);
+          ok ? onOk() : onFail();
+        } catch (e) { onFail(); }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext !== false) {
+        navigator.clipboard.writeText(text).then(onOk, fb);
+      } else { fb(); }
+    }
+
+    function attributionFor(t) {
+      var name = t.firstName ? t.firstName : 'CipherExam user';
+      // Quote-ready string Brad can paste straight into a post.
+      return '"' + (t.quote || '').trim() + '" — ' + name +
+        (t.examName ? ' (' + t.examName + ' candidate)' : '');
+    }
+
+    function render(payload) {
+      var list = (payload && Array.isArray(payload.testimonials)) ? payload.testimonials : [];
+
+      if (list.length === 0) {
+        gridEl.innerHTML =
+          '<div class="tm-empty">No published testimonials yet.<br>' +
+          'They appear here once a user consents and an admin approves one in CipherExam,<br>' +
+          'then you run <code>node scripts/pull-testimonials.mjs</code>.</div>';
+      } else {
+        gridEl.innerHTML = list.map(function (t, i) {
+          var name = t.firstName ? esc(t.firstName) : 'CipherExam user';
+          var exam = t.examName ? '<span class="tm-exam">' + esc(t.examName) + '</span>' : '';
+          var sep = t.examName ? ' &middot; ' : '';
+          return '' +
+            '<div class="tm-card">' +
+              '<div class="tm-card-top">' +
+                stars(t.rating) +
+                '<button class="tm-copy" type="button" data-i="' + i + '">Copy quote</button>' +
+              '</div>' +
+              '<p class="tm-quote">&ldquo;' + esc(t.quote) + '&rdquo;</p>' +
+              '<div class="tm-attrib">&mdash; ' + name + sep + exam + '</div>' +
+            '</div>';
+        }).join('');
+
+        // Wire copy buttons (copies a paste-ready, attributed quote).
+        var btns = gridEl.querySelectorAll('.tm-copy');
+        for (var b = 0; b < btns.length; b++) {
+          btns[b].addEventListener('click', function () {
+            var idx = parseInt(this.getAttribute('data-i'), 10);
+            var btn = this;
+            copyText(attributionFor(list[idx]),
+              function () { btn.textContent = 'Copied ✓'; setTimeout(function () { btn.textContent = 'Copy quote'; }, 1500); },
+              function () { btn.textContent = 'Copy failed'; setTimeout(function () { btn.textContent = 'Copy quote'; }, 1800); }
+            );
+          });
+        }
+      }
+
+      var meta = payload && payload._meta ? payload._meta : {};
+      var bits = [];
+      bits.push((meta.count != null ? meta.count : list.length) + ' testimonial' + ((meta.count === 1) ? '' : 's'));
+      if (meta.pulledAt) bits.push('pulled ' + esc(meta.pulledAt));
+      if (meta.source) bits.push('source: ' + esc(meta.source));
+      metaEl.textContent = bits.join(' · ');
+    }
+
+    fetch('/api/testimonials', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(render)
+      .catch(function () {
+        gridEl.innerHTML =
+          '<div class="tm-empty">Could not load testimonials.<br>' +
+          'Is the dashboard server running? Try <code>node serve.mjs</code>, ' +
+          'then <code>node scripts/pull-testimonials.mjs</code>.</div>';
+      });
+  })();
+  </script>
 </section>
 </main>
 

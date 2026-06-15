@@ -43,8 +43,9 @@ function resolveSafe(urlPath) {
 }
 
 // ---- API helpers ----
-const POSTS_FILE    = join(ROOT, "data/posts.json");
-const STATE_FILE    = join(ROOT, "data/campaign-state.json");
+const POSTS_FILE        = join(ROOT, "data/posts.json");
+const STATE_FILE        = join(ROOT, "data/campaign-state.json");
+const TESTIMONIALS_FILE = join(ROOT, "data/testimonials.json");
 
 function jsonOk(res, body) {
   const payload = JSON.stringify(body);
@@ -90,6 +91,23 @@ async function handleApi(req, res) {
       res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
       res.end(raw); return;
     } catch { jsonErr(res, 500, "could not read posts.json"); return; }
+  }
+
+  // GET /api/testimonials — always-fresh testimonials.json (mirrors /api/posts).
+  // Read-only: the testimonials come from a public CipherExam Firestore
+  // collection via scripts/pull-testimonials.mjs; the dashboard never writes them.
+  // If the file doesn't exist yet (pull never run), return a tidy empty payload
+  // instead of a 500 so the panel can show its empty state.
+  if (req.method === "GET" && url === "/api/testimonials") {
+    try {
+      const raw = await readFile(TESTIMONIALS_FILE, "utf8");
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
+      res.end(raw); return;
+    } catch {
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ _meta: { count: 0, note: "testimonials.json not found — run node scripts/pull-testimonials.mjs" }, testimonials: [] }));
+      return;
+    }
   }
 
   // POST /api/publish — mark a post as published

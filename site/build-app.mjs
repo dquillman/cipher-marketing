@@ -24,6 +24,7 @@ const ROUTES = [
   { file: "engineering.html", route: "engineering", label: "Engineering" },
   { file: "voice.html",       route: "voice",       label: "Voice" },
   { file: "competitors.html", route: "competitors", label: "Competitors" },
+  { file: "testimonials.html", route: "testimonials", label: "Testimonials" },
 ];
 
 const FILE_TO_ROUTE = Object.fromEntries(ROUTES.map(r => [r.file, r.route]));
@@ -134,7 +135,8 @@ function cipherShow(route) {
     landing:     'Landing — CipherExam Campaign',
     engineering: 'Engineering — CipherExam Campaign',
     voice:       'Voice — CipherExam Campaign',
-    competitors: 'Competitors — CipherExam Campaign'
+    competitors: 'Competitors — CipherExam Campaign',
+    testimonials:'Testimonials — CipherExam Campaign'
   })[route] || 'CipherExam Campaign';
   window.scrollTo(0, 0);
 }
