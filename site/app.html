@@ -2183,6 +2183,39 @@ details[open] summary::before { transform: rotate(90deg); }
 
 
 <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+<style id="fx-styles">
+/* ---- Ambient WebGL + GSAP motion layer (progressive enhancement) ----
+   Adds depth + premium micro-motion without touching the data layer. Activated
+   only when body.fx-on is set (default on; user-toggleable; auto-off under
+   prefers-reduced-motion). Cards stay opaque so text is never less legible. */
+#fx-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.6s ease}
+body.fx-on{background:transparent}
+body.fx-on #fx-canvas{opacity:1}
+/* Aurora breathes in the gutters + behind the glass nav; the content column
+   keeps a calm translucent backing so text is always on a settled surface. */
+body.fx-on main.wrap{position:relative;z-index:1;background:rgba(3,7,20,0.66)}
+/* Premium card depth + lift on hover */
+.card,.kpi-card,.summary-card,.command-center{transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .28s ease,box-shadow .28s ease}
+.card:hover,.kpi-card:hover,.summary-card:hover{transform:translateY(-3px);box-shadow:0 16px 46px -20px rgba(125,211,252,.32)}
+/* Command center — slow animated gradient halo (the signature moment) */
+@property --halo{syntax:'<angle>';initial-value:0deg;inherits:false}
+.command-center{position:relative;isolation:isolate}
+.command-center::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;
+  background:conic-gradient(from var(--halo,0deg),transparent 0 52%,rgba(125,211,252,.6) 68%,rgba(167,139,250,.6) 84%,transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  opacity:0;transition:opacity .8s ease;pointer-events:none;z-index:-1}
+body.fx-on .command-center::before{opacity:.9;animation:halo-spin 7s linear infinite}
+@keyframes halo-spin{to{--halo:360deg}}
+/* FX toggle chip */
+#fx-toggle{cursor:pointer;font-family:'Satoshi',system-ui,sans-serif}
+#fx-toggle.off{opacity:.5}
+@media (prefers-reduced-motion: reduce){
+  .card,.kpi-card,.summary-card,.command-center{transition:none}
+  .card:hover,.kpi-card:hover,.summary-card:hover{transform:none}
+  body.fx-on .command-center::before{animation:none;opacity:.5}
+}
+</style>
 </head>
 <body>
 
@@ -2270,8 +2303,9 @@ function cipherHelp() {
       <button class="nav-link" type="button" data-route="voice" onclick="cipherShow('voice')" title="Brand voice guardrails">Voice</button>
     </div>
     <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the daily playbook — how to use this dashboard">? Help</a>
+    <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle the ambient visual effects">✦ FX</button>
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
-    <span class="version-bar" title="Dashboard version">v1.6.0</span>
+    <span class="version-bar" title="Dashboard version">v1.7.0</span>
   </div>
 </nav>
 
@@ -7133,5 +7167,126 @@ function escHtml(s) {
 
 </script>
 <!--/INLINE-ASSETS-->
+
+<!-- ===================================================================== -->
+<!-- Ambient WebGL aurora (three.js) + GSAP motion — progressive layer.    -->
+<!-- Self-contained, fails silently, respects prefers-reduced-motion and a -->
+<!-- persisted on/off toggle. Never blocks or alters the core dashboard.   -->
+<!-- ===================================================================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function () {
+  var REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FX_ON   = localStorage.getItem('ce.fx') !== 'off'; // default on
+  var body    = document.body;
+
+  // ---- Toggle (always wired, regardless of FX state) ----
+  var toggle = document.getElementById('fx-toggle');
+  if (toggle) {
+    toggle.classList.toggle('off', !FX_ON);
+    toggle.textContent = FX_ON ? '✦ FX' : '✦ FX off';
+    toggle.addEventListener('click', function () {
+      localStorage.setItem('ce.fx', FX_ON ? 'off' : 'on');
+      location.reload();
+    });
+  }
+  if (!FX_ON) return;
+  body.classList.add('fx-on');
+
+  // ---- GSAP motion: animate the active section on every route change ----
+  (function motion() {
+    if (REDUCED || !window.gsap) return;
+    var g = window.gsap;
+    function animate(sec) {
+      if (!sec) return;
+      g.killTweensOf(sec); g.killTweensOf(sec.children);
+      g.fromTo(sec, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
+      g.fromTo(sec.children, { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.035, ease: 'power3.out', overwrite: 'auto', clearProps: 'transform,opacity' });
+    }
+    if (typeof window.cipherShow === 'function') {
+      var orig = window.cipherShow;
+      window.cipherShow = function () {
+        orig.apply(this, arguments);
+        animate(document.querySelector('.route-section.active'));
+      };
+    }
+    var first = function () { animate(document.querySelector('.route-section.active')); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', first);
+    else first();
+  })();
+
+  // ---- three.js ambient aurora (dynamic import → optional) ----
+  if (REDUCED) return;
+  (async function aurora() {
+    try {
+      var canvas = document.createElement('canvas');
+      canvas.id = 'fx-canvas';
+      body.insertBefore(canvas, body.firstChild);
+      var THREE = await import('https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js');
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: 'low-power' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      var scene = new THREE.Scene();
+      var camera = new THREE.Camera();
+      var geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3));
+      var u = { u_time: { value: 0 }, u_res: { value: new THREE.Vector2(1, 1) }, u_mouse: { value: new THREE.Vector2(0.5, 0.5) } };
+      var mat = new THREE.ShaderMaterial({
+        uniforms: u, depthTest: false, depthWrite: false,
+        vertexShader: 'void main(){ gl_Position = vec4(position,1.0); }',
+        fragmentShader: [
+          'precision highp float;',
+          'uniform float u_time; uniform vec2 u_res; uniform vec2 u_mouse;',
+          'float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123); }',
+          'float noise(vec2 p){ vec2 i=floor(p),f=fract(p); vec2 w=f*f*(3.0-2.0*f);',
+          '  return mix(mix(hash(i),hash(i+vec2(1,0)),w.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),w.x), w.y); }',
+          'float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.02; a*=0.5; } return v; }',
+          'void main(){',
+          '  vec2 uv = gl_FragCoord.xy / u_res.xy;',
+          '  vec2 p = uv; p.x *= u_res.x/u_res.y;',
+          '  float t = u_time*0.03;',
+          '  vec2 m = (u_mouse-0.5)*0.35;',
+          '  vec2 q = vec2(fbm(p+t+m), fbm(p+vec2(5.2,1.3)-t));',
+          '  float n = fbm(p + 1.6*q + t*0.6);',
+          '  vec3 cyan=vec3(0.49,0.83,0.99), purple=vec3(0.655,0.545,0.98), deep=vec3(0.008,0.024,0.090);',
+          '  vec3 col = mix(deep, purple, smoothstep(0.25,0.85,n)*0.45);',
+          '  col = mix(col, cyan, smoothstep(0.55,1.0,n)*0.30);',
+          '  float vig = smoothstep(1.25,0.15,length(uv-0.5));',
+          '  col *= 0.45 + 0.55*vig; col *= 0.85;',
+          '  gl_FragColor = vec4(col,1.0);',
+          '}'
+        ].join('\n')
+      });
+      scene.add(new THREE.Mesh(geo, mat));
+
+      function resize() {
+        var w = window.innerWidth, h = window.innerHeight, dpr = renderer.getPixelRatio();
+        renderer.setSize(w, h, false);
+        u.u_res.value.set(w * dpr, h * dpr);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var tmx = 0.5, tmy = 0.5;
+      window.addEventListener('pointermove', function (e) {
+        tmx = e.clientX / window.innerWidth;
+        tmy = 1.0 - e.clientY / window.innerHeight;
+      }, { passive: true });
+
+      var start = performance.now();
+      (function frame(now) {
+        requestAnimationFrame(frame);
+        if (document.hidden) return;
+        u.u_time.value = (now - start) / 1000;
+        u.u_mouse.value.x += (tmx - u.u_mouse.value.x) * 0.05;
+        u.u_mouse.value.y += (tmy - u.u_mouse.value.y) * 0.05;
+        renderer.render(scene, camera);
+      })(start);
+    } catch (e) {
+      console.warn('[fx] aurora unavailable:', e && e.message);
+    }
+  })();
+})();
+</script>
 </body>
 </html>
