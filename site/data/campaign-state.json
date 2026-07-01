@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-06-13T00:25:16.100Z",
+    "lastUpdatedAt": "2026-07-01T03:01:03.056Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -529,8 +529,8 @@
     }
   ],
   "boardPriorities": {
-    "cycleDate": "2026-06-02",
-    "mirroredAt": "2026-06-13T00:25:16.100Z",
+    "cycleDate": "2026-06-30",
+    "mirroredAt": "2026-07-01T03:01:03.056Z",
     "source": "qcode ops-board.json (codeq-board cycle)",
     "items": [
       {
