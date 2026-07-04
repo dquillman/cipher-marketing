@@ -2310,7 +2310,7 @@ function cipherHelp() {
     <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the daily playbook — how to use this dashboard">? Help</a>
     <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle the ambient visual effects">✦ FX</button>
     <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
-    <span class="version-bar" title="Dashboard version">v1.7.1</span>
+    <span class="version-bar" title="Dashboard version">v1.7.2</span>
   </div>
 </nav>
 
@@ -6710,13 +6710,18 @@ if (document.readyState === 'loading') {
     if (!strip) return;
     var cs = window.__CAMPAIGN_STATE__ || {};
 
-    // Chip 1: Campaign week + day
+    // Chip 1: Campaign week + day. The plan window is 4 weeks; past day 28
+    // the chip flips to overtime so "day 46 of 28" never renders.
     var startStr = (cs.campaign && cs.campaign.start) || '2026-05-18';
     var startMs = new Date(startStr + 'T00:00:00').getTime();
     var dayNum = Math.max(0, Math.floor((Date.now() - startMs) / 86400000)) + 1;
     var weekIdx = Math.max(0, Math.floor((dayNum - 1) / 7)) + 1;
     var dowName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
     var weekLabel = 'Wk ' + weekIdx + ' · ' + dowName;
+    var CAMPAIGN_LEN = 28;
+    var overtime = dayNum > CAMPAIGN_LEN;
+    var whenSub = overtime ? '+' + (dayNum - CAMPAIGN_LEN) + 'd past 4-wk window' : 'day ' + dayNum + ' of ' + CAMPAIGN_LEN;
+    var whenCls = overtime ? 'warn' : 'info';
 
     // Chip 2: Pipeline (next 7 days)
     var todayStr = new Date().toISOString().slice(0,10);
@@ -6756,7 +6761,7 @@ if (document.readyState === 'loading') {
     var gateSub = activatedTotal >= gate ? '✓ paid spend unlocked' : (gate - activatedTotal) + ' to unlock paid';
 
     strip.innerHTML =
-      chip('When',           weekLabel,                  'day ' + dayNum + ' of 28',     'info') +
+      chip('When',           weekLabel,                  whenSub,                        whenCls) +
       chip('Pipeline (next 7d)', pipelineN + ' post' + (pipelineN === 1 ? '' : 's'), pipelineSub, pipelineCls) +
       chip('Drafts pending', String(draftN),             draftSub,                       draftCls) +
       chip('Trend scout',    scoutValue,                 scoutSub,                       scoutCls) +
