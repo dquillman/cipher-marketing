@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-07-01T03:01:03.056Z",
+    "lastUpdatedAt": "2026-07-07T23:00:41.237Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -529,8 +529,8 @@
     }
   ],
   "boardPriorities": {
-    "cycleDate": "2026-06-30",
-    "mirroredAt": "2026-07-01T03:01:03.056Z",
+    "cycleDate": "2026-07-07",
+    "mirroredAt": "2026-07-07T23:00:41.237Z",
     "source": "qcode ops-board.json (codeq-board cycle)",
     "items": [
       {
@@ -544,6 +544,10 @@
       {
         "priority": "P0",
         "text": "CipherExam: validate the Grand Slam Offer on 5 real PMP candidates (offer + frames already written → positioning/01-one-pager.md)."
+      },
+      {
+        "priority": "P0",
+        "text": "CipherExam: surface the real PMP-activation count now — the 06-30 binding gate needs it by ~07-29."
       },
       {
         "priority": "P1",
