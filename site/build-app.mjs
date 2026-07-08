@@ -156,7 +156,7 @@ let out = tpl
 // deletes them — this shipped broken once (commit 4fb1bea wiped 1,569 lines;
 // restored in a91404a / v1.5.0). If the rebuilt output would drop any of the
 // sentinel features still present in the current file, abort unless --force.
-const SENTINELS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp"];
+const SENTINELS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp", "halw-rail"];
 const FORCE = process.argv.includes("--force");
 let existingApp = "";
 try { existingApp = readFileSync(join(HERE, "app.html"), "utf8"); } catch {}

@@ -281,15 +281,12 @@ li { margin-bottom: 0.3em; }
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
 .version-bar {
-  position: fixed;
-  top: 68px;
-  left: max(22px, calc(50% - 448px));
-  font-size: 0.475rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--muted);
   font-family: 'Satoshi', system-ui, sans-serif;
-  pointer-events: none;
-  z-index: 51;
+  white-space: nowrap;
+  align-self: center;
 }
 
 /* Cards */
@@ -682,7 +679,7 @@ details[open] summary::before { transform: rotate(90deg); }
   .nav-inner { padding: 10px 14px; gap: 10px; }
   .nav-links { gap: 2px; }
   .nav-link { font-size: 0.8rem; padding: 4px 7px; }
-  .nav-rollup { display: none; }
+  .nav-rollup, .version-bar { display: none; }
   table { font-size: 0.82rem; }
   th, td { padding: 6px 7px; }
   .week-strip .day { padding: 8px 2px; font-size: 0.7rem; }
@@ -783,7 +780,7 @@ details[open] summary::before { transform: rotate(90deg); }
 <script>window.__CAMPAIGN_STATE__ = {
   "_meta": {
     "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-06-01T16:14:52.605Z",
+    "lastUpdatedAt": "2026-07-07T23:00:41.237Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -876,75 +873,187 @@ details[open] summary::before { transform: rotate(90deg); }
     "byExam": {
       "PMP": {
         "reddit": [
-          { "label": "r/pmp", "url": "https://www.reddit.com/r/pmp/" },
-          { "label": "r/projectmanagement", "url": "https://www.reddit.com/r/projectmanagement/" }
+          {
+            "label": "r/pmp",
+            "url": "https://www.reddit.com/r/pmp/"
+          },
+          {
+            "label": "r/projectmanagement",
+            "url": "https://www.reddit.com/r/projectmanagement/"
+          }
         ],
         "facebook": [
-          { "label": "PMP Exam Prep group", "url": "https://www.facebook.com/groups/pmpexamprep", "note": "Verify exact URL — placeholder" },
-          { "label": "PMP Question Bank group", "url": "https://www.facebook.com/groups/pmpquestionbank", "note": "Verify exact URL — placeholder" }
+          {
+            "label": "PMP Exam Prep group",
+            "url": "https://www.facebook.com/groups/pmpexamprep",
+            "note": "Verify exact URL — placeholder"
+          },
+          {
+            "label": "PMP Question Bank group",
+            "url": "https://www.facebook.com/groups/pmpquestionbank",
+            "note": "Verify exact URL — placeholder"
+          }
         ],
         "linkedin": [
-          { "label": "#PMP feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=pmp" },
-          { "label": "PMI company page", "url": "https://www.linkedin.com/company/project-management-institute/" },
-          { "label": "PMP study group search", "url": "https://www.linkedin.com/search/results/groups/?keywords=PMP", "note": "Pick a specific group and pin its URL here" }
+          {
+            "label": "#PMP feed",
+            "url": "https://www.linkedin.com/feed/hashtag/?keywords=pmp"
+          },
+          {
+            "label": "PMI company page",
+            "url": "https://www.linkedin.com/company/project-management-institute/"
+          },
+          {
+            "label": "PMP study group search",
+            "url": "https://www.linkedin.com/search/results/groups/?keywords=PMP",
+            "note": "Pick a specific group and pin its URL here"
+          }
         ],
         "x": [
-          { "label": "#PMP live", "url": "https://x.com/search?q=%23PMP&f=live" },
-          { "label": "@PMInstitute", "url": "https://x.com/PMInstitute" },
-          { "label": "Add 2 more PMI handles", "url": "https://x.com/search?q=PMP%20PMI&f=user", "note": "Dave to curate" }
+          {
+            "label": "#PMP live",
+            "url": "https://x.com/search?q=%23PMP&f=live"
+          },
+          {
+            "label": "@PMInstitute",
+            "url": "https://x.com/PMInstitute"
+          },
+          {
+            "label": "Add 2 more PMI handles",
+            "url": "https://x.com/search?q=PMP%20PMI&f=user",
+            "note": "Dave to curate"
+          }
         ]
       },
       "Security+": {
         "reddit": [
-          { "label": "r/CompTIA", "url": "https://www.reddit.com/r/CompTIA/" },
-          { "label": "r/cybersecurity", "url": "https://www.reddit.com/r/cybersecurity/" },
-          { "label": "r/sysadmin", "url": "https://www.reddit.com/r/sysadmin/" }
+          {
+            "label": "r/CompTIA",
+            "url": "https://www.reddit.com/r/CompTIA/"
+          },
+          {
+            "label": "r/cybersecurity",
+            "url": "https://www.reddit.com/r/cybersecurity/"
+          },
+          {
+            "label": "r/sysadmin",
+            "url": "https://www.reddit.com/r/sysadmin/"
+          }
         ],
         "facebook": [
-          { "label": "CompTIA Security+ Study Group", "url": "https://www.facebook.com/groups/comptiasecurityplus", "note": "Verify exact URL — placeholder" }
+          {
+            "label": "CompTIA Security+ Study Group",
+            "url": "https://www.facebook.com/groups/comptiasecurityplus",
+            "note": "Verify exact URL — placeholder"
+          }
         ],
         "linkedin": [
-          { "label": "#SecurityPlus feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=securityplus" },
-          { "label": "#Cybersecurity feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=cybersecurity" },
-          { "label": "CompTIA company page", "url": "https://www.linkedin.com/company/comptia/" },
-          { "label": "Security+ study group search", "url": "https://www.linkedin.com/search/results/groups/?keywords=Security%2B", "note": "Pick a specific group and pin its URL here" }
+          {
+            "label": "#SecurityPlus feed",
+            "url": "https://www.linkedin.com/feed/hashtag/?keywords=securityplus"
+          },
+          {
+            "label": "#Cybersecurity feed",
+            "url": "https://www.linkedin.com/feed/hashtag/?keywords=cybersecurity"
+          },
+          {
+            "label": "CompTIA company page",
+            "url": "https://www.linkedin.com/company/comptia/"
+          },
+          {
+            "label": "Security+ study group search",
+            "url": "https://www.linkedin.com/search/results/groups/?keywords=Security%2B",
+            "note": "Pick a specific group and pin its URL here"
+          }
         ],
         "x": [
-          { "label": "#SecurityPlus live", "url": "https://x.com/search?q=%23SecurityPlus&f=live" },
-          { "label": "@CompTIA", "url": "https://x.com/CompTIA" },
-          { "label": "Add 2 more infosec handles", "url": "https://x.com/search?q=Security%2B&f=user", "note": "Dave to curate" }
+          {
+            "label": "#SecurityPlus live",
+            "url": "https://x.com/search?q=%23SecurityPlus&f=live"
+          },
+          {
+            "label": "@CompTIA",
+            "url": "https://x.com/CompTIA"
+          },
+          {
+            "label": "Add 2 more infosec handles",
+            "url": "https://x.com/search?q=Security%2B&f=user",
+            "note": "Dave to curate"
+          }
         ]
       },
       "SHRM-CP": {
         "reddit": [
-          { "label": "r/humanresources", "url": "https://www.reddit.com/r/humanresources/" },
-          { "label": "r/AskHR", "url": "https://www.reddit.com/r/AskHR/" }
+          {
+            "label": "r/humanresources",
+            "url": "https://www.reddit.com/r/humanresources/"
+          },
+          {
+            "label": "r/AskHR",
+            "url": "https://www.reddit.com/r/AskHR/"
+          }
         ],
         "facebook": [
-          { "label": "SHRM-CP / SCP Exam Prep", "url": "https://www.facebook.com/groups/shrmcpexamprep", "note": "Verify exact URL — placeholder" }
+          {
+            "label": "SHRM-CP / SCP Exam Prep",
+            "url": "https://www.facebook.com/groups/shrmcpexamprep",
+            "note": "Verify exact URL — placeholder"
+          }
         ],
         "linkedin": [
-          { "label": "#SHRM feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=shrm" },
-          { "label": "#HumanResources feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=humanresources" },
-          { "label": "SHRM company page", "url": "https://www.linkedin.com/company/society-for-human-resource-management/" },
-          { "label": "SHRM-CP study group search", "url": "https://www.linkedin.com/search/results/groups/?keywords=SHRM-CP", "note": "Pick a specific group and pin its URL here" }
+          {
+            "label": "#SHRM feed",
+            "url": "https://www.linkedin.com/feed/hashtag/?keywords=shrm"
+          },
+          {
+            "label": "#HumanResources feed",
+            "url": "https://www.linkedin.com/feed/hashtag/?keywords=humanresources"
+          },
+          {
+            "label": "SHRM company page",
+            "url": "https://www.linkedin.com/company/society-for-human-resource-management/"
+          },
+          {
+            "label": "SHRM-CP study group search",
+            "url": "https://www.linkedin.com/search/results/groups/?keywords=SHRM-CP",
+            "note": "Pick a specific group and pin its URL here"
+          }
         ],
         "x": [
-          { "label": "#SHRM live", "url": "https://x.com/search?q=%23SHRM&f=live" },
-          { "label": "@SHRM", "url": "https://x.com/SHRM" },
-          { "label": "Add 2 more HR handles", "url": "https://x.com/search?q=SHRM-CP&f=user", "note": "Dave to curate" }
+          {
+            "label": "#SHRM live",
+            "url": "https://x.com/search?q=%23SHRM&f=live"
+          },
+          {
+            "label": "@SHRM",
+            "url": "https://x.com/SHRM"
+          },
+          {
+            "label": "Add 2 more HR handles",
+            "url": "https://x.com/search?q=SHRM-CP&f=user",
+            "note": "Dave to curate"
+          }
         ]
       },
       "default": {
         "reddit": [
-          { "label": "r/certifications", "url": "https://www.reddit.com/r/certifications/" }
+          {
+            "label": "r/certifications",
+            "url": "https://www.reddit.com/r/certifications/"
+          }
         ],
         "facebook": [],
         "linkedin": [
-          { "label": "#certification feed", "url": "https://www.linkedin.com/feed/hashtag/?keywords=certification" }
+          {
+            "label": "#certification feed",
+            "url": "https://www.linkedin.com/feed/hashtag/?keywords=certification"
+          }
         ],
         "x": [
-          { "label": "#certification live", "url": "https://x.com/search?q=%23certification&f=live" }
+          {
+            "label": "#certification live",
+            "url": "https://x.com/search?q=%23certification&f=live"
+          }
         ]
       }
     }
@@ -1197,7 +1306,38 @@ details[open] summary::before { transform: rotate(90deg); }
       "date": "2026-05-26",
       "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     }
-  ]
+  ],
+  "boardPriorities": {
+    "cycleDate": "2026-07-07",
+    "mirroredAt": "2026-07-07T23:00:41.237Z",
+    "source": "qcode ops-board.json (codeq-board cycle)",
+    "items": [
+      {
+        "priority": "P0",
+        "text": "Start an email list + capture every CipherExam signup into it."
+      },
+      {
+        "priority": "P0",
+        "text": "Concentrate on LinkedIn — right audience (PM/IT/HR/cert); grow from <500, route readers to the email list."
+      },
+      {
+        "priority": "P0",
+        "text": "CipherExam: validate the Grand Slam Offer on 5 real PMP candidates (offer + frames already written → positioning/01-one-pager.md)."
+      },
+      {
+        "priority": "P0",
+        "text": "CipherExam: surface the real PMP-activation count now — the 06-30 binding gate needs it by ~07-29."
+      },
+      {
+        "priority": "P1",
+        "text": "CipherExam: pick ONE distribution channel (r/PMP, r/CompTIA…) and run it 30 days."
+      },
+      {
+        "priority": "P1",
+        "text": "Goal: CipherExam's first 10 paying users — make it the visible scoreboard."
+      }
+    ]
+  }
 }
 ;</script>
 <script>window.__POSTS__ = {
@@ -1655,6 +1795,7 @@ details[open] summary::before { transform: rotate(90deg); }
 
 
 
+
 <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
 </head>
 <body>
@@ -1738,6 +1879,7 @@ details[open] summary::before { transform: rotate(90deg); }
   </div>
 
 </main>
+
 
 
 
@@ -2801,5 +2943,8 @@ function escHtml(s) {
 
 </script>
 <!--/INLINE-ASSETS-->
+<!--HAL-RAIL-->
+<script src="assets/hal-rail.js"></script>
+<!--/HAL-RAIL-->
 </body>
 </html>

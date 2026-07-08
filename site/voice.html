@@ -281,15 +281,12 @@ li { margin-bottom: 0.3em; }
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
 .version-bar {
-  position: fixed;
-  top: 68px;
-  left: max(22px, calc(50% - 448px));
-  font-size: 0.475rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--muted);
   font-family: 'Satoshi', system-ui, sans-serif;
-  pointer-events: none;
-  z-index: 51;
+  white-space: nowrap;
+  align-self: center;
 }
 
 /* Cards */
@@ -682,7 +679,7 @@ details[open] summary::before { transform: rotate(90deg); }
   .nav-inner { padding: 10px 14px; gap: 10px; }
   .nav-links { gap: 2px; }
   .nav-link { font-size: 0.8rem; padding: 4px 7px; }
-  .nav-rollup { display: none; }
+  .nav-rollup, .version-bar { display: none; }
   table { font-size: 0.82rem; }
   th, td { padding: 6px 7px; }
   .week-strip .day { padding: 8px 2px; font-size: 0.7rem; }
@@ -2011,5 +2008,8 @@ function escHtml(s) {
 
 </script>
 <!--/INLINE-ASSETS-->
+<!--HAL-RAIL-->
+<script src="assets/hal-rail.js"></script>
+<!--/HAL-RAIL-->
 </body>
 </html>
