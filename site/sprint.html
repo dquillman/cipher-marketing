@@ -281,12 +281,15 @@ li { margin-bottom: 0.3em; }
 }
 .nav-rollup:hover { color: var(--cyan); border-color: var(--cyan); }
 .version-bar {
-  font-size: 0.68rem;
+  position: fixed;
+  top: 68px;
+  left: max(22px, calc(50% - 448px));
+  font-size: 0.475rem;
   font-weight: 700;
-  color: var(--muted);
+  color: #ffffff;
   font-family: 'Satoshi', system-ui, sans-serif;
-  white-space: nowrap;
-  align-self: center;
+  pointer-events: none;
+  z-index: 51;
 }
 
 /* Cards */
@@ -679,7 +682,7 @@ details[open] summary::before { transform: rotate(90deg); }
   .nav-inner { padding: 10px 14px; gap: 10px; }
   .nav-links { gap: 2px; }
   .nav-link { font-size: 0.8rem; padding: 4px 7px; }
-  .nav-rollup, .version-bar { display: none; }
+  .nav-rollup { display: none; }
   table { font-size: 0.82rem; }
   th, td { padding: 6px 7px; }
   .week-strip .day { padding: 8px 2px; font-size: 0.7rem; }
@@ -786,8 +789,131 @@ details[open] summary::before { transform: rotate(90deg); }
 })();
 </script>
 <!--/INLINE-ASSETS-->
+<!--INLINE-ASSETS-->
+<style>
+  .sprint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .gate-note { font-size: 0.85rem; color: var(--dim); margin: -6px 0 18px; }
+  .targets { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
+  .targets a { font-size: 0.82rem; padding: 5px 10px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); }
+  td.yes { color: var(--good); font-weight: 700; }
+  td.no  { color: var(--muted); }
+  .empty-state { padding: 20px; text-align: center; color: var(--dim); border: 1px dashed var(--border); border-radius: var(--radius); }
+  .empty-state code { font-size: 0.85em; }
+</style>
+</head>
+<body>
+<div class="nav"><div class="nav-inner">
+  <span class="nav-brand">CipherExam</span>
+  <div class="nav-links">
+    <a class="nav-link" href="app.html">Dashboard</a>
+    <a class="nav-link" href="funnel.html">Funnel</a>
+    <a class="nav-link current" href="sprint.html">Activation Sprint</a>
+  </div>
+</div></div>
 
+<div class="wrap">
+  <div class="hero">
+    <h1>Activation Sprint</h1>
+    <p class="sub">Hand-recruit real PMP candidates. Lead with the free demo, never the trial. Prove value on ~5 people before scaling anything. Playbook: <code>15-activation-sprint.md</code>.</p>
+  </div>
 
+  <div id="content"><p style="color:var(--dim)">Loading sprint state…</p></div>
+
+  <p class="gate-note" id="updated"></p>
+</div>
+
+<script>
+(async function () {
+  // Prefer build-inlined state; fall back to fetching the live JSON.
+  let state = window.__CAMPAIGN_STATE__ || null;
+  if (!state) {
+    try {
+      const res = await fetch('data/campaign-state.json', { cache: 'no-store' });
+      state = await res.json();
+    } catch (e) {
+      document.getElementById('content').innerHTML =
+        '<div class="empty-state">Could not load <code>data/campaign-state.json</code>. Run the dashboard server (<code>node serve.mjs</code>) and open via http://localhost:8766/sprint.html.</div>';
+      return;
+    }
+  }
+
+  const s = state.activationSprint;
+  const root = document.getElementById('content');
+  if (!s) {
+    root.innerHTML = '<div class="empty-state">No <code>activationSprint</code> block in campaign-state.json yet.</div>';
+    return;
+  }
+
+  const cands = Array.isArray(s.candidates) ? s.candidates : [];
+  // Derive totals from candidates so the page is always self-consistent.
+  const t = {
+    contacted: cands.filter(c => c.contacted).length,
+    signedUp: cands.filter(c => c.signedUp).length,
+    activated: cands.filter(c => c.activated).length,
+    day2: cands.filter(c => c.day2Return).length,
+  };
+  const target = s.targetActivated || 5;
+  const gate = s.gate || 25;
+
+  const pct = (n, d) => d ? Math.min(100, Math.round((n / d) * 100)) : 0;
+  const bar = (n, d) => `<div class="progress-bar"><div class="fill" style="width:${pct(n,d)}%"></div></div>`;
+
+  const kpi = (label, value, sub) =>
+    `<div class="kpi-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub||''}</div></div>`;
+
+  // Daily community targets for the sprint exam (PMP), pulled from communityEngagement.
+  const ce = (state.communityEngagement && state.communityEngagement.byExam && state.communityEngagement.byExam[s.exam]) || {};
+  const targetLinks = ['reddit','linkedin','facebook','x'].flatMap(p =>
+    (ce[p] || []).map(x => `<a href="${x.url}" target="_blank" rel="noopener">${p}: ${x.label}</a>`)
+  ).join('');
+
+  const rows = cands.length ? cands.map((c, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${c.handle || ''}</td>
+      <td>${c.source || ''}</td>
+      <td class="${c.contacted ? 'yes' : 'no'}">${c.contacted ? '✓' : '·'}</td>
+      <td class="${c.signedUp ? 'yes' : 'no'}">${c.signedUp ? '✓' : '·'}</td>
+      <td class="${c.examPicked ? 'yes' : 'no'}">${c.examPicked ? '✓' : '·'}</td>
+      <td>${c.qAnswered != null ? c.qAnswered : ''}</td>
+      <td class="${c.activated ? 'yes' : 'no'}">${c.activated ? '✓' : '·'}</td>
+      <td class="${c.day2Return ? 'yes' : 'no'}">${c.day2Return ? '✓' : '·'}</td>
+      <td>${c.note || ''}</td>
+    </tr>`).join('') : `<tr><td colspan="10"><div class="empty-state">No candidates logged yet. Add entries to <code>activationSprint.candidates[]</code> in campaign-state.json as you recruit (see <code>15-activation-sprint.md</code>).</div></td></tr>`;
+
+  root.innerHTML = `
+    <div class="sprint-grid">
+      ${kpi('Activated (sprint goal)', `${t.activated} / ${target}`, 'signup + exam + 10 Q')}
+      ${kpi('Came back day 2', `${t.day2}`, 'the real proof of value')}
+      ${kpi('Contacted', `${t.contacted}`, 'candidates reached')}
+      ${kpi('Signed up', `${t.signedUp}`, 'finished registration')}
+    </div>
+
+    <h3>Progress to sprint goal — ${t.activated} / ${target} activated</h3>
+    ${bar(t.activated, target)}
+    <div class="progress-meta"><span>Sprint goal: ${target}</span><span>${pct(t.activated, target)}%</span></div>
+
+    <h3>Progress to paid-spend gate — ${t.activated} / ${gate} activated</h3>
+    ${bar(t.activated, gate)}
+    <div class="progress-meta"><span>$2/day retargeting unlocks at ${gate}</span><span>${pct(t.activated, gate)}%</span></div>
+
+    <h3>Today's recruiting targets (${s.exam}) — aim ${state.communityEngagement?.dailyTarget || 3}/platform</h3>
+    <div class="targets">${targetLinks || '<span style="color:var(--dim)">No targets configured.</span>'}</div>
+
+    <h3>Candidate tracker</h3>
+    <table>
+      <thead><tr>
+        <th>#</th><th>Candidate</th><th>Source</th><th>Contacted</th><th>Signed up</th>
+        <th>Exam</th><th>Q</th><th>Activated</th><th>Day-2</th><th>Notes</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  const when = state._meta && state._meta.lastUpdatedAt ? new Date(state._meta.lastUpdatedAt).toLocaleString() : 'unknown';
+  document.getElementById('updated').textContent = `State last updated: ${when}. Edit activationSprint.candidates[] in campaign-state.json, then hard-refresh.`;
+})();
+</script>
 <!--INLINE-ASSETS-->
 <script>
 /* CipherExam campaign site — shared JS (vanilla, no deps) */

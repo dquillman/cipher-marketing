@@ -73,7 +73,11 @@ const STATE_KIND = {
 // deleted ~838 lines). Use scripts/refresh-inline-state.mjs to refresh only its
 // state block. --force includes it — only for an intentional rebuild.
 const FORCE = process.argv.includes("--force");
-const SKIP = new Set(["launch-campaign.html", ...(FORCE ? [] : ["app.html"])]);
+// funnel.html and sprint.html are standalone hand-authored pages (their own
+// .topbar/.nav + inlined assets). Processing sprint.html once destroyed its body
+// (unbalanced INLINE-ASSETS markers → the strip regex ate the content), so they
+// are always skipped like app.html and load HAL via a hand-maintained tag.
+const SKIP = new Set(["launch-campaign.html", "funnel.html", "sprint.html", ...(FORCE ? [] : ["app.html"])]);
 if (!FORCE) {
   console.log("note: skipping app.html (hand-edited — processing it deletes direct edits; --force overrides)");
 }

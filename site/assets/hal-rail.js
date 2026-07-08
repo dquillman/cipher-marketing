@@ -28,12 +28,13 @@
 @media (max-width:1100px){ :root { --hal-rail-w: 330px; } }
 body { padding-right: var(--hal-rail-w); transition: padding-right .2s ease; }
 body.hal-collapsed { padding-right: 30px; }
-/* Header spans full width; HAL sits BELOW it (top = measured nav height). */
-.nav { margin-right: calc(-1 * var(--hal-rail-w)); }
-body.hal-collapsed .nav { margin-right: -30px; }
+/* Header spans full width; HAL sits BELOW it (top = measured header height).
+   Pages use either .nav (dashboard tabs) or .topbar (standalone funnel/sprint). */
+.nav, .topbar { margin-right: calc(-1 * var(--hal-rail-w)); }
+body.hal-collapsed .nav, body.hal-collapsed .topbar { margin-right: -30px; }
 @media (max-width:820px){
   body:not(.hal-collapsed){ padding-right: 30px; }
-  .nav { margin-right: -30px; }
+  .nav, .topbar { margin-right: -30px; }
 }
 .hal-rail { position:fixed; top:var(--hal-top); right:0; bottom:0; width:var(--hal-rail-w);
   z-index:55; display:flex; flex-direction:row; background:#05060a; color:#cfd6e4;
@@ -131,13 +132,13 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 
     // ---- keep the rail below the header: track the nav height ---------------
     function setNavTop() {
-      var nav = document.querySelector(".nav");
+      var nav = document.querySelector(".nav, .topbar");
       var h = nav ? Math.round(nav.getBoundingClientRect().height) : 0;
       document.documentElement.style.setProperty("--hal-top", h + "px");
     }
     setNavTop();
     window.addEventListener("resize", setNavTop);
-    var navEl = document.querySelector(".nav");
+    var navEl = document.querySelector(".nav, .topbar");
     if (window.ResizeObserver && navEl) { try { new ResizeObserver(setNavTop).observe(navEl); } catch (e) {} }
 
     // ---- personas ----------------------------------------------------------
