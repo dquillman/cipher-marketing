@@ -218,9 +218,48 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       utt.onstart = function () { pendingGreeting = null; speaking = true; setState(); };
       synth.speak(utt);
     }
+    // Client-side navigation: "go to the Dashboard", "show me Posts", "open the
+    // schedule tab" - HAL switches the app page/tab itself by driving the page's own
+    // nav, with no server round-trip (works even when the HAL server is down).
+    // Returns the nav element to activate, or null if it's not a navigation command.
+    function halFindNav(text) {
+      var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
+      var target = null;
+      var m = t.match(/^(?:(?:hal|jarvis|assistant)[,:\s]+|please\s+)*(?:go(?:\s*to)?|goto|show(?:\s*me)?|open|take me to|switch to|navigate to|jump to|bring up|pull up|let'?s see)\s+(?:the\s+)?(.+)$/);
+      if (m) { target = m[1]; }
+      else { var b = t.match(/^(?:the\s+)?(.+?)\s+(?:tab|page|section|view)$/); if (b) { target = b[1]; } }
+      if (!target) { return null; }
+      target = target.replace(/\s+(tab|page|section|view)$/, "").replace(/[^a-z0-9+ ]/g, " ").replace(/\s+/g, " ").trim();
+      if (target.length < 2) { return null; }
+      var cands = [];
+      [].slice.call(document.querySelectorAll(".nav-link, .nav a, .topbar a, [data-route]")).forEach(function (el) {
+        var label = (el.textContent || "").toLowerCase().replace(/[^a-z0-9+ ]/g, " ").replace(/\s+/g, " ").trim();
+        if (label) { cands.push({ label: label, el: el }); }
+      });
+      function pick(pred) { for (var i = 0; i < cands.length; i++) { if (pred(cands[i].label)) { return cands[i]; } } return null; }
+      return pick(function (l) { return l === target; })
+          || pick(function (l) { return l.indexOf(target) === 0; })
+          || pick(function (l) { return target.indexOf(l + " ") === 0; })
+          || pick(function (l) { return l.split(" ").indexOf(target) > -1; });
+    }
+
     function send(raw) {
       var text = (raw !== undefined ? raw : input.value).trim();
       if (!text || busy) return;
+      var nav = halFindNav(text);
+      if (nav) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        var name = (nav.label.replace(/[^a-z0-9+ ]/gi, "").trim() || "there")
+          .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        var who = FACES[face].name;
+        var line = who === "J.A.R.V.I.S." ? ("Right away, sir - " + name + ".")
+                 : who === "HAL 9000" ? ("Certainly, Dave. Bringing up " + name + ".")
+                 : ("Opening " + name + ".");
+        append("assistant", line); speak(line);
+        setTimeout(function () { try { nav.el.click(); } catch (e) {} }, 80);
+        setState();
+        return;
+      }
       pendingGreeting = null; input.value = ""; append("user", text); busy = true; setState();
       fetch(HAL_API + "/api/ask", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: text, history: chat.slice(-16), face: face }) })
