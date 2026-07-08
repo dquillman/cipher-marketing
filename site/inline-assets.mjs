@@ -116,8 +116,9 @@ for (const f of files) {
   }
 
   // Inject the shared HAL rail on every page (idempotent — strip prior block first).
-  // Single source of truth is assets/hal-rail.js; app.html carries an inline copy
-  // (it is hand-edited and excluded from this pass).
+  // Single source of truth is assets/hal-rail.js. app.html is excluded from this
+  // pass (its hand-edited inline CSS/JS), but references the same external file
+  // directly via a <!--HAL-RAIL--> tag maintained by hand.
   const HAL_OPEN = "<!--HAL-RAIL-->", HAL_CLOSE = "<!--/HAL-RAIL-->";
   html = html.replace(new RegExp(`\\n?${HAL_OPEN}[\\s\\S]*?${HAL_CLOSE}\\n?`, "g"), "\n");
   const halBlock = `${HAL_OPEN}\n<script src="assets/hal-rail.js"></script>\n${HAL_CLOSE}`;
