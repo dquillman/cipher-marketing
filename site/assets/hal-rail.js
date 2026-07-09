@@ -56,42 +56,48 @@ body.hal-collapsed .hal-rail { transform:translateX(calc(100% - 30px)); }
 .hal-handle-chev { font-size:16px; color:#5a6578; transition:transform .2s ease; }
 body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-panel { flex:1; min-width:0; display:flex; flex-direction:column; }
-.hal-winhead { display:flex; align-items:center; gap:8px; padding:10px 12px;
+.hal-winhead { display:flex; flex-direction:column; align-items:center; gap:6px; padding:18px 12px 12px;
   border-bottom:1px solid #16181d; user-select:none; }
 /* Per-persona eye: HAL red lens, JARVIS blue arc reactor, assistant neutral lens.
    Same designs as the qcode ops HAL/JARVIS consoles, scaled to the rail header. */
-.hal-eye { position:relative; width:24px; height:24px; flex:none; display:inline-flex; align-items:center; justify-content:center; }
-.hal-lens { position:relative; width:24px; height:24px; border-radius:9999px; flex:none;
+.hal-eye { position:relative; width:72px; height:72px; flex:none; display:inline-flex; align-items:center; justify-content:center; }
+/* HAL red eye: metallic bezel ring -> black bezel -> red lens -> glint (qcode design) */
+.hal-ring { width:72px; height:72px; border-radius:9999px; padding:6px;
+  background:linear-gradient(155deg, #ececec, #8f8f8f 30%, #3c3c3c 62%, #a8a8a8);
+  box-shadow:0 0 14px rgba(0,0,0,.95), inset 0 0 6px rgba(0,0,0,.65); }
+.hal-bezel { position:relative; width:100%; height:100%; border-radius:9999px; background:#050505;
+  display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 12px #000; }
+.hal-lens { position:relative; width:44px; height:44px; border-radius:9999px; flex:none;
   background:radial-gradient(circle at 50% 44%, #fff7d6 0%, #ffc24a 5%, #ff5a00 16%,
     #d61a00 30%, #6e0700 52%, #1c0100 74%, #000 92%);
-  box-shadow:0 0 8px 2px rgba(255,42,0,.5); animation:halBreathe 4.5s ease-in-out infinite; }
+  box-shadow:0 0 18px 4px rgba(255,42,0,.55); animation:halBreathe 4.5s ease-in-out infinite; }
 .hal-eye.thinking .hal-lens { animation:halBreathe 1.4s ease-in-out infinite; }
 .hal-eye.speaking .hal-lens { animation:halSpeak .55s ease-in-out infinite; }
-.hal-glint { position:absolute; width:6px; height:4px; border-radius:9999px; top:30%; left:38%;
-  background:rgba(255,255,255,.85); filter:blur(1px); transform:rotate(-25deg); }
+.hal-glint { position:absolute; width:11px; height:7px; border-radius:9999px; top:30%; left:38%;
+  background:rgba(255,255,255,.85); filter:blur(1.5px); transform:rotate(-25deg); }
 /* JARVIS arc reactor: housing -> rotating segmented coil ring -> blue core */
-.hal-reactor { position:relative; width:24px; height:24px; border-radius:9999px; flex:none;
+.hal-reactor { position:relative; width:72px; height:72px; border-radius:9999px; flex:none;
   background:radial-gradient(circle, #0b1420 55%, #1a2836 72%, #0a0e14 100%);
-  box-shadow:0 0 8px rgba(60,180,255,.35), inset 0 0 6px #000;
+  box-shadow:0 0 18px rgba(60,180,255,.3), inset 0 0 10px #000;
   display:flex; align-items:center; justify-content:center; }
-.hal-coils { position:absolute; inset:2px; border-radius:9999px;
+.hal-coils { position:absolute; inset:6px; border-radius:9999px;
   background:repeating-conic-gradient(from 0deg, rgba(120,220,255,.9) 0deg 12deg, rgba(10,20,30,.05) 12deg 36deg);
-  -webkit-mask:radial-gradient(circle, transparent 54%, #000 58%, #000 86%, transparent 90%);
-  mask:radial-gradient(circle, transparent 54%, #000 58%, #000 86%, transparent 90%);
-  animation:jvIdle 24s linear infinite; filter:drop-shadow(0 0 3px rgba(90,200,255,.6)); }
-.hal-core { width:11px; height:11px; border-radius:9999px;
+  -webkit-mask:radial-gradient(circle, transparent 56%, #000 60%, #000 86%, transparent 90%);
+  mask:radial-gradient(circle, transparent 56%, #000 60%, #000 86%, transparent 90%);
+  animation:jvIdle 24s linear infinite; filter:drop-shadow(0 0 5px rgba(90,200,255,.6)); }
+.hal-core { width:33px; height:33px; border-radius:9999px;
   background:radial-gradient(circle at 50% 48%, #fff 0%, #dff6ff 22%, #8fdcff 44%, #37a8e8 66%, #0c3a5e 86%, #051524 100%);
-  box-shadow:0 0 8px 2px rgba(90,200,255,.6); animation:jvBreathe 4.5s ease-in-out infinite; }
+  box-shadow:0 0 18px 4px rgba(90,200,255,.6); animation:jvBreathe 4.5s ease-in-out infinite; }
 .hal-eye.thinking .hal-coils { animation:jvIdle 2.2s linear infinite; }
 .hal-eye.speaking .hal-core { animation:jvSpeak .5s ease-in-out infinite; }
 @keyframes jvIdle { to { transform:rotate(360deg); } }
 @keyframes jvBreathe { 0%,100% { filter:brightness(.9);} 50% { filter:brightness(1.15);} }
-@keyframes jvSpeak { 0%,100% { filter:brightness(.95); box-shadow:0 0 8px 2px rgba(90,200,255,.5);}
-  50% { filter:brightness(1.4); box-shadow:0 0 16px 4px rgba(140,225,255,.9);} }
-.hal-name { letter-spacing:.28em; color:#9db4ff; font-size:12px; }
-.hal-status { letter-spacing:.2em; color:#5a6578; font-size:9px; }
+@keyframes jvSpeak { 0%,100% { filter:brightness(.95); box-shadow:0 0 18px 4px rgba(90,200,255,.5);}
+  50% { filter:brightness(1.4); box-shadow:0 0 30px 8px rgba(140,225,255,.9);} }
+.hal-name { letter-spacing:.45em; color:#9db4ff; font-size:14px; padding-left:.45em; }
+.hal-status { letter-spacing:.3em; color:#5a6578; font-size:10px; }
 .hal-spacer { flex:1; }
-.hal-faces { display:flex; gap:9px; align-items:center; }
+.hal-faces { display:flex; gap:9px; align-items:center; margin-top:2px; }
 .hal-faces button { width:13px; height:13px; border-radius:9999px; border:none; cursor:pointer;
   opacity:.4; transition:all .15s; }
 .hal-faces button.on { opacity:1; box-shadow:0 0 8px 1px currentColor; }
@@ -133,9 +139,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       '    <div class="hal-winhead" id="halw-winhead">' +
       '      <span class="hal-eye" id="halw-eye"></span>' +
       '      <span class="hal-name" id="halw-facename">HAL 9000</span>' +
-      '      <span class="hal-faces" id="halw-faces" role="group" aria-label="Choose persona"></span>' +
-      '      <span class="hal-spacer"></span>' +
       '      <span class="hal-status" id="halw-status">OPERATIONAL</span>' +
+      '      <span class="hal-faces" id="halw-faces" role="group" aria-label="Choose persona"></span>' +
       '    </div>' +
       '    <div class="hal-log" id="halw-log"></div>' +
       '    <form class="hal-controls" id="halw-form">' +
@@ -204,15 +209,17 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     function paintEye() {
       if (face === "jarvis") {
         eye.innerHTML = '<span class="hal-reactor"><span class="hal-coils"></span><span class="hal-core"></span></span>';
-      } else if (face === "assistant") {
-        eye.innerHTML = '<span class="hal-lens" style="filter:' + (FACES.assistant.tint || "") + '"><span class="hal-glint"></span></span>';
       } else {
-        eye.innerHTML = '<span class="hal-lens"><span class="hal-glint"></span></span>';
+        var tint = face === "assistant" ? (' style="filter:' + (FACES.assistant.tint || "") + '"') : "";
+        eye.innerHTML = '<span class="hal-ring"><span class="hal-bezel"><span class="hal-lens"' + tint + '><span class="hal-glint"></span></span></span></span>';
       }
     }
 
     function setState() {
-      statusEl.textContent = listening ? "LISTENING" : paused ? "PAUSED" : speaking ? "SPEAKING" : busy ? "PROCESSING" : "OPERATIONAL";
+      // Idle status word matches the qcode consoles per persona: JARVIS reads
+      // ONLINE, HAL/assistant read OPERATIONAL.
+      var idle = face === "jarvis" ? "ONLINE" : "OPERATIONAL";
+      statusEl.textContent = listening ? "LISTENING" : paused ? "PAUSED" : speaking ? "SPEAKING" : busy ? "PROCESSING" : idle;
       eye.className = "hal-eye" + (speaking ? " speaking" : busy ? " thinking" : "");
       sendBtn.disabled = busy || !input.value.trim();
       // PAUSE + MUTE are ALWAYS visible (ops-hal / MFI layout). PAUSE greys out until
@@ -429,6 +436,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     var facesEl = document.getElementById("halw-faces"), nameEl = document.getElementById("halw-facename");
     function renderFaces() {
       nameEl.textContent = FACES[face].name;
+      // Name tint matches the qcode consoles: JARVIS gold, HAL/assistant blue-grey.
+      nameEl.style.color = face === "jarvis" ? "#ffd47e" : "#9db4ff";
       paintEye();
       var btns = facesEl.querySelectorAll("button");
       for (var i = 0; i < btns.length; i++) { btns[i].className = btns[i].getAttribute("data-face") === face ? "on" : ""; }
