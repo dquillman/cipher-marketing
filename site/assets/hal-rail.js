@@ -71,6 +71,11 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
   background:radial-gradient(circle at 50% 44%, #fff7d6 0%, #ffc24a 5%, #ff5a00 16%,
     #d61a00 30%, #6e0700 52%, #1c0100 74%, #000 92%);
   box-shadow:0 0 18px 4px rgba(255,42,0,.55); animation:halBreathe 4.5s ease-in-out infinite; }
+/* Assistant: a neutral STEEL lens (its own identity, not a dimmed HAL eye). */
+.hal-lens.hal-steel {
+  background:radial-gradient(circle at 50% 44%, #fff 0%, #eef2f8 6%, #c2ccda 20%,
+    #8a97a9 42%, #444e5c 66%, #1a1f27 84%, #000 96%);
+  box-shadow:0 0 18px 4px rgba(150,175,210,.5); }
 .hal-eye.thinking .hal-lens { animation:halBreathe 1.4s ease-in-out infinite; }
 .hal-eye.speaking .hal-lens { animation:halSpeak .55s ease-in-out infinite; }
 .hal-glint { position:absolute; width:11px; height:7px; border-radius:9999px; top:30%; left:38%;
@@ -210,8 +215,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (face === "jarvis") {
         eye.innerHTML = '<span class="hal-reactor"><span class="hal-coils"></span><span class="hal-core"></span></span>';
       } else {
-        var tint = face === "assistant" ? (' style="filter:' + (FACES.assistant.tint || "") + '"') : "";
-        eye.innerHTML = '<span class="hal-ring"><span class="hal-bezel"><span class="hal-lens"' + tint + '><span class="hal-glint"></span></span></span></span>';
+        var lensCls = face === "assistant" ? "hal-lens hal-steel" : "hal-lens";
+        eye.innerHTML = '<span class="hal-ring"><span class="hal-bezel"><span class="' + lensCls + '"><span class="hal-glint"></span></span></span></span>';
       }
     }
 
@@ -436,8 +441,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     var facesEl = document.getElementById("halw-faces"), nameEl = document.getElementById("halw-facename");
     function renderFaces() {
       nameEl.textContent = FACES[face].name;
-      // Name tint matches the qcode consoles: JARVIS gold, HAL/assistant blue-grey.
-      nameEl.style.color = face === "jarvis" ? "#ffd47e" : "#9db4ff";
+      // Name tint per persona: JARVIS gold, ASSISTANT steel, HAL blue-grey.
+      nameEl.style.color = face === "jarvis" ? "#ffd47e" : face === "assistant" ? "#b8c4d4" : "#9db4ff";
       paintEye();
       var btns = facesEl.querySelectorAll("button");
       for (var i = 0; i < btns.length; i++) { btns[i].className = btns[i].getAttribute("data-face") === face ? "on" : ""; }
