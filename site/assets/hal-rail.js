@@ -58,14 +58,36 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-panel { flex:1; min-width:0; display:flex; flex-direction:column; }
 .hal-winhead { display:flex; align-items:center; gap:8px; padding:10px 12px;
   border-bottom:1px solid #16181d; user-select:none; }
+/* Per-persona eye: HAL red lens, JARVIS blue arc reactor, assistant neutral lens.
+   Same designs as the qcode ops HAL/JARVIS consoles, scaled to the rail header. */
+.hal-eye { position:relative; width:24px; height:24px; flex:none; display:inline-flex; align-items:center; justify-content:center; }
 .hal-lens { position:relative; width:24px; height:24px; border-radius:9999px; flex:none;
   background:radial-gradient(circle at 50% 44%, #fff7d6 0%, #ffc24a 5%, #ff5a00 16%,
     #d61a00 30%, #6e0700 52%, #1c0100 74%, #000 92%);
   box-shadow:0 0 8px 2px rgba(255,42,0,.5); animation:halBreathe 4.5s ease-in-out infinite; }
-.hal-lens.thinking { animation:halBreathe 1.4s ease-in-out infinite; }
-.hal-lens.speaking { animation:halSpeak .55s ease-in-out infinite; }
+.hal-eye.thinking .hal-lens { animation:halBreathe 1.4s ease-in-out infinite; }
+.hal-eye.speaking .hal-lens { animation:halSpeak .55s ease-in-out infinite; }
 .hal-glint { position:absolute; width:6px; height:4px; border-radius:9999px; top:30%; left:38%;
   background:rgba(255,255,255,.85); filter:blur(1px); transform:rotate(-25deg); }
+/* JARVIS arc reactor: housing -> rotating segmented coil ring -> blue core */
+.hal-reactor { position:relative; width:24px; height:24px; border-radius:9999px; flex:none;
+  background:radial-gradient(circle, #0b1420 55%, #1a2836 72%, #0a0e14 100%);
+  box-shadow:0 0 8px rgba(60,180,255,.35), inset 0 0 6px #000;
+  display:flex; align-items:center; justify-content:center; }
+.hal-coils { position:absolute; inset:2px; border-radius:9999px;
+  background:repeating-conic-gradient(from 0deg, rgba(120,220,255,.9) 0deg 12deg, rgba(10,20,30,.05) 12deg 36deg);
+  -webkit-mask:radial-gradient(circle, transparent 54%, #000 58%, #000 86%, transparent 90%);
+  mask:radial-gradient(circle, transparent 54%, #000 58%, #000 86%, transparent 90%);
+  animation:jvIdle 24s linear infinite; filter:drop-shadow(0 0 3px rgba(90,200,255,.6)); }
+.hal-core { width:11px; height:11px; border-radius:9999px;
+  background:radial-gradient(circle at 50% 48%, #fff 0%, #dff6ff 22%, #8fdcff 44%, #37a8e8 66%, #0c3a5e 86%, #051524 100%);
+  box-shadow:0 0 8px 2px rgba(90,200,255,.6); animation:jvBreathe 4.5s ease-in-out infinite; }
+.hal-eye.thinking .hal-coils { animation:jvIdle 2.2s linear infinite; }
+.hal-eye.speaking .hal-core { animation:jvSpeak .5s ease-in-out infinite; }
+@keyframes jvIdle { to { transform:rotate(360deg); } }
+@keyframes jvBreathe { 0%,100% { filter:brightness(.9);} 50% { filter:brightness(1.15);} }
+@keyframes jvSpeak { 0%,100% { filter:brightness(.95); box-shadow:0 0 8px 2px rgba(90,200,255,.5);}
+  50% { filter:brightness(1.4); box-shadow:0 0 16px 4px rgba(140,225,255,.9);} }
 .hal-name { letter-spacing:.28em; color:#9db4ff; font-size:12px; }
 .hal-status { letter-spacing:.2em; color:#5a6578; font-size:9px; }
 .hal-spacer { flex:1; }
@@ -109,7 +131,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       '  </button>' +
       '  <div class="hal-panel">' +
       '    <div class="hal-winhead" id="halw-winhead">' +
-      '      <span class="hal-lens" id="halw-lens"><span class="hal-glint"></span></span>' +
+      '      <span class="hal-eye" id="halw-eye"></span>' +
       '      <span class="hal-name" id="halw-facename">HAL 9000</span>' +
       '      <span class="hal-faces" id="halw-faces" role="group" aria-label="Choose persona"></span>' +
       '      <span class="hal-spacer"></span>' +
@@ -120,7 +142,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       '      <input class="hal-input" id="halw-input" placeholder="Ask HAL about the campaign&#8230;" autocomplete="off">' +
       '      <button type="submit" class="hal-btn" id="halw-send">SEND</button>' +
       '      <button type="button" class="hal-btn" id="halw-mic" style="display:none">MIC</button>' +
-      '      <button type="button" class="hal-btn" id="halw-voice">VOICE ON</button>' +
+      '      <button type="button" class="hal-btn" id="halw-pause" title="Pause / resume HAL\'s current reply" disabled>PAUSE</button>' +
+      '      <button type="button" class="hal-btn" id="halw-mute" title="Mute / unmute HAL\'s voice">MUTE</button>' +
       '      <button type="button" class="hal-btn" id="halw-dream" title="HAL\'s proactive pass - reviews the brain + recent commits (~1-2 min)">DREAM</button>' +
       '      <button type="button" class="hal-btn" id="halw-lastdream" title="Show the most recent dream instantly">LAST DREAM</button>' +
       '    </form>' +
@@ -169,17 +192,36 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     };
     var face = "hal";
     try { var f0 = localStorage.getItem("hal-console-face"); if (FACES[f0]) face = f0; } catch (e) {}
-    var busy = false, speaking = false, listening = false, voiceOn = true, pendingGreeting = null, chat = [];
-    var lens = document.getElementById("halw-lens"), statusEl = document.getElementById("halw-status"),
+    var busy = false, speaking = false, listening = false, voiceOn = true, paused = false, pendingGreeting = null, chat = [];
+    var eye = document.getElementById("halw-eye"), statusEl = document.getElementById("halw-status"),
         log = document.getElementById("halw-log"), input = document.getElementById("halw-input"),
         sendBtn = document.getElementById("halw-send"), micBtn = document.getElementById("halw-mic"),
-        voiceBtn = document.getElementById("halw-voice");
+        pauseBtn = document.getElementById("halw-pause"), muteBtn = document.getElementById("halw-mute");
+
+    // Paint the active persona's eye — HAL red lens, JARVIS blue arc reactor,
+    // assistant neutral (desaturated) lens. Rebuilt only on face change (not on
+    // every keystroke) so the CSS animations don't restart.
+    function paintEye() {
+      if (face === "jarvis") {
+        eye.innerHTML = '<span class="hal-reactor"><span class="hal-coils"></span><span class="hal-core"></span></span>';
+      } else if (face === "assistant") {
+        eye.innerHTML = '<span class="hal-lens" style="filter:' + (FACES.assistant.tint || "") + '"><span class="hal-glint"></span></span>';
+      } else {
+        eye.innerHTML = '<span class="hal-lens"><span class="hal-glint"></span></span>';
+      }
+    }
 
     function setState() {
-      statusEl.textContent = listening ? "LISTENING" : speaking ? "SPEAKING" : busy ? "PROCESSING" : "OPERATIONAL";
-      lens.className = "hal-lens" + (speaking ? " speaking" : busy ? " thinking" : "");
-      lens.style.filter = FACES[face].tint;
+      statusEl.textContent = listening ? "LISTENING" : paused ? "PAUSED" : speaking ? "SPEAKING" : busy ? "PROCESSING" : "OPERATIONAL";
+      eye.className = "hal-eye" + (speaking ? " speaking" : busy ? " thinking" : "");
       sendBtn.disabled = busy || !input.value.trim();
+      // PAUSE + MUTE are ALWAYS visible (ops-hal / MFI layout). PAUSE greys out until
+      // HAL is actually speaking; MUTE is the persistent voice on/off toggle.
+      pauseBtn.disabled = !speaking;
+      pauseBtn.textContent = paused ? "RESUME" : "PAUSE";
+      pauseBtn.classList.toggle("live", paused);
+      muteBtn.textContent = voiceOn ? "MUTE" : "MUTED";
+      muteBtn.classList.toggle("live", !voiceOn);
     }
     input.addEventListener("input", setState);
 
@@ -203,7 +245,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     var keepAlive = null;
     function speak(text) {
       if (!voiceOn || !("speechSynthesis" in window)) return;
-      var synth = window.speechSynthesis; synth.cancel();
+      var synth = window.speechSynthesis; synth.cancel(); paused = false;
       var p = FACES[face], utt = new SpeechSynthesisUtterance(text);
       utt.lang = p.lang; utt.rate = p.rate; utt.pitch = p.pitch; utt.volume = 1;
       var voices = synth.getVoices(), pick = null;
@@ -212,8 +254,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (!pick) { for (var k2 = 0; k2 < voices.length; k2++) { if (voices[k2].lang.indexOf("en") === 0) { pick = voices[k2]; break; } } }
       if (pick) utt.voice = pick;
       if (keepAlive) { clearInterval(keepAlive); keepAlive = null; }
-      keepAlive = setInterval(function () { if (!synth.speaking) { clearInterval(keepAlive); keepAlive = null; return; } synth.pause(); synth.resume(); }, 10000);
-      var finish = function () { if (keepAlive) { clearInterval(keepAlive); keepAlive = null; } speaking = false; setState(); };
+      keepAlive = setInterval(function () { if (!synth.speaking) { clearInterval(keepAlive); keepAlive = null; return; } if (paused) return; synth.pause(); synth.resume(); }, 10000);
+      var finish = function () { if (keepAlive) { clearInterval(keepAlive); keepAlive = null; } speaking = false; paused = false; setState(); };
       utt.onend = finish; utt.onerror = finish;
       utt.onstart = function () { pendingGreeting = null; speaking = true; setState(); };
       synth.speak(utt);
@@ -277,9 +319,18 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         .then(function () { busy = false; setState(); });
     }
     document.getElementById("halw-form").addEventListener("submit", function (e) { e.preventDefault(); send(); });
-    voiceBtn.addEventListener("click", function () {
-      if (voiceOn) window.speechSynthesis && window.speechSynthesis.cancel();
-      voiceOn = !voiceOn; voiceBtn.textContent = "VOICE " + (voiceOn ? "ON" : "OFF");
+    // PAUSE freezes the current reply mid-sentence; click again (RESUME) to continue.
+    // The keepAlive interval above checks `paused`, so it won't auto-resume a hold.
+    pauseBtn.addEventListener("click", function () {
+      var synth = window.speechSynthesis; if (!synth || !speaking) return;
+      if (paused) { synth.resume(); paused = false; } else { synth.pause(); paused = true; }
+      setState();
+    });
+    // MUTE is HAL's persistent voice on/off toggle (ops-hal / MFI semantics). Muting
+    // also cancels any in-flight speech immediately; unmuting re-enables the next reply.
+    muteBtn.addEventListener("click", function () {
+      window.speechSynthesis && window.speechSynthesis.cancel();
+      voiceOn = !voiceOn; speaking = false; paused = false; setState();
     });
 
     // DREAM - HAL's proactive pass, on demand.
@@ -378,6 +429,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     var facesEl = document.getElementById("halw-faces"), nameEl = document.getElementById("halw-facename");
     function renderFaces() {
       nameEl.textContent = FACES[face].name;
+      paintEye();
       var btns = facesEl.querySelectorAll("button");
       for (var i = 0; i < btns.length; i++) { btns[i].className = btns[i].getAttribute("data-face") === face ? "on" : ""; }
     }
@@ -387,7 +439,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       b.style.background = FACES[f].dot; b.style.color = FACES[f].dot;
       b.addEventListener("click", function () {
         if (face === f) return;
-        window.speechSynthesis && window.speechSynthesis.cancel(); speaking = false; face = f;
+        window.speechSynthesis && window.speechSynthesis.cancel(); speaking = false; paused = false; face = f;
         try { localStorage.setItem("hal-console-face", f); } catch (e) {}
         renderFaces(); setState();
         if (chat.length === 0) { var gg = pickGreeting(); append("assistant", gg); pendingGreeting = gg; speak(gg); }
