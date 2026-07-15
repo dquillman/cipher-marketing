@@ -5,6 +5,7 @@ import { LaunchTeaser } from "./components/LaunchTeaser";
 import { AiTutorDemo } from "./components/AiTutorDemo";
 import { DomainWeights } from "./components/DomainWeights";
 import { PbqWalkthrough } from "./components/PbqWalkthrough";
+import { AdAllFour } from "./components/AdAllFour";
 import type { ExamVariant } from "./data/examVariants";
 
 const FontLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -121,6 +122,17 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{ variant: v }}
         />
       ))}
+      {/* ===== Paid-social motion ad: "All four answers" (5s loop) ===== */}
+      <Composition
+        key="ad-all-four-1x1"
+        id="ad-all-four-1x1"
+        component={wrap(() => <AdAllFour />) as React.FC<VariantProps>}
+        durationInFrames={150}
+        fps={30}
+        width={1080}
+        height={1080}
+        defaultProps={{ variant: "pmp" }}
+      />
       <Composition
         key="pbq-walkthrough-secplus-li"
         id="pbq-walkthrough-secplus-li"
