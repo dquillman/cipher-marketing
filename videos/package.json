@@ -9,7 +9,8 @@
     "render:secplus": "remotion render src/index.ts launch-teaser-secplus out/1x1-square/launch-teaser-secplus.mp4 && remotion render src/index.ts domain-weights-secplus out/1x1-square/domain-weights-secplus.mp4 && remotion render src/index.ts ai-tutor-demo-secplus out/9x16-vertical/ai-tutor-demo-secplus.mp4 && remotion render src/index.ts ai-tutor-demo-secplus-li out/4x5-portrait/ai-tutor-demo-secplus.mp4",
     "render:shrm": "remotion render src/index.ts launch-teaser-shrm out/1x1-square/launch-teaser-shrm.mp4 && remotion render src/index.ts domain-weights-shrm out/1x1-square/domain-weights-shrm.mp4 && remotion render src/index.ts ai-tutor-demo-shrm out/9x16-vertical/ai-tutor-demo-shrm.mp4 && remotion render src/index.ts ai-tutor-demo-shrm-li out/4x5-portrait/ai-tutor-demo-shrm.mp4",
     "render:ads": "remotion render src/index.ts ad-all-four-1x1 out/1x1-square/ad-all-four.mp4 && remotion render src/index.ts ad-all-four-4x5 out/4x5-portrait/ad-all-four.mp4",
-    "render:all": "npm run render:pmp && npm run render:secplus && npm run render:shrm && npm run render:ads"
+    "normalize": "node scripts/normalize.mjs",
+    "render:all": "npm run render:pmp && npm run render:secplus && npm run render:shrm && npm run render:ads && npm run normalize"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.290",

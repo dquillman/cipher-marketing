@@ -29,7 +29,12 @@ Coach demo exists as 4:5 for LinkedIn and 9:16 for X).
 ```
 npm run render:pmp      # or secplus / shrm — renders all four ratios for that cert
 npm run render:ads      # the ad creatives (1:1 + 4:5)
-npm run render:all      # everything
+npm run render:all      # everything, then normalizes automatically
 ```
 
-Rule: **LinkedIn = 4:5. Ads must be fully composed at frame 0** (see ../README.md).
+⚠ **After a single render (`render:pmp` etc.), run `npm run normalize`.** Remotion
+outputs full-range H.264 (`yuvj420p`), which **LinkedIn rejects** with "File(s) not
+supported." `normalize` re-encodes every clip to standard `yuv420p` (LinkedIn/X/
+Reddit-safe). `render:all` runs it for you; single-cert renders do not.
+
+Rule: **LinkedIn = 4:5. Ads fully composed at frame 0. Always normalize before upload.**
