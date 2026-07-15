@@ -61,33 +61,34 @@ export const AdAllFour: React.FC = () => {
           </div>
         </div>
 
-        {/* options — the hero */}
-        <div style={{ position: "relative", flex: 1, marginTop: 40, display: "flex", alignItems: "center" }}>
-          {/* tangled connectors */}
-          <svg width="1080" height="620" viewBox="0 0 1080 620" style={{ position: "absolute", inset: 0 }}>
+        {/* options + connectors — a fixed 920×432 unit that flex-centers, so
+            the wires track the option rows identically at 1:1 and 4:5. */}
+        <div style={{ flex: 1, display: "flex", alignItems: "center", marginTop: 32 }}>
+          <div style={{ position: "relative", width: 920, height: 432 }}>
+          {/* tangled connectors (block coordinate space; overflow visible for node glow) */}
+          <svg viewBox="0 0 920 432" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }}>
             {OPTIONS.map((o, i) => {
-              const y = 78 + i * 150;
+              const y = 50 + i * 111;  // ≈ centers of the 4 space-between rows
               const dim = interpolate(frame, [RESOLVE, RESOLVE + 14], [1, o.correct ? 1 : 0.12], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
               // fully drawn at frame 0; subtle shimmer gives pre-resolve life
-              const draw = 1;
               const shimmer = frame < RESOLVE ? 0.75 + 0.25 * Math.sin(frame / 5 + i * 1.7) : 1;
               const col = o.correct ? theme.good : i === 0 ? theme.accentPurple : theme.fgMuted;
               return (
                 <path key={i}
-                  d={`M700,${y} C860,${y} 900,310 980,310`}
+                  d={`M700,${y} C812,${y} 850,216 900,216`}
                   fill="none" stroke={col}
                   strokeWidth={o.correct ? 5 : 3}
-                  opacity={draw * dim * shimmer * (o.correct ? 0.95 : 0.6)}
+                  opacity={dim * shimmer * (o.correct ? 0.95 : 0.6)}
                 />
               );
             })}
             {/* resolved node */}
-            <circle cx="980" cy="310" r={interpolate(fade(frame, LOCK, LOCK + 10), [0, 1], [0, 26 + pulse * 8])} fill={theme.good} opacity={0.18} />
-            <circle cx="980" cy="310" r={interpolate(fade(frame, LOCK, LOCK + 8), [0, 1], [0, 11])} fill={theme.good} />
+            <circle cx="900" cy="216" r={interpolate(fade(frame, LOCK, LOCK + 10), [0, 1], [0, 26 + pulse * 8])} fill={theme.good} opacity={0.18} />
+            <circle cx="900" cy="216" r={interpolate(fade(frame, LOCK, LOCK + 8), [0, 1], [0, 11])} fill={theme.good} />
           </svg>
 
           {/* option rows */}
-          <div style={{ width: 700, display: "flex", flexDirection: "column", gap: 16, position: "relative", zIndex: 2 }}>
+          <div style={{ width: 700, height: 432, display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
             {OPTIONS.map((o, i) => {
               // rows fully visible at frame 0 (frame-0 requirement); only the
               // resolve/dim/lock states animate
@@ -101,7 +102,7 @@ export const AdAllFour: React.FC = () => {
                     opacity: dim,
                     transform: `scale(${scale})`,
                     display: "flex", alignItems: "center", gap: 22,
-                    padding: "18px 28px", borderRadius: 18,
+                    padding: "16px 28px", borderRadius: 18,
                     border: `2px solid ${locked ? theme.good : theme.border}`,
                     backgroundColor: locked ? "rgba(52,211,153,0.12)" : theme.bgElev,
                     boxShadow: locked ? `0 0 34px -6px ${theme.good}66` : "none",
@@ -120,6 +121,7 @@ export const AdAllFour: React.FC = () => {
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
 

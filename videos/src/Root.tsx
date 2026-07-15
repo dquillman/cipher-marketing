@@ -122,7 +122,8 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{ variant: v }}
         />
       ))}
-      {/* ===== Paid-social motion ad: "All four answers" (5s loop) ===== */}
+      {/* ===== Paid-social motion ad: "All four answers" (5s loop) =====
+          1:1 = universal (X, Reddit, link). 4:5 = LinkedIn-recommended. */}
       <Composition
         key="ad-all-four-1x1"
         id="ad-all-four-1x1"
@@ -131,6 +132,16 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1080}
+        defaultProps={{ variant: "pmp" }}
+      />
+      <Composition
+        key="ad-all-four-4x5"
+        id="ad-all-four-4x5"
+        component={wrap(() => <AdAllFour />) as React.FC<VariantProps>}
+        durationInFrames={150}
+        fps={30}
+        width={1080}
+        height={1350}
         defaultProps={{ variant: "pmp" }}
       />
       <Composition
