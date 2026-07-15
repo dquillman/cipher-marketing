@@ -26,11 +26,13 @@ export const AdAllFour: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const RESOLVE = 78;   // wrong ones start dimming
-  const LOCK = 92;      // correct locks green
-
-  const headline = spring({ frame: frame - 96, fps, config: { damping: 16, stiffness: 120 } });
-  const ctaP = spring({ frame: frame - 118, fps, config: { damping: 15, stiffness: 140 } });
+  // FRAME-0 REQUIREMENT (Dave, 2026-07-15): every ad must be fully composed at
+  // frame 0 — options, headline, CTA all visible, nothing sliding in from
+  // blank. Autoplay-off viewers see frame 0 as the thumbnail, and autoplay
+  // viewers judge the ad in the first split-second. Frame 0 here IS the
+  // static ad; the motion is the dim -> resolve -> DECODED drama on top.
+  const RESOLVE = 45;   // wrong ones start dimming
+  const LOCK = 62;      // correct locks green
   // gentle looping pulse on the resolved node
   const pulse = 0.5 + 0.5 * Math.sin((frame / fps) * Math.PI * 1.6);
 
@@ -49,8 +51,8 @@ export const AdAllFour: React.FC = () => {
       />
 
       <AbsoluteFill style={{ padding: "64px 80px 64px", display: "flex", flexDirection: "column" }}>
-        {/* brand */}
-        <div style={{ opacity: fade(frame, 0, 14) }}>
+        {/* brand — visible from frame 0 */}
+        <div>
           <div style={{ fontFamily: fontHeading, fontSize: 30, fontWeight: 600, letterSpacing: 1, color: theme.fg }}>
             <span style={{ color: theme.accent }}>⟨</span> CIPHEREXAM <span style={{ color: theme.accent }}>⟩</span>
           </div>
@@ -66,15 +68,16 @@ export const AdAllFour: React.FC = () => {
             {OPTIONS.map((o, i) => {
               const y = 78 + i * 150;
               const dim = interpolate(frame, [RESOLVE, RESOLVE + 14], [1, o.correct ? 1 : 0.12], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-              const draw = fade(frame, 18 + i * 8, 60);
+              // fully drawn at frame 0; subtle shimmer gives pre-resolve life
+              const draw = 1;
+              const shimmer = frame < RESOLVE ? 0.75 + 0.25 * Math.sin(frame / 5 + i * 1.7) : 1;
               const col = o.correct ? theme.good : i === 0 ? theme.accentPurple : theme.fgMuted;
               return (
                 <path key={i}
                   d={`M700,${y} C860,${y} 900,310 980,310`}
                   fill="none" stroke={col}
                   strokeWidth={o.correct ? 5 : 3}
-                  opacity={draw * dim * (o.correct ? 0.95 : 0.6)}
-                  strokeDasharray="600" strokeDashoffset={interpolate(draw, [0, 1], [600, 0])}
+                  opacity={draw * dim * shimmer * (o.correct ? 0.95 : 0.6)}
                 />
               );
             })}
@@ -86,7 +89,8 @@ export const AdAllFour: React.FC = () => {
           {/* option rows */}
           <div style={{ width: 700, display: "flex", flexDirection: "column", gap: 16, position: "relative", zIndex: 2 }}>
             {OPTIONS.map((o, i) => {
-              const p = spring({ frame: frame - (18 + i * 9), fps, config: { damping: 18, stiffness: 130 } });
+              // rows fully visible at frame 0 (frame-0 requirement); only the
+              // resolve/dim/lock states animate
               const dim = o.correct ? 1 : interpolate(frame, [RESOLVE, RESOLVE + 14], [1, 0.38], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
               const locked = o.correct && frame >= LOCK;
               const lockP = spring({ frame: frame - LOCK, fps, config: { damping: 12, stiffness: 160 } });
@@ -94,8 +98,8 @@ export const AdAllFour: React.FC = () => {
               return (
                 <div key={i}
                   style={{
-                    opacity: interpolate(p, [0, 1], [0, 1]) * dim,
-                    transform: `translateX(${interpolate(p, [0, 1], [-40, 0])}px) scale(${scale})`,
+                    opacity: dim,
+                    transform: `scale(${scale})`,
                     display: "flex", alignItems: "center", gap: 22,
                     padding: "18px 28px", borderRadius: 18,
                     border: `2px solid ${locked ? theme.good : theme.border}`,
@@ -119,8 +123,8 @@ export const AdAllFour: React.FC = () => {
           </div>
         </div>
 
-        {/* headline */}
-        <div style={{ opacity: interpolate(headline, [0, 1], [0, 1]), transform: `translateY(${interpolate(headline, [0, 1], [24, 0])}px)`, marginTop: 18 }}>
+        {/* headline — visible from frame 0 */}
+        <div style={{ marginTop: 18 }}>
           <div style={{ fontFamily: fontHeading, fontWeight: 800, fontSize: 66, lineHeight: 1.02, letterSpacing: -1.5, color: theme.fg }}>
             All four answers <span style={{ color: theme.accent }}>look right.</span>
           </div>
@@ -129,8 +133,8 @@ export const AdAllFour: React.FC = () => {
           </div>
         </div>
 
-        {/* CTA */}
-        <div style={{ display: "flex", alignItems: "center", gap: 28, marginTop: 26, opacity: interpolate(ctaP, [0, 1], [0, 1]), transform: `translateY(${interpolate(ctaP, [0, 1], [16, 0])}px)` }}>
+        {/* CTA — visible from frame 0 */}
+        <div style={{ display: "flex", alignItems: "center", gap: 28, marginTop: 26 }}>
           <div style={{ fontFamily: fontHeading, fontWeight: 700, fontSize: 30, letterSpacing: 0.5, backgroundColor: theme.accent, color: "#06121a", borderRadius: 14, padding: "20px 36px" }}>
             Start Free Trial
           </div>

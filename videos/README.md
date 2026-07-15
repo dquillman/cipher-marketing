@@ -17,6 +17,12 @@ Cert codes:
 
 All cert-specific content (lens label, scenario question, options, explanation, domain weights, callout) lives in [`src/data/examVariants.ts`](src/data/examVariants.ts). Components read from there via a `variant` prop — to add a Tier 2 cert, add a config entry and append the variant code to `TIER_1` in `Root.tsx`. No component edits needed.
 
+## ⚠ Frame-0 requirement for ADS (Dave, 2026-07-15)
+
+Every paid/social **ad** composition must be **fully composed at frame 0** — hero visual, headline, and CTA all visible and legible from the first frame. No slide-in-from-blank intros, no logo-only openers.
+
+Why: feeds autoplay muted while scrolling (first split-second = the scroll-stop), and autoplay-off viewers see frame 0 as the static thumbnail, so frame 0 must work as the static ad on its own. Give content no entrance animation; animate only the payoff (dim / resolve / lock / pulse). Reference: `src/components/AdAllFour.tsx` (`ad-all-four-1x1`).
+
 ## One-time setup
 
 ```bash
