@@ -1,9 +1,25 @@
 {
   "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-07-07T23:00:41.237Z",
+    "lastUpdatedBy": "claude-hold-lift",
+    "lastUpdatedAt": "2026-07-16T00:00:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
+  },
+  "postingHold": {
+    "active": false,
+    "liftedAt": "2026-07-16",
+    "liftedBy": "Dave — 'now fix these' directive naming the hold as gap #2 (Claude Code session, 2026-07-16)",
+    "since": "2026-07-09",
+    "orderedBy": "Dave",
+    "scope": "ALL posts AND the daily community-reply/engagement cadence, ALL channels (LinkedIn + X + Reddit). No publishing, no new scheduled sends, and no proactive replies/engagement while active.",
+    "reason": "Dave ordered: 'Brad, hold all posts until further notice.'",
+    "affectedPosts": [
+      "li-fri-2026-05-29-scenario",
+      "x-fri-2026-05-29-scenario",
+      "li-mon-2026-06-01-domains",
+      "x-mon-2026-06-01-domains"
+    ],
+    "liftInstructions": "Lift ONLY on Dave's explicit go. Set active=false, flip each affectedPosts entry in posts.json from status 'hold' back to its preHoldStatus ('scheduled') and refresh scheduledTime, AND restore communityEngagement.dailyTarget from preHoldDailyTarget + set communityEngagement.paused=false."
   },
   "campaign": {
     "start": "2026-05-18",
@@ -90,6 +106,11 @@
   },
   "communityEngagement": {
     "instructions": "Daily community-reply targets. Active exam(s) are auto-detected from the current campaign week's scheduled posts (posts.json → examFocus) — the dashboard picks the matching byExam[<exam>] block. If multiple exams are scheduled the same week, targets are merged. Falls back to byExam.default when nothing matches. dailyTarget = replies per platform per day.",
+    "paused": false,
+    "resumedAt": "2026-07-16",
+    "pausedSince": "2026-07-09",
+    "pausedReason": "Full engagement freeze — Dave extended 'hold all posts' to include the daily community reply/engagement cadence. LIFTED 2026-07-16 with the posting hold.",
+    "preHoldDailyTarget": 3,
     "dailyTarget": 3,
     "byExam": {
       "PMP": {
