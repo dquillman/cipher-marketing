@@ -357,6 +357,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
           : who2 === "HAL 9000" ? ("Certainly, Dave. " + music.label + ". I know how much you enjoy this era.")
           : ("Playing " + music.label + " on YouTube.");
         var win = window.open(music.url, "_blank", "noopener");
+        window.focus(); // return focus to this tab - the new tab shouldn't steal it
         append("assistant", win ? mline : (mline + " Your browser blocked the new tab - use the link below."), null, { url: music.url, label: "▶ " + music.label + " on YouTube" });
         speak(mline);
         setState();
