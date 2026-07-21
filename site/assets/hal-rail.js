@@ -241,7 +241,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     }
     input.addEventListener("input", setState);
 
-    function append(role, text, files) {
+    function append(role, text, files, href) {
       var d = document.createElement("div"); d.className = "hal-line " + (role === "assistant" ? "hal" : "dave");
       var w = document.createElement("span"); w.className = "who";
       w.textContent = role === "assistant" ? FACES[face].name : "DAVE"; d.appendChild(w);
@@ -249,6 +249,12 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (files && files.length) {
         var c = document.createElement("div"); c.className = "hal-cite";
         c.textContent = "MEMORY: " + files.join("  \\u00B7  "); d.appendChild(c);
+      }
+      if (href) {
+        var a = document.createElement("a");
+        a.href = href.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.textContent = href.label; a.style.display = "block"; a.style.marginTop = "4px";
+        d.appendChild(a);
       }
       log.appendChild(d); log.scrollTo({ top: log.scrollHeight, behavior: "smooth" });
       chat.push({ role: role, content: text });
@@ -307,6 +313,25 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
           || pick(function (l) { return l.split(" ").indexOf(target) > -1; });
     }
 
+    // DJ mode: "play music" (default: 70s greatest hits), "play some 80s
+    // music", etc. Opens YouTube in a new tab - no server round-trip, works
+    // even when the HAL server is down. Ported verbatim from MFI HalPanel
+    // (the reference implementation, see 2nd Brain/HAL_SPEC.md).
+    var MUSIC_70S_URL = "https://www.youtube.com/watch?v=WanZkMp31xw&list=RDWanZkMp31xw&start_radio=1";
+    var MUSIC_DECADES = { fifties: "50s", sixties: "60s", seventies: "70s", eighties: "80s", nineties: "90s" };
+    function findMusicCommand(text) {
+      var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
+      var m = t.match(/^(?:(?:hal|jarvis|assistant)[,:\s]+|please\s+)*(?:play|put on|spin up|spin)\s+(?:me\s+)?(?:some\s+|a little\s+|the\s+)?(.*?)\s*(?:music|tunes|songs|hits)(?:\s+please)?$/);
+      if (!m) { return null; }
+      var q = (m[1] || "").replace(/\s+/g, " ").trim();
+      q = MUSIC_DECADES[q] || q;
+      if (!q || q === "70s") { return { url: MUSIC_70S_URL, label: "70s greatest hits" }; }
+      return {
+        url: "https://www.youtube.com/results?search_query=" + encodeURIComponent(q + " greatest hits playlist"),
+        label: q + " music",
+      };
+    }
+
     function send(raw) {
       var text = (raw !== undefined ? raw : input.value).trim();
       if (!text || busy) return;
@@ -321,6 +346,19 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
                  : ("Opening " + name + ".");
         append("assistant", line); speak(line);
         setTimeout(function () { try { nav.el.click(); } catch (e) {} }, 80);
+        setState();
+        return;
+      }
+      var music = findMusicCommand(text);
+      if (music) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        var who2 = FACES[face].name;
+        var mline = who2 === "J.A.R.V.I.S." ? ("With pleasure, sir - " + music.label + ", on YouTube.")
+          : who2 === "HAL 9000" ? ("Certainly, Dave. " + music.label + ". I know how much you enjoy this era.")
+          : ("Playing " + music.label + " on YouTube.");
+        var win = window.open(music.url, "_blank", "noopener");
+        append("assistant", win ? mline : (mline + " Your browser blocked the new tab - use the link below."), null, { url: music.url, label: "▶ " + music.label + " on YouTube" });
+        speak(mline);
         setState();
         return;
       }
