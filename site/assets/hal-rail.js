@@ -126,6 +126,15 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-btn:hover { border-color:#8a1200; color:#ff6a4a; }
 .hal-btn:disabled { opacity:.4; cursor:default; }
 .hal-btn.live { border-color:#b31500; color:#ff4020; box-shadow:0 0 12px rgba(255,42,0,.35); }
+/* MODEL picker (HAL_SPEC 3c) - copied from the hal.py console reference. */
+/* wrap: the rail is 380px (330px under 1100px viewport) and four model buttons
+   plus the label do not fit on one line - without this they overflow the form. */
+.hal-model-row { flex:1 1 100%; display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding-top:2px; }
+.hal-model-label { font-size:10px; letter-spacing:.14em; color:#5a6578; white-space:nowrap; }
+.hal-btn.model-on { border-color:#5DCAA5; color:#5DCAA5; box-shadow:0 0 8px rgba(93,202,165,.25); }
+.hal-model-btn { display:flex; flex-direction:column; align-items:center; gap:2px; line-height:1; }
+.hal-model-cost { font-size:9px; color:#5a6578; letter-spacing:.04em; font-weight:400; }
+.hal-btn.model-on .hal-model-cost { color:#5DCAA5; opacity:.75; }
 `;
     var styleEl = document.createElement("style");
     styleEl.id = "hal-rail-style";
@@ -157,6 +166,16 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       '      <button type="button" class="hal-btn" id="halw-mute" title="Mute / unmute HAL\'s voice">MUTE</button>' +
       '      <button type="button" class="hal-btn" id="halw-dream" title="HAL\'s proactive pass - reviews the brain + recent commits (~1-2 min)">DREAM</button>' +
       '      <button type="button" class="hal-btn" id="halw-lastdream" title="Show the most recent dream instantly">LAST DREAM</button>' +
+      // MODEL picker (HAL_SPEC 3c). The brain here is a local `hal app` server,
+      // which accepts offline/ollama/haiku/sonnet - so this surface offers all
+      // four, same as the Second Brain console.
+      '      <div class="hal-model-row">' +
+      '        <span class="hal-model-label">MODEL:</span>' +
+      '        <button type="button" class="hal-btn hal-model-btn" data-model="offline" title="No API - deterministic retrieval only">OFFLINE<span class="hal-model-cost">no API</span></button>' +
+      '        <button type="button" class="hal-btn hal-model-btn" data-model="haiku" title="Claude Haiku - fast, cheapest">HAIKU<span class="hal-model-cost">fast</span></button>' +
+      '        <button type="button" class="hal-btn hal-model-btn" data-model="sonnet" title="Claude Sonnet - slower, best copy">SONNET<span class="hal-model-cost">best copy</span></button>' +
+      '        <button type="button" class="hal-btn hal-model-btn" data-model="ollama" title="Local Ollama - free, needs Ollama running">OLLAMA<span class="hal-model-cost">local</span></button>' +
+      '      </div>' +
       '    </form>' +
       '  </div>' +
       '</aside>';
@@ -203,6 +222,12 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     };
     var face = "hal";
     try { var f0 = localStorage.getItem("hal-console-face"); if (FACES[f0]) face = f0; } catch (e) {}
+    // MODEL picker (HAL_SPEC 3c). "hal-model" is the SAME key every HAL surface
+    // uses, so Dave's choice follows him between HALs. The server validates it,
+    // so an unknown value can only fall back to the default.
+    var MODELS = ["offline", "haiku", "sonnet", "ollama"];
+    var halModel = "haiku";
+    try { var m0 = localStorage.getItem("hal-model"); if (MODELS.indexOf(m0) >= 0) halModel = m0; } catch (e) {}
     var busy = false, speaking = false, listening = false, voiceOn = true, paused = false, live = false, pendingGreeting = null, chat = [];
     var eye = document.getElementById("halw-eye"), statusEl = document.getElementById("halw-status"),
         log = document.getElementById("halw-log"), input = document.getElementById("halw-input"),
@@ -240,6 +265,26 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       liveBtn.classList.toggle("live", live);
     }
     input.addEventListener("input", setState);
+
+    // ---- MODEL selector (HAL_SPEC 3c) -------------------------------------
+    // Copied from the hal.py console reference rather than re-derived.
+    function syncModelBtns() {
+      var btns = document.querySelectorAll("#halw-rail [data-model]");
+      Array.prototype.forEach.call(btns, function (b) {
+        b.classList.toggle("model-on", b.getAttribute("data-model") === halModel);
+      });
+    }
+    Array.prototype.forEach.call(
+      document.querySelectorAll("#halw-rail [data-model]"),
+      function (b) {
+        b.addEventListener("click", function () {
+          halModel = this.getAttribute("data-model");
+          try { localStorage.setItem("hal-model", halModel); } catch (e) {}
+          syncModelBtns();
+        });
+      }
+    );
+    syncModelBtns();
 
     function append(role, text, files, href) {
       var d = document.createElement("div"); d.className = "hal-line " + (role === "assistant" ? "hal" : "dave");
@@ -365,7 +410,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       }
       pendingGreeting = null; input.value = ""; append("user", text); busy = true; setState();
       fetch(HAL_API + "/api/ask", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: text, history: chat.slice(-16), face: face }) })
+        body: JSON.stringify({ question: text, history: chat.slice(-16), face: face, model: halModel }) })
         .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { res: res, d: d }; }); })
         .then(function (x) {
           var reply = !x.res.ok ? ("I've just picked up a fault in the AE-35 unit. " + (x.d.error || ("Error " + x.res.status + ".")))
