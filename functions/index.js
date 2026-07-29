@@ -8,14 +8,198 @@
 import { onRequest } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import { initializeApp } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import {
+  RequestError,
+  requireBootstrapOperator,
+  requireMarketingAdmin,
+  validateGradePayload,
+} from "./security.js";
 import Anthropic from "@anthropic-ai/sdk";
+import {
+  RESET_CONFIRMATION,
+  buildCompetitorReports,
+  buildFreshCompetitors,
+  buildFreshPosts,
+  buildFreshState,
+  validateCampaignStart,
+} from "./campaign-blueprint.js";
 
 initializeApp();
 
 const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 
 const MODEL = "claude-sonnet-4-6";
+const ALLOWED_ORIGINS = [
+  "https://cipher-marketing-daveq.web.app",
+  "https://cipher-marketing-daveq.firebaseapp.com",
+  "http://localhost:8766",
+  "http://127.0.0.1:8766",
+];
+const GRADE_LIMIT_PER_MINUTE = 10;
+
+async function verifyBearerToken(req) {
+  const header = req.get("authorization") || "";
+  const match = header.match(/^Bearer (.+)$/i);
+  if (!match) throw new RequestError(401, "Bearer authentication required.");
+  try {
+    return await getAuth().verifyIdToken(match[1]);
+  } catch (error) {
+    if (error instanceof RequestError) throw error;
+    throw new RequestError(401, "Invalid or expired operator token.");
+  }
+}
+
+async function authenticateOperator(req) {
+  return requireMarketingAdmin(await verifyBearerToken(req));
+}
+
+export const bootstrapMarketingAdmin = onRequest(
+  { cors: ALLOWED_ORIGINS, region: "us-central1", invoker: "public" },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        res.status(405).json({ error: "POST only" });
+        return;
+      }
+      const decoded = requireBootstrapOperator(await verifyBearerToken(req));
+      const auth = getAuth();
+      const user = await auth.getUser(decoded.uid);
+      await auth.setCustomUserClaims(user.uid, {
+        ...(user.customClaims || {}),
+        marketingAdmin: true,
+      });
+      res.json({ ok: true });
+    } catch (error) {
+      console.error("bootstrapMarketingAdmin failed:", error);
+      const status = Number(error.statusCode) || 500;
+      res.status(status).json({
+        error: status >= 500 ? "Unable to authorize operator." : error.message,
+      });
+    }
+  }
+);
+function validateResetPayload(body) {
+  if (!body || typeof body !== "object") {
+    throw new RequestError(400, "A reset request is required.");
+  }
+  try {
+    validateCampaignStart(body.startDate);
+  } catch (error) {
+    throw new RequestError(400, error.message);
+  }
+  if (body.confirmation !== RESET_CONFIRMATION) {
+    throw new RequestError(400, `Type ${RESET_CONFIRMATION} to confirm.`);
+  }
+  if (typeof body.requestId !== "string" || !/^[a-zA-Z0-9_-]{12,80}$/.test(body.requestId)) {
+    throw new RequestError(400, "A valid reset request ID is required.");
+  }
+  return { startDate: body.startDate, requestId: body.requestId };
+}
+
+export const resetCampaign = onRequest(
+  { cors: ALLOWED_ORIGINS, region: "us-central1", invoker: "public" },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        res.status(405).json({ error: "POST only" });
+        return;
+      }
+      const operator = await authenticateOperator(req);
+      const { startDate, requestId } = validateResetPayload(req.body);
+      const db = getFirestore();
+      const archiveId = requestId;
+      const archiveRef = db.collection("campaignArchives").doc(archiveId);
+      const stateRef = db.collection("campaign").doc("state");
+      const postsRef = db.collection("campaign").doc("posts");
+      const competitorsRef = db.collection("campaign").doc("competitors");
+      const reportIds = ["landscape", "deepdive", "battlecard"];
+      const reportRefs = reportIds.map((id) => db.collection("competitor_intel").doc(id));
+
+      const result = await db.runTransaction(async (tx) => {
+        const [archiveSnap, stateSnap, postsSnap, competitorsSnap, ...reportSnaps] =
+          await Promise.all([
+            tx.get(archiveRef),
+            tx.get(stateRef),
+            tx.get(postsRef),
+            tx.get(competitorsRef),
+            ...reportRefs.map((ref) => tx.get(ref)),
+          ]);
+
+        if (archiveSnap.exists) {
+          return { alreadyCompleted: true, ...archiveSnap.data() };
+        }
+
+        const now = new Date();
+        const currentState = stateSnap.exists ? stateSnap.data() : {};
+        const currentPosts = postsSnap.exists ? postsSnap.data() : {};
+        const currentCompetitors = competitorsSnap.exists ? competitorsSnap.data() : {};
+        const freshState = buildFreshState(currentState, startDate, now);
+        const freshPosts = buildFreshPosts(currentPosts, startDate, now);
+        const freshCompetitors = buildFreshCompetitors(now);
+        const freshReports = buildCompetitorReports(now);
+
+        tx.create(archiveRef, {
+          archiveId,
+          createdAt: now.toISOString(),
+          createdByUid: operator.uid,
+          previousCampaignStart: currentState?.campaign?.start || null,
+          newCampaignStart: startDate,
+          strategyVersion: "pmp-judgment-2026",
+          recoverable: true,
+        });
+        tx.create(archiveRef.collection("snapshots").doc("state"), { exists: stateSnap.exists, data: currentState });
+        tx.create(archiveRef.collection("snapshots").doc("posts"), { exists: postsSnap.exists, data: currentPosts });
+        tx.create(archiveRef.collection("snapshots").doc("competitors"), { exists: competitorsSnap.exists, data: currentCompetitors });
+        reportSnaps.forEach((snap, index) => {
+          tx.create(archiveRef.collection("competitor_intel").doc(reportIds[index]), {
+            exists: snap.exists,
+            data: snap.exists ? snap.data() : {},
+          });
+        });
+
+        tx.set(stateRef, freshState);
+        tx.set(postsRef, freshPosts);
+        tx.set(competitorsRef, freshCompetitors);
+        reportRefs.forEach((ref, index) => tx.set(ref, freshReports[reportIds[index]]));
+
+        return {
+          archiveId,
+          createdAt: now.toISOString(),
+          newCampaignStart: startDate,
+          strategyVersion: "pmp-judgment-2026",
+          recoverable: true,
+        };
+      });
+
+      res.json({ ok: true, ...result });
+    } catch (error) {
+      console.error("resetCampaign failed:", error);
+      const status = Number(error.statusCode) || 500;
+      res.status(status).json({ error: status >= 500 ? "Unable to reset the campaign safely." : error.message });
+    }
+  }
+);
+async function enforceGradeRateLimit(db, uid) {
+  const ref = db.collection("_rateLimits").doc(`grade_${uid}`);
+  const now = Date.now();
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const current = snap.exists ? snap.data() : null;
+    const sameWindow = current && now - Number(current.windowStartedAt || 0) < 60_000;
+    const count = sameWindow ? Number(current.count || 0) : 0;
+    if (count >= GRADE_LIMIT_PER_MINUTE) {
+      throw new RequestError(429, "Grade request limit reached. Try again in one minute.");
+    }
+    tx.set(ref, {
+      windowStartedAt: sameWindow ? current.windowStartedAt : now,
+      count: count + 1,
+      updatedAt: new Date(now).toISOString(),
+    });
+  });
+}
+
 
 function pct(n, d) { return d > 0 ? (n / d) * 100 : 0; }
 
@@ -169,20 +353,17 @@ ${isRedditOrganic ? "REDDIT NOTES: This is organic Reddit. There are no impressi
 }
 
 export const gradePost = onRequest(
-  { secrets: [ANTHROPIC_API_KEY], cors: true, region: "us-central1", invoker: "public" },
+  { secrets: [ANTHROPIC_API_KEY], cors: ALLOWED_ORIGINS, region: "us-central1", invoker: "public" },
   async (req, res) => {
     try {
       if (req.method !== "POST") {
         res.status(405).json({ error: "POST only" });
         return;
       }
-      const { postId, metrics } = req.body || {};
-      if (!postId || !metrics || typeof metrics !== "object") {
-        res.status(400).json({ error: "postId + metrics required" });
-        return;
-      }
-
+      const operator = await authenticateOperator(req);
+      const { postId, metrics } = validateGradePayload(req.body);
       const db = getFirestore();
+      await enforceGradeRateLimit(db, operator.uid);
       const docRef = db.collection("campaign").doc("posts");
       const snap = await docRef.get();
       if (!snap.exists) { res.status(500).json({ error: "campaign/posts doc missing" }); return; }
@@ -307,7 +488,9 @@ export const gradePost = onRequest(
       });
     } catch (e) {
       console.error("gradePost failed:", e);
-      res.status(500).json({ error: e.message || "unknown error" });
+      const status = Number(e.statusCode) || 500;
+      const message = status >= 500 ? "Unable to grade post." : e.message;
+      res.status(status).json({ error: message });
     }
   }
 );

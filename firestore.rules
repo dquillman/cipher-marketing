@@ -1,9 +1,14 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Personal dashboard — no auth needed
+    // Private operator dashboard - explicit admin claim required.
     match /{document=**} {
-      allow read, write: if true;
+    function isMarketingAdmin() {
+      return request.auth != null
+        && request.auth.token.marketingAdmin == true;
+    }
+
+      allow read, write: if isMarketingAdmin();
     }
   }
 }

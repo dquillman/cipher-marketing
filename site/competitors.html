@@ -130,7 +130,7 @@ button:focus { outline: 2px solid var(--purple); outline-offset: 2px; }
   --border: #1d2748;
   --text: #e6edf3;
   --dim: #9da7b3;
-  --muted: #6e7681;
+  --muted: #8b97a8;
   --cyan: #7dd3fc;
   --purple: #a78bfa;
   --good: #4ade80;
@@ -778,14 +778,19 @@ details[open] summary::before { transform: rotate(90deg); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script>
 (function(){
   var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
   if(!firebase.apps.length)firebase.initializeApp(cfg);
   window._cipherDb=firebase.firestore();
+  window._cipherAuth=firebase.auth();
 })();
 </script>
+<script src="assets/operator-auth.js"></script>
 <!--/INLINE-ASSETS-->
+
+
 
 
 
@@ -956,9 +961,6 @@ details[open] summary::before { transform: rotate(90deg); }
   </table>
 
   <script>
-  var PROJECT = 'cipher-marketing-daveq';
-  var FBKEY   = 'AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts';
-  var FSBASE  = 'https://firestore.googleapis.com/v1/projects/' + PROJECT + '/databases/(default)/documents/competitor_intel';
   var cache   = {};
 
   function fmtDate(iso) {
@@ -968,12 +970,13 @@ details[open] summary::before { transform: rotate(90deg); }
 
   async function fetchDoc(docId) {
     if (cache[docId]) return cache[docId];
-    var res = await fetch(FSBASE + '/' + docId + '?key=' + FBKEY);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
+    await window._cipherAuthReady;
+    var snap = await window._cipherDb.collection('competitor_intel').doc(docId).get();
+    if (!snap.exists) throw new Error('Report not found: ' + docId);
+    var data = snap.data();
     cache[docId] = {
-      content:      data.fields.content.stringValue,
-      generated_at: data.fields.generated_at.stringValue
+      content:      String(data.content || ''),
+      generated_at: String(data.generated_at || '')
     };
     return cache[docId];
   }
@@ -1030,7 +1033,10 @@ details[open] summary::before { transform: rotate(90deg); }
   }
 
   function inline(t) {
-    return t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    var safe = String(t).replace(/[&<>]/g, function (char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char];
+    });
+    return safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.+?)\*/g, '<em>$1</em>')
             .replace(/`(.+?)`/g, '<code>$1</code>');
   }
@@ -1046,6 +1052,8 @@ details[open] summary::before { transform: rotate(90deg); }
 
 
 
+
+
 <!--INLINE-ASSETS-->
 <script>
 /* CipherExam campaign site — shared JS (vanilla, no deps) */
@@ -1057,7 +1065,6 @@ let CURRENT_ACTIVATED = 0;
 let ACTIVATION_GATE = 25;
 let ACTIVATION_TARGET_4WK = 55;
 let STATE = null;                              // populated by loadState()
-const STATE_URL = 'data/campaign-state.json';
 
 function applyState(j) {
   if (!j) return null;
@@ -1070,17 +1077,17 @@ function applyState(j) {
 }
 
 async function loadState() {
-  // 1. Prefer inline state (works in static preview without fetch)
-  if (typeof window !== 'undefined' && window.__CAMPAIGN_STATE__) {
-    return applyState(window.__CAMPAIGN_STATE__);
-  }
-  // 2. Fall back to fetch (works when served via http)
   try {
-    const res = await fetch(STATE_URL, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return applyState(await res.json());
+    if (!window._cipherAuthReady || !window._cipherDb) {
+      throw new Error('Authenticated Firestore is unavailable.');
+    }
+    await window._cipherAuthReady;
+    const snap = await window._cipherDb.collection('campaign').doc('state').get();
+    if (!snap.exists) throw new Error('campaign/state is missing.');
+    window.__CAMPAIGN_STATE__ = snap.data();
+    return applyState(window.__CAMPAIGN_STATE__);
   } catch (e) {
-    console.warn('[campaign-state] fetch failed, using defaults:', e.message);
+    console.warn('[campaign-state] authenticated load failed:', e.message);
     return null;
   }
 }
@@ -1570,12 +1577,17 @@ function initScratchpad() {
     parts.push('4. Bump _meta.lastUpdatedAt');
 
     const message = parts.join('\n');
+    if (window.cipherAskBrad) {
+      window.cipherAskBrad(message);
+      if (status) { status.textContent = '✓ Sent to Brad.'; status.classList.add('good'); }
+      setTimeout(() => { if (status) { status.textContent = ''; status.classList.remove('good'); } }, 4000);
+      return;
+    }
     try {
       await navigator.clipboard.writeText(message);
-      if (status) { status.textContent = '✓ Copied. Paste into Claude Code.'; status.classList.add('good'); }
-      setTimeout(() => { if (status) { status.textContent = ''; status.classList.remove('good'); } }, 4000);
+      if (status) { status.textContent = 'Brad is unavailable. Update copied as a fallback.'; status.classList.add('bad'); }
     } catch (e) {
-      if (status) { status.textContent = '✗ Copy failed — select the text in the textarea below and copy manually.'; status.classList.add('bad'); }
+      if (status) { status.textContent = 'Brad is unavailable. Select the update below and copy it manually.'; status.classList.add('bad'); }
       const fallback = document.getElementById('copy-fallback');
       if (fallback) { fallback.value = message; fallback.style.display = 'block'; }
     }
@@ -1634,7 +1646,7 @@ function initTodayPage() {
   if (kpiSnap) renderClusterKpis(kpiSnap);
   const stateNote = document.getElementById('state-source');
   if (stateNote && STATE?._meta?.lastUpdatedAt) {
-    stateNote.textContent = `Numbers from data/campaign-state.json · last updated ${STATE._meta.lastUpdatedAt}`;
+    stateNote.textContent = `Campaign numbers last changed ${new Date(STATE._meta.lastUpdatedAt).toLocaleString()}`;
   }
 
   // Today's recommended video creative
@@ -1747,6 +1759,7 @@ if (document.readyState === 'loading') {
       if (!snap.exists) return;
       window.__CAMPAIGN_STATE__ = snap.data();
       applyState(window.__CAMPAIGN_STATE__);
+      document.dispatchEvent(new CustomEvent('cipher:state-updated'));
     }, function (err) {
       console.warn('[cipher] Firestore state sync error:', err.message);
     });
@@ -1761,10 +1774,17 @@ if (document.readyState === 'loading') {
     });
   }
 
+  function startAuthenticatedSync() {
+    var ready = window._cipherAuthReady || Promise.reject(new Error('Operator authentication is unavailable.'));
+    ready.then(wireFirestore).catch(function (err) {
+      console.warn('[cipher] Firestore sync not started:', err.message);
+    });
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wireFirestore);
+    document.addEventListener('DOMContentLoaded', startAuthenticatedSync);
   } else {
-    wireFirestore();
+    startAuthenticatedSync();
   }
 })();
 
@@ -1951,9 +1971,10 @@ if (document.readyState === 'loading') {
     btn.disabled = true;
     btn.textContent = 'Grading…';
     try {
+      var authHeaders = await window.cipherAuthHeaders();
       var res = await fetch('/api/grade', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
         body: JSON.stringify({ postId: currentPostId, metrics: metrics }),
       });
       var json = await res.json();

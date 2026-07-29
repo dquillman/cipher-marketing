@@ -781,13 +781,16 @@ details[open] summary::before { transform: rotate(90deg); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script>
 (function(){
   var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
   if(!firebase.apps.length)firebase.initializeApp(cfg);
   window._cipherDb=firebase.firestore();
+  window._cipherAuth=firebase.auth();
 })();
 </script>
+<script src="assets/operator-auth.js"></script>
 <!--/INLINE-ASSETS-->
 <!--INLINE-ASSETS-->
 <style>
@@ -824,17 +827,16 @@ details[open] summary::before { transform: rotate(90deg); }
 
 <script>
 (async function () {
-  // Prefer build-inlined state; fall back to fetching the live JSON.
-  let state = window.__CAMPAIGN_STATE__ || null;
-  if (!state) {
-    try {
-      const res = await fetch('data/campaign-state.json', { cache: 'no-store' });
-      state = await res.json();
-    } catch (e) {
-      document.getElementById('content').innerHTML =
-        '<div class="empty-state">Could not load <code>data/campaign-state.json</code>. Run the dashboard server (<code>node serve.mjs</code>) and open via http://localhost:8766/sprint.html.</div>';
-      return;
-    }
+  let state;
+  try {
+    await window._cipherAuthReady;
+    const snap = await window._cipherDb.collection('campaign').doc('state').get();
+    if (!snap.exists) throw new Error('campaign/state is missing');
+    state = snap.data();
+  } catch (e) {
+    document.getElementById('content').innerHTML =
+      '<div class="empty-state">Authenticated campaign data could not be loaded.</div>';
+    return;
   }
 
   const s = state.activationSprint;

@@ -3,6 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+// Local campaign data and Firebase authentication require an HTTP origin.
+// In file mode, stop data requests and let operator-auth.js show recovery help.
+if (window.location.hostname === '127.0.0.1') {
+  var localUrl = new URL(window.location.href);
+  localUrl.hostname = 'localhost';
+  window.location.replace(localUrl.toString());
+}
+if (window.location.protocol === 'file:') {
+  window.__cipherFileMode = true;
+  window.fetch = function () {
+    return Promise.reject(new Error('Open Cipher Marketing.vbs to run the dashboard.'));
+  };
+}
+</script>
 <!-- Operator dashboard — DO NOT INDEX. Public marketing lives at cipherexam.com. -->
 <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 <title>CipherExam Campaign</title>
@@ -132,7 +147,7 @@ button:focus { outline: 2px solid var(--purple); outline-offset: 2px; }
   --border: #1d2748;
   --text: #e6edf3;
   --dim: #9da7b3;
-  --muted: #6e7681;
+  --muted: #8b97a8;
   --cyan: #7dd3fc;
   --purple: #a78bfa;
   --good: #4ade80;
@@ -1169,1012 +1184,19 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 
 </style>
-<!--INLINE-STATE-->
-<script>window.__CAMPAIGN_STATE__ = {
-  "_meta": {
-    "lastUpdatedBy": "claude",
-    "lastUpdatedAt": "2026-06-13T00:25:16.100Z",
-    "schemaVersion": 1,
-    "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
-  },
-  "campaign": {
-    "start": "2026-05-18",
-    "tier1": [
-      "PMP",
-      "Security+",
-      "SHRM-CP"
-    ],
-    "paidSpendCap": 2,
-    "activationGate": 25,
-    "activationTarget4wk": 55
-  },
-  "metrics": {
-    "activatedUsersTotal": 0,
-    "trialSignupsTotal": 0,
-    "paidSpendThisWeek": 0,
-    "perCluster": {
-      "PMP": {
-        "signups": 0,
-        "activated": 0,
-        "target": 30
-      },
-      "Security+": {
-        "signups": 0,
-        "activated": 0,
-        "target": 15
-      },
-      "SHRM-CP": {
-        "signups": 0,
-        "activated": 0,
-        "target": 10
-      }
-    },
-    "funnel": {
-      "asOf": "2026-05-28T17:30:00.000Z",
-      "windowDays": 7,
-      "instructions": "Hand-entered daily. Five arrows: impressions -> lpVisits -> signups -> examPicked -> activated. Sources: GA4 + Meta Pixel for top-of-funnel, posts.json impressions, internal Firestore for signups/exam-picked/activated. 'aggregate' is the rolling N-day sum across all clusters; 'perCluster' is the same window scoped to that exam's LP traffic. Update windowDays + asOf together; bump _meta.lastUpdatedAt on save.",
-      "aggregate": {
-        "impressions": 0,
-        "lpVisits": 0,
-        "signups": 0,
-        "examPicked": 0,
-        "activated": 0
-      },
-      "perCluster": {
-        "PMP": {
-          "impressions": 0,
-          "lpVisits": 0,
-          "signups": 0,
-          "examPicked": 0,
-          "activated": 0
-        },
-        "Security+": {
-          "impressions": 0,
-          "lpVisits": 0,
-          "signups": 0,
-          "examPicked": 0,
-          "activated": 0
-        },
-        "SHRM-CP": {
-          "impressions": 0,
-          "lpVisits": 0,
-          "signups": 0,
-          "examPicked": 0,
-          "activated": 0
-        }
-      }
-    }
-  },
-  "activationSprint": {
-    "instructions": "Manual activation sprint tracker (playbook: 15-activation-sprint.md). Hand-edit candidates[] as you recruit. sprint.html renders this. 'activated' = signup + exam picked + >=10 questions. 'day2Return' = came back the next day (the real proof). Update totals to match candidates[] and bump _meta.lastUpdatedAt.",
-    "startedAt": "2026-05-28",
-    "exam": "PMP",
-    "targetActivated": 5,
-    "gate": 25,
-    "dailyInteractionTarget": 9,
-    "candidates": [],
-    "totals": {
-      "contacted": 0,
-      "signedUp": 0,
-      "activated": 0,
-      "day2Returned": 0
-    }
-  },
-  "communityEngagement": {
-    "instructions": "Daily community-reply targets. Active exam(s) are auto-detected from the current campaign week's scheduled posts (posts.json → examFocus) — the dashboard picks the matching byExam[<exam>] block. If multiple exams are scheduled the same week, targets are merged. Falls back to byExam.default when nothing matches. dailyTarget = replies per platform per day.",
-    "dailyTarget": 3,
-    "byExam": {
-      "PMP": {
-        "reddit": [
-          {
-            "label": "r/pmp",
-            "url": "https://www.reddit.com/r/pmp/"
-          },
-          {
-            "label": "r/projectmanagement",
-            "url": "https://www.reddit.com/r/projectmanagement/"
-          }
-        ],
-        "facebook": [
-          {
-            "label": "PMP Exam Prep group",
-            "url": "https://www.facebook.com/groups/pmpexamprep",
-            "note": "Verify exact URL — placeholder"
-          },
-          {
-            "label": "PMP Question Bank group",
-            "url": "https://www.facebook.com/groups/pmpquestionbank",
-            "note": "Verify exact URL — placeholder"
-          }
-        ],
-        "linkedin": [
-          {
-            "label": "#PMP feed",
-            "url": "https://www.linkedin.com/feed/hashtag/?keywords=pmp"
-          },
-          {
-            "label": "PMI company page",
-            "url": "https://www.linkedin.com/company/project-management-institute/"
-          },
-          {
-            "label": "PMP study group search",
-            "url": "https://www.linkedin.com/search/results/groups/?keywords=PMP",
-            "note": "Pick a specific group and pin its URL here"
-          }
-        ],
-        "x": [
-          {
-            "label": "#PMP live",
-            "url": "https://x.com/search?q=%23PMP&f=live"
-          },
-          {
-            "label": "@PMInstitute",
-            "url": "https://x.com/PMInstitute"
-          },
-          {
-            "label": "Add 2 more PMI handles",
-            "url": "https://x.com/search?q=PMP%20PMI&f=user",
-            "note": "Dave to curate"
-          }
-        ]
-      },
-      "Security+": {
-        "reddit": [
-          {
-            "label": "r/CompTIA",
-            "url": "https://www.reddit.com/r/CompTIA/"
-          },
-          {
-            "label": "r/cybersecurity",
-            "url": "https://www.reddit.com/r/cybersecurity/"
-          },
-          {
-            "label": "r/sysadmin",
-            "url": "https://www.reddit.com/r/sysadmin/"
-          }
-        ],
-        "facebook": [
-          {
-            "label": "CompTIA Security+ Study Group",
-            "url": "https://www.facebook.com/groups/comptiasecurityplus",
-            "note": "Verify exact URL — placeholder"
-          }
-        ],
-        "linkedin": [
-          {
-            "label": "#SecurityPlus feed",
-            "url": "https://www.linkedin.com/feed/hashtag/?keywords=securityplus"
-          },
-          {
-            "label": "#Cybersecurity feed",
-            "url": "https://www.linkedin.com/feed/hashtag/?keywords=cybersecurity"
-          },
-          {
-            "label": "CompTIA company page",
-            "url": "https://www.linkedin.com/company/comptia/"
-          },
-          {
-            "label": "Security+ study group search",
-            "url": "https://www.linkedin.com/search/results/groups/?keywords=Security%2B",
-            "note": "Pick a specific group and pin its URL here"
-          }
-        ],
-        "x": [
-          {
-            "label": "#SecurityPlus live",
-            "url": "https://x.com/search?q=%23SecurityPlus&f=live"
-          },
-          {
-            "label": "@CompTIA",
-            "url": "https://x.com/CompTIA"
-          },
-          {
-            "label": "Add 2 more infosec handles",
-            "url": "https://x.com/search?q=Security%2B&f=user",
-            "note": "Dave to curate"
-          }
-        ]
-      },
-      "SHRM-CP": {
-        "reddit": [
-          {
-            "label": "r/humanresources",
-            "url": "https://www.reddit.com/r/humanresources/"
-          },
-          {
-            "label": "r/AskHR",
-            "url": "https://www.reddit.com/r/AskHR/"
-          }
-        ],
-        "facebook": [
-          {
-            "label": "SHRM-CP / SCP Exam Prep",
-            "url": "https://www.facebook.com/groups/shrmcpexamprep",
-            "note": "Verify exact URL — placeholder"
-          }
-        ],
-        "linkedin": [
-          {
-            "label": "#SHRM feed",
-            "url": "https://www.linkedin.com/feed/hashtag/?keywords=shrm"
-          },
-          {
-            "label": "#HumanResources feed",
-            "url": "https://www.linkedin.com/feed/hashtag/?keywords=humanresources"
-          },
-          {
-            "label": "SHRM company page",
-            "url": "https://www.linkedin.com/company/society-for-human-resource-management/"
-          },
-          {
-            "label": "SHRM-CP study group search",
-            "url": "https://www.linkedin.com/search/results/groups/?keywords=SHRM-CP",
-            "note": "Pick a specific group and pin its URL here"
-          }
-        ],
-        "x": [
-          {
-            "label": "#SHRM live",
-            "url": "https://x.com/search?q=%23SHRM&f=live"
-          },
-          {
-            "label": "@SHRM",
-            "url": "https://x.com/SHRM"
-          },
-          {
-            "label": "Add 2 more HR handles",
-            "url": "https://x.com/search?q=SHRM-CP&f=user",
-            "note": "Dave to curate"
-          }
-        ]
-      },
-      "default": {
-        "reddit": [
-          {
-            "label": "r/certifications",
-            "url": "https://www.reddit.com/r/certifications/"
-          }
-        ],
-        "facebook": [],
-        "linkedin": [
-          {
-            "label": "#certification feed",
-            "url": "https://www.linkedin.com/feed/hashtag/?keywords=certification"
-          }
-        ],
-        "x": [
-          {
-            "label": "#certification live",
-            "url": "https://x.com/search?q=%23certification&f=live"
-          }
-        ]
-      }
-    }
-  },
-  "preLaunchChecklist": [
-    {
-      "id": "lps-deployed",
-      "label": "Three Tier 1 LPs (PMP, Sec+, SHRM-CP) deployed and reachable",
-      "status": "done",
-      "completedAt": "2026-05-12",
-      "note": "Shipped 2026-05-12. All 3 LPs live on cipherexam.com — see blocker lps-deployed."
-    },
-    {
-      "id": "widget-render",
-      "label": "Try-a-Question widget renders on each LP with explanation panel working",
-      "status": "done",
-      "completedAt": "2026-05-12",
-      "note": "Verified 2026-05-12 via live test on all 3 LPs (/lp/pmp, /lp/security-plus, /lp/shrm-cp). Widget renders, 4 ABCD option buttons, Reveal button shows explanation panel with Bloom's level. No console errors."
-    },
-    {
-      "id": "ga4-signup-event",
-      "label": "GA4 signup_complete fires on a real test signup (verify in DebugView)",
-      "status": "done",
-      "completedAt": "2026-05-12",
-      "note": "Verified 2026-05-12 via /verify-events tab during real test signup. signup_complete fired with full payload: method=email, user_id, utm_source, utm_campaign, utm_content. Meta Pixel CompleteRegistration + Google Ads conversion also confirmed firing on the same event."
-    },
-    {
-      "id": "meta-capi",
-      "label": "Meta Conversions API server-side test event received",
-      "status": "na",
-      "deferredUntil": "First paid Meta ad set after 25-activation gate",
-      "note": "N/A for Week 1 — not running paid Meta until 25 activations (paid-spend gate). Server-side CAPI verification only matters when paid Meta campaigns start. Move back to pending-runtime when first Meta ad set goes live."
-    },
-    {
-      "id": "linkedin-insight",
-      "label": "LinkedIn Insight Tag firing on /lp/* pages",
-      "status": "done",
-      "completedAt": "2026-05-12",
-      "note": "Insight Tag installed + cipher#9 conversion stub shipped. Verified pageview attribution."
-    },
-    {
-      "id": "resend-day0",
-      "label": "Resend Day 0 email sends to test address with merge tags populated",
-      "status": "na",
-      "deferredUntil": "2026-05-25 (Week 2)",
-      "note": "N/A for Week 1 — Resend drip deferred to Week 2 (resend-sequence blocker). Week 1 uses manual founder 1:1 emails (07-founder-1to1-emails.md)."
-    },
-    {
-      "id": "resend-suppression",
-      "label": "Resend suppresses correctly when test user upgrades mid-trial",
-      "status": "na",
-      "deferredUntil": "2026-05-25 (Week 2)",
-      "note": "N/A for Week 1 — same deferral as Resend Day 0. Re-activates when resend-sequence blocker is built in Week 2."
-    },
-    {
-      "id": "testimonial-prompt",
-      "label": "In-app testimonial prompt fires at 10th-question milestone",
-      "status": "done",
-      "completedAt": "2026-05-12",
-      "note": "Shipped 2026-05-12 (cipher#10). Slide-up card at Q10 captures rating + quote + UTM."
-    },
-    {
-      "id": "utm-attribution",
-      "label": "UTM source/medium/campaign/exam tags resolve cleanly in GA4",
-      "status": "done",
-      "completedAt": "2026-05-12",
-      "note": "Verified 2026-05-12 end-to-end: hit /lp/pmp?utm_source=preflight&utm_campaign=monday_launch_check&utm_content=brad_dryrun → values landed in sessionStorage.ec_utm → reappeared in signup_complete event payload → also persisted to testimonials/{uid} Firestore doc as utmSource/utmCampaign/utmContent. GA4 custom dimensions verification still requires real traffic to compare reports (Day 2-3 of launch)."
-    },
-    {
-      "id": "phone-alarms-set",
-      "label": "Set 3 phone alarms — Mon/Wed/Fri 8:00 AM ET — for manual posting",
-      "status": "done",
-      "completedAt": "2026-05-18",
-      "note": "Alarms set + fired on launch Monday 2026-05-18 and Wed 2026-05-20. Posted LinkedIn + X on both days. Friday 2026-05-22 alarm is still set and pending its scheduled fire. Revisit scheduler tooling only if posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
-    }
-  ],
-  "blockers": [
-    {
-      "id": "lps-deployed",
-      "label": "Three Tier 1 LPs deployed (PMP, Sec+, SHRM-CP)",
-      "owner": "Engineering",
-      "status": "done",
-      "due": "2026-05-17",
-      "note": "Shipped to prod 2026-05-12. All 3 LPs verified: /lp/pmp, /lp/security-plus, /lp/shrm-cp render correctly. Pre-select wiring confirmed: ?exam=pmp writes correct Firestore ID to localStorage. Required follow-up: cipher#8 fixed a route-slug mismatch from cipher#6 (-practice suffix dropped)."
-    },
-    {
-      "id": "conversion-events",
-      "label": "GA4 / Meta / LinkedIn conversion events wired",
-      "owner": "Engineering",
-      "status": "done",
-      "due": "2026-05-17",
-      "note": "Audit 2026-05-12: GA4 funnel (landing_page_view, cta_click, signup_complete, activated_user, exam_selected, explanation_viewed) shipped 2026-03-17 — see web/docs/event-definitions.md. Google Ads + Meta Pixel CompleteRegistration fire inside trackSignupComplete. LinkedIn Insight Tag installed for pageview attribution. UTMs captured on LandingShell mount, persist via sessionStorage through signup → quiz. Optional follow-up: lintrk track call for LinkedIn Campaign Manager conversion (only matters if/when LinkedIn paid ads run)."
-    },
-    {
-      "id": "testimonial-prompt",
-      "label": "In-app testimonial prompt at 10th-question milestone",
-      "owner": "Engineering",
-      "status": "done",
-      "due": "2026-05-17",
-      "note": "Shipped 2026-05-12 as cipher#10. Slide-up card at bottom-right of Quiz page appears at Q10 (same trigger as activated_user). Captures rating (1-5) + optional quote + share consent + UTM attribution. One write per user (Firestore create-only rule + localStorage dedup). Future work: display approved testimonials on LPs as social proof; admin moderation UI."
-    },
-    {
-      "id": "resend-sequence",
-      "label": "Resend 7-day onboarding with exam merge tags",
-      "owner": "Engineering + Marketing",
-      "status": "deferred",
-      "due": "2026-05-25",
-      "note": "DEFERRED to Week 2 (2026-05-25). For Week 1, all signups get personal founder emails from Dave instead — templates at cipher-marketing/07-founder-1to1-emails.md (Day 0 / Day 3 / Day 6). Decision rationale: at <25 activated users, founder-touch outperforms any drip on signal-quality + testimonial-yield + brand loyalty. Building Cloud Function infra (functions/package.json + resend SDK + first-time deploy from this repo) was estimated 2-3h with non-trivial risk to existing 50+ deployed functions. Tradeoff was clearly not worth it pre-launch. Brad will surface founder-email recommendations during morning briefings (matched to day-since-signup + activation status)."
-    }
-  ],
-  "decisions": [
-    {
-      "date": "2026-05-11",
-      "what": "Tier 1 = PMP / Security+ / SHRM-CP",
-      "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority"
-    },
-    {
-      "date": "2026-05-11",
-      "what": "$2/day paid cap; gate at 25 activated users",
-      "why": "Dave's actual budget constraint"
-    },
-    {
-      "date": "2026-05-11",
-      "what": "4-week target 55 activated users (was 100)",
-      "why": "Original target assumed paid acquisition at $45/day"
-    },
-    {
-      "date": "2026-05-11",
-      "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)",
-      "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text"
-    },
-    {
-      "date": "2026-05-11",
-      "what": "Cornerstone blog holds for Monday 2026-05-18 — NOT publishing early",
-      "why": "Publishing today breaks the week-1 social drumbeat that anchors on the cornerstone-launch beat"
-    },
-    {
-      "date": "2026-05-11",
-      "what": "Tier 1 LPs (PMP, Sec+, SHRM-CP) built as React components + signup pre-select wiring",
-      "why": "Shipped as two PRs: cipher#6 (LP components/routes) + cipher#7 (login ?exam= reader). Both must merge for message-match to work end-to-end. Dave reviews + merges + runs deploy-web.sh."
-    },
-    {
-      "date": "2026-05-12",
-      "what": "Deferred Resend onboarding drip automation to Week 2. Week 1 uses manual founder 1:1 emails (templates in cipher-marketing/07-founder-1to1-emails.md).",
-      "why": "At <25 activated users, founder emails > automation. Functions infrastructure was partially gitignored in this repo (package.json missing, deploy script excludes functions) — 2-3h work with risk of breaking 50 deployed functions. Not worth it pre-launch."
-    },
-    {
-      "date": "2026-05-12",
-      "what": "Week 1 (2026-05-18 → 05-22) is PMP-only. Security+ and SHRM-CP drafts deferred to Weeks 2 and 3.",
-      "why": "Concentration over spread. 6 posts across one exam cluster gives a cleaner signal on which hook converts (tool-builder vs why-B-is-a-trap vs domain-weights) than 6 posts fragmented across 3 audiences. Once we see what works for PMP, we replicate the winning hook structure for Sec+ in Week 2 and SHRM-CP in Week 3. Also lower cognitive load on a solo founder running first-week ops."
-    },
-    {
-      "date": "2026-05-12",
-      "what": "Locked Week 1 posting times: LinkedIn 08:00 ET (12:00 UTC), X 09:00 ET (13:00 UTC), Mon/Wed/Fri.",
-      "why": "LinkedIn 08:00 ET catches working-professional pre-work scroll across all US time zones (mid-morning Central, early West Coast). X 09:00 ET stays in same morning window for cross-channel reinforcement without exact-minute duplication. Same time slot all three days = clean A/B on hook variation while holding timing constant."
-    },
-    {
-      "date": "2026-05-12",
-      "what": "All 6 Week 1 PMP drafts flipped draft → scheduled in posts.json.",
-      "why": "Copy reviewed for voice (no first-person exam-taking, no 'cadence', max one 'cipher' pun per asset — none of the 6 used the pun). Hooks differentiated across the three days. Ready for Dave's final voice sign-off before publish."
-    },
-    {
-      "date": "2026-05-12",
-      "what": "Dropped Publer setup entirely. Deferred Buffer setup (08-buffer-setup-sunday.md). Week 1 will be manually posted Mon/Wed/Fri.",
-      "why": "Six posts across one week is low enough volume that a scheduler is overhead, not leverage. Manual posting also keeps Dave inside the post UI on launch morning — he sees engagement, comments, edge cases in real time, which matters more in Week 1 than convenience. Replaced with three phone alarms at 08:00 ET on Mon/Wed/Fri. Buffer reference doc left in place with a deferred-header note; revisit when posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
-    }
-  ],
-  "dailyLog": [
-    {
-      "date": "2026-06-01",
-      "entry": "Competitor intel refreshed (monthly automated run). Rewrote all three competitor_intel docs in Firestore — battlecard (loop-vs-lens 3-point + 'exam reasoning trainer' category angle + 3 ad hooks), Pocket Prep deepdive (explanation-ceiling wedge + 'dissect the trap' organic play), landscape (top-5 ranked; Brain Sensei elevated to a PMP-specific HIGH threat alongside Pocket Prep; SHRM-CP flagged as least-contested reasoning cluster). Recurring action across all three: standardize a reusable 'reasoning trainer vs. [their format]' comparison block on the 3 Tier-1 LPs. Live gap surfaced: SHRM-CP lead-magnet PDF still 404s and is blocking that funnel."
-    },
-    {
-      "date": "2026-05-28",
-      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
-    },
-    {
-      "date": "2026-05-11",
-      "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
-    },
-    {
-      "date": "2026-05-11",
-      "entry": "Tier 1 LP work shipped to cipher product repo as cipher#6 (3 LP components + routes + 3 shared sub-components) and cipher#7 (login ?exam= pre-select reader, 25-line surgical change). Both PRs open with test plans, awaiting Dave's review + merge + deploy. Blocker lps-deployed moved pending → in-progress."
-    },
-    {
-      "date": "2026-05-11",
-      "entry": "Daily walkthrough mode added to cipher-exam-marketing agent — triggered by phrases like 'walk me through today' / 'what's on today' / 'morning briefing'. Agent now consolidates calendar + state + recommended creative into a guided per-task flow instead of pointing at multiple files."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Morning briefing: deployed Tier 1 LPs to staging, caught route-slug bug (/lp/pmp-practice vs /lp/pmp), shipped fix as cipher#8, redeployed staging + prod. All 3 LPs verified on cipherexam.com. Pre-select wiring confirmed via localStorage. Blocker lps-deployed marked done."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "conversion-events blocker audited and marked done. All GA4/Meta/Google Ads/LinkedIn Insight wiring shipped back on 2026-03-17 — verified via grep + web/docs/event-definitions.md. No code changes needed for Week 1 attribution. LinkedIn lintrk conversion id stub queued as optional add-on."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "LinkedIn conversion stub shipped as cipher#9 (no-op until LINKEDIN_CONVERSION_IDS filled in). Verified prod with UTM smoke test: ?utm_source=test landed correctly into sessionStorage.ec_utm. Forward-prep for whenever LinkedIn paid ads run."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "testimonial-prompt blocker shipped via cipher#10. TestimonialPrompt component fires at Q10 (activated_user milestone). Captures rating + optional quote + consent + UTM snapshot for attribution back to source post. Deployed to both staging and prod. Firestore rule create-only at testimonials/{uid} prevents overwrite."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "resend-sequence blocker deferred to Week 2 (due 2026-05-25). Week 1 strategy switched to manual founder 1:1 emails — 3 templates (Day 0 / Day 3 / Day 6) written to cipher-marketing/07-founder-1to1-emails.md. Brad updated to surface signup-by-signup recommendations during morning briefings."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Morning briefing continuation: no new signups since yesterday. Moved to Week 1 post-draft review (6 drafts in posts.json — 3 LinkedIn / 3 X, all PMP-focused, scheduled Mon/Wed/Fri 2026-05-18 → 2026-05-22)."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Week 1 locked as PMP-only — Sec+/SHRM-CP deferred to Weeks 2/3. Decision logged for hook-isolation rationale: 6 posts on one cluster gives cleaner signal on which framing converts. Once Week 1 names a winning hook, replicate it for Sec+ in Week 2."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Locked posting times for all 6 Week 1 PMP posts: LinkedIn 08:00 ET, X 09:00 ET, Mon (5/18) / Wed (5/20) / Fri (5/22). Flipped all 6 posts.json entries from status:draft → status:scheduled. Added scheduledTime (ISO UTC) and scheduledTimeLocal fields to each. Awaiting Dave's final voice sign-off on copy before publish."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Pre-launch status review (T-6 days). Code-shipped blockers confirmed done: 3 Tier 1 LPs deployed, LinkedIn Insight Tag installed (cipher#9 stub for conversion id), testimonial prompt live at Q10 (cipher#10). Resend Day 0 + suppression list confirmed N/A for Week 1 — folded into deferred resend-sequence blocker; Week 1 uses founder 1:1 emails instead. Runtime verification still pending on 4 items: widget render under load, GA4 signup_complete fires end-to-end, Meta CAPI server-side mirror, UTM custom dimensions visible in GA4 reports. All 4 are 'code shipped, awaiting first live signups to verify' — cannot fully validate until traffic hits post-launch."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Dashboard pre-launch task list rewired to read from campaign-state.json → preLaunchChecklist instead of the flat hardcoded array in site.js. Each of the 9 §7 items now carries status (done / na / pending-runtime) + a note explaining why. Renderer groups by status, shows a summary line ('5 of 9 done · 4 awaiting Day-1 verification'), and disables checkboxes for done/N/A items (those are server-driven, not user-driven). Source-doc footnote on today.html updated to point at campaign-state.json. Rebuild via site/inline-assets.mjs + build-app.mjs."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Day-1 pre-flight verification complete. All 3 LPs: Try-a-Question widget renders + reveals correctly. Test signup confirmed signup_complete fires with full UTM payload (preflight/monday_launch_check/brad_dryrun) — visible in /verify-events tab. Meta Pixel CompleteRegistration + Google Ads conversion both fired. Bug caught and fixed: testimonial prompt was dying at end-of-10-question session (Quiz unmount). Shipped fix as cipher#11 — hoisted prompt to App level via localStorage signal. Retested: rating 4 + text + consent → testimonials/{uid} doc created with all 14 fields populated correctly. Test account + user doc cleaned up after."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "preLaunchChecklist updated: widget-render, ga4-signup-event, utm-attribution moved to done after live verification. meta-capi moved to na (not running paid Meta yet). Dashboard now shows 6 done / 0 awaiting / 3 N/A — all actionable items cleared pre-launch."
-    },
-    {
-      "date": "2026-05-12",
-      "entry": "Scheduler tooling dropped for Week 1. Publer setup removed entirely (no task ever existed in checklist — confirmed). Buffer setup deferred — 08-buffer-setup-sunday.md kept as future reference with a deferred-header note added. New checklist item added: phone-alarms-set (pending) — three recurring alarms at 08:00 ET on Mon/Wed/Fri. Dashboard now shows 6 done / 1 pending / 3 N/A."
-    },
-    {
-      "date": "2026-05-18",
-      "entry": "LAUNCH DAY: Monday LinkedIn launch post went live. Post 'li-mon-2026-05-11-launch' (tool-builder hook, PMP focus) — scheduled 10:30 MT via LinkedIn native scheduler. Video: launch-teaser-pmp.mp4 (1:1). URL: https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/ — posts.json status flipped scheduled → posted. Pre-launch hiccups resolved: (1) Remotion videos not yet rendered (ran npm install + npm run render:pmp — all 3 PMP videos now in videos/out/), (2) original post draft had file path pasted into body text instead of attached as media (caught + corrected pre-publish), (3) X posts updated with UTM URLs in visible body (was attribution gap), (4) hashtags added to all 6 Week 1 posts (#PMP #ProjectManagement #PMPExam on LinkedIn, #PMP on X). New dashboard tab built: Schedule (MT times, Copy text / Copy video path / Tell Brad I posted buttons). Awaiting: X Monday post still needs scheduling (suggested 11:30 MT). First grading window for Monday posts opens Wed 2026-05-20."
-    },
-    {
-      "date": "2026-05-18",
-      "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
-    },
-    {
-      "date": "2026-05-26",
-      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
-    }
-  ],
-  "boardPriorities": {
-    "cycleDate": "2026-06-02",
-    "mirroredAt": "2026-06-13T00:25:16.100Z",
-    "source": "qcode ops-board.json (codeq-board cycle)",
-    "items": [
-      {
-        "priority": "P0",
-        "text": "Start an email list + capture every CipherExam signup into it."
-      },
-      {
-        "priority": "P0",
-        "text": "Concentrate on LinkedIn — right audience (PM/IT/HR/cert); grow from <500, route readers to the email list."
-      },
-      {
-        "priority": "P0",
-        "text": "CipherExam: validate the Grand Slam Offer on 5 real PMP candidates (offer + frames already written → positioning/01-one-pager.md)."
-      },
-      {
-        "priority": "P1",
-        "text": "CipherExam: pick ONE distribution channel (r/PMP, r/CompTIA…) and run it 30 days."
-      },
-      {
-        "priority": "P1",
-        "text": "Goal: CipherExam's first 10 paying users — make it the visible scoreboard."
-      }
-    ]
-  }
-};</script>
-<script>window.__POSTS__ = {
-  "posts": [
-    {
-      "examFocus": "PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch",
-      "postedAt": "2026-05-18T16:30:00.000Z",
-      "metrics": {
-        "impressions": 173,
-        "membersReached": 16,
-        "videoViews": 36,
-        "watchTimeSeconds": 645,
-        "avgWatchTimeSeconds": 17,
-        "socialEngagements": 0,
-        "reactions": 0,
-        "likes": 0,
-        "comments": 0,
-        "reposts": 0,
-        "saves": 0,
-        "sends": 0,
-        "linkClicks": 1,
-        "profileViewers": 1,
-        "followersGained": 0,
-        "trialSignupsAttributed": null,
-        "engagementRatePct": 0,
-        "linkClickRatePct": 0.58,
-        "videoViewRatePct": 20.81,
-        "impressionsToReachPct": 9.25,
-        "gradedAt": "2026-05-28T00:00:00.000Z"
-      },
-      "channelAccount": "personal",
-      "id": "li-mon-2026-05-11-launch",
-      "grade": "D",
-      "outlierScore": 105,
-      "outlierPattern": null,
-      "gradeNotes": "Regraded on long-tail metrics: 173 impressions is below the LI 200 floor (auto bump-down), engagement rate 0% fails the 2% good floor, link click rate 0.58% (1/173) fails the 1% good floor, video view rate 20.8% (36/173) fails the 30% good floor. All three rates fail → D earned on substance, not just distribution. The buried positive: 17s avg watch on 36 views is the BEST of the 3 Week 1 LI posts — once viewers commit, they finish. The damning number is impressions→reach: 16 unique humans out of 173 impressions (9.2%) — the WORST conversion of the 3 posts (Wed 18%, Fri 44%). LinkedIn served the post repeatedly to the same small set of feeds without expanding to new humans, consistent with algorithmic deprioritization of category-adversarial framing ('Cert prep tools haven't changed since 2010' reads as attacking an established category). Outlier 105% of channel 7-day avg (164.3) — neutral, neither winner nor loser. Trial attribution unrecoverable (Week 1 UTM collision).",
-      "copy": "Cert prep tools haven't changed since 2010.\n\nBigger question banks. Prettier flashcards. Same broken loop: memorize the right answer, forget it, repeat.\n\nThe actual exams aren't testing your memory. They're testing whether you can think the way PMI thinks. Or the way (ISC)² thinks. Or SHRM.\n\nSo I built CipherExam.\n\nEvery question comes with an AI explanation of why the wrong answers *look* right — because that's where candidates actually lose points. Not on the content. On the framing.\n\nLive now for 11 certifications. Starting with PMP.\n\n7-day free trial, no card: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP #ProjectManagement #PMPExam",
-      "recommendations": "Kill the category-adversarial opener pattern. 'Cert prep tools haven't changed since 2010' likely triggered LinkedIn's impressions→reach throttle (9% vs Fri domain post's 44%). Lead with a candidate-pain number or a domain-stat opener like Friday's post ('Process is 50% of the exam') — workmanlike beats clever for cert audiences. Hook ranking by long-tail reach was the inverse of intuition: domain-weights > tool-builder > exam-trap.",
-      "channel": "linkedin",
-      "scheduled": "2026-05-18",
-      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/",
-      "video": "launch-teaser-pmp.mp4",
-      "scheduledTimeLocal": "2026-05-18 10:30 MT",
-      "scheduledTime": "2026-05-18T16:30:00.000Z",
-      "videoFormat": "1:1",
-      "status": "posted",
-      "hook": "tool-builder"
-    },
-    {
-      "scheduledTime": "2026-05-18T17:30:00.000Z",
-      "status": "posted",
-      "hook": "tool-builder",
-      "videoFormat": "1:1",
-      "postUrl": "https://x.com/QuillmanDavid/status/2056430150435361265",
-      "video": "launch-teaser-pmp.mp4",
-      "copy": "Cert prep tools haven't changed since 2010. Bigger banks. Prettier flashcards. Same broken loop.\n\nThe exams aren't testing your memory. They're testing how you think.\n\nSo I built CipherExam. 7 days free, no card:\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch\n\n#PMP",
-      "channel": "x",
-      "recommendations": "Before publishing the next post, seed the account with at least 10–20 targeted follows/replies in the PMP and project management community so the algorithm has a relevance signal, and consider boosting this exact post for $20–$50 targeting PMP exam candidates — the creative is ready, the audience just never showed up.",
-      "scheduled": "2026-05-18",
-      "scheduledTimeLocal": "2026-05-18 11:30 MT",
-      "metrics": {
-        "engagementActions": 0,
-        "linkClicks": 0,
-        "gradedAt": "2026-05-21T23:29:18.637Z",
-        "comments": 0,
-        "reposts": 0,
-        "videoViews": 0,
-        "likes": 0,
-        "trialSignupsAttributed": 0,
-        "linkClickRatePct": 0,
-        "videoViewRatePct": 0,
-        "engagementRatePct": 0,
-        "impressions": 39
-      },
-      "postedAt": "2026-05-18T17:30:00.000Z",
-      "channelHandle": "@QuillmanDavid",
-      "gradeNotes": "39 impressions with zero engagement, zero video views, and zero link clicks means this post effectively didn't exist — the mechanical D is generous. The copy itself is solid: the provocative hook, clear value prop, and frictionless CTA (7 days, no card) are all above average, so the copy is not the culprit. The failure is almost certainly a distribution problem — a brand-new account with no follower base and no amplification means 39 impressions went to nobody who cared, and the video never autoplay-triggered because the feed scroll never happened at meaningful scale. One hashtag (#PMP) on a zero-authority account does nothing at this volume.",
-      "channelAccount": "personal",
-      "id": "x-mon-2026-05-11-launch",
-      "grade": "D",
-      "examFocus": "PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch"
-    },
-    {
-      "scheduledTimeLocal": "2026-05-20 10:30 MT",
-      "scheduled": "2026-05-20",
-      "channel": "linkedin",
-      "copy": "Every PMP prep tool tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nMost candidates don't fail because they didn't study. They fail because PMI writes four plausible options and three of them are *almost* right — right for the wrong scenario, right under classical PM, right if you skip a stakeholder.\n\nIf your prep doesn't teach you to spot the trap, your prep isn't preparing you for the test.\n\nTry one free: cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP #ProjectManagement #PMPExam",
-      "video": "ai-tutor-demo-pmp.mp4",
-      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7462888356549586944/",
-      "videoFormat": "9:16",
-      "hook": "why-B-is-a-trap",
-      "status": "posted",
-      "scheduledTime": "2026-05-20T16:30:00.000Z",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=wed_tutor",
-      "examFocus": "PMP",
-      "grade": "D",
-      "outlierScore": 67,
-      "outlierPattern": null,
-      "channelAccount": "personal",
-      "id": "li-wed-2026-05-13-trap",
-      "gradeNotes": "Regraded on long-tail metrics: 98 impressions is still below the LI <200 floor, so reach is the headline problem — and notably WORSE than Friday's domain post (222 imps) despite a catchier trap hook. That's an inversion of the hook-strength prediction: long-tail distribution is driven by sustained engagement signals, not opener wit, and a flat-engagement Wed video gets no compounding lift. Engagement rate 0% (0/98) fails the 2% good floor; link click rate 1.02% (1/98) just barely clears 1% good; video view rate 16.3% (16/98) fails the 30% good floor. The buried positive signal: 16s avg watch time on 16 views means viewers who started the video mostly finished it — the creative holds attention once a scroll stops, the thumbnail just isn't earning the stop. Trial attribution unknown — Week 1 UTMs were mis-tagged with `mon_launch` across all 3 LI posts (wed_tutor / fri_domains both collapsed into mon_launch in GA4), so per-post conversion is unrecoverable for Week 1. Outlier 67% of channel 7-day avg (146.3) — neither winner nor loser.",
-      "postedAt": "2026-05-22T00:12:54.273Z",
-      "metrics": {
-        "impressions": 98,
-        "membersReached": 18,
-        "videoViews": 16,
-        "watchTimeSeconds": 261,
-        "avgWatchTimeSeconds": 16,
-        "socialEngagements": 0,
-        "reactions": 0,
-        "likes": 0,
-        "comments": 0,
-        "reposts": 0,
-        "saves": 0,
-        "sends": 0,
-        "linkClicks": 1,
-        "profileViewers": 0,
-        "followersGained": 0,
-        "trialSignupsAttributed": null,
-        "engagementRatePct": 0,
-        "linkClickRatePct": 1.02,
-        "videoViewRatePct": 16.33,
-        "gradedAt": "2026-05-27T00:00:00.000Z",
-        "utmAttributionNote": "Week 1 UTMs mis-tagged — utm_content=mon_launch used across all 3 LI Week 1 posts; per-post GA4 attribution collapsed and unrecoverable."
-      },
-      "recommendations": "Open the video on a single concrete trap frame — show a 4-option question with one wrong answer highlighted in red and the word 'PLAUSIBLE' across it — within the first 1.5s. The 16s avg watch proves the content holds once viewers commit; the 16.3% view rate proves the thumbnail isn't earning the commit. Fix the cold-open, not the copy."
-    },
-    {
-      "postedAt": "2026-05-22T00:13:59.370Z",
-      "metrics": {
-        "audienceRetentionPct": 0,
-        "profileVisits": 0,
-        "videoUniqueViews": 1,
-        "impressions": 2,
-        "membersReached": 0,
-        "detailExpands": 1,
-        "gradedAt": "2026-05-22T16:34:46.510Z",
-        "trialSignupsAttributed": 0,
-        "videoViewRatePct": 100,
-        "linkClickRatePct": 0,
-        "engagementRatePct": 0,
-        "engagementActions": 0,
-        "linkClicks": 0,
-        "videoViews": 2,
-        "likes": 0,
-        "comments": 0,
-        "reposts": 0
-      },
-      "grade": "C",
-      "id": "x-wed-2026-05-13-trap",
-      "channelAccount": "personal",
-      "gradeNotes": "With only 2 impressions and 0 members reached, this post essentially didn't leave the launch pad — the metrics reflect a distribution failure, not a creative failure. The copy itself is sharp: the 'wrong answers look right' hook is a genuine insight that differentiates CipherExam from commodity drill-and-kill prep. Video view rate hit 100% but on a sample of 1 unique viewer, so that number is statistically meaningless. Zero engagement actions, zero link clicks, and zero attributed trials confirm the audience simply wasn't there to respond.",
-      "examFocus": "PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor",
-      "scheduledTime": "2026-05-20T17:30:00.000Z",
-      "videoFormat": "9:16",
-      "hook": "why-B-is-a-trap",
-      "status": "posted",
-      "scheduled": "2026-05-20",
-      "copy": "Most PMP prep tells you the right answer.\n\nWe tell you why the wrong ones look right.\n\nCandidates don't fail on content. They fail because PMI writes 4 plausible options and 3 are *almost* right.\n\nTry one free → https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=wed_tutor\n\n#PMP",
-      "recommendations": "Before optimizing copy or creative, fix distribution — boost this exact post with $20–50 in paid spend targeting PMP exam takers, or repost it from an account with an established follower base, to get at least 500 impressions before drawing any performance conclusions.",
-      "channel": "x",
-      "postUrl": "https://x.com/QuillmanDavid/status/2057128902842307041",
-      "video": "ai-tutor-demo-pmp.mp4",
-      "scheduledTimeLocal": "2026-05-20 11:30 MT"
-    },
-    {
-      "examFocus": "PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains",
-      "metrics": {
-        "impressions": 238,
-        "membersReached": 105,
-        "videoViews": 63,
-        "watchTimeSeconds": 804,
-        "avgWatchTimeSeconds": 12,
-        "socialEngagements": 0,
-        "reactions": 0,
-        "likes": 0,
-        "comments": 0,
-        "reposts": 0,
-        "saves": 0,
-        "sends": 0,
-        "linkClicks": 1,
-        "profileViewers": 1,
-        "followersGained": 1,
-        "trialSignupsAttributed": 0,
-        "engagementRatePct": 0,
-        "linkClickRatePct": 0.45,
-        "videoViewRatePct": 28.38,
-        "gradedAt": "2026-05-27T00:00:00.000Z"
-      },
-      "postedAt": "2026-05-22T16:00:40.075Z",
-      "gradeNotes": "Regraded on updated metrics: 222 impressions clears the <200 LI floor, so the rubric now grades on substance instead of distribution. Engagement rate is 0% (0 reactions/comments/reposts/saves/sends across 222 impressions) — well below the 2% 'good' floor. Link click rate is 0.45% (1 click) — below the 1% 'good' floor. Both rates fail → D earned on substance. Video view rate 28.4% (63/222) still just under the 30% 'good' threshold, and 12s avg watch time on a launch-teaser video means viewers tapped out before the hook landed. Outlier score ~243% of the channel 7-day avg (91.5) — reach recovered via long-tail algorithmic distribution, but with zero engagement that's just the channel average moving up, not a winner pattern. The post got seen and nobody cared.",
-      "grade": "D",
-      "outlierScore": 243,
-      "outlierPattern": null,
-      "channelAccount": "personal",
-      "id": "li-fri-2026-05-15-domains",
-      "video": "domain-weights-pmp.mp4",
-      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7463574409774084096/",
-      "scheduled": "2026-05-22",
-      "recommendations": "Reach is no longer the bottleneck — engagement is. Next domain-weights post: cut the explainer paragraph and lead with the closing question itself ('PMPs — which domain tripped you up hardest, Process, People, or Business Environment?') as line one. Force the reply before the pitch. The current opener buries the only thing that could earn a comment.",
-      "copy": "Quick PMP reality check.\n\nProcess is 50% of the exam.\n\nHalf. Of the entire test. One domain.\n\nMost candidates spend equal time on all three — People, Process, Business Environment — because that's how the courses are structured. Then they wonder why their practice scores plateau at 65%.\n\nCipherExam routes you adaptively to the domains where you're weakest. So if you're underweight on Process, that's where the next question comes from. Not the next random question. The next *useful* one.\n\nPMPs — which domain tripped you up hardest? Process, People, or Business Environment? Curious where most people get stuck.\n\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP #ProjectManagement #PMPExam",
-      "channel": "linkedin",
-      "scheduledTimeLocal": "2026-05-22 10:30 MT",
-      "scheduledTime": "2026-05-22T16:30:00.000Z",
-      "hook": "domain-weights",
-      "status": "posted",
-      "videoFormat": "1:1"
-    },
-    {
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
-      "examFocus": "PMP",
-      "grade": "D",
-      "channelAccount": "personal",
-      "id": "x-fri-2026-05-15-domains",
-      "gradeNotes": "With only 2 impressions, this post essentially wasn't seen by anyone, making all engagement metrics meaningless for creative evaluation — the D grade reflects near-zero distribution, not necessarily a content failure. The 200% video view rate (4 views on 2 impressions) and the 1 follow gained are the only bright spots, suggesting the video format has some pull when it does reach people. Zero link clicks and zero replies indicate the CTA and question prompt had no opportunity to convert given the reach problem. This post needs an audience before it can be graded on persuasion.",
-      "postedAt": "2026-05-22T16:01:53.248Z",
-      "metrics": {
-        "avgWatchTimeSeconds": 11,
-        "linkClicks": 0,
-        "replies": 0,
-        "reposts": 0,
-        "videoViews": 4,
-        "followsGained": 1,
-        "likes": 0,
-        "engagementRatePct": 0,
-        "bookmarks": 0,
-        "trialSignupsAttributed": 0,
-        "linkClickRatePct": 0,
-        "videoViewRatePct": 200,
-        "gradedAt": "2026-05-25T23:54:22.996Z",
-        "impressions": 2,
-        "profileVisits": 1
-      },
-      "scheduledTimeLocal": "2026-05-22 11:30 MT",
-      "scheduled": "2026-05-22",
-      "recommendations": "Prioritize seeding this content to a small targeted PMP study community or reply thread before publishing standalone to dramatically increase baseline impressions above single digits.",
-      "channel": "x",
-      "copy": "Process is 50% of the PMP exam.\n\nMost candidates split study time evenly across all 3 domains.\n\nCipherExam routes adaptively to your weakest.\n\nWhich domain tripped YOU up hardest?\n\nhttps://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains\n\n#PMP",
-      "video": "domain-weights-pmp.mp4",
-      "postUrl": "https://x.com/QuillmanDavid/status/2057802657029562464",
-      "videoFormat": "1:1",
-      "hook": "domain-weights",
-      "status": "posted",
-      "scheduledTime": "2026-05-22T17:30:00.000Z"
-    },
-    {
-      "id": "li-wed-2026-05-27-bridge",
-      "scheduled": "2026-05-27",
-      "scheduledTime": "2026-05-27T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-27 10:30 MT",
-      "channel": "linkedin",
-      "channelAccount": "personal",
-      "status": "posted",
-      "examFocus": "Security+",
-      "hook": "tool-builder",
-      "video": "launch-teaser-secplus.mp4",
-      "videoFormat": "1:1",
-      "imageUrl": null,
-      "canvaDesignId": null,
-      "canvaCandidate": false,
-      "humanizerTellsStripped": 0,
-      "copy": "CompTIA is flipping Security+ from SY0-701 to SY0-801 around October.\n\nIf you're studying now, you've probably already heard the question: do I rush to test on 701, or restart on 801?\n\nWrong question.\n\nMost prep tools train you to memorize the version-specific answer key. When the objectives shift, the question bank goes stale and you re-buy the tool.\n\nI built CipherExam differently. The product teaches the *reasoning* CompTIA tests — the Security Triad applied to scenarios, the troubleshooting model, the way they construct distractors. That reasoning survives the version change. Same engine on 701 today. Same engine on 801 when it drops.\n\nMarkus Kopko, PMI AI Standards Core Team Member, put it this way during beta: \"What you have built is differentiated by the coaching lens approach, the exam-specific reasoning frameworks, and the feedback loop you ran with real testers.\"\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
-      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=wed_bridge",
-      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
-      "postedAt": "2026-05-27T16:30:00.000Z",
-      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7465378855944458240/",
-      "postedAtNote": "Backfilled 2026-05-28 — postUrl had been set, status was still 'scheduled'. Actual posting time approximated to scheduledTime; correct if real posted time is known.",
-      "metrics": null,
-      "grade": null,
-      "gradeNotes": null,
-      "recommendations": null
-    },
-    {
-      "id": "x-wed-2026-05-27-bridge",
-      "scheduled": "2026-05-27",
-      "scheduledTime": "2026-05-27T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-27 11:30 MT",
-      "channel": "x",
-      "channelAccount": "personal",
-      "channelHandle": "@QuillmanDavid",
-      "status": "skipped",
-      "skippedReason": "1+ day stale at 2026-05-28. Tool-builder hook recyclable for a later week. Decision per board todo #3 — clear drift; the LinkedIn variant already shipped its version of the hook so re-posting on X would just dilute the same beat.",
-      "skippedAt": "2026-05-28T17:30:00.000Z",
-      "examFocus": "Security+",
-      "hook": "tool-builder",
-      "video": "launch-teaser-secplus.mp4",
-      "videoFormat": "9:16",
-      "imageUrl": null,
-      "canvaDesignId": null,
-      "canvaCandidate": false,
-      "humanizerTellsStripped": 0,
-      "copy": "CompTIA flips Security+ to SY0-801 this October.\n\nMost prep tools go stale at the flip. Question banks shift, you re-buy.\n\nCipherExam teaches CompTIA's reasoning — works on 701 today and 801 when it drops.\n\n7-day free trial: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=wed_bridge\n\n#SecurityPlus",
-      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=wed_bridge",
-      "postingNote": "Reply into 3-5 active Sec+ / r/CompTIA-adjacent threads on X BEFORE posting this standalone — Week 1 X lesson (cold-start account needs warm signal).",
-      "postedAt": null,
-      "postUrl": null,
-      "metrics": null,
-      "grade": null,
-      "gradeNotes": null,
-      "recommendations": null
-    },
-    {
-      "id": "li-fri-2026-05-29-scenario",
-      "scheduled": "2026-05-29",
-      "scheduledTime": "2026-05-29T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-29 10:30 MT",
-      "channel": "linkedin",
-      "channelAccount": "personal",
-      "status": "scheduled",
-      "examFocus": "Security+",
-      "hook": "worked-question",
-      "video": "ai-tutor-demo-secplus.mp4",
-      "videoFormat": "1:1",
-      "imageUrl": null,
-      "canvaDesignId": null,
-      "canvaStatus": "candidates-ready",
-      "canvaCandidate": false,
-      "humanizerTellsStripped": 0,
-      "copy": "Quick Security+ scenario.\n\nA junior admin emails you: \"Production database server's been compromised. I'm isolating it from the network now — should I also shut it down?\"\n\nThe instinct answer is yes. Pull the plug, contain the threat.\n\nMost Sec+ prep tools mark \"shut down\" as correct because it sounds like containment.\n\nThe exam doesn't.\n\nCompTIA writes this scenario to test whether you understand that shutting down a live system destroys volatile memory — running processes, network connections, decryption keys — which is exactly what an incident responder needs to capture first. Availability is one leg of the CIA triad, but so is the integrity of forensic evidence.\n\nThe right answer under exam reasoning: isolate, image, then power off. Order matters.\n\nCipherExam walks through every question this way. Not just which option is right, but why the obvious-but-wrong options were written to bait you.\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
-      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=fri_scenario",
-      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
-      "postedAt": null,
-      "postUrl": null,
-      "metrics": null,
-      "grade": null,
-      "gradeNotes": null,
-      "recommendations": null
-    },
-    {
-      "id": "x-fri-2026-05-29-scenario",
-      "scheduled": "2026-05-29",
-      "scheduledTime": "2026-05-29T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-05-29 11:30 MT",
-      "channel": "x",
-      "channelAccount": "personal",
-      "channelHandle": "@QuillmanDavid",
-      "status": "scheduled",
-      "examFocus": "Security+",
-      "hook": "worked-question",
-      "video": "ai-tutor-demo-secplus.mp4",
-      "videoFormat": "9:16",
-      "imageUrl": null,
-      "canvaDesignId": null,
-      "canvaCandidate": false,
-      "humanizerTellsStripped": 0,
-      "copy": "Sec+ scenario.\n\nCompromised prod DB. Isolate AND shut down?\n\nCompTIA says no — shutdown wipes volatile memory (processes, keys) forensics needs.\n\nIsolate. Image. Power off.\n\nReasoning, not just answers: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=fri_scenario\n\n#SecurityPlus",
-      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=fri_scenario",
-      "postingNote": "Reply into 3-5 active Sec+ threads on X BEFORE posting this standalone — Week 1 X lesson.",
-      "postedAt": null,
-      "postUrl": null,
-      "metrics": null,
-      "grade": null,
-      "gradeNotes": null,
-      "recommendations": null
-    },
-    {
-      "id": "li-mon-2026-06-01-domains",
-      "scheduled": "2026-06-01",
-      "scheduledTime": "2026-06-01T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-06-01 10:30 MT",
-      "channel": "linkedin",
-      "channelAccount": "personal",
-      "status": "scheduled",
-      "examFocus": "Security+",
-      "hook": "domain-weights",
-      "video": "domain-weights-secplus.mp4",
-      "videoFormat": "1:1",
-      "imageUrl": null,
-      "canvaDesignId": null,
-      "canvaStatus": "candidates-ready",
-      "canvaCandidate": false,
-      "humanizerTellsStripped": 0,
-      "copy": "Security+ domain weighting, by exam percentage:\n\nGeneral Security Concepts — 12%\nThreats, Vulnerabilities, and Mitigations — 22%\nSecurity Architecture — 18%\nSecurity Operations — 28%\nSecurity Program Management and Oversight — 20%\n\nMost candidates study these evenly. Then their practice scores plateau in the low 70s and they can't figure out why.\n\nOperations is over a quarter of the test. Threats is more than a fifth. Together, half the exam is the day-to-day reactive work: IR, monitoring, vulnerability response, patch management. Architecture and Governance get the same study hours but test less.\n\nCipherExam routes you adaptively. If your last 30 questions on Operations were shaky, the next one comes from Operations. Not random. Not the next chapter in the book. Where you're actually weak.\n\nSec+ candidates — which domain has been the hardest for you so far? Curious where most people get stuck.\n\nStart your 7-day free trial. No credit card.\n\n#SecurityPlus #CompTIA",
-      "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_campaign=launch_week2&utm_content=mon_domains",
-      "postingNote": "Drop the URL from the post body as drafted. Post the cta URL as the FIRST reply comment immediately after publishing — Week 1 LI lesson.",
-      "postedAt": null,
-      "postUrl": null,
-      "metrics": null,
-      "grade": null,
-      "gradeNotes": null,
-      "recommendations": null
-    },
-    {
-      "id": "x-mon-2026-06-01-domains",
-      "scheduled": "2026-06-01",
-      "scheduledTime": "2026-06-01T17:30:00.000Z",
-      "scheduledTimeLocal": "2026-06-01 11:30 MT",
-      "channel": "x",
-      "channelAccount": "personal",
-      "channelHandle": "@QuillmanDavid",
-      "status": "scheduled",
-      "examFocus": "Security+",
-      "hook": "domain-weights",
-      "video": "domain-weights-secplus.mp4",
-      "videoFormat": "1:1",
-      "imageUrl": null,
-      "canvaDesignId": null,
-      "canvaCandidate": false,
-      "humanizerTellsStripped": 0,
-      "copy": "Security+ domain weights:\n\nOperations 28%\nThreats 22%\nProgram Mgmt 20%\nArchitecture 18%\nConcepts 12%\n\nMost study evenly. Operations + Threats = half the exam.\n\nCipherExam routes to your weakest: https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=mon_domains\n\n#SecurityPlus",
-      "cta": "https://cipherexam.com/lp/security-plus?utm_source=x&utm_campaign=launch_week2&utm_content=mon_domains",
-      "postingNote": "Reply into 3-5 active Sec+ threads on X BEFORE posting this standalone — Week 1 X lesson.",
-      "postedAt": null,
-      "postUrl": null,
-      "metrics": null,
-      "grade": null,
-      "gradeNotes": null,
-      "recommendations": null
-    }
-  ],
-  "benchmarks": {
-    "x": {
-      "engagementRatePctGoodAtLeast": 1,
-      "videoViewRatePctGreatAtLeast": 30,
-      "linkClickRatePctGreatAtLeast": 1.5,
-      "videoViewRatePctGoodAtLeast": 15,
-      "linkClickRatePctGoodAtLeast": 0.5,
-      "engagementRatePctGreatAtLeast": 3
-    },
-    "linkedin": {
-      "engagementRatePctGreatAtLeast": 5,
-      "videoViewRatePctGoodAtLeast": 30,
-      "linkClickRatePctGoodAtLeast": 1,
-      "linkClickRatePctGreatAtLeast": 2.5,
-      "videoViewRatePctGreatAtLeast": 50,
-      "engagementRatePctGoodAtLeast": 2
-    }
-  },
-  "_meta": {
-    "lastUpdatedBy": "postUrl-fill",
-    "lastUpdatedAt": "2026-05-28T02:18:07.797Z",
-    "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
-    "schemaVersion": 1
-  }
-};</script>
-<!--/INLINE-STATE-->
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script>
 (function(){
+  if(window.__cipherFileMode)return;
   var cfg={apiKey:"AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts",authDomain:"cipher-marketing-daveq.firebaseapp.com",projectId:"cipher-marketing-daveq"};
   if(!firebase.apps.length)firebase.initializeApp(cfg);
   window._cipherDb=firebase.firestore();
+  window._cipherAuth=firebase.auth();
 })();
 </script>
+<script src="assets/operator-auth.js"></script>
 <!--/INLINE-ASSETS-->
 
 
@@ -2221,6 +1243,74 @@ body.fx-on .command-center::before{opacity:.9;animation:halo-spin 7s linear infi
   body.fx-on .command-center::before{animation:none;opacity:.5}
 }
 </style>
+<style id="operator-simplification">
+:root { --max: 1120px; }
+.nav-inner { flex-wrap: nowrap; min-height: 64px; max-width:1280px; padding-left:24px; padding-right:44px; }
+.nav-brand { flex:none; }
+.nav-links { flex:0 1 auto; flex-wrap: nowrap; overflow: visible; justify-content: center; }
+.nav-link { min-height: 40px; display: inline-flex; align-items: center; }
+.nav-utilities { display:flex; align-items:center; gap:8px; margin-left:auto; }
+.resource-menu { position:relative; }
+.resource-menu > summary {
+  list-style:none; cursor:pointer; color:var(--dim); font-size:.88rem; font-weight:600;
+  min-height:40px; display:flex; align-items:center; padding:5px 10px; border-radius:6px;
+}
+.resource-menu > summary::-webkit-details-marker { display:none; }
+.resource-menu > summary::after { content:"⌄"; margin-left:6px; color:var(--muted); }
+.resource-menu[open] > summary,.resource-menu > summary:hover { color:var(--text); background:var(--surface-2); }
+.resource-panel {
+  position:absolute; top:calc(100% + 8px); right:0; z-index:70; width:260px;
+  padding:8px; border:1px solid var(--border); border-radius:10px;
+  background:#091126; box-shadow:0 18px 50px rgba(0,0,0,.42); display:grid; gap:3px;
+}
+.resource-panel button,.resource-panel a {
+  width:100%; min-height:42px; padding:9px 11px; border:0; border-radius:7px;
+  background:transparent; color:var(--dim); text-align:left; font:inherit; font-size:.88rem;
+}
+.resource-panel button:hover,.resource-panel a:hover { color:var(--text); background:var(--surface-2); }
+.sync-health {
+  display:inline-flex; align-items:center; gap:6px; min-height:30px; padding:4px 9px;
+  border:1px solid var(--border); border-radius:999px; color:var(--dim);
+  font-size:.74rem; white-space:nowrap;
+}
+.sync-health::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--warn); }
+.sync-health.ok::before { background:var(--good); }
+.sync-health.bad::before { background:var(--bad); }
+.today-more { margin-top:20px; border-top:1px solid var(--border); padding-top:16px; }
+.today-more > summary {
+  cursor:pointer; list-style:none; font-family:'Satoshi',system-ui,sans-serif;
+  font-weight:700; color:var(--dim); padding:12px 14px; border:1px solid var(--border);
+  border-radius:9px; background:rgba(11,18,38,.65);
+}
+.today-more > summary::-webkit-details-marker { display:none; }
+.today-more > summary::before { content:"＋"; margin-right:9px; color:var(--cyan); }
+.today-more[open] > summary::before { content:"−"; }
+.today-more-body { padding-top:6px; }
+.workflow-pipeline { display:grid; grid-template-columns:repeat(6,1fr); gap:7px; margin:18px 0 26px; }
+.pipeline-stage {
+  position:relative; min-height:70px; padding:12px 10px; border:1px solid var(--border);
+  border-radius:9px; background:var(--surface); color:var(--dim); font-size:.78rem; text-align:center;
+}
+.pipeline-stage strong { display:block; color:var(--text); font-size:.86rem; margin-bottom:3px; }
+.pipeline-stage:not(:last-child)::after {
+  content:"›"; position:absolute; right:-8px; top:22px; z-index:2; color:var(--cyan);
+}
+.settings-card { max-width:760px; }
+.plain-help { color:var(--dim); max-width:72ch; }
+#status-strip .status-chip:nth-child(n+4) { display:none; }
+@media (max-width: 900px) {
+  .nav-inner { flex-wrap:wrap; gap:8px; }
+  .nav-links { order:3; width:100%; justify-content:flex-start; overflow-x:auto; }
+  .nav-utilities { margin-left:0; }
+  .workflow-pipeline { grid-template-columns:repeat(3,1fr); }
+}
+@media (max-width: 620px) {
+  .sync-health,.version-bar,#fx-toggle { display:none; }
+  .nav-link { padding:5px 8px; font-size:.82rem; }
+  .workflow-pipeline { grid-template-columns:repeat(2,1fr); }
+  .resource-panel { position:fixed; left:12px; right:12px; top:68px; width:auto; }
+}
+</style>
 </head>
 <body>
 
@@ -2247,18 +1337,19 @@ function cipherShow(route) {
     }
   }
   document.title = ({
-    today:       'Today — CipherExam Campaign',
-    dashboard:   'Dashboard — CipherExam Campaign',
-    schedule:    'Schedule — CipherExam Campaign',
-    posts:       'Posts — CipherExam Campaign',
+    today:       'Today — CipherExam Marketing',
+    dashboard:   'Results — CipherExam Marketing',
+    schedule:    'Publish — CipherExam Marketing',
+    posts:       'Create — CipherExam Marketing',
     strategy:    'Strategy — CipherExam Campaign',
     content:     'Content — CipherExam Campaign',
     landing:     'Landing — CipherExam Campaign',
     engineering: 'Engineering — CipherExam Campaign',
     voice:       'Voice — CipherExam Campaign',
     competitors: 'Competitors — CipherExam Campaign',
-    testimonials:'Testimonials — CipherExam Campaign'
-  })[route] || 'CipherExam Campaign';
+    testimonials:'Testimonials — CipherExam Campaign',
+    settings:    'Settings — CipherExam Marketing'
+  })[route] || 'CipherExam Marketing';
   // Keep the URL hash in sync so refresh / back / bookmarks restore the tab.
   if (('#' + route) !== location.hash) {
     try { history.replaceState(null, '', '#' + route); } catch (e) {}
@@ -2277,6 +1368,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // Jump to the Today tab and open the daily playbook — the "how do I use this?" entry point.
 function cipherHelp() {
   cipherShow('today');
+  var more = document.querySelector('.today-more');
+  if (more) more.open = true;
   var pb = document.querySelector('.daily-playbook');
   if (pb) {
     pb.open = true;
@@ -2288,35 +1381,37 @@ function cipherHelp() {
   <div class="nav-inner">
     <a class="nav-brand" href="#" onclick="cipherShow('today');return false;" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32" style="display:block;"></a>
     <div class="nav-links">
-      <!-- Daily ops — the tabs you touch every day -->
-      <button class="nav-link" type="button" data-route="today" onclick="cipherShow('today')" title="Command center — what to do right now">Today</button>
-      <button class="nav-link" type="button" data-route="schedule" onclick="cipherShow('schedule')" title="Copy post text/video, mark posted">Schedule</button>
-      <button class="nav-link" type="button" data-route="posts" onclick="cipherShow('posts')" title="Drafts, grades, per-post metrics">Posts</button>
-      <span class="nav-sep" aria-hidden="true"></span>
-      <!-- Performance & reports -->
-      <button class="nav-link" type="button" data-route="dashboard" onclick="cipherShow('dashboard')" title="Campaign KPIs and blockers">Dashboard</button>
-      <button class="nav-link" type="button" data-route="competitors" onclick="cipherShow('competitors')" title="Monthly competitor intel reports">Competitors</button>
-      <button class="nav-link" type="button" data-route="testimonials" onclick="cipherShow('testimonials')" title="Real user quotes — copy into posts/ads">Testimonials</button>
-      <a class="nav-link" href="funnel.html" title="Opens the funnel diagnostic page">Funnel&thinsp;↗</a>
-      <a class="nav-link" href="sprint.html" title="Opens the activation sprint tracker">Sprint&thinsp;↗</a>
-      <span class="nav-sep" aria-hidden="true"></span>
-      <!-- Reference docs — read-only campaign source material -->
-      <button class="nav-link" type="button" data-route="strategy" onclick="cipherShow('strategy')" title="Tier matrix, budget, 4-week calendar">Strategy</button>
-      <button class="nav-link" type="button" data-route="content" onclick="cipherShow('content')" title="Cornerstone blog, social posts, emails">Content</button>
-      <button class="nav-link" type="button" data-route="landing" onclick="cipherShow('landing')" title="Landing page drafts">Landing</button>
-      <button class="nav-link" type="button" data-route="engineering" onclick="cipherShow('engineering')" title="Engineering handoff + checklist">Engineering</button>
-      <button class="nav-link" type="button" data-route="voice" onclick="cipherShow('voice')" title="Brand voice guardrails">Voice</button>
+      <button class="nav-link" type="button" data-route="today" onclick="cipherShow('today')" title="Your single next action">Today</button>
+      <button class="nav-link" type="button" data-route="posts" onclick="cipherShow('posts')" title="Draft and review marketing posts">Create</button>
+      <button class="nav-link" type="button" data-route="schedule" onclick="cipherShow('schedule')" title="Publish posts and record live URLs">Publish</button>
+      <button class="nav-link" type="button" data-route="dashboard" onclick="cipherShow('dashboard')" title="Campaign performance and blockers">Results</button>
     </div>
-    <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the daily playbook — how to use this dashboard">? Help</a>
-    <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle the ambient visual effects">✦ FX</button>
-    <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
-    <span class="version-bar" title="Dashboard version">v1.9.4</span>
+    <div class="nav-utilities">
+      <span class="sync-health" id="sync-health" role="status" aria-live="polite">Connecting…</span>
+      <details class="resource-menu">
+        <summary>Resources</summary>
+        <div class="resource-panel">
+          <button type="button" onclick="cipherShow('competitors');this.closest('details').open=false">Competitor research</button>
+          <button type="button" onclick="cipherShow('testimonials');this.closest('details').open=false">Testimonials</button>
+          <button type="button" onclick="cipherShow('strategy');this.closest('details').open=false">Campaign strategy</button>
+          <button type="button" onclick="cipherShow('content');this.closest('details').open=false">Content library</button>
+          <button type="button" onclick="cipherShow('landing');this.closest('details').open=false">Landing pages</button>
+          <a href="funnel.html">Funnel diagnostic ↗</a>
+          <a href="sprint.html">Activation sprint ↗</a>
+          <button type="button" onclick="cipherShow('engineering');this.closest('details').open=false">Engineering reference</button>
+          <button type="button" onclick="cipherShow('voice');this.closest('details').open=false">Brand voice</button>
+          <button type="button" onclick="cipherShow('settings');this.closest('details').open=false">Settings</button>
+        </div>
+      </details>
+      <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
+      <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
+      <span class="version-bar" title="Dashboard version">v1.9.5</span>
+    </div>
   </div>
 </nav>
 
 <main class="wrap">
 <section class="route-section active" data-route="today">
-
 
   <!-- Brad inbox — pending questions from Brad waiting for your answer -->
   <div id="brad-inbox" class="brad-inbox" style="display:none;"></div>
@@ -2352,15 +1447,18 @@ function cipherHelp() {
     <div id="today-sequence-steps"><div class="trend-scout-empty">Computing…</div></div>
   </div>
 
+  <details class="today-more">
+    <summary>More campaign details</summary>
+    <div class="today-more-body">
   <details class="daily-playbook">
     <summary>Daily playbook — how this works</summary>
     <div class="pb-body">
       <p style="margin-top:0;color:var(--dim);font-size:0.92rem;">The repeatable routine. ~30 min/day total. Open this if you're new, lost, or starting your day cold.</p>
 
-      <h4>Every weekday morning (7-10 AM MT)</h4>
+      <h4>Every weekday morning</h4>
       <ol>
         <li><strong>Check today's scheduled posts.</strong> The Right Now card above tells you which post + which video + the exact copy to paste. Copy → paste → schedule (or post immediately) → paste the live URL back into the dashboard. Status flips to <em>posted</em>.</li>
-        <li><strong>Grade yesterday's post</strong> (if 24+ hours have passed). Open the platform's analytics, copy the numbers (impressions, likes, comments, link clicks, trial signups), then say to Brad: <code>grade my [Monday/Tuesday/Wednesday] post</code>. Brad delegates to <code>post-performance-grader</code> which writes the grade + recommendations.</li>
+        <li><strong>Grade yesterday's post</strong> (if 24+ hours have passed). Open the platform's analytics and use the Grade this post button.</li>
         <li><strong>Engage</strong> (10-15 min). Reply to comments on your last 3 posts. Skim r/pmp, r/CompTIA, r/humanresources for questions you can answer authentically. Value-first replies; mention CipherExam only if directly asked.</li>
         <li><strong>Founder email</strong> (only when applicable). If you have a new signup, send the matching template from <code>07-founder-1to1-emails.md</code> (Day 0 / Day 3 / Day 6). Brad surfaces which template during the walkthrough.</li>
       </ol>
@@ -2381,11 +1479,11 @@ function cipherHelp() {
 
       <h4>Hard rules — don't break these</h4>
       <ul>
-        <li><strong>Don't post before 7 AM MT.</strong> The scheduler accepts earlier times; you should not.</li>
+        <li><strong>Don't post before 7 AM local time.</strong> The scheduler accepts earlier times; you should not.</li>
         <li><strong>Don't grade a post less than 24h old.</strong> Metrics aren't stable yet — early signal is misleading.</li>
         <li><strong>Don't post on weekends</strong> (LinkedIn engagement collapses Sat/Sun; X is OK but quiet).</li>
         <li><strong>Don't claim you took an exam.</strong> You haven't — use builder POV, tool-builder framings.</li>
-        <li><strong>Don't run <code>node site/build-app.mjs</code></strong> — it wipes load-bearing direct edits to <code>app.html</code>.</li>
+        <li><strong>Keep campaign maintenance in Settings.</strong> Daily work belongs on Today, Create, Publish, and Results.</li>
       </ul>
 
       <h4>Talking to Brad — useful phrases</h4>
@@ -2393,7 +1491,7 @@ function cipherHelp() {
         <li><code>walk me through today</code> — full conversational walkthrough of the day's tasks</li>
         <li><code>grade my [day] post</code> — when reporting metrics</li>
         <li><code>Brad, run trend scout</code> — weekly trend scan before drafting</li>
-        <li><code>Brad, draft next week's [exam] posts</code> — kicks off draft-week-posts</li>
+        <li><code>Brad, draft next week's [exam] posts</code> — creates the next six reviewable drafts</li>
         <li><code>any new signups since yesterday?</code> — Brad walks you through founder emails</li>
         <li><code>analyze last week's posts</code> — Brad surfaces patterns across all graded posts</li>
       </ul>
@@ -2428,26 +1526,26 @@ function cipherHelp() {
       </a>
       <a href="#" onclick="cipherShow('posts');return false;" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
         <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Post Performance</span>
-        <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">Per-post grades &amp; metrics on the Posts tab</span>
+        <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">Per-post grades and metrics in Create</span>
       </a>
       <a href="https://qcode-9a2dc.web.app/ops" target="_blank" rel="noopener" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
         <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Ops Console ↗</span>
         <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">All-projects view on qcode — repo status, commits, board</span>
       </a>
     </div>
-    <p style="color:var(--muted);font-size:0.78rem;font-style:italic;margin:10px 0 0;">Weekly performance report is generated on request — ask Brad "weekly performance report" and it pulls live from posts.json + campaign-state.json.</p>
+    <p style="color:var(--muted);font-size:0.78rem;font-style:italic;margin:10px 0 0;">Ask Brad for a weekly performance report whenever you want a campaign summary.</p>
   </div>
 
   <!-- 2. Today's tasks -->
   <h2 style="margin-top:0;">Today's tasks</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Active-week tasks come from 00-campaign-brief.md §3. Pre-launch checklist comes from <code>data/campaign-state.json → preLaunchChecklist</code> (status set by Brad; source list mirrors 06-engineering-handoff.md §7). Items marked <em>done</em> or <em>N/A</em> are server-driven — local checkboxes can't override them.</p>
+  <p style="color:var(--dim);font-size:0.92rem;">Your checklist is saved automatically for the day. Campaign-completed items remain locked so the plan stays consistent.</p>
   <div id="today-tasks"></div>
 
   <!-- 6. KPI snapshot from state -->
   <h2>KPI snapshot — by cluster</h2>
   <div class="card-grid" id="kpi-snapshot">Loading…</div>
   <p id="state-source" style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:8px;">Loading state…</p>
-  <p style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:4px;">Numbers come from <code>data/campaign-state.json</code>. Tell Claude what to update via the scratchpad below, or have engineering wire GA4 → state once <code>signup_complete</code> / <code>activated_user</code> events are live (see <a href="#" onclick="cipherShow('engineering');return false;">engineering §2</a>).</p>
+  <p style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:4px;">The sync indicator in the header tells you when these campaign numbers were last refreshed.</p>
 
   <!-- Today's recommended creative -->
   <h2>Today's creative</h2>
@@ -2456,15 +1554,15 @@ function cipherHelp() {
 
   <!-- Trend Scout latest scan -->
   <h2>Trend Scout — latest scan</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">3 ranked angles from the most recent <code>cipher-trend-scout</code> run. Brad uses these before <code>draft-week-posts</code>. Re-scan: <em>"Brad, run trend scout"</em>.</p>
+  <p style="color:var(--dim);font-size:0.92rem;">Three ranked angles from the latest market scan. Brad checks these before drafting new posts.</p>
   <div id="trend-scout-panel" class="trend-scout-panel"><div class="trend-scout-empty">Loading latest scan…</div></div>
 
   <!-- Scratchpad + copy-for-Claude -->
   <h2>Today's scratchpad</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Jot anything that happened today — completed posts, signups, useful Reddit comments, friction with the product. Persists locally. When ready, click the button — it formats your notes + checked tasks as a structured update you paste into Claude Code. Claude updates <code>campaign-state.json</code>, the page refreshes with the new state.</p>
+  <p style="color:var(--dim);font-size:0.92rem;">Jot down completed posts, signups, useful conversations, or product friction. Your notes stay on this device.</p>
   <textarea id="scratchpad" rows="6" placeholder="e.g.&#10;- Posted on r/pmp at 9am, 4 upvotes, one DM asking about EMV support&#10;- Sent 12 LinkedIn warm DMs to PMP candidates&#10;- 2 signups today, 1 activated (chose PMP, finished 12 questions)&#10;- Bug: someone reported the diagnostic stuck on Q3 — flagged to Dave"></textarea>
   <div style="margin-top:10px;display:flex;align-items:center;gap:14px;">
-    <button id="copy-update-btn" type="button">Copy update for Claude</button>
+    <button id="copy-update-btn" type="button">Send update to Brad</button>
     <span id="copy-status" style="font-size:0.9rem;"></span>
   </div>
   <textarea id="copy-fallback" rows="10" style="display:none;width:100%;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85rem;"></textarea>
@@ -2496,16 +1594,17 @@ function cipherHelp() {
     <div id="gate-progress"></div>
     <p id="gate-note" style="margin:10px 0 0;font-size:0.92rem;"></p>
   </div>
-
-
+    </div>
+  </details>
 </section>
 
 <section class="route-section" data-route="dashboard">
 
 
   <div class="hero">
-    <h1>CipherExam Multi-Exam Acquisition Campaign</h1>
-    <p class="sub"><strong>Tier 1:</strong> PMP · Security+ · SHRM-CP. $2/day paid cap. 4-week target: 55 activated users.</p>
+    <h1>Results</h1>
+    <p class="sub">Campaign progress, conversion health, and the few blockers that need attention.</p>
+    <button type="button" class="btn-secondary" onclick="window.cipherAskBrad ? window.cipherAskBrad('Brad, create a concise weekly CipherExam marketing performance report from the live campaign data.') : alert('Open Brad from the right edge and ask for a weekly performance report.')">Generate weekly report with Brad</button>
   </div>
 
   <!-- Today widget -->
@@ -2582,8 +1681,8 @@ function cipherHelp() {
   </div>
 
   <!-- Pre-launch blockers (state-driven) -->
-  <h2>Pre-launch engineering blockers</h2>
-  <p style="color:var(--dim);">Source: <code>data/campaign-state.json</code>. Tell Claude when an item moves to <code>in-progress</code> or <code>done</code>.</p>
+  <h2>Campaign blockers</h2>
+  <p style="color:var(--dim);">Items that are preventing marketing or measurement from moving forward.</p>
   <div class="card">
     <div id="index-blockers">Loading…</div>
   </div>
@@ -2865,8 +1964,8 @@ function cipherHelp() {
 .workflow-step .step-text strong { color: var(--text); }
 </style>
 
-<h1 style="margin-top:0;">Post Scheduler</h1>
-<p class="tz-note">All times shown in <strong>Mountain Time (MT)</strong>. The workflow: prep posts the night before using LinkedIn's and X's native schedulers — no early mornings needed.</p>
+<h1 style="margin-top:0;">Publish</h1>
+<p class="tz-note">Times automatically use <strong id="scheduler-timezone">your local timezone</strong>. Open a post, copy what you need, publish it, then save the live URL here.</p>
 
 <div class="workflow-steps">
   <div class="workflow-step">
@@ -2880,7 +1979,7 @@ function cipherHelp() {
   </div>
   <div class="workflow-step">
     <div class="step-num">2</div>
-    <div class="step-text"><strong>Paste the post text</strong> into the composer body (where you type the caption). Set the scheduler to your preferred MT time.</div>
+    <div class="step-text"><strong>Paste the post text</strong> into the composer body and use the time shown on the card.</div>
   </div>
   <div class="workflow-step">
     <div class="step-num">3</div>
@@ -2900,8 +1999,10 @@ function cipherHelp() {
 <script>
 (function renderSchedulePage() {
 
-  var TZ = 'America/Denver';
+  var TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Chicago';
   var VIDEO_DIR = 'G:\\Users\\daveq\\cipher-marketing\\videos\\out\\';
+  var tzLabel = document.getElementById('scheduler-timezone');
+  if (tzLabel) tzLabel.textContent = TZ.replace(/_/g, ' ');
 
   function toMT(isoStr) {
     if (!isoStr) return '—';
@@ -3399,8 +2500,21 @@ details.post-card > summary .post-head { margin-bottom: 0; }
 }
 </style>
 
-  <h1 style="margin-top:0;">Posts</h1>
-  <p style="color:var(--dim);font-size:0.92rem;">Brad drafts here. After you publish, paste the metrics into Claude — the <code>post-performance-grader</code> subagent grades each post and updates this view. State lives in <code>data/posts.json</code>.</p>
+  <h1 style="margin-top:0;">Create &amp; manage posts</h1>
+  <p class="plain-help">Every post moves through one clear workflow. Review drafts here, publish from the Publish tab, then enter performance numbers after 24–48 hours.</p>
+  <div class="workflow-pipeline" aria-label="Post workflow">
+    <div class="pipeline-stage"><strong>1. Idea</strong>Choose an exam and angle</div>
+    <div class="pipeline-stage"><strong>2. Draft</strong>Brad writes the post</div>
+    <div class="pipeline-stage"><strong>3. Approved</strong>You review the copy</div>
+    <div class="pipeline-stage"><strong>4. Scheduled</strong>Ready to publish</div>
+    <div class="pipeline-stage"><strong>5. Posted</strong>Live URL saved</div>
+    <div class="pipeline-stage"><strong>6. Graded</strong>Results recorded</div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" class="btn-primary" onclick="window.cipherAskBrad ? window.cipherAskBrad('Brad, create the next appropriate set of CipherExam posts. Check the current campaign status and existing drafts before creating anything new.') : alert('Open Brad from the right edge, then ask him to create the next posts.')">Create posts with Brad</button>
+    <button type="button" class="btn-secondary" data-approve-drafts>Approve reviewed drafts</button>
+    <span id="approve-drafts-status" role="status" aria-live="polite" style="align-self:center;color:var(--dim);font-size:.86rem;"></span>
+  </div>
 
   <div class="scorecard-summary" id="posts-summary">Loading…</div>
 
@@ -3414,20 +2528,22 @@ details.post-card > summary .post-head { margin-bottom: 0; }
   <p style="color:var(--dim);font-size:0.88rem;">Performance recap. Patterns emerge after 3-5 graded posts.</p>
   <div id="posts-graded">Loading…</div>
 
-  <h2 style="margin-top:32px;">How to use this page</h2>
+  <details style="margin-top:32px;">
+  <summary style="cursor:pointer;font-weight:700;">How this workflow works</summary>
   <ol style="color:var(--dim);font-size:0.92rem;line-height:1.6;">
-    <li><strong>Drafts</strong> live above. Hit "Copy post" to grab the text + CTA — paste into LinkedIn/X, attach the matching video from <code>videos/out/</code>.</li>
-    <li><strong>After posting</strong>, tell Claude: <em>"I posted the Monday launch — here's the link: [url]"</em>. Brad moves it to "Awaiting metrics".</li>
-    <li><strong>24-48h later</strong>, open LinkedIn/X analytics, copy the numbers, paste them to Claude: <em>"grade the Monday post — 1,247 impressions, 38 likes, 4 comments, 1 share, 23 link clicks, 2 trial signups"</em>.</li>
-    <li>The <code>post-performance-grader</code> subagent grades A/B/C/D vs benchmarks, writes notes + recommendations, updates <code>posts.json</code>. Refresh this page to see the result.</li>
+    <li><strong>Review drafts</strong> and approve only the posts you are comfortable publishing.</li>
+    <li><strong>Publish</strong> from the Publish tab and save the live post URL.</li>
+    <li><strong>Wait 24–48 hours</strong>, open the platform's analytics, and use Grade this post to enter the numbers.</li>
+    <li><strong>Use the result</strong> to improve the next set of posts.</li>
   </ol>
+  </details>
 
 <script>
 (function renderPostsPage() {
   function render() {
     var data = window.__POSTS__;
     if (!data || !Array.isArray(data.posts)) {
-      var msg = '<p class="empty-state">No posts.json data loaded.</p>';
+      var msg = '<p class="empty-state">Waiting for live post data.</p>';
       ['posts-summary','posts-pipeline','posts-awaiting','posts-graded'].forEach(function(id){
         var el = document.getElementById(id); if (el) el.innerHTML = msg;
       });
@@ -4939,7 +4055,7 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <div class="hero">
     <h1>Competitor Intel</h1>
-    <p class="sub">Refreshed by Brad on the 1st of each month. All three reports load below. <span id="ci-last-generated" style="color:var(--dim)"></span><button type="button" class="ci-refresh-btn" onclick="loadAllReports(true)">↻ Reload</button></p>
+    <p class="sub">Current review completed July 28, 2026. All three live reports load below. <span id="ci-last-generated" style="color:var(--dim)"></span><button type="button" class="ci-refresh-btn" onclick="loadAllReports(true)">↻ Reload</button></p>
   </div>
 
   <div class="ci-report-grid">
@@ -4980,10 +4096,10 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
       </tr>
     </thead>
     <tbody>
-      <tr><td><strong>Pocket Prep</strong></td><td>Mobile-first, huge question bank</td><td>No answer explanations; pure memorization loop</td><td><span class="pill warn">High</span></td></tr>
-      <tr><td><strong>Examzify</strong></td><td>Clean UI, popular for IT certs</td><td>Static questions, no AI layer, no adaptive routing</td><td><span class="pill warn">High</span></td></tr>
-      <tr><td><strong>Kaplan IT</strong></td><td>Brand authority, Security+ stronghold</td><td>Old-school UX, expensive, no AI</td><td><span class="pill warn">High</span></td></tr>
-      <tr><td><strong>MeasureUp</strong></td><td>Official practice tests, exam-sim feel</td><td>Expensive, no explanations, purely transactional</td><td><span class="pill good">Med</span></td></tr>
+      <tr><td><strong>PMI Study Hall</strong></td><td>Official authority; updated-exam resources; $49/$79 quarterly plans</td><td>Broad study environment; CipherExam can differentiate on concise option-by-option judgment coaching</td><td><span class="pill warn">High</span></td></tr>
+      <tr><td><strong>Pocket Prep</strong></td><td>2,450 PMP questions, detailed explanations, mobile habits, 80 free questions</td><td>Public positioning emphasizes breadth, quiz modes, and repetition rather than transferable scenario-judgment patterns</td><td><span class="pill warn">High</span></td></tr>
+      <tr><td><strong>TIA PMP Simulator</strong></td><td>1,100+ questions, video explanations, strong instructor audience, updated for July 2026</td><td>Long-form instructor format; CipherExam can deliver faster feedback inside every question loop</td><td><span class="pill warn">High</span></td></tr>
+      <tr><td><strong>PM PrepCast Simulator</strong></td><td>1,900+ questions, established simulator reputation, full-exam depth</td><td>$99-$149 simulator tiers create a low-friction opening for a no-card trial</td><td><span class="pill warn">Med-High</span></td></tr>
       <tr><td><strong>Magoosh</strong></td><td>Video-heavy, GMAT/GRE pedigree</td><td>Thin on PMI/SHRM; wrong audience</td><td><span class="pill good">Med</span></td></tr>
       <tr><td><strong>Whizlabs</strong></td><td>Cheap, broad cert coverage</td><td>Notoriously low question quality; outdated</td><td><span class="pill dim">Low</span></td></tr>
       <tr><td><strong>Pluralsight</strong></td><td>Deep IT video library</td><td>Cert prep is secondary; no adaptive questioning</td><td><span class="pill dim">Low</span></td></tr>
@@ -4995,9 +4111,6 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   </table>
 
   <script>
-  var PROJECT = 'cipher-marketing-daveq';
-  var FBKEY   = 'AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts';
-  var FSBASE  = 'https://firestore.googleapis.com/v1/projects/' + PROJECT + '/databases/(default)/documents/competitor_intel';
   var cache   = {};
 
   function fmtDate(iso) {
@@ -5007,12 +4120,13 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   async function fetchDoc(docId) {
     if (cache[docId]) return cache[docId];
-    var res = await fetch(FSBASE + '/' + docId + '?key=' + FBKEY);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
+    await window._cipherAuthReady;
+    var snap = await window._cipherDb.collection('competitor_intel').doc(docId).get();
+    if (!snap.exists) throw new Error('Report not found: ' + docId);
+    var data = snap.data();
     cache[docId] = {
-      content:      data.fields.content.stringValue,
-      generated_at: data.fields.generated_at.stringValue
+      content:      String(data.content || ''),
+      generated_at: String(data.generated_at || '')
     };
     return cache[docId];
   }
@@ -5070,7 +4184,10 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   }
 
   function inline(t) {
-    return t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    var safe = String(t).replace(/[&<>]/g, function (char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char];
+    });
+    return safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.+?)\*/g, '<em>$1</em>')
             .replace(/`(.+?)`/g, '<code>$1</code>');
   }
@@ -5223,8 +4340,15 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
       metaEl.textContent = bits.join(' · ');
     }
 
-    fetch('/api/testimonials', { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
+    window._cipherAuthReady
+      .then(function () { return window.cipherAuthHeaders(); })
+      .then(function (headers) {
+        return fetch('/api/testimonials', { cache: 'no-store', headers: headers });
+      })
+      .then(function (r) {
+        if (!r.ok) throw new Error('testimonial request failed');
+        return r.json();
+      })
       .then(render)
       .catch(function () {
         gridEl.innerHTML =
@@ -5234,6 +4358,38 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
       });
   })();
   </script>
+</section>
+<section class="route-section" data-route="settings">
+  <h1>Settings</h1>
+  <p class="plain-help">Campaign maintenance lives here so it cannot be mistaken for daily work.</p>
+
+  <div class="card settings-card">
+    <h2 style="margin-top:0;">Start a new campaign</h2>
+    <p style="color:var(--dim);font-size:0.9rem;line-height:1.55;">The existing campaign is saved to a recovery archive before the new campaign replaces posts, grades, metrics, schedules, decisions, and reports. Your access and interface preferences are preserved.</p>
+    <form id="campaign-reset-form" style="display:grid;gap:12px;margin-top:14px;">
+      <label style="display:grid;gap:6px;color:var(--dim);font-size:0.88rem;max-width:260px;">
+        New campaign start date
+        <input id="campaign-reset-start" type="date" required style="color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;">
+      </label>
+      <label style="display:flex;align-items:flex-start;gap:9px;color:var(--dim);font-size:0.88rem;">
+        <input id="campaign-reset-ack" type="checkbox" required style="margin-top:3px;">
+        I understand the current campaign data will be replaced after a recovery archive is created.
+      </label>
+      <label style="display:grid;gap:6px;color:var(--dim);font-size:0.88rem;max-width:360px;">
+        Type <strong style="color:var(--text);">RESET CAMPAIGN</strong> to confirm
+        <input id="campaign-reset-confirmation" type="text" autocomplete="off" required style="color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;">
+      </label>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+        <button class="btn-warn" type="submit">Archive current campaign and start a new one</button>
+        <span id="campaign-reset-status" role="status" aria-live="polite" style="font-size:0.88rem;"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="card settings-card">
+    <h2 style="margin-top:0;">Interface</h2>
+    <p style="color:var(--dim);margin-bottom:0;">Brad starts collapsed so the marketing workspace remains the focus. Use the narrow tab on the right edge whenever you want his help.</p>
+  </div>
 </section>
 </main>
 
@@ -5253,7 +4409,6 @@ let CURRENT_ACTIVATED = 0;
 let ACTIVATION_GATE = 25;
 let ACTIVATION_TARGET_4WK = 55;
 let STATE = null;                              // populated by loadState()
-const STATE_URL = 'data/campaign-state.json';
 
 function applyState(j) {
   if (!j) return null;
@@ -5266,17 +4421,17 @@ function applyState(j) {
 }
 
 async function loadState() {
-  // 1. Prefer inline state (works in static preview without fetch)
-  if (typeof window !== 'undefined' && window.__CAMPAIGN_STATE__) {
-    return applyState(window.__CAMPAIGN_STATE__);
-  }
-  // 2. Fall back to fetch (works when served via http)
   try {
-    const res = await fetch(STATE_URL, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return applyState(await res.json());
+    if (!window._cipherAuthReady || !window._cipherDb) {
+      throw new Error('Authenticated Firestore is unavailable.');
+    }
+    await window._cipherAuthReady;
+    const snap = await window._cipherDb.collection('campaign').doc('state').get();
+    if (!snap.exists) throw new Error('campaign/state is missing.');
+    window.__CAMPAIGN_STATE__ = snap.data();
+    return applyState(window.__CAMPAIGN_STATE__);
   } catch (e) {
-    console.warn('[campaign-state] fetch failed, using defaults:', e.message);
+    console.warn('[campaign-state] authenticated load failed:', e.message);
     return null;
   }
 }
@@ -5766,12 +4921,17 @@ function initScratchpad() {
     parts.push('4. Bump _meta.lastUpdatedAt');
 
     const message = parts.join('\n');
+    if (window.cipherAskBrad) {
+      window.cipherAskBrad(message);
+      if (status) { status.textContent = '✓ Sent to Brad.'; status.classList.add('good'); }
+      setTimeout(() => { if (status) { status.textContent = ''; status.classList.remove('good'); } }, 4000);
+      return;
+    }
     try {
       await navigator.clipboard.writeText(message);
-      if (status) { status.textContent = '✓ Copied. Paste into Claude Code.'; status.classList.add('good'); }
-      setTimeout(() => { if (status) { status.textContent = ''; status.classList.remove('good'); } }, 4000);
+      if (status) { status.textContent = 'Brad is unavailable. Update copied as a fallback.'; status.classList.add('bad'); }
     } catch (e) {
-      if (status) { status.textContent = '✗ Copy failed — select the text in the textarea below and copy manually.'; status.classList.add('bad'); }
+      if (status) { status.textContent = 'Brad is unavailable. Select the update below and copy it manually.'; status.classList.add('bad'); }
       const fallback = document.getElementById('copy-fallback');
       if (fallback) { fallback.value = message; fallback.style.display = 'block'; }
     }
@@ -5830,7 +4990,7 @@ function initTodayPage() {
   if (kpiSnap) renderClusterKpis(kpiSnap);
   const stateNote = document.getElementById('state-source');
   if (stateNote && STATE?._meta?.lastUpdatedAt) {
-    stateNote.textContent = `Numbers from data/campaign-state.json · last updated ${STATE._meta.lastUpdatedAt}`;
+    stateNote.textContent = `Campaign numbers last changed ${new Date(STATE._meta.lastUpdatedAt).toLocaleString()}`;
   }
 
   // Today's recommended video creative
@@ -5934,17 +5094,33 @@ if (document.readyState === 'loading') {
 
 // ---- Firebase live sync (wires up after boot so applyState is defined) ----
 (function () {
+  function markSync(ok, text, detail) {
+    var el = document.getElementById('sync-health');
+    if (!el) return;
+    el.className = 'sync-health ' + (ok ? 'ok' : 'bad');
+    el.textContent = text;
+    if (detail) el.title = detail;
+  }
+
   function wireFirestore() {
     var db = window._cipherDb;
-    if (!db) return; // Firebase SDK not available (offline / CDN blocked)
+    if (!db) {
+      markSync(false, 'Offline', 'Campaign data could not connect.');
+      return;
+    }
 
     // Live campaign state → updates header metrics, blockers, etc.
     db.collection('campaign').doc('state').onSnapshot(function (snap) {
       if (!snap.exists) return;
       window.__CAMPAIGN_STATE__ = snap.data();
       applyState(window.__CAMPAIGN_STATE__);
+      var updated = window.__CAMPAIGN_STATE__._meta && window.__CAMPAIGN_STATE__._meta.lastUpdatedAt;
+      var label = updated ? new Date(updated).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'now';
+      markSync(true, 'Synced · ' + label, updated ? 'Campaign data last changed ' + new Date(updated).toLocaleString() : 'Campaign data connected.');
+      document.dispatchEvent(new CustomEvent('cipher:state-updated'));
     }, function (err) {
       console.warn('[cipher] Firestore state sync error:', err.message);
+      markSync(false, 'Sync problem', 'Campaign data may be out of date.');
     });
 
     // Live posts → notifies schedule + posts tabs to re-render
@@ -5954,13 +5130,22 @@ if (document.readyState === 'loading') {
       document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
     }, function (err) {
       console.warn('[cipher] Firestore posts sync error:', err.message);
+      markSync(false, 'Sync problem', 'Post data may be out of date.');
+    });
+  }
+
+  function startAuthenticatedSync() {
+    var ready = window._cipherAuthReady || Promise.reject(new Error('Operator authentication is unavailable.'));
+    ready.then(wireFirestore).catch(function (err) {
+      console.warn('[cipher] Firestore sync not started:', err.message);
+      markSync(false, 'Sign in required', 'Sign in to load live campaign data.');
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wireFirestore);
+    document.addEventListener('DOMContentLoaded', startAuthenticatedSync);
   } else {
-    wireFirestore();
+    startAuthenticatedSync();
   }
 })();
 
@@ -6091,15 +5276,13 @@ if (document.readyState === 'loading') {
   }
 
   function mtTodayStr() {
-    // Approximate MT day boundary (UTC-6 / -7 depending on DST). Cheap heuristic: use local-time YYYY-MM-DD.
     var d = new Date();
-    var off = -d.getTimezoneOffset();
-    var local = new Date(d.getTime() + (off + (-7) * 60) * 60 * 1000); // shift so MT-relative
-    return d.toISOString().slice(0, 10); // simpler: scheduled fields use YYYY-MM-DD; treat browser-local as proxy
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
   }
 
   function mtHour() {
-    // Browser-local hour as MT proxy. Dave runs this from his own machine in MT, so local time == MT.
     return new Date().getHours();
   }
 
@@ -6201,13 +5384,40 @@ if (document.readyState === 'loading') {
     var todayStr = mtTodayStr();
     var hour = mtHour();
     var dow = dayOfWeek();
+    var campaignState = window.__CAMPAIGN_STATE__ || {};
+    var campaign = campaignState.campaign || {};
+    var campaignStart = new Date((campaign.start || '2026-05-18') + 'T00:00:00');
+    var durationWeeks = Number(campaign.durationWeeks || 4);
+    var campaignEnd = new Date(campaignStart.getTime() + durationWeeks * 7 * 86400000);
 
-    // Rule 0: Too early (before 7 AM MT) → standby
+    // Stop recommendations at the campaign boundary. A new cycle requires an
+    // explicit operator decision instead of silently falling back to PMP.
+    if (!isNaN(campaignEnd.getTime()) && Date.now() >= campaignEnd.getTime()) {
+      var unresolvedDrafts = posts.filter(function (p) {
+        return p.status === 'draft' || p.status === 'scheduled';
+      });
+      return {
+        type: 'campaign-ended',
+        title: 'Campaign complete — choose the next cycle',
+        sub: unresolvedDrafts.length
+          ? unresolvedDrafts.length + ' unfinished post' + (unresolvedDrafts.length === 1 ? '' : 's') + ' need a decision before new posts are created.'
+          : 'The planned ' + durationWeeks + '-week campaign has ended. Review the results, then start the next campaign deliberately.',
+        detail:
+          '<div class="cc-detail-label">Recommended order</div>' +
+          '<p style="margin:6px 0 0;color:var(--dim);">1. Review unfinished posts. 2. Check Results. 3. Start a new campaign from Settings when you are ready.</p>',
+        buttons: [
+          { label: unresolvedDrafts.length ? 'Review unfinished posts' : 'Review results', onclick: function () { cipherShow(unresolvedDrafts.length ? 'posts' : 'dashboard'); } },
+          { label: 'Open Settings', cls: 'secondary', onclick: function () { cipherShow('settings'); } }
+        ]
+      };
+    }
+
+    // Rule 0: Too early (before 7 AM local time) → standby
     if (hour < 7) {
       return {
         type: 'standby',
         title: 'Too early to post',
-        sub: "Don't post before 7 AM MT — algorithms penalize 5-6 AM posts. Have coffee. Read the playbook below if you want a head start.",
+        sub: "Don't post before 7 AM local time. Have coffee and use the quick guide if you want a head start.",
         detail: null,
         buttons: [
           { label: 'Open Daily Playbook', onclick: "document.querySelector('.daily-playbook').open = true; window.scrollTo({top:document.querySelector('.daily-playbook').offsetTop - 20, behavior:'smooth'});" }
@@ -6257,7 +5467,7 @@ if (document.readyState === 'loading') {
             }; })(p.cta, isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body')
           } : null),
           {
-            label: 'Open Schedule tab',
+            label: 'Open Publish',
             cls: 'secondary',
             onclick: function () { if (typeof cipherShow === 'function') cipherShow('schedule'); }
           }
@@ -6274,18 +5484,17 @@ if (document.readyState === 'loading') {
       return {
         type: 'review-drafts',
         title: 'REVIEW ' + pendingDrafts.length + ' DRAFT' + (pendingDrafts.length === 1 ? '' : 'S') + ' — Brad is waiting for sign-off',
-        sub: 'Brad drafted these and wrote them to posts.json with status: "draft". Review the copy on the Posts tab, then approve to flip them to scheduled.',
+        sub: 'Brad created these drafts and is waiting for your review. Approve them when the copy is ready to publish.',
         detail:
           '<div class="cc-detail-label">Drafts awaiting your review</div>' + draftList +
           '<div class="cc-detail-label" style="margin-top:14px;">To approve</div>' +
           '<pre>Brad, approve the drafts</pre>' +
-          '<p style="color:var(--dim);margin-top:8px;font-size:0.85rem;">Or open the Posts tab and review them one by one. Edits welcome before sign-off.</p>',
+          '<p style="color:var(--dim);margin-top:8px;font-size:0.85rem;">Open Create to review each draft. Edit anything you want before approval.</p>',
         buttons: [
-          { label: 'Open Posts tab', onclick: function () { if (typeof cipherShow === 'function') cipherShow('posts'); } },
-          { label: 'Copy approval phrase', cls: 'secondary', onclick: function () {
-            navigator.clipboard.writeText('Brad, approve the drafts');
-            var btn = this; btn.innerText = 'Copied ✓';
-            setTimeout(function () { btn.innerText = 'Copy approval phrase'; }, 1800);
+          { label: 'Open Create', onclick: function () { if (typeof cipherShow === 'function') cipherShow('posts'); } },
+          { label: 'Approve with Brad', cls: 'secondary', onclick: function () {
+            if (window.cipherAskBrad) window.cipherAskBrad('Brad, approve the drafts');
+            else cipherShow('posts');
           }}
         ]
       };
@@ -6308,8 +5517,8 @@ if (document.readyState === 'loading') {
           '<div class="cc-detail-label">Backlog</div>' + staleList +
           '<p style="color:var(--dim);margin-top:10px;font-size:0.85rem;">Tell Brad what you want to do — e.g. "Brad, skip the stale posts" or "Brad, repurpose Wednesday\'s trap post for tomorrow."</p>',
         buttons: [
-          { label: 'Open Schedule tab', onclick: "cipherShow('schedule')" },
-          { label: 'Open Posts tab', cls: 'secondary', onclick: "cipherShow('posts')" }
+          { label: 'Open Publish', onclick: "cipherShow('schedule')" },
+          { label: 'Open Create', cls: 'secondary', onclick: "cipherShow('posts')" }
         ]
       };
     }
@@ -6383,37 +5592,18 @@ if (document.readyState === 'loading') {
       return {
         type: 'draft-urgent',
         title: 'DRAFT NOW: this week\'s ' + rec.exam + ' posts',
-        sub: 'Pipeline is empty for the next 7 days. Brad recommends ' + rec.exam + '. Copy the phrase below → paste in Claude Code chat → Brad runs the pipeline shown below.',
+        sub: 'Nothing is ready for the next 7 days. Brad recommends starting with ' + rec.exam + '.',
         detail:
-          // 1) Why
           '<div class="cc-detail-label">Why ' + esc(rec.exam) + '?</div>' +
           '<div style="font-size:0.9rem;line-height:1.5;">' + rec.reason + '</div>' +
-          // 2) The phrase
-          '<div class="cc-detail-label" style="margin-top:14px;">Step 1 — say to Brad</div>' +
-          '<pre>Brad, draft this week\'s ' + esc(rec.exam) + ' posts</pre>' +
-          (rec.alternates && rec.alternates.length ?
-            '<div style="margin-top:6px;color:var(--dim);font-size:0.8rem;">Override: ' +
-            rec.alternates.map(function (a) { return '<code>' + esc(a) + '</code>'; }).join(' · ') +
-            '</div>' : '') +
-          // 3) What happens next — the pipeline
-          '<div class="cc-detail-label" style="margin-top:18px;">What Brad does after you paste that</div>' +
-          '<div style="background:rgba(0,0,0,0.15);border:1px solid var(--border);border-radius:8px;padding:4px 14px;margin-top:6px;">' +
-            pipelineRow('A', 'Reads the campaign plan', 'Looks up Week ' + (Math.floor((Date.now() - new Date(((window.__CAMPAIGN_STATE__||{}).campaign||{start:'2026-05-18'}).start + 'T00:00:00').getTime()) / (7 * 86400000)) + 1) + ' from <code>00-campaign-brief.md</code>. Already done — ' + esc(rec.exam) + ' confirmed.', { mark: '✓', text: 'ready', cls: 'ok' }) +
-            pipelineRow('B', 'Reads the lessons file', '<code>site/data/grading-lessons.md</code> — patterns from prior weeks the drafter applies as constraints.', lessonsStatus) +
-            pipelineRow('C', 'Runs Trend Scout (if stale)', 'Scans Reddit/LinkedIn/X for hot angles in ' + esc(rec.exam) + ' space. Output written to <code>site/data/trend-scout.json</code>.', trendStatus) +
-            pipelineRow('D', 'Calls <code>draft-week-posts</code> skill', 'Writes 6 post drafts (Mon/Wed/Fri × LinkedIn + X) to <code>posts.json</code> with <strong>status: "draft"</strong>. Topic cooldown + humanizer pass + A-grade anchors applied automatically.', null) +
-            pipelineRow('E', 'Shows you the 6 drafts here', 'Right Now card flips to "REVIEW 6 DRAFTS". You read the copy on the Posts tab, edit if needed, then approve.', null) +
-            pipelineRow('F', 'You approve → drafts go live in the schedule', 'Status flips draft → scheduled. The Schedule tab shows them. Mon/Wed/Fri morning the Right Now card surfaces each one for posting.', null) +
-          '</div>',
+          '<p style="color:var(--dim);margin:12px 0 0;">Brad will check recent lessons and trends, create six drafts, and bring them back to Create for your approval.</p>',
         buttons: [
           {
-            label: 'Copy phrase to clipboard',
+            label: 'Create posts with Brad',
             onclick: (function (exam) { return function () {
               var phrase = "Brad, draft this week's " + exam + " posts";
-              navigator.clipboard.writeText(phrase);
-              var btn = this;
-              btn.innerText = 'Copied ✓';
-              setTimeout(function () { btn.innerText = 'Copy phrase to clipboard'; }, 1800);
+              if (window.cipherAskBrad) window.cipherAskBrad(phrase);
+              else cipherShow('posts');
             }; })(rec.exam)
           },
           {
@@ -6439,7 +5629,7 @@ if (document.readyState === 'loading') {
           '<pre>Brad, draft next week\'s PMP posts</pre>' +
           '<p style="color:var(--dim);margin-top:8px;font-size:0.85rem;">Substitute PMP with Security+ or SHRM-CP if needed. Brad will surface trend scout angles first.</p>',
         buttons: [
-          { label: 'Open Schedule tab', onclick: "cipherShow('schedule')" }
+          { label: 'Open Publish', onclick: "cipherShow('schedule')" }
         ]
       };
     }
@@ -6470,7 +5660,7 @@ if (document.readyState === 'loading') {
         sub: 'LinkedIn engagement collapses on weekends. X is OK but quiet. Reply to comments if any, otherwise rest.',
         detail: null,
         buttons: [
-          { label: 'Check comments on Posts tab', onclick: "cipherShow('posts')" }
+          { label: 'Check comments in Create', onclick: "cipherShow('posts')" }
         ]
       };
     }
@@ -6486,7 +5676,7 @@ if (document.readyState === 'loading') {
         '2. Skim r/pmp / r/CompTIA / r/humanresources for questions you can answer (5 min)\n' +
         '3. Drop 1-2 high-effort value-first replies — don\'t mention CipherExam unless directly asked (5 min)</pre>',
       buttons: [
-        { label: 'Open Posts tab', onclick: "cipherShow('posts')" },
+        { label: 'Open Create', onclick: "cipherShow('posts')" },
         { label: 'Daily Playbook', cls: 'secondary', onclick: "document.querySelector('.daily-playbook').open = true; window.scrollTo({top:document.querySelector('.daily-playbook').offsetTop - 20, behavior:'smooth'});" }
       ]
     };
@@ -6597,9 +5787,16 @@ if (document.readyState === 'loading') {
   }
 
   function renderTodaySequence(posts, trendData) {
+    var action = computeNextAction(posts, trendData);
     var steps = computeTodaySequence(posts, trendData);
     var el = document.getElementById('today-sequence-steps');
     if (!el) return;
+    var sequenceCard = el.closest('.today-sequence');
+    if (action.type === 'campaign-ended') {
+      if (sequenceCard) sequenceCard.style.display = 'none';
+      return;
+    }
+    if (sequenceCard) sequenceCard.style.display = '';
     if (steps.length === 0) {
       el.innerHTML = '<div class="trend-scout-empty">Nothing scheduled. Rest day or catch-up day.</div>';
       return;
@@ -6670,15 +5867,12 @@ if (document.readyState === 'loading') {
         var opt = q && q.options && q.options[oi];
         if (!opt) return;
         var phrase = opt.resumePhrase || ('Brad, continue: ' + opt.key);
-        // Copy phrase to clipboard
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(phrase);
-        }
-        // Show confirmation with the phrase + next step
+        if (window.cipherAskBrad) window.cipherAskBrad(phrase);
         var after = document.getElementById('bi-after-' + qi);
         if (after) {
-          after.innerHTML = '✓ Copied to clipboard:<br><code>' + esc(phrase) + '</code><br>' +
-            '<strong>Now:</strong> switch to Claude Code chat (Alt+Tab) → paste → press Enter. Brad will resume.';
+          after.innerHTML = window.cipherAskBrad
+            ? '✓ Sent to Brad. He will continue in the assistant panel.'
+            : 'Open Brad from the right edge and tell him: <code>' + esc(phrase) + '</code>';
           after.classList.add('show');
         }
         // Optimistically dim the question
@@ -6718,13 +5912,15 @@ if (document.readyState === 'loading') {
     var weekIdx = Math.max(0, Math.floor((dayNum - 1) / 7)) + 1;
     var dowName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
     var weekLabel = 'Wk ' + weekIdx + ' · ' + dowName;
-    var CAMPAIGN_LEN = 28;
+    var CAMPAIGN_LEN = ((cs.campaign && Number(cs.campaign.durationWeeks)) || 4) * 7;
     var overtime = dayNum > CAMPAIGN_LEN;
     var whenSub = overtime ? '+' + (dayNum - CAMPAIGN_LEN) + 'd past 4-wk window' : 'day ' + dayNum + ' of ' + CAMPAIGN_LEN;
     var whenCls = overtime ? 'warn' : 'info';
+    if (overtime) weekLabel = 'Campaign complete';
 
     // Chip 2: Pipeline (next 7 days)
-    var todayStr = new Date().toISOString().slice(0,10);
+    var today = new Date();
+    var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
     var weekAheadStr = new Date(Date.now() + 7*86400000).toISOString().slice(0,10);
     var upcomingPosts = posts.filter(function (p) {
       return (p.status === 'scheduled' || p.status === 'draft') &&
@@ -6732,12 +5928,13 @@ if (document.readyState === 'loading') {
     });
     var pipelineN = upcomingPosts.length;
     var pipelineCls = pipelineN === 0 ? 'bad' : (pipelineN < 3 ? 'warn' : 'ok');
-    var pipelineSub = pipelineN === 0 ? 'EMPTY — draft now' : (pipelineN < 3 ? 'thin — draft soon' : 'healthy');
+    var pipelineSub = overtime ? 'campaign complete' : (pipelineN === 0 ? 'empty — create next' : (pipelineN < 3 ? 'thin — create soon' : 'healthy'));
+    if (overtime && pipelineN === 0) pipelineCls = 'warn';
 
     // Chip 3: Drafts pending review
     var draftN = posts.filter(function (p) { return p.status === 'draft'; }).length;
     var draftCls = draftN > 0 ? 'info' : '';
-    var draftSub = draftN > 0 ? 'review on Posts tab' : 'none waiting';
+    var draftSub = draftN > 0 ? 'review in Create' : 'none waiting';
 
     // Chip 4: Trend scout freshness
     var scoutDays = trendData && trendData.scanDate
@@ -6824,6 +6021,7 @@ if (document.readyState === 'loading') {
     init();
   }
   document.addEventListener('cipher:posts-updated', reRender);
+  document.addEventListener('cipher:state-updated', reRender);
 })();
 
 // ---- Grade modal (shared across schedule + posts pages) ----
@@ -7009,9 +6207,10 @@ if (document.readyState === 'loading') {
     btn.disabled = true;
     btn.textContent = 'Grading…';
     try {
+      var authHeaders = await window.cipherAuthHeaders();
       var res = await fetch('/api/grade', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
         body: JSON.stringify({ postId: currentPostId, metrics: metrics }),
       });
       var json = await res.json();
@@ -7030,6 +6229,50 @@ if (document.readyState === 'loading') {
 
   // Event delegation — survives any number of re-renders.
   document.addEventListener('click', function (e) {
+    var approveBtn = e.target.closest && e.target.closest('[data-approve-drafts]');
+    if (approveBtn) {
+      e.preventDefault();
+      var approvalStatus = document.getElementById('approve-drafts-status');
+      var drafts = ((window.__POSTS__ && window.__POSTS__.posts) || []).filter(function (p) { return p.status === 'draft'; });
+      if (drafts.length === 0) {
+        if (approvalStatus) approvalStatus.textContent = 'No drafts are waiting for approval.';
+        return;
+      }
+      if (!window.confirm('Approve all ' + drafts.length + ' drafts and move them to Publish?')) return;
+      approveBtn.disabled = true;
+      approveBtn.textContent = 'Approving…';
+      var approveDb = window._cipherDb;
+      if (!approveDb) {
+        if (approvalStatus) approvalStatus.textContent = 'Live campaign data is unavailable.';
+        approveBtn.disabled = false;
+        approveBtn.textContent = 'Approve reviewed drafts';
+        return;
+      }
+      var approveRef = approveDb.collection('campaign').doc('posts');
+      approveRef.get().then(function (snap) {
+        var data = snap.data() || {};
+        var count = 0;
+        data.posts = (data.posts || []).map(function (post) {
+          if (post.status !== 'draft') return post;
+          count++;
+          return Object.assign({}, post, { status: 'scheduled', approvedAt: new Date().toISOString() });
+        });
+        data._meta = data._meta || {};
+        data._meta.lastUpdatedAt = new Date().toISOString();
+        data._meta.lastUpdatedBy = 'dashboard approval';
+        return approveRef.set(data).then(function () { return count; });
+      }).then(function (count) {
+        if (approvalStatus) approvalStatus.textContent = '✓ ' + count + ' draft' + (count === 1 ? '' : 's') + ' moved to Publish.';
+        approveBtn.disabled = false;
+        approveBtn.textContent = 'Approve reviewed drafts';
+      }).catch(function (err) {
+        if (approvalStatus) approvalStatus.textContent = 'Could not approve drafts: ' + (err.message || 'unknown error');
+        approveBtn.disabled = false;
+        approveBtn.textContent = 'Approve reviewed drafts';
+      });
+      return;
+    }
+
     var openBtn = e.target.closest && e.target.closest('[data-grade-open]');
     if (openBtn) {
       e.preventDefault();
@@ -7304,5 +6547,7 @@ function escHtml(s) {
 <!--HAL-RAIL-->
 <script src="assets/hal-rail.js"></script>
 <!--/HAL-RAIL-->
+<script src="assets/campaign-reset.js"></script>
+
 </body>
 </html>

@@ -18,8 +18,25 @@
       "competitors.html"
     ],
     "rewrites": [
-      { "source": "/api/grade", "function": "gradePost", "region": "us-central1" },
-      { "source": "**", "destination": "/app.html" }
+      {
+        "source": "/api/operator/bootstrap",
+        "function": "bootstrapMarketingAdmin",
+        "region": "us-central1"
+      },
+      {
+        "source": "/api/grade",
+        "function": "gradePost",
+        "region": "us-central1"
+      },
+      {
+        "source": "/api/campaign/reset",
+        "function": "resetCampaign",
+        "region": "us-central1"
+      },
+      {
+        "source": "**",
+        "destination": "/app.html"
+      }
     ],
     "headers": [
       {
@@ -46,12 +63,24 @@
     {
       "source": "functions",
       "codebase": "default",
-      "runtime": "nodejs20",
-      "ignore": ["node_modules", ".git", "*.local"]
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "*.local"
+      ]
     }
   ],
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "CipherExam Marketing",
+        "supportEmail": "dquillman2112@gmail.com"
+      }
+    }
   }
 }

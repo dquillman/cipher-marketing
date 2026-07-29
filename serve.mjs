@@ -8,15 +8,32 @@
 // Press Ctrl-C to stop.
 
 import http from "node:http";
-import { readFile, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, dirname, extname, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execSync, spawn } from "node:child_process";
+import {
+  RESET_CONFIRMATION,
+  buildFreshCompetitors,
+  buildFreshPosts,
+  buildFreshState,
+} from "./functions/campaign-blueprint.js";
+import { getApps, initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import {
+  RequestError,
+  requireBootstrapOperator,
+  requireMarketingAdmin,
+} from "./functions/security.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "site");
 const PORT = Number(process.env.PORT || 8766);
 const HOST = process.env.HOST || "127.0.0.1";
+if (!getApps().length) {
+  initializeApp({ projectId: "cipher-marketing-daveq" });
+}
+
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -45,27 +62,70 @@ function resolveSafe(urlPath) {
 // ---- API helpers ----
 const POSTS_FILE        = join(ROOT, "data/posts.json");
 const STATE_FILE        = join(ROOT, "data/campaign-state.json");
+const COMPETITORS_FILE  = join(ROOT, "data/competitors.json");
+const ARCHIVES_DIR      = join(ROOT, "data/archives");
 const TESTIMONIALS_FILE = join(ROOT, "data/testimonials.json");
 
 function jsonOk(res, body) {
   const payload = JSON.stringify(body);
-  res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+  res.writeHead(200, { "Content-Type": "application/json" });
   res.end(payload);
 }
 function jsonErr(res, code, msg) {
-  res.writeHead(code, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+  res.writeHead(code, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ ok: false, error: msg }));
 }
 async function readBody(req) {
   return new Promise((resolve, reject) => {
     let buf = "";
-    req.on("data", c => buf += c);
+    let rejected = false;
+    req.on("data", chunk => {
+      if (rejected) return;
+      buf += chunk;
+      if (Buffer.byteLength(buf, "utf8") > 64 * 1024) {
+        rejected = true;
+        reject(new RequestError(413, "request body is too large"));
+      }
+    });
     req.on("end", () => {
-      try { resolve(JSON.parse(buf)); } catch { resolve({}); }
+      if (rejected) return;
+      try { resolve(JSON.parse(buf)); }
+      catch { reject(new RequestError(400, "request body must be valid JSON")); }
     });
     req.on("error", reject);
   });
 }
+async function verifyOperatorToken(req) {
+  const header = req.headers.authorization || "";
+  const match = header.match(/^Bearer (.+)$/i);
+  if (!match) throw new RequestError(401, "Bearer authentication required.");
+  try {
+    return await getAuth().verifyIdToken(match[1]);
+  } catch (error) {
+    if (error instanceof RequestError) throw error;
+    throw new RequestError(401, "Invalid or expired operator token.");
+  }
+}
+
+async function authenticateOperator(req) {
+  return requireMarketingAdmin(await verifyOperatorToken(req));
+}
+
+function requireHttpUrl(value) {
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") throw new Error();
+    return parsed.toString();
+  } catch {
+    throw new RequestError(400, "postUrl must be a valid http(s) URL");
+  }
+}
+
+function apiError(res, error) {
+  const status = Number(error.statusCode) || 500;
+  jsonErr(res, status, status >= 500 ? "request failed" : error.message);
+}
+
 function triggerRebuild() {
   try {
     execSync("node inline-assets.mjs && node build-app.mjs", { cwd: ROOT, stdio: "ignore" });
@@ -78,17 +138,33 @@ function triggerRebuild() {
 async function handleApi(req, res) {
   const url = req.url.split("?")[0];
 
-  // CORS preflight
   if (req.method === "OPTIONS") {
-    res.writeHead(204, { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST", "Access-Control-Allow-Headers": "Content-Type" });
-    res.end(); return;
+    jsonErr(res, 405, "cross-origin requests are not allowed"); return;
+  }
+
+  // POST /api/operator/bootstrap - local mirror of the deployed claim bootstrap.
+  if (req.method === "POST" && url === "/api/operator/bootstrap") {
+    try {
+      const decoded = requireBootstrapOperator(await verifyOperatorToken(req));
+      const auth = getAuth();
+      const user = await auth.getUser(decoded.uid);
+      await auth.setCustomUserClaims(user.uid, {
+        ...(user.customClaims || {}),
+        marketingAdmin: true,
+      });
+      jsonOk(res, { ok: true });
+    } catch (error) {
+      apiError(res, error);
+    }
+    return;
   }
 
   // GET /api/posts — always-fresh posts.json (bypasses inline cache)
   if (req.method === "GET" && url === "/api/posts") {
+    try { await authenticateOperator(req); } catch (error) { apiError(res, error); return; }
     try {
       const raw = await readFile(POSTS_FILE, "utf8");
-      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
       res.end(raw); return;
     } catch { jsonErr(res, 500, "could not read posts.json"); return; }
   }
@@ -99,23 +175,31 @@ async function handleApi(req, res) {
   // If the file doesn't exist yet (pull never run), return a tidy empty payload
   // instead of a 500 so the panel can show its empty state.
   if (req.method === "GET" && url === "/api/testimonials") {
+    try { await authenticateOperator(req); } catch (error) { apiError(res, error); return; }
     try {
       const raw = await readFile(TESTIMONIALS_FILE, "utf8");
-      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
       res.end(raw); return;
     } catch {
-      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" });
-      res.end(JSON.stringify({ _meta: { count: 0, note: "testimonials.json not found — run node scripts/pull-testimonials.mjs" }, testimonials: [] }));
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+      res.end(JSON.stringify({ _meta: { count: 0, note: "testimonials.json not found - run node scripts/pull-testimonials.mjs" }, testimonials: [] }));
       return;
     }
   }
 
   // POST /api/publish — mark a post as published
   if (req.method === "POST" && url === "/api/publish") {
-    const body = await readBody(req);
+    try {
+      await authenticateOperator(req);
+    } catch (error) {
+      apiError(res, error); return;
+    }
+    let body;
+    try { body = await readBody(req); } catch (error) { apiError(res, error); return; }
     const { id, postUrl } = body;
     if (!id || !postUrl) { jsonErr(res, 400, "id and postUrl required"); return; }
-    if (!postUrl.startsWith("http")) { jsonErr(res, 400, "postUrl must start with http"); return; }
+    let safePostUrl;
+    try { safePostUrl = requireHttpUrl(postUrl); } catch (error) { apiError(res, error); return; }
     try {
       const data = JSON.parse(await readFile(POSTS_FILE, "utf8"));
       const post = data.posts.find(p => p.id === id);
@@ -126,17 +210,62 @@ async function handleApi(req, res) {
       const now = new Date().toISOString();
       post.status   = "posted";
       post.postedAt = now;
-      post.postUrl  = postUrl;
+      post.postUrl  = safePostUrl;
       data._meta.lastUpdatedAt = now;
       await writeFile(POSTS_FILE, JSON.stringify(data, null, 2) + "\n", "utf8");
       // Rebuild dashboard in background so the inline state reflects the change
       setImmediate(triggerRebuild);
-      console.log(`[api] published: ${id} → ${postUrl}`);
+      console.log(`[api] published: ${id} → ${safePostUrl}`);
       jsonOk(res, { ok: true, id, status: "posted", postedAt: now });
-    } catch (e) { jsonErr(res, 500, e.message); }
+    } catch (e) { apiError(res, e); }
     return;
   }
 
+  // POST /api/campaign/reset - local mirror of the recoverable full reset.
+  if (req.method === "POST" && url === "/api/campaign/reset") {
+    try { await authenticateOperator(req); } catch (error) { apiError(res, error); return; }
+    let body;
+    try { body = await readBody(req); } catch (error) { apiError(res, error); return; }
+    try {
+      if (body.confirmation !== RESET_CONFIRMATION) {
+        jsonErr(res, 400, `Type ${RESET_CONFIRMATION} to confirm.`); return;
+      }
+      if (typeof body.requestId !== "string" || !/^[a-zA-Z0-9_-]{12,80}$/.test(body.requestId)) {
+        jsonErr(res, 400, "A valid reset request ID is required."); return;
+      }
+      const [currentState, currentPosts, currentCompetitors] = await Promise.all([
+        readFile(STATE_FILE, "utf8").then(JSON.parse),
+        readFile(POSTS_FILE, "utf8").then(JSON.parse),
+        readFile(COMPETITORS_FILE, "utf8").then(JSON.parse),
+      ]);
+      const now = new Date();
+      const archive = {
+        archiveId: body.requestId,
+        createdAt: now.toISOString(),
+        previousCampaignStart: currentState?.campaign?.start || null,
+        newCampaignStart: body.startDate,
+        state: currentState,
+        posts: currentPosts,
+        competitors: currentCompetitors,
+      };
+      const freshState = buildFreshState(currentState, body.startDate, now);
+      const freshPosts = buildFreshPosts(currentPosts, body.startDate, now);
+      const freshCompetitors = buildFreshCompetitors(now);
+      await mkdir(ARCHIVES_DIR, { recursive: true });
+      await Promise.all([
+        writeFile(join(ARCHIVES_DIR, `${body.requestId}.json`), JSON.stringify(archive, null, 2) + "\n", "utf8"),
+        writeFile(STATE_FILE, JSON.stringify(freshState, null, 2) + "\n", "utf8"),
+        writeFile(POSTS_FILE, JSON.stringify(freshPosts, null, 2) + "\n", "utf8"),
+        writeFile(COMPETITORS_FILE, JSON.stringify(freshCompetitors, null, 2) + "\n", "utf8"),
+      ]);
+      console.log(`[api] full campaign reset: ${body.requestId} -> ${freshState.campaign.start}`);
+      jsonOk(res, { ok: true, archiveId: body.requestId, newCampaignStart: body.startDate, recoverable: true });
+    } catch (e) {
+      const validationError = /startDate|calendar date|confirm|request ID/.test(e.message);
+      jsonErr(res, validationError ? 400 : 500, validationError ? e.message : "request failed");
+    }
+    return;
+  }
   jsonErr(res, 404, "unknown api route");
 }
 
@@ -182,7 +311,9 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  const url = `http://${HOST === "0.0.0.0" ? "localhost" : HOST}:${PORT}/`;
+  // Use localhost in browser-facing URLs because Firebase OAuth authorizes
+  // hostnames, and 127.0.0.1 is intentionally not an authorized domain.
+  const url = `http://${HOST === "0.0.0.0" || HOST === "127.0.0.1" ? "localhost" : HOST}:${PORT}/`;
   console.log(`\n  CipherExam marketing dashboard`);
   console.log(`  Serving:  ${ROOT}`);
   console.log(`  URL:      ${url}app.html`);

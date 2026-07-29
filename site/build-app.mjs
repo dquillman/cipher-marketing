@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Builds a single-file SPA `app.html` from the 7 per-page HTML files.
+// Validates the canonical hand-maintained `app.html` and builds the linear
+// `launch-campaign.html` rollup from the per-page HTML files.
 // Each page's <main class="wrap">…</main> becomes a <section data-route="X">.
 // Hash-based router (#today, #dashboard, etc.) shows one section at a time.
 //
@@ -36,36 +37,7 @@ function extractMain(html) {
   return m[1];
 }
 
-// ---- Rewrite ALL intra-site links to cipherShow() calls (no hash routing) ----
-const ROUTE_NAMES = ROUTES.map(r => r.route);
-
-function rewriteLinks(html) {
-  // 1. <a href="today.html"> or <a href="landing.html#pmp"> → onclick=cipherShow
-  html = html.replace(/href="([a-z][a-z0-9-]*\.html)(#[a-z0-9-]+)?"/gi, (full, file) => {
-    const route = FILE_TO_ROUTE[file];
-    if (!route) return full;
-    return `href="#" onclick="cipherShow('${route}');return false;"`;
-  });
-
-  // 2. <a href="#today"> etc. (route hashes from prior build) → onclick=cipherShow
-  html = html.replace(/href="#([a-z][a-z0-9-]*)"/gi, (full, hash) => {
-    if (ROUTE_NAMES.includes(hash)) {
-      return `href="#" onclick="cipherShow('${hash}');return false;"`;
-    }
-    return full; // leave non-route anchors (sub-section anchors) alone
-  });
-
-  // 3. <a href="../00-campaign-brief.md">...</a> → strip the link, keep the text
-  //    The raw .md files are outside the server root, so links can't resolve.
-  html = html.replace(
-    /<a\s+[^>]*href="\.\.?\/[0-9]{2}-[a-z-]+\.md(?:#[a-z0-9-]+)?"[^>]*>([\s\S]*?)<\/a>/gi,
-    (_full, text) => text
-  );
-
-  return html;
-}
-
-// ---- Read all 7 source pages ----
+// ---- Read all source pages ----
 const pages = ROUTES.map(r => {
   const html = readFileSync(join(HERE, r.file), "utf8");
   return { ...r, html };
@@ -74,108 +46,17 @@ const pages = ROUTES.map(r => {
 // ---- Use today.html as the template (it already has inline CSS / JS / state) ----
 const tpl = pages.find(p => p.route === "today").html;
 
-// ---- Build the nav: buttons (NOT links) so no hash navigation quirks ----
-const navBtnsHtml = ROUTES.map(r =>
-  `      <button class="nav-link" type="button" data-route="${r.route}" onclick="cipherShow('${r.route}')">${r.label}</button>`
-).join("\n");
-
-const newNav = `<nav class="nav">
-  <div class="nav-inner">
-    <a class="nav-brand" href="#" onclick="cipherShow('today');return false;" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32" style="display:block;"></a>
-    <div class="nav-links">
-${navBtnsHtml}
-    </div>
-    <a class="nav-rollup" href="launch-campaign.html" target="_blank" rel="noopener">Full rollup ↗</a>
-  </div>
-</nav>
-<div class="version-bar">v${APP_VERSION}</div>`;
-
-// ---- Combined <main>. Today is "active" (visible) by default; others have
-//      class="route-section" only — CSS hides them. No `hidden` attribute,
-//      no `:target` selectors, no hashchange. Pure class-driven. ----
-const sectionsHtml = pages.map(p => {
-  const inner = rewriteLinks(extractMain(p.html));
-  const activeClass = p.route === "today" ? " active" : "";
-  return `<section class="route-section${activeClass}" data-route="${p.route}">\n${inner}\n</section>`;
-}).join("\n\n");
-
-const newMain = `<main class="wrap">\n${sectionsHtml}\n</main>`;
-
-// ---- The tiny tab switcher. Inline at top of body so it's defined before
-//      any onclick handler fires. No DOMContentLoaded dependency. ----
-const routerScript = `<script>
-// Defined immediately so the nav's onclick handlers work the moment the page renders.
-function cipherShow(route) {
-  var ok = false;
-  var secs = document.getElementsByClassName('route-section');
-  for (var i = 0; i < secs.length; i++) {
-    if (secs[i].getAttribute('data-route') === route) {
-      secs[i].classList.add('active');
-      ok = true;
-    } else {
-      secs[i].classList.remove('active');
-    }
-  }
-  if (!ok) return; // unknown route — leave page alone
-  var links = document.getElementsByClassName('nav-link');
-  for (var j = 0; j < links.length; j++) {
-    if (links[j].getAttribute('data-route') === route) {
-      links[j].classList.add('current');
-    } else {
-      links[j].classList.remove('current');
-    }
-  }
-  document.title = ({
-    today:       'Today — CipherExam Campaign',
-    dashboard:   'Dashboard — CipherExam Campaign',
-    schedule:    'Schedule — CipherExam Campaign',
-    posts:       'Posts — CipherExam Campaign',
-    strategy:    'Strategy — CipherExam Campaign',
-    content:     'Content — CipherExam Campaign',
-    landing:     'Landing — CipherExam Campaign',
-    engineering: 'Engineering — CipherExam Campaign',
-    voice:       'Voice — CipherExam Campaign',
-    competitors: 'Competitors — CipherExam Campaign',
-    testimonials:'Testimonials — CipherExam Campaign'
-  })[route] || 'CipherExam Campaign';
-  window.scrollTo(0, 0);
+// app.html is the canonical deployed dashboard and is never generated. This
+// permanently removes the destructive path that previously erased features.
+const REQUIRED_APP_MARKERS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp", "hal-rail.js", "operator-auth.js"];
+const existingApp = readFileSync(join(HERE, "app.html"), "utf8");
+const missingMarkers = REQUIRED_APP_MARKERS.filter(marker => !existingApp.includes(marker));
+if (missingMarkers.length > 0) {
+  throw new Error("app.html is missing required features: " + missingMarkers.join(", "));
 }
-</script>`;
+console.log("validated canonical app.html (preserved; never generated)");
 
-// ---- Assemble: swap nav+main, inject the switcher inline BEFORE the nav
-//      so cipherShow() is defined the instant the onclick handlers exist. ----
-let out = tpl
-  .replace(/<nav class="nav">[\s\S]*?<\/nav>/, routerScript + "\n" + newNav)
-  .replace(/<main class="wrap">[\s\S]*?<\/main>/, newMain)
-  .replace(/<title>[^<]*<\/title>/, "<title>CipherExam Campaign</title>");
 
-// ---- WIPE GUARD ------------------------------------------------------------
-// app.html is HAND-EDITED and holds load-bearing direct edits that do not
-// exist in the operator pages (Right Now command center, collapsed schedule
-// feed, Reddit grading, hash routing). Rebuilding from the operator pages
-// deletes them — this shipped broken once (commit 4fb1bea wiped 1,569 lines;
-// restored in a91404a / v1.5.0). If the rebuilt output would drop any of the
-// sentinel features still present in the current file, abort unless --force.
-const SENTINELS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp", "hal-rail.js"];
-const FORCE = process.argv.includes("--force");
-let existingApp = "";
-try { existingApp = readFileSync(join(HERE, "app.html"), "utf8"); } catch {}
-const wouldLose = SENTINELS.filter(s => existingApp.includes(s) && !out.includes(s));
-if (wouldLose.length > 0 && !FORCE) {
-  console.error("ABORT: rebuilding app.html would delete hand-made direct edits.");
-  console.error("These features exist in the current app.html but not in the rebuilt output:");
-  console.error("  " + wouldLose.join(", "));
-  console.error("app.html is the deployed dashboard and is edited directly — the operator");
-  console.error("pages lag behind it. Re-run with --force ONLY for an intentional rebuild");
-  console.error("after porting the direct edits into the operator pages.");
-  process.exit(1);
-}
-if (wouldLose.length > 0) {
-  console.warn("WARNING (--force): overwriting app.html and deleting: " + wouldLose.join(", "));
-}
-
-writeFileSync(join(HERE, "app.html"), out);
-console.log("built app.html (" + out.length + " bytes, " + ROUTES.length + " routes)");
 
 // ============================================================================
 // ROLLUP BUILD — launch-campaign.html

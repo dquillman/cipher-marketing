@@ -1,13 +1,14 @@
 {
   "name": "cipher-marketing",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "private": true,
   "type": "module",
-  "description": "Marketing campaign for CipherExam (cipherexam.com) â€” strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
+  "description": "Marketing campaign for CipherExam (cipherexam.com) — strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
   "scripts": {
     "serve": "node serve.mjs",
+    "test": "node --test",
     "serve:lan": "cross-env-shell HOST=0.0.0.0 node serve.mjs",
-    "build": "cd site && node inline-assets.mjs && node build-app.mjs",
+    "build": "cd site && node inline-assets.mjs && node strip-private-state.mjs && node build-app.mjs",
     "deploy": "npm run build && firebase deploy --only hosting",
     "seed": "node scripts/seed-firestore.mjs",
     "post-copy": "node scripts/post-copy.mjs",
@@ -26,6 +27,9 @@
   },
   "license": "UNLICENSED",
   "devDependencies": {
-    "firebase-admin": "^13.10.0"
+    "firebase-admin": "12.7.0"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
   }
 }

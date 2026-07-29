@@ -12,25 +12,54 @@ Standalone repo for the **CipherExam** (cipherexam.com) multi-exam acquisition c
 ## Quick start
 
 ```bash
-# 1. Install Remotion deps (one-time)
+# 1. Install dashboard + Remotion dependencies (one-time)
+npm install
 cd videos
 npm install
 
 # 2. Build the site
-cd ../site
-node inline-assets.mjs    # bake CSS/JS/state into source pages
-node build-app.mjs        # produce app.html + launch-campaign.html
+cd ..
+npm run build
 
 # 3. Run a local server to view it
-python -m http.server 8766
+npm run serve
 # Open http://localhost:8766/app.html
 ```
 
+On Windows, the normal operator workflow requires no terminal: double-click
+**`Open Cipher Marketing.vbs`** in this folder. It starts the local server
+silently and opens the dashboard in your default browser.
+
+## Operator access
+
+The dashboard is private. Firestore, grading, publishing, and campaign reset
+require a signed-in Firebase user with the `marketingAdmin` custom claim.
+Private campaign and post data is never embedded in hosted HTML.
+
+Google sign-in is enabled for the Firebase project. On first sign-in, the
+authenticated bootstrap function grants the claim only to these verified Google
+accounts:
+
+- davequillman@gmail.com
+- dquillman2112@gmail.com
+
+All other accounts receive a 403 and remain locked out. The manual
+`scripts/grant-marketing-admin.mjs` utility remains available for deliberate
+future additions.
+
+Never commit a service-account key. Deploy Firestore rules and the grading
+function together after granting the claim, avoiding both lockout and an
+anonymous mutation window.
+
+
 ## Daily workflow
 
-Open `site/app.html` in a browser. The **Today** tab shows today's tasks (based on `site/assets/site.js` CAMPAIGN_START), recommended video creative, and a scratchpad with a "Copy update for Claude" button that produces a structured update message.
+Double-click **`Open Cipher Marketing.vbs`**. Do not open `site/app.html`
+directly: browsers block its campaign-data requests when an HTML file is opened
+with a `file:///` address. The **Today** tab then shows the current recommended
+marketing action and campaign status.
 
-When you paste an update into Claude Code, Claude updates `site/data/campaign-state.json`, re-runs `inline-assets.mjs` + `build-app.mjs`, and the page reflects new state on refresh.
+When you paste an update into Claude Code, Claude updates `site/data/campaign-state.json`, mirrors it to authenticated Firestore, and runs `npm run build`. `site/app.html` is canonical and the build validates it without overwriting it.
 
 ## Tier 1 campaign clusters
 

@@ -135,6 +135,9 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-model-btn { display:flex; flex-direction:column; align-items:center; gap:2px; line-height:1; }
 .hal-model-cost { font-size:9px; color:#5a6578; letter-spacing:.04em; font-weight:400; }
 .hal-btn.model-on .hal-model-cost { color:#5DCAA5; opacity:.75; }
+/* Cipher Marketing has one assistant. Advanced persona/model controls belong
+   in the Second Brain console, not in the daily marketing workspace. */
+.hal-faces,.hal-model-row,#halw-dream,#halw-lastdream { display:none !important; }
 `;
     var styleEl = document.createElement("style");
     styleEl.id = "hal-rail-style";
@@ -143,22 +146,22 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 
     // ---- markup ------------------------------------------------------------
     var railHTML =
-      '<aside class="hal-rail" id="halw-rail" aria-label="HAL assistant">' +
-      '  <button class="hal-handle" id="halw-collapse" title="Collapse / expand HAL" aria-label="Collapse or expand HAL">' +
+      '<aside class="hal-rail" id="halw-rail" aria-label="Brad marketing assistant">' +
+      '  <button class="hal-handle" id="halw-collapse" title="Open or close Brad" aria-label="Open or close Brad">' +
       '    <span class="hal-handle-eye"></span>' +
-      '    <span class="hal-handle-label">HAL</span>' +
+      '    <span class="hal-handle-label">BRAD</span>' +
       '    <span class="hal-handle-chev" id="halw-chev">&#8250;</span>' +
       '  </button>' +
       '  <div class="hal-panel">' +
       '    <div class="hal-winhead" id="halw-winhead">' +
       '      <span class="hal-eye" id="halw-eye"></span>' +
-      '      <span class="hal-name" id="halw-facename">HAL 9000</span>' +
+      '      <span class="hal-name" id="halw-facename">BRAD</span>' +
       '      <span class="hal-status" id="halw-status">OPERATIONAL</span>' +
       '      <span class="hal-faces" id="halw-faces" role="group" aria-label="Choose persona"></span>' +
       '    </div>' +
       '    <div class="hal-log" id="halw-log"></div>' +
       '    <form class="hal-controls" id="halw-form">' +
-      '      <input class="hal-input" id="halw-input" placeholder="Ask HAL about the campaign&#8230;" autocomplete="off">' +
+      '      <input class="hal-input" id="halw-input" placeholder="Ask Brad about the campaign&#8230;" autocomplete="off">' +
       '      <button type="submit" class="hal-btn" id="halw-send">SEND</button>' +
       '      <button type="button" class="hal-btn" id="halw-mic" style="display:none">MIC</button>' +
       '      <button type="button" class="hal-btn" id="halw-live" style="display:none" title="Hands-free conversation - HAL listens, replies, then listens again. Tap MIC to cut in.">LIVE</button>' +
@@ -196,7 +199,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 
     // ---- personas ----------------------------------------------------------
     var FACES = {
-      assistant: { name:"ASSISTANT", dot:"#9aa4b2", tint:"saturate(0.15) brightness(1.15)",
+      assistant: { name:"BRAD", dot:"#9aa4b2", tint:"saturate(0.15) brightness(1.15)",
         lang:"en-US", rate:1.0, pitch:1.0,
         pref:["Microsoft Aria Online (Natural) - English (United States)","Google US English"],
         greetings:["Ready. Ask about the campaign, the brain, or say remember to store a fact."] },
@@ -220,8 +223,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
           "At your service, sir. What shall we look up?",
           "Welcome back, sir. Shall I pull something from the campaign?"] }
     };
-    var face = "hal";
-    try { var f0 = localStorage.getItem("hal-console-face"); if (FACES[f0]) face = f0; } catch (e) {}
+    var face = "assistant";
     // MODEL picker (HAL_SPEC 3c). "hal-model" is the SAME key every HAL surface
     // uses, so Dave's choice follows him between HALs. The server validates it,
     // so an unknown value can only fall back to the default.
@@ -584,11 +586,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     renderFaces();
 
     // ---- collapse: a permanent dock with an escape hatch -------------------
-    var collapsed = false;
+    var collapsed = true;
     try {
       var cs = localStorage.getItem("hal-rail-collapsed");
-      if (cs === "1") collapsed = true;
-      else if (cs === null && window.innerWidth < 1024) collapsed = true;  // start tucked on small screens
+      if (cs === "0") collapsed = false;
     } catch (e) {}
     document.body.classList.toggle("hal-collapsed", collapsed);
     function setCollapsed(v) {
@@ -596,6 +597,12 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       try { localStorage.setItem("hal-rail-collapsed", v ? "1" : "0"); } catch (e) {}
       if (!v) { setTimeout(function () { input.focus(); }, 220); }
     }
+    window.cipherAskBrad = function (text) {
+      setCollapsed(false);
+      input.value = String(text || "");
+      setState();
+      send(input.value);
+    };
     document.getElementById("halw-collapse").addEventListener("click", function () { setCollapsed(!collapsed); });
 
     // Greet once on load - text only (browsers block speech before a gesture).
