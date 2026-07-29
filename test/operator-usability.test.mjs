@@ -67,4 +67,10 @@ test('draft ownership is explicit and drafts are grouped into dated weeks', () =
   assert.match(app, /Week of /);
   assert.match(app, /class="post-week-group"/);
   assert.match(app, /renderPost\(post, true\)/);
+  assert.match(app, /var draftWeeksByStart = \{\}/);
+  assert.match(app, /class="cc-week-row/);
+  assert.match(app, /Review one week at a time\./);
+  assert.match(app, /Review this week/);
+  assert.doesNotMatch(app, /pendingDrafts\.slice\(0, 8\)/);
+  assert.doesNotMatch(app, /Approve with Brad/);
 });
