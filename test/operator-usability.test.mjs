@@ -58,3 +58,13 @@ test('direct file opening is intercepted with a one-click Windows recovery path'
   assert.match(launcher, /node serve\.mjs/);
   assert.match(launcher, /MSXML2\.ServerXMLHTTP\.6\.0/);
 });
+
+test('draft ownership is explicit and drafts are grouped into dated weeks', () => {
+  assert.match(app, /Brad analyzes the evidence\. You approve the final copy\./);
+  assert.match(app, /Current trends/);
+  assert.match(app, /Past post grades/);
+  assert.match(app, /function renderDraftWeeks\(items\)/);
+  assert.match(app, /Week of /);
+  assert.match(app, /class="post-week-group"/);
+  assert.match(app, /renderPost\(post, true\)/);
+});

@@ -1,0 +1,77 @@
+{
+  "_meta": {
+    "purpose": "Goal 1.4 — mine founder-email replies for theme/tone. For every reply Dave reports to a founder outreach email, Brad appends one entry here and tags it with ONE primary theme (optionally one secondary). After >=10 tagged replies, run the surfacing rule below to produce the top-3 themes, which feed (a) Tier 1.2 drip copy and (b) the next round of LinkedIn hooks.",
+    "lastUpdatedBy": "claude-goal-1.4-setup",
+    "lastUpdatedAt": "2026-07-09",
+    "schemaVersion": 1,
+    "howBradTags": "When Dave reports a founder-email reply (pastes it, summarizes it, or says 'got a reply that said X'), Brad: (1) appends a reply object to `replies` with a new id `fer-YYYY-MM-DD-NN`; (2) sets `primaryTheme` to the single best-fit key from `themes`; (3) sets `secondaryTheme` only if a second theme is clearly present, else null; (4) captures a short `gist` (<=200 chars, Brad's paraphrase) and, when the reply has a vivid line worth reusing, a verbatim `quote`; (5) sets `sentiment` (positive|neutral|negative|mixed) and `examFocus` if known; (6) bumps `_meta.lastUpdatedAt` and `stats`. Never invent replies — only log what Dave actually reports.",
+    "surfacingRule": "When `stats.total` >= 10, count `primaryTheme` occurrences (weight a `secondaryTheme` as 0.5). Output the top 3 themes with: count, one representative `quote`, the `dripImplication`, and the `hookImplication` from the `themes` map. Deliver as a short brief Dave can act on. Re-run each time total crosses a new multiple of 10.",
+    "downstreamConsumers": [
+      "Tier 1.2 drip copy — the nurture email sequence; each top theme becomes an objection to preempt or a message to lead with.",
+      "Next-round LinkedIn hooks — each top theme becomes a candidate opener angle for draft-week-posts."
+    ]
+  },
+  "themes": {
+    "pricing-confusion": {
+      "label": "Confused / hesitant about pricing",
+      "definition": "Asks what it costs, seems surprised by the price, compares to free tools, or misunderstands the trial (thinks a card is required, thinks $19 is per-exam, etc.).",
+      "dripImplication": "Add a plain pricing-clarity beat to the drip: '$19/mo or $189/yr, 7-day trial, no card' stated once, cleanly.",
+      "hookImplication": "A cost-of-failure hook (retake fee vs. one month of prep) reframes price without discounting."
+    },
+    "loved-trap-framing": {
+      "label": "Loved the trap / 'why wrong answers look right' framing",
+      "definition": "Responds warmly to the metacognitive angle — the exam-lens / thinking-traps / 'the exam stops feeling like a trick' idea specifically.",
+      "dripImplication": "Lead the drip with the trap frame; it's the resonant hook — reinforce, don't bury it under features.",
+      "hookImplication": "Double down on concrete trap examples (one 4-option question, one plausible-but-wrong answer highlighted)."
+    },
+    "skeptical-of-ai": {
+      "label": "Skeptical it's more than a ChatGPT wrapper",
+      "definition": "Questions whether the AI is real/useful, assumes it's generic LLM output, or worries about hallucinated explanations.",
+      "dripImplication": "Add a proof beat: Bloom's classification + per-question trap detection, not free-form chat. Show, don't assert.",
+      "hookImplication": "A 'here's the actual reasoning the AI gives' teardown hook counters the wrapper assumption."
+    },
+    "cert-coverage-question": {
+      "label": "Asking if their specific cert is covered",
+      "definition": "Wants to know if PMP / Security+ / SHRM-CP / ITIL / CISSP / etc. is available or on the roadmap.",
+      "dripImplication": "Segment the drip by cert; surface the covered-cert list early and a 'request your cert' path.",
+      "hookImplication": "Cert-specific domain-weight hooks (proven Week 1 winner) for the certs prospects keep asking about."
+    },
+    "credibility-question": {
+      "label": "Who are you / why should I trust this",
+      "definition": "Asks about the founder, the company, track record, or wants social proof before trying.",
+      "dripImplication": "Add the founder-story + credibility beat (real person, the Kopko PMI AI Standards signal) to the drip.",
+      "hookImplication": "A founder-voice origin hook ('I built this because...') leans into the trust gap competitors can't match."
+    },
+    "trial-friction": {
+      "label": "Signup / onboarding friction",
+      "definition": "Tried but got stuck, confused about how to start, which exam to pick, or how the trial works mechanically.",
+      "dripImplication": "Add a 'first 10 minutes' walkthrough beat; reduce activation friction directly in the sequence.",
+      "hookImplication": "Not a hook driver — this is a product/onboarding signal to route to Dave, not a post angle."
+    },
+    "timing-objection": {
+      "label": "Not in market / already passed / studying later",
+      "definition": "Interested but timing is off — exam already taken, not scheduled yet, or on hold.",
+      "dripImplication": "Long-cycle nurture branch: keep-warm cadence, 'when you're ready' framing, no hard CTA.",
+      "hookImplication": "Low hook value; possibly a 'start before you schedule' reframe if this theme is large."
+    },
+    "positive-generic": {
+      "label": "Positive but non-specific",
+      "definition": "Warm reply with no particular objection or hook resonance ('looks great', 'nice, will check it out').",
+      "dripImplication": "Weak signal for copy; treat as a soft-yes to move toward a trial CTA.",
+      "hookImplication": "None — carries no directional information for hooks."
+    },
+    "other": {
+      "label": "Other / doesn't fit",
+      "definition": "Use sparingly. If 'other' becomes a top-3 theme, that's a signal to add a new theme key here.",
+      "dripImplication": "Review the clustered 'other' replies and define a new theme.",
+      "hookImplication": "n/a"
+    }
+  },
+  "replies": [],
+  "stats": {
+    "total": 0,
+    "byPrimaryTheme": {},
+    "surfacedAt": null,
+    "note": "No founder-email replies logged yet. Awaiting Dave to report replies. Surfacing runs at total>=10."
+  }
+}

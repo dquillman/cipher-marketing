@@ -1133,14 +1133,53 @@ details[open] summary::before { transform: rotate(90deg); }
   font-style: italic;
   padding: 24px 0;
 }
+.draft-owner-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(125,211,252,.10), rgba(167,139,250,.08));
+  border: 1px solid rgba(125,211,252,.28);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 18px 0;
+}
+.draft-owner-card strong { color: var(--text); }
+.draft-owner-card p { margin: 4px 0 0; color: var(--dim); line-height: 1.5; }
+.post-week-group {
+  border: 1px solid var(--border); border-radius: 12px;
+  background: rgba(255,255,255,.018); margin: 0 0 14px; overflow: hidden;
+}
+.post-week-group > summary {
+  list-style: none; cursor: pointer; padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px; user-select: none;
+}
+.post-week-group > summary::-webkit-details-marker { display: none; }
+.post-week-title { font-weight: 800; color: var(--text); }
+.post-week-count { color: var(--dim); font-size: .82rem; margin-left: auto; }
+.post-week-chevron { color: var(--muted); transition: transform .15s; }
+.post-week-group[open] .post-week-chevron { transform: rotate(90deg); }
+.post-week-posts { padding: 4px 14px 1px; border-top: 1px solid var(--border); }
+.post-week-posts .post-card { margin: 10px 0 14px; }
+@media (max-width: 700px) {
+  .draft-owner-card { grid-template-columns: 1fr; }
+  .post-week-count { display: none; }
+}
 </style>
 
   <h1 style="margin-top:0;">Posts</h1>
+  <div class="draft-owner-card">
+    <div>
+      <strong>Brad analyzes the evidence. You approve the final copy.</strong>
+      <p>Before defining a week's drafts, Brad reviews current trends, past grades, exam priorities, competitors, brand voice, and testimonials.</p>
+    </div>
+  </div>
   <p style="color:var(--dim);font-size:0.92rem;">Brad drafts here. After you publish, paste the metrics into Claude — the <code>post-performance-grader</code> subagent grades each post and updates this view. State lives in <code>data/posts.json</code>.</p>
 
   <div class="scorecard-summary" id="posts-summary">Loading…</div>
 
-  <h2>Drafts &amp; scheduled</h2>
+  <h2>Drafts by week</h2>
+  <p style="color:var(--dim);font-size:0.88rem;margin-top:-6px;">Open one week, then open only the post you want to review. Weeks are ordered by publishing date.</p>
   <div id="posts-pipeline">Loading…</div>
 
   <h2>Posted — awaiting metrics</h2>
@@ -1195,7 +1234,7 @@ details[open] summary::before { transform: rotate(90deg); }
       summaryCard('Signups from posts', totalSignups);
 
     document.getElementById('posts-pipeline').innerHTML = drafts.length
-      ? drafts.map(renderPost).join('')
+      ? renderDraftWeeks(drafts)
       : '<p class="empty-state">No drafts or scheduled posts.</p>';
 
     document.getElementById('posts-awaiting').innerHTML = awaiting.length
@@ -1227,6 +1266,64 @@ details[open] summary::before { transform: rotate(90deg); }
     return '<div class="summary-card"><div class="label">' + esc(label) + '</div><div class="value' + cls + '">' + esc(String(value)) + '</div></div>';
   }
 
+  function parsePostDate(value) {
+    var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
+    if (!match) return null;
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12);
+  }
+
+  function localDateKey(date) {
+    return date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
+      String(date.getDate()).padStart(2, '0');
+  }
+
+  function weekStartKey(post) {
+    var date = parsePostDate(post.scheduled);
+    if (!date) return 'undated';
+    var mondayOffset = (date.getDay() + 6) % 7;
+    date.setDate(date.getDate() - mondayOffset);
+    return localDateKey(date);
+  }
+
+  function formatWeek(key) {
+    if (key === 'undated') return 'No date assigned';
+    var start = parsePostDate(key);
+    var end = new Date(start.getTime());
+    end.setDate(end.getDate() + 6);
+    var startLabel = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    var endLabel = end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    return 'Week of ' + startLabel + ' – ' + endLabel;
+  }
+
+  function renderDraftWeeks(items) {
+    var groups = {};
+    items.slice().sort(function(a, b) {
+      return (a.scheduled || '9999-99-99').localeCompare(b.scheduled || '9999-99-99');
+    }).forEach(function(post) {
+      var key = weekStartKey(post);
+      (groups[key] = groups[key] || []).push(post);
+    });
+    var keys = Object.keys(groups).sort(function(a, b) {
+      if (a === 'undated') return 1;
+      if (b === 'undated') return -1;
+      return a.localeCompare(b);
+    });
+    return keys.map(function(key, index) {
+      var weekPosts = groups[key];
+      var draftCount = weekPosts.filter(function(post) { return post.status === 'draft'; }).length;
+      var scheduledCount = weekPosts.filter(function(post) { return post.status === 'scheduled'; }).length;
+      var countLabel = draftCount + ' draft' + (draftCount === 1 ? '' : 's');
+      if (scheduledCount) countLabel += ' · ' + scheduledCount + ' scheduled';
+      return '<details class="post-week-group"' + (index === 0 ? ' open' : '') + '>' +
+        '<summary><span class="post-week-title">' + esc(formatWeek(key)) + '</span>' +
+        '<span class="post-week-count">' + esc(countLabel) + '</span>' +
+        '<span class="post-week-chevron">›</span></summary>' +
+        '<div class="post-week-posts">' + weekPosts.map(function(post) { return renderPost(post, true); }).join('') + '</div>' +
+      '</details>';
+    }).join('');
+  }
+
   // Map a numeric avg-grade (1=D … 4=A) to a grade-A/B/C/D CSS class.
   function avgGradeClass(n) {
     if (n === '—' || n == null) return '';
@@ -1239,7 +1336,7 @@ details[open] summary::before { transform: rotate(90deg); }
     return '';
   }
 
-  function renderPost(p) {
+  function renderPost(p, startCollapsed) {
     var statusClass = 'status-' + (p.status || 'draft');
     var gradePill = p.grade ? '<span class="post-pill grade-' + esc(p.grade) + '">Grade ' + esc(p.grade) + '</span>' : '';
     var channelLabel = (p.channel || 'other').toUpperCase();
@@ -1307,7 +1404,7 @@ details[open] summary::before { transform: rotate(90deg); }
         '<span class="post-toggle">›</span>' +
       '</div>' +
     '</summary>';
-    return '<details class="post-card ' + statusClass + '"' + (isGraded ? '' : ' open') + '>' +
+    return '<details class="post-card ' + statusClass + '"' + (isGraded || startCollapsed ? '' : ' open') + '>' +
       summaryHead +
       '<div class="post-body">' +
         '<div class="post-copy">' + esc(p.copy || '') + '</div>' +

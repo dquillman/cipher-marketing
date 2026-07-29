@@ -165,12 +165,28 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
       // status: Firestore "posted" beats local "scheduled"/"draft" — once posted,
       // a re-seed must NEVER demote it back. Going the other direction (remote
       // older than local) is rare but still safe to override locally.
+      //
+      // "skipped" is a deliberate TERMINAL decision, not a rung on the
+      // draft→scheduled→posted ladder. It used to score -1 via the `?? -1`
+      // fallback below, which meant a remote "scheduled" (1) outranked a local
+      // "skipped" (-1) and every re-seed silently un-skipped the post. Skips
+      // are now terminal on both sides and are never demoted.
       const STATUS_ORDER = { draft: 0, scheduled: 1, posted: 2 };
-      const rOrd = STATUS_ORDER[remote.status] ?? -1;
-      const lOrd = STATUS_ORDER[localPost.status] ?? -1;
-      if (rOrd > lOrd) {
-        out.status = remote.status;
+      if (localPost.status === "skipped") {
+        // Local skip wins outright — leave out.status as the local "skipped".
+      } else if (remote.status === "skipped") {
+        out.status = "skipped";
+        for (const f of ["skippedReason", "skippedAt"]) {
+          if (hasRealValue(remote[f])) out[f] = remote[f];
+        }
         postedChanged = true;
+      } else {
+        const rOrd = STATUS_ORDER[remote.status] ?? -1;
+        const lOrd = STATUS_ORDER[localPost.status] ?? -1;
+        if (rOrd > lOrd) {
+          out.status = remote.status;
+          postedChanged = true;
+        }
       }
 
       if (gradeChanged)  preservedGrade++;

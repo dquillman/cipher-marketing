@@ -1,7 +1,7 @@
 {
   "_meta": {
     "purpose": "Canonical competitor list for CipherExam. The competitors.html page currently hardcodes a reference table; this file is the single source of truth going forward. When Brad adds a competitor here, also mirror it into competitors.html until that page is wired to fetch this file.",
-    "lastUpdatedAt": "2026-05-23T22:00:00Z",
+    "lastUpdatedAt": "2026-07-15T00:00:00Z",
     "owner": "Brad (CipherExam marketing orchestrator)"
   },
   "competitors": [
@@ -139,14 +139,50 @@
     {
       "id": "pgmp-simulator",
       "name": "PgMP Simulator",
+      "productName": "PgMP-Sim",
+      "brand": "PM Career OS",
+      "url": "https://pgmp-sim.pm-career-os.de/en/start",
+      "parentSite": "https://pm-career-os.de",
+      "founder": "Markus Kopko (PgMP, CPMAI) — markus@pmcos.de",
       "category": "single-exam judgment simulator",
       "exams": ["PgMP"],
       "primaryStrength": "Sharp positioning: 'judgment over knowledge'. 735 scenario-based questions, four practice modes (Learning, Quiz, Weakspot Training, Full Exam 170q/240min), domain analytics + Weakspot Domain Breakdown. EUR 29 entry, prorated upgrades, 100% money-back, access clock starts on first full exam (removes buyer regret), 15-question free try with no signup or credit card.",
       "knownWeakness": "PgMP-only — single-exam product with no expansion story. Pilot tester quote (Tamisha Doublin) is the only social proof and she's instructional-design, not a sat-and-passed-it candidate. Pricing copy ('starting at') buries the actual tier structure. No explanation pedagogy mentioned — heavy on simulation, light on why-you-were-wrong. No metacognitive framework like Exam Lens. No PBQ-style item types (PgMP is MCQ-only so this is moot for them, but it means they can't expand into CompTIA without rebuilding the engine). No AI tutor.",
-      "threat": "low",
-      "threatNote": "Low direct threat to CipherExam — they only cover PgMP and we cover PgMP among 11 exams. But their LinkedIn ad copy is the strongest 'judgment over knowledge' positioning we've seen in the prep space. Watch their funnel, steal the framing, and out-execute on multi-exam + explanations.",
+      "threat": "medium (PgMP-only); low (portfolio-wide)",
+      "threatNote": "On the PgMP head-to-head they now out-gun us on depth: 1,000+ questions vs CipherExam's ~170 PgMP items, plus 2x/3x full-mock sims and a real money-back guarantee we don't offer. But PgMP is a maintenance cert for us (no paid spend, PMP #1). Portfolio-wide they remain low threat — single-exam, no AI, no multi-cert story. Their positioning now overlaps our reasoning-not-recall thesis heavily; see founderConflict.",
       "addedAt": "2026-05-22",
-      "source": "LinkedIn ad spotted by Dave 2026-05-22",
+      "source": "LinkedIn ad spotted by Dave 2026-05-22; enriched 2026-07-15 via WebFetch of /en/start + parent site",
+      "founderConflict_2026_07_15": {
+        "issue": "Markus Kopko is BOTH the founder of PgMP-Sim / PM Career OS AND CipherExam's single canonical homepage testimonial provider ('PMI AI Standards Core Team Member'). A competitor is our top social-proof source. Dave wants this resolved.",
+        "positioningOverlap": "PgMP-Sim's on-site copy now closely tracks CipherExam's 'reasoning-not-memorization / the exam tests a frame, not recall / your experience works against you' thesis. Their live line: 'most PgMP candidates fail not because they lack the experience, but because their prep tools were built for older exam logic' nearly matches CipherExam's Experience Trap angle. Per the canonical-testimonial timeline (skill: cipher-exam-context), Markus was inside CipherExam's beta while building PgMP-Sim; the metacognitive/Exam Lens framing is CipherExam IP with Markus as a credentialed witness. Dave's read: the framing originated with CipherExam.",
+        "recommendation": "SCOPE, do not retire. Keep the quote where it is a pure institutional credential ('PMI AI Standards Core Team Member') — Sec+/SHRM-CP LPs, founder credibility. Enforce the existing name-removed rule on ALL PMI surfaces (already code-enforced via testimonials.pmi-safe.ts). Do NOT add it to any PgMP surface. Priority action: get the written perpetual-use release email AND collect 2 more beta-tester quotes so we are not single-point-dependent on a competitor's founder. Retiring outright throws away a genuinely strong PMI-insider credential for no gain; the risk is concentration + optics, both fixable by scoping."
+      },
+      "freshFindings_2026_07_15": {
+        "newOnSiteTagline": "Master the PgMP Exam with Confidence",
+        "experienceTrapLineNowLive": "'PgMP questions punish PM-level reasoning.' + 'most PgMP candidates fail not because they lack the experience, but because their prep tools were built for older exam logic, mixed PMP-level questions with program-level ones.' — the reasoning-trap framing moved from paid ad into permanent site copy.",
+        "guaranteeUpgrade": "Now marketed as '100% Money-Back Guarantee, double the protection of typical 50% competitor offers' — they are explicitly cost-anchoring against rivals' partial guarantees. Mechanic unchanged: requires 2 full exams at 80%+ then a real-exam fail within the access window.",
+        "depthClaims": "1,000+ scenario questions, 5 ECO domains, 72 tasks, domain-weighted scoring mirroring the real exam (D2 44%, D1 15%). Deferred activation (clock starts on first attempt).",
+        "portfolioUnchanged": "Still only 3 products (PgMP-Sim, CPMAI Exam Simulator, CPMAI Coaching). No new certs. No AI layer — expert-curated, references The Standard for Program Management.",
+        "reviewsFootprint": "No Trustpilot/G2/Capterra presence found for pm-career-os. Markus appears as a PM PrepCast forum moderator. PgMP niche also served by pmlearning.org (350+ Q), Brain Sensei, pmtrainingschool — PgMP-Sim's 1,000+ bank is the depth leader in that niche.",
+        "depthGapVsCipher": "CipherExam has ~170 PgMP questions; PgMP-Sim ships 1,000+. On a pure PgMP depth comparison we lose. Our counter is AI Coach Breakdown + Bloom's tagging + adaptive Smart Practice + 11-cert breadth, none of which they have."
+      },
+      "featureGap_2026_07_15": {
+        "note": "CipherExam vs PgMP-Sim on PgMP specifically. Rating = advantage holder.",
+        "rows": [
+          {"dimension": "PgMP question depth", "cipherExam": "~170", "pgmpSim": "1,000+", "edge": "PgMP-Sim"},
+          {"dimension": "Full-length mock sims", "cipherExam": "1 (170q/240min)", "pgmpSim": "2-4 depending on tier", "edge": "PgMP-Sim"},
+          {"dimension": "Money-back guarantee", "cipherExam": "None", "pgmpSim": "100% (conditional)", "edge": "PgMP-Sim"},
+          {"dimension": "AI explanations / coaching", "cipherExam": "AI Coach Breakdown", "pgmpSim": "None (expert-curated only)", "edge": "CipherExam"},
+          {"dimension": "Bloom's cognitive tagging", "cipherExam": "Yes", "pgmpSim": "No", "edge": "CipherExam"},
+          {"dimension": "Adaptive / thinking-traps engine", "cipherExam": "Smart Practice + traps", "pgmpSim": "Weakspot Training (wrong-Qs only)", "edge": "CipherExam"},
+          {"dimension": "Metacognitive framework", "cipherExam": "Exam Lens (Program Governance Lens)", "pgmpSim": "Unnamed 'scenario questions'", "edge": "CipherExam"},
+          {"dimension": "Cert breadth", "cipherExam": "11 certs", "pgmpSim": "1 (PgMP)", "edge": "CipherExam"},
+          {"dimension": "Pricing model", "cipherExam": "$19/mo, 7-day trial, no card", "pgmpSim": "One-time EUR 29/49/79 or EUR 9.99-29.99/mo", "edge": "context-dependent"},
+          {"dimension": "Explanation quality (observed)", "cipherExam": "Exam Lens + references (target)", "pgmpSim": "Per-option rationale + Standard citations (strong)", "edge": "parity"},
+          {"dimension": "Free taste", "cipherExam": "7-day trial + 20q/day", "pgmpSim": "15-25 free questions, no signup", "edge": "PgMP-Sim (lower friction)"}
+        ]
+      },
+      "strategicCall_2026_07_15": "DE-PRIORITIZE PgMP; win on multi-cert + AI. Do not fund a question-depth war on a single maintenance cert where they lead 1,000 to 170 and we spend zero on paid. Building 800+ PgMP items to reach parity is a poor use of scarce production capacity vs PMP/CISSP/AWS. Hold PgMP as coverage, keep the Program Governance Lens as our qualitative differentiator, and let breadth + AI + adaptive be the reason a PgMP candidate who also wants PMP/Sec+ picks us. Revisit only if PgMP unexpectedly drives activations.",
       "adCopy": "PgMP $800 sit fee → 'most candidates prepare by reading. Then they see the actual questions.' → judgment > knowledge → 735 scenario questions → 4 modes → analytics → pilot quote → EUR 29, prorated, money-back, 15 free questions no signup.",
       "whyThisAdWorks": [
         "Cost anchor in line 1 — '$800 to sit' makes the EUR 29 feel rational by contrast.",

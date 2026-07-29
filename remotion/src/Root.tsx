@@ -25,6 +25,12 @@ import {
   SHRM_CP_VARIANT,
 } from './CipherExamMotionAd';
 import {
+  AdStudioEndCard,
+  AD_STUDIO_END_CARD_DEFAULTS,
+  AD_STUDIO_END_CARD_DURATION,
+} from './AdStudioEndCard';
+import { AdStudioPmpCut, AD_STUDIO_PMP_CUT_DURATION } from './AdStudioPmpCut';
+import {
   OGCard,
   OG_DEFAULT,
   OG_PMP,
@@ -126,6 +132,27 @@ export const RemotionRoot: React.FC = () => (
       width={1920}
       height={1080}
       defaultProps={MOTION_AD_DEFAULTS}
+    />
+
+    {/* ─── AD-STUDIO PMP CUT (live action + captions + logo + end card) ─── */}
+    <Composition
+      id="AdStudioPmpCut"
+      component={AdStudioPmpCut}
+      durationInFrames={AD_STUDIO_PMP_CUT_DURATION}
+      fps={24}
+      width={1280}
+      height={720}
+    />
+
+    {/* ─── AD-STUDIO END CARD (standalone, concat after live-action cuts) ─── */}
+    <Composition
+      id="AdStudioEndCard"
+      component={AdStudioEndCard}
+      durationInFrames={AD_STUDIO_END_CARD_DURATION}
+      fps={24}
+      width={1280}
+      height={720}
+      defaultProps={AD_STUDIO_END_CARD_DEFAULTS}
     />
 
     {/* ─── OG SOCIAL CARDS (1200×630 stills) ─── */}

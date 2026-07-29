@@ -7,6 +7,7 @@ import {
 } from "remotion";
 import { theme } from "./theme";
 import { fontHeading, fontBody } from "./fonts";
+import { SealStamp } from "./SealStamp";
 
 // Short (5s) looping paid-social ad. Works muted: all visual + text, no audio.
 // Beat sheet (30fps): brand in → 4 options slide in tangled → wrong ones dim →
@@ -145,6 +146,12 @@ export const AdAllFour: React.FC = () => {
           </div>
         </div>
       </AbsoluteFill>
+
+      {/* gold guarantee seal — settled in the top-right from frame 0 (on the
+          thumbnail too), with a gold shine-sweep as its motion */}
+      <div style={{ position: "absolute", right: 44, top: 40, transformOrigin: "center" }}>
+        <SealStamp size={264} tilt={-12} />
+      </div>
     </AbsoluteFill>
   );
 };
