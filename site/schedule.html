@@ -2579,6 +2579,44 @@ if (document.readyState === 'loading') {
 
   // Event delegation — survives any number of re-renders.
   document.addEventListener('click', function (e) {
+    var reviseBtn = e.target.closest && e.target.closest('[data-revise-draft]');
+    if (reviseBtn) {
+      e.preventDefault();
+      var reviseId = reviseBtn.getAttribute('data-revise-draft');
+      var revisePost = ((window.__POSTS__ && window.__POSTS__.posts) || []).find(function (post) {
+        return post.id === reviseId;
+      });
+      if (!revisePost) {
+        window.alert('That draft could not be found. Refresh the page and try again.');
+        return;
+      }
+      var revisePrompt = [
+        'Brad, start a revision request for exactly one CipherExam draft.',
+        '',
+        'Selected draft:',
+        '- ID: ' + (revisePost.id || '?'),
+        '- Channel: ' + (revisePost.channel || '?'),
+        '- Exam: ' + (revisePost.examFocus || '?'),
+        '- Scheduled: ' + (revisePost.scheduled || '?'),
+        '- Hook: ' + (revisePost.hook || '?'),
+        '',
+        'Current copy:',
+        revisePost.copy || '(no copy)',
+        '',
+        'First ask me what I want changed. Do not revise, approve, reschedule, or alter any draft yet.',
+        'After I answer, update only this draft ID, preserve its date and draft status unless I explicitly request otherwise, show me the revised copy, and wait for my approval.'
+      ].join('\n');
+      if (window.cipherAskBrad) {
+        window.cipherAskBrad(revisePrompt);
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(revisePrompt);
+        window.alert('Brad is unavailable. The revision request was copied so you can paste it into Brad.');
+      } else {
+        window.alert('Open Brad from the right edge and identify draft ' + reviseId + '.');
+      }
+      return;
+    }
+
     var openBtn = e.target.closest && e.target.closest('[data-grade-open]');
     if (openBtn) {
       e.preventDefault();

@@ -74,3 +74,13 @@ test('draft ownership is explicit and drafts are grouped into dated weeks', () =
   assert.doesNotMatch(app, /pendingDrafts\.slice\(0, 8\)/);
   assert.doesNotMatch(app, /Approve with Brad/);
 });
+
+test('each draft can start a post-specific Brad revision request', () => {
+  assert.match(app, /data-revise-draft=/);
+  assert.match(app, />Ask Brad to revise<\/button>/);
+  assert.match(app, /Brad, start a revision request for exactly one CipherExam draft\./);
+  assert.match(app, /First ask me what I want changed\./);
+  assert.match(app, /update only this draft ID/);
+  assert.match(app, /preserve its date and draft status/);
+  assert.match(app, /revisePost\.copy/);
+});
