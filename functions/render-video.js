@@ -26,6 +26,7 @@ import os from "node:os";
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { lookupExamSitFee } from "./remotion/examPricing.js";
+import { pickTheme } from "./remotion/videoThemes.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GMAIL_APP_PASSWORD = defineSecret("GMAIL_APP_PASSWORD");
@@ -172,7 +173,15 @@ export const renderPostVideo = onDocumentCreated(
       const examName = post.examFocus || "";
       const examPrice = lookupExamSitFee(examName);
       const hookText = deriveHookText(post.copy);
-      const inputProps = { examName, examPrice, hookText, ctaText: "Start Free Trial" };
+      // Visual format rotates by scheduled week (post.videoTheme pins one).
+      const chosenTheme = pickTheme(post.scheduled, post.videoTheme);
+      const inputProps = {
+        examName,
+        examPrice,
+        hookText,
+        ctaText: "Start Free Trial",
+        themeId: chosenTheme.id,
+      };
 
       await ensureBrowser();
       const serveUrl = await getBundleLocation();
@@ -219,7 +228,13 @@ export const renderPostVideo = onDocumentCreated(
       const videoUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(storagePath)}?alt=media`;
       const renderedAt = new Date().toISOString();
 
-      await updatePostRecord(postId, { videoUrl, videoStatus: "ready", renderedAt });
+      // videoThemeUsed is recorded so grading can correlate format vs. performance.
+      await updatePostRecord(postId, {
+        videoUrl,
+        videoStatus: "ready",
+        renderedAt,
+        videoThemeUsed: chosenTheme.id,
+      });
       await jobRef.set(
         { status: "ready", stage: "done", progress: 100, videoUrl, completedAt: renderedAt },
         { merge: true }

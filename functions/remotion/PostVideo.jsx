@@ -3,42 +3,109 @@ import {
   useCurrentFrame,
   useVideoConfig,
   interpolate,
-  spring,
 } from "remotion";
 import { theme } from "./theme.js";
 import { fontHeading, fontBody } from "./fonts.js";
+import { VIDEO_THEMES } from "./videoThemes.js";
 
 // Deploy-scoped copy of videos/src/components/PostVideo.tsx — see theme.js
 // for why this is duplicated instead of imported from the sibling project.
 // Keep these two files in sync by hand when the template changes.
+//
+// The visual format comes from videoThemes.js and rotates by week, so one
+// week's posts share a look and consecutive weeks differ. Brand palette,
+// copy rules, and CTA timing stay constant across every format.
 
 const fade = (frame, a, b) =>
   interpolate(frame, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free Trial" }) => {
+export const PostVideo = ({
+  examName,
+  examPrice,
+  hookText,
+  ctaText = "Start Free Trial",
+  themeId,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const t = VIDEO_THEMES.find((x) => x.id === themeId) || VIDEO_THEMES[0];
 
   const tagPulse = 0.5 + 0.5 * Math.sin((frame / fps) * Math.PI * 1.4);
-  const tagSpring = spring({ frame, fps, config: { damping: 16, stiffness: 120 } });
-  const tagScale = interpolate(tagSpring, [0, 1], [0.9, 1]);
 
   // CTA must be FULLY visible at the 2s mark (Dave, 2026-07-31) — the fade
-  // starts at ~1.7s and completes at exactly 2.0s. The earlier version
-  // STARTED its slow fade at 2s and did not finish settling until ~3s,
-  // which read as arriving much later than 2s.
+  // starts at ~1.7s and completes at exactly 2.0s. An earlier version STARTED
+  // a slow spring fade at 2s that did not settle until ~3s, which read as
+  // arriving much later than 2s. Identical across every format.
   const CTA_VISIBLE_AT = 120; // frame the CTA is fully planted (2s @60fps)
   const CTA_FADE = 18;
   const ctaOpacity = fade(frame, CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT);
-  const ctaY = interpolate(frame, [CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT], [24, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const ctaY = interpolate(frame, [CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT], [24, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  const leftAligned = t.align === "left";
+
+  const hookStyle = {
+    fontFamily: fontHeading,
+    fontWeight: 800,
+    fontSize: 68,
+    lineHeight: 1.12,
+    letterSpacing: "-0.02em",
+    color: theme.fg,
+    textAlign: leftAligned ? "left" : "center",
+    maxWidth: 900,
+  };
+
+  const hookInner = t.underline ? (
+    <span style={{ boxShadow: `inset 0 -14px 0 ${t.accent}33` }}>{hookText}</span>
+  ) : (
+    hookText
+  );
+
+  let hookBlock = <div style={hookStyle}>{hookInner}</div>;
+
+  if (t.hookCard) {
+    hookBlock = (
+      <div
+        style={{
+          backgroundColor: t.panel,
+          border: `1px solid ${t.border}`,
+          borderRadius: 24,
+          padding: "48px 56px",
+          maxWidth: 940,
+          boxShadow: `0 0 60px -20px ${t.accent}44`,
+        }}
+      >
+        <div style={hookStyle}>{hookInner}</div>
+      </div>
+    );
+  } else if (t.accentBar) {
+    hookBlock = (
+      <div style={{ display: "flex", gap: 34, alignItems: "stretch", maxWidth: 960 }}>
+        <div style={{ width: 8, borderRadius: 8, backgroundColor: t.accent, flexShrink: 0 }} />
+        <div style={hookStyle}>{hookInner}</div>
+      </div>
+    );
+  }
+
+  const pillSolid = t.pill === "solid";
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg, fontFamily: fontBody, overflow: "hidden" }}>
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(120% 90% at 50% 0%, #12314a 0%, ${theme.bg} 55%, #04070f 100%)`,
-        }}
-      />
+      <AbsoluteFill style={{ background: t.bg }} />
+
+      {t.grid && (
+        <AbsoluteFill
+          style={{
+            opacity: 0.16,
+            backgroundImage: `linear-gradient(${t.border} 1px, transparent 1px), linear-gradient(90deg, ${t.border} 1px, transparent 1px)`,
+            backgroundSize: "72px 72px",
+            maskImage: "radial-gradient(ellipse 85% 75% at 50% 40%, #000 35%, transparent 80%)",
+            WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 50% 40%, #000 35%, transparent 80%)",
+          }}
+        />
+      )}
 
       <AbsoluteFill style={{ padding: "72px 84px", display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -57,44 +124,52 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
           {examPrice != null && (
             <div
               style={{
-                transform: `scale(${tagScale})`,
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
                 padding: "12px 22px",
                 borderRadius: 999,
-                border: `1px solid ${theme.border}`,
-                backgroundColor: theme.bgElev,
-                boxShadow: `0 0 ${18 + tagPulse * 10}px -6px ${theme.warn}55`,
+                border: `1px solid ${pillSolid ? t.accent : t.border}`,
+                backgroundColor: pillSolid ? t.accent : t.panel,
+                boxShadow: `0 0 ${18 + tagPulse * 10}px -6px ${t.accent}55`,
               }}
             >
               {/* "exam fee" spelled out — "$425 to sit" was too easy to
                   misread as CipherExam's own price (Dave, 2026-07-31) */}
-              <div style={{ fontSize: 24, color: theme.fgDim, fontWeight: 600, letterSpacing: 0.5, textTransform: "uppercase" }}>
+              <div
+                style={{
+                  fontSize: 24,
+                  color: pillSolid ? "#1a1206" : theme.fgDim,
+                  fontWeight: 600,
+                  letterSpacing: 0.5,
+                  textTransform: "uppercase",
+                }}
+              >
                 {examName} exam fee
               </div>
-              <div style={{ fontSize: 32, color: theme.warn, fontWeight: 800, fontFamily: fontHeading }}>
+              <div
+                style={{
+                  fontSize: 32,
+                  color: pillSolid ? "#1a1206" : t.accent,
+                  fontWeight: 800,
+                  fontFamily: fontHeading,
+                }}
+              >
                 ${examPrice}
               </div>
             </div>
           )}
         </div>
 
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div
-            style={{
-              fontFamily: fontHeading,
-              fontWeight: 800,
-              fontSize: 68,
-              lineHeight: 1.12,
-              letterSpacing: "-0.02em",
-              color: theme.fg,
-              textAlign: "center",
-              maxWidth: 900,
-            }}
-          >
-            {hookText}
-          </div>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: leftAligned ? "flex-start" : "center",
+          }}
+        >
+          {hookBlock}
         </div>
 
         {/* Deliberately NOT styled as a button: nothing in a video is
@@ -104,11 +179,11 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
           style={{
             opacity: ctaOpacity,
             transform: `translateY(${ctaY}px)`,
-            textAlign: "center",
+            textAlign: leftAligned ? "left" : "center",
           }}
         >
           <div style={{ fontFamily: fontHeading, fontWeight: 700, fontSize: 52, letterSpacing: "-0.01em", color: theme.fg }}>
-            Start free at <span style={{ color: theme.accent }}>cipherexam.com</span>
+            Start free at <span style={{ color: t.accent }}>cipherexam.com</span>
           </div>
           <div style={{ marginTop: 12, fontFamily: fontHeading, fontSize: 26, letterSpacing: 1, color: theme.fgMuted }}>
             7-day free trial · no credit card required

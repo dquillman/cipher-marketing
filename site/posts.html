@@ -925,6 +925,26 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 .btn-warn:hover { background: rgba(251,191,36,0.28); }
 
+.btn-approve {
+  background: rgba(52,211,153,0.16); color: #6ee7b7;
+  border: 1px solid rgba(52,211,153,0.45); border-radius: 8px;
+  padding: 9px 16px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-approve:hover { background: rgba(52,211,153,0.28); }
+.btn-approve[disabled] { opacity: 0.6; cursor: default; }
+/* Toast for approve/unapprove confirmations */
+#cipher-toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(12px);
+  background: #0B1526; color: #e6e8ee; border: 1px solid rgba(52,211,153,0.5);
+  border-radius: 10px; padding: 12px 20px; font-size: 0.9rem; font-weight: 600;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5); z-index: 90;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+}
+#cipher-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#cipher-toast.err { border-color: rgba(248,113,113,0.6); }
+
 /* ---- Grade color scale: A = gold, B = green, C = yellow, D = red ---- */
 .post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
 .post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
@@ -1405,6 +1425,16 @@ details[open] summary::before { transform: rotate(90deg); }
       ? '<button class="btn-secondary" type="button" data-revise-draft="' + esc(p.id) + '" aria-label="Ask Brad to revise ' + esc(channelLabel) + ' draft scheduled ' + esc(p.scheduled || 'without a date') + '">Ask Brad to revise</button>'
       : '';
 
+
+    // Per-draft approval: drafts get Approve, already-approved posts get
+    // Unapprove so a post can be pulled back before it is published.
+    var approveBtn = '';
+    if (p.status === 'draft') {
+      approveBtn = '<button class="btn-approve" type="button" data-approve-post="' + esc(p.id) + '">Approve</button>';
+    } else if (p.status === 'scheduled' && !p.postUrl) {
+      approveBtn = '<button class="btn-secondary" type="button" data-unapprove-post="' + esc(p.id) + '">Unapprove</button>';
+    }
+
     var videoBtn = '';
     if (p.videoStatus === 'ready' && p.videoUrl) {
       videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">▶ Preview video</button>' +
@@ -1438,6 +1468,7 @@ details[open] summary::before { transform: rotate(90deg); }
         '<div class="post-action-row">' +
           '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
           reviseBtn +
+          approveBtn +
           videoBtn +
           gradeBtn +
         '</div>' +
@@ -2557,6 +2588,73 @@ if (document.readyState === 'loading') {
     if (e.key === 'Escape') closeModal();
   });
 })();
+
+  // ---- Per-draft approve / unapprove -------------------------------------
+  // Moves a single post between 'draft' and 'scheduled' (the status the
+  // Publish tab reads), so Dave can approve one post at a time instead of
+  // only the bulk "approve all drafts" action. Transactional because every
+  // post lives inside the one campaign/posts document — a plain
+  // read-modify-write here would clobber a concurrent render's videoUrl.
+  function cipherToast(message, isError) {
+    var el = document.getElementById('cipher-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'cipher-toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.className = isError ? 'err show' : 'show';
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.className = isError ? 'err' : ''; }, 3200);
+  }
+
+  async function setPostApproval(postId, approve, btn) {
+    var db = window._cipherDb;
+    if (!db) { cipherToast('Live campaign data is unavailable.', true); return; }
+    var original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = approve ? 'Approving…' : 'Updating…'; }
+    var docRef = db.collection('campaign').doc('posts');
+    try {
+      await db.runTransaction(async function (tx) {
+        var snap = await tx.get(docRef);
+        var data = snap.data() || {};
+        var idx = (data.posts || []).findIndex(function (p) { return p.id === postId; });
+        if (idx === -1) throw new Error('Post not found');
+        var post = data.posts[idx];
+        if (approve) {
+          post.status = 'scheduled';
+          post.approvedAt = new Date().toISOString();
+        } else {
+          post.status = 'draft';
+          delete post.approvedAt;
+        }
+        data.posts[idx] = post;
+        data._meta = data._meta || {};
+        data._meta.lastUpdatedAt = new Date().toISOString();
+        data._meta.lastUpdatedBy = approve ? 'dashboard approve-post' : 'dashboard unapprove-post';
+        tx.set(docRef, data);
+      });
+      cipherToast(approve ? 'Draft approved — ready for Publish page' : 'Moved back to drafts');
+    } catch (err) {
+      if (btn) { btn.disabled = false; btn.textContent = original; }
+      cipherToast('Could not update: ' + (err.message || 'unknown error'), true);
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var ap = e.target.closest && e.target.closest('[data-approve-post]');
+    if (ap) {
+      e.preventDefault();
+      setPostApproval(ap.getAttribute('data-approve-post'), true, ap);
+      return;
+    }
+    var un = e.target.closest && e.target.closest('[data-unapprove-post]');
+    if (un) {
+      e.preventDefault();
+      setPostApproval(un.getAttribute('data-unapprove-post'), false, un);
+      return;
+    }
+  });
 
 // ---- Generate Video modal --------------------------------------------------
 // "Generate Video" writes a job doc to `videoRenderQueue`; a Firestore-
