@@ -42,8 +42,16 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
 
       <AbsoluteFill style={{ padding: "72px 84px", display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ fontFamily: fontHeading, fontSize: 30, fontWeight: 600, letterSpacing: 1, color: theme.fg }}>
-            <span style={{ color: theme.accent }}>⟨</span> CIPHEREXAM <span style={{ color: theme.accent }}>⟩</span>
+          {/* logo mark inlined from site/assets/logo-mark.svg — avoids
+              staticFile/public-dir handling in the function bundle */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <svg width="42" height="42" viewBox="0 0 64 64" fill="none">
+              <path d="M 32 8 A 24 24 0 1 0 32 56" stroke="#4f46e5" strokeWidth="7" strokeLinecap="round" />
+              <path d="M 40 22 L 50 32 L 40 42" stroke="#a5b4fc" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div style={{ fontFamily: fontHeading, fontSize: 30, fontWeight: 600, letterSpacing: 1, color: theme.fg }}>
+              CIPHEREXAM
+            </div>
           </div>
 
           {examPrice != null && (
@@ -62,10 +70,10 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
             >
               {/* "exam fee" spelled out — "$425 to sit" was too easy to
                   misread as CipherExam's own price (Dave, 2026-07-31) */}
-              <div style={{ fontSize: 19, color: theme.fgDim, fontWeight: 600, letterSpacing: 0.5, textTransform: "uppercase" }}>
+              <div style={{ fontSize: 24, color: theme.fgDim, fontWeight: 600, letterSpacing: 0.5, textTransform: "uppercase" }}>
                 {examName} exam fee
               </div>
-              <div style={{ fontSize: 24, color: theme.warn, fontWeight: 800, fontFamily: fontHeading }}>
+              <div style={{ fontSize: 32, color: theme.warn, fontWeight: 800, fontFamily: fontHeading }}>
                 ${examPrice}
               </div>
             </div>
@@ -103,7 +111,7 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
             Start free at <span style={{ color: theme.accent }}>cipherexam.com</span>
           </div>
           <div style={{ marginTop: 12, fontFamily: fontHeading, fontSize: 26, letterSpacing: 1, color: theme.fgMuted }}>
-            7-day free trial · no credit card
+            7-day free trial · no credit card required
           </div>
         </div>
       </AbsoluteFill>
