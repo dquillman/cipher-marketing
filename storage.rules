@@ -1,0 +1,16 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Rendered post videos are pre-publish marketing creative (destined to be
+    // posted publicly anyway) — public read keeps <video src> simple with no
+    // token/auth juggling. Only the Cloud Function (Admin SDK, bypasses rules)
+    // ever writes here.
+    match /post-videos/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

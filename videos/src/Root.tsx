@@ -6,6 +6,7 @@ import { AiTutorDemo } from "./components/AiTutorDemo";
 import { DomainWeights } from "./components/DomainWeights";
 import { PbqWalkthrough } from "./components/PbqWalkthrough";
 import { AdAllFour } from "./components/AdAllFour";
+import { PostVideo, type PostVideoProps } from "./components/PostVideo";
 import type { ExamVariant } from "./data/examVariants";
 
 const FontLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -153,6 +154,28 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1350}
         defaultProps={{ variant: "secplus" }}
+      />
+      {/* ===== Post-to-video: turns a draft's copy into a 7s motion ad =====
+          Data-driven (examName/examPrice/hookText passed per render) rather
+          than a fixed variant — the Cloud Function supplies props per post. */}
+      <Composition
+        key="post-video"
+        id="post-video"
+        component={(props: PostVideoProps) => (
+          <FontLoader>
+            <PostVideo {...props} />
+          </FontLoader>
+        )}
+        durationInFrames={420}
+        fps={60}
+        width={1080}
+        height={1080}
+        defaultProps={{
+          examName: "PMP",
+          examPrice: 425,
+          hookText: "Cert prep tools haven't changed since 2010.",
+          ctaText: "Start Free Trial",
+        }}
       />
     </>
   );

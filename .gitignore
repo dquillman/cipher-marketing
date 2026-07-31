@@ -16,3 +16,4 @@ _server.cjs
 # Claude Code worktrees + Firebase local cache
 .claude/
 .firebase/
+functions/.cache/

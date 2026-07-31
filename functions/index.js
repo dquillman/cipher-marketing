@@ -25,6 +25,7 @@ import {
   buildFreshState,
   validateCampaignStart,
 } from "./campaign-blueprint.js";
+export { renderPostVideo } from "./render-video.js";
 
 initializeApp();
 

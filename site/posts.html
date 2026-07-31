@@ -1404,6 +1404,20 @@ details[open] summary::before { transform: rotate(90deg); }
     var reviseBtn = p.status === 'draft'
       ? '<button class="btn-secondary" type="button" data-revise-draft="' + esc(p.id) + '" aria-label="Ask Brad to revise ' + esc(channelLabel) + ' draft scheduled ' + esc(p.scheduled || 'without a date') + '">Ask Brad to revise</button>'
       : '';
+
+    var videoBtn = '';
+    if (p.videoStatus === 'ready' && p.videoUrl) {
+      videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">▶ Preview video</button>';
+    } else if (p.videoStatus === 'queued' || p.videoStatus === 'rendering') {
+      videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">Generating video…</button>';
+    } else if (p.status === 'draft') {
+      videoBtn = '<button class="btn-secondary" type="button" data-generate-video="' + esc(p.id) + '">Generate Video</button>';
+    }
+    // Inline player in the card once the video is ready — no modal needed
+    // to watch the video the draft was made for.
+    var videoEmbed = (p.videoStatus === 'ready' && p.videoUrl)
+      ? '<video controls preload="metadata" src="' + esc(p.videoUrl) + '" style="width:100%;max-width:420px;border-radius:10px;margin-top:10px;background:#000;display:block;"></video>'
+      : '';
     var isGraded = !!p.grade;
     var summaryHead = '<summary>' +
       '<div class="post-head">' +
@@ -1422,8 +1436,10 @@ details[open] summary::before { transform: rotate(90deg); }
         '<div class="post-action-row">' +
           '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
           reviseBtn +
+          videoBtn +
           gradeBtn +
         '</div>' +
+        videoEmbed +
         fields +
         metrics +
         gradeBlock +
@@ -2537,6 +2553,201 @@ if (document.readyState === 'loading') {
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeModal();
+  });
+})();
+
+// ---- Generate Video modal --------------------------------------------------
+// "Generate Video" writes a job doc to `videoRenderQueue`; a Firestore-
+// triggered Cloud Function (functions/render-video.js) renders the post's
+// copy into a branded Remotion video, uploads it to Storage, and auto-
+// attaches videoUrl/videoStatus/renderedAt onto the post record. This modal
+// just reflects that status live via the existing campaign/posts sync — no
+// separate "Attach to Post" step (fully-automatic MVP scope).
+(function () {
+  var VIDEO_MODAL_HTML = ''
+    + '<div id="video-modal" class="grade-modal" aria-hidden="true">'
+    +   '<div class="grade-modal-backdrop" data-video-close></div>'
+    +   '<div class="grade-modal-body" role="dialog" aria-labelledby="video-modal-title">'
+    +     '<div class="grade-modal-head">'
+    +       '<h3 id="video-modal-title">Generate video</h3>'
+    +       '<button type="button" class="grade-modal-x" data-video-close aria-label="Close">×</button>'
+    +     '</div>'
+    +     '<p class="grade-modal-sub" id="video-modal-sub"></p>'
+    +     '<div id="video-modal-status" class="grade-form-status" aria-live="polite"></div>'
+    +     '<div id="video-progress-wrap" style="display:none;margin-top:12px;height:10px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;">'
+    +       '<div id="video-progress-fill" style="height:100%;width:0%;border-radius:6px;background:var(--cyan,#7ad6ff);transition:width 0.6s ease;"></div>'
+    +     '</div>'
+    +     '<video id="video-modal-player" controls style="width:100%;border-radius:10px;margin-top:10px;display:none;background:#000;"></video>'
+    +     '<div class="grade-form-actions" style="margin-top:14px;">'
+    +       '<button type="button" class="btn-secondary" data-video-close>Close</button>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>';
+
+  var currentVideoPostId = null;
+  var currentVideoJobUnsub = null;
+  var currentVideoJob = null;
+
+  function ensureVideoModal() {
+    if (document.getElementById('video-modal')) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML = VIDEO_MODAL_HTML;
+    document.body.appendChild(wrap.firstChild);
+  }
+
+  function findPost(postId) {
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    return posts.find(function (p) { return p.id === postId; });
+  }
+
+  function renderVideoModalState(post) {
+    var sub = document.getElementById('video-modal-sub');
+    var status = document.getElementById('video-modal-status');
+    var player = document.getElementById('video-modal-player');
+    var barWrap = document.getElementById('video-progress-wrap');
+    var barFill = document.getElementById('video-progress-fill');
+    if (!sub || !status || !player || !post) return;
+    var job = currentVideoJob;
+    sub.textContent = (post.channel || '').toUpperCase() + ' · ' + (post.examFocus || '') + ' · ' + (post.scheduled || '');
+    function showBar(pct) { if (barWrap && barFill) { barWrap.style.display = 'block'; barFill.style.width = pct + '%'; } }
+    function hideBar() { if (barWrap) barWrap.style.display = 'none'; }
+    if (post.videoStatus === 'ready' && post.videoUrl) {
+      status.className = 'grade-form-status ok';
+      status.textContent = 'Ready.';
+      hideBar();
+      if (player.getAttribute('src') !== post.videoUrl) player.src = post.videoUrl;
+      player.style.display = 'block';
+      return;
+    }
+    player.style.display = 'none';
+    player.removeAttribute('src');
+    if (post.videoStatus === 'error' || (job && job.status === 'error')) {
+      status.className = 'grade-form-status err';
+      status.textContent = 'Render failed. Close this and try Generate Video again.';
+      hideBar();
+      return;
+    }
+    // Progress detail comes from the videoRenderQueue job doc (stage +
+    // render %); the overall bar maps: queued 3 → bundling 8 → rendering
+    // 15-90 → uploading 95 → ready 100.
+    status.className = 'grade-form-status';
+    var stage = job && job.stage;
+    if (job && job.status === 'ready') {
+      status.textContent = 'Finishing…';
+      showBar(100);
+    } else if (stage === 'rendering') {
+      var pct = Math.max(0, Math.min(100, Number(job.progress || 0)));
+      status.textContent = 'Rendering… ' + pct + '%';
+      showBar(15 + pct * 0.75);
+    } else if (stage === 'uploading') {
+      status.textContent = 'Uploading to storage…';
+      showBar(95);
+    } else if (stage === 'bundling' || post.videoStatus === 'rendering') {
+      status.textContent = 'Preparing the renderer…';
+      showBar(8);
+    } else {
+      status.textContent = 'Queued…';
+      showBar(3);
+    }
+  }
+
+  function watchVideoJob(post) {
+    if (currentVideoJobUnsub) { currentVideoJobUnsub(); currentVideoJobUnsub = null; }
+    currentVideoJob = null;
+    if (!post || !post.videoJobId || !window._cipherDb) return;
+    currentVideoJobUnsub = window._cipherDb.collection('videoRenderQueue').doc(post.videoJobId)
+      .onSnapshot(function (snap) {
+        currentVideoJob = snap.exists ? snap.data() : null;
+        if (currentVideoPostId) renderVideoModalState(findPost(currentVideoPostId));
+      }, function () {});
+  }
+
+  function openVideoModal(postId) {
+    ensureVideoModal();
+    currentVideoPostId = postId;
+    var post = findPost(postId);
+    watchVideoJob(post);
+    var modal = document.getElementById('video-modal');
+    renderVideoModalState(post);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeVideoModal() {
+    var modal = document.getElementById('video-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    currentVideoPostId = null;
+    if (currentVideoJobUnsub) { currentVideoJobUnsub(); currentVideoJobUnsub = null; }
+    currentVideoJob = null;
+  }
+
+  // Live status ticks through queued -> rendering -> ready/error as the
+  // Cloud Function updates campaign/posts, which the existing onSnapshot
+  // sync (above) picks up and rebroadcasts as this event. Fine-grained
+  // stage/percent comes from the job-doc subscription in watchVideoJob.
+  document.addEventListener('cipher:posts-updated', function () {
+    if (!currentVideoPostId) return;
+    var post = findPost(currentVideoPostId);
+    if (post && post.videoJobId && !currentVideoJobUnsub) watchVideoJob(post);
+    renderVideoModalState(post);
+  });
+
+  async function startVideoGeneration(postId) {
+    var db = window._cipherDb;
+    if (!db) { window.alert('Firebase not loaded — check your connection and refresh.'); return; }
+    var auth = window._cipherAuth;
+    var uid = (auth && auth.currentUser && auth.currentUser.uid) || null;
+    var docRef = db.collection('campaign').doc('posts');
+    try {
+      // Generate the job id client-side (no write) so it can be stored on
+      // the post in the same update — the modal uses it to subscribe to the
+      // job doc for the live progress bar.
+      var jobRef = db.collection('videoRenderQueue').doc();
+      var snap = await docRef.get();
+      var data = snap.data();
+      var idx = data.posts.findIndex(function (p) { return p.id === postId; });
+      if (idx === -1) throw new Error('Post "' + postId + '" not found in Firestore');
+      data.posts[idx].videoStatus = 'queued';
+      data.posts[idx].videoJobId = jobRef.id;
+      data._meta = data._meta || {};
+      data._meta.lastUpdatedAt = new Date().toISOString();
+      data._meta.lastUpdatedBy = 'dashboard generate-video';
+      await docRef.set(data);
+      await jobRef.set({
+        postId: postId,
+        status: 'queued',
+        requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        requestedBy: uid,
+      });
+      openVideoModal(postId);
+    } catch (err) {
+      window.alert('Could not start video generation: ' + (err.message || 'unknown error'));
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var genBtn = e.target.closest && e.target.closest('[data-generate-video]');
+    if (genBtn) {
+      e.preventDefault();
+      startVideoGeneration(genBtn.getAttribute('data-generate-video'));
+      return;
+    }
+    var openBtn = e.target.closest && e.target.closest('[data-video-open]');
+    if (openBtn) {
+      e.preventDefault();
+      openVideoModal(openBtn.getAttribute('data-video-open'));
+      return;
+    }
+    if (e.target.matches && e.target.matches('[data-video-close]')) {
+      e.preventDefault();
+      closeVideoModal();
+      return;
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeVideoModal();
   });
 })();
 

@@ -41,11 +41,13 @@ const PULL_ONLY  = args.has("--pull");
 //   - metrics/grade/gradeNotes/recommendations  ← gradePost Cloud Function
 //   - status (only when Firestore = "posted")   ← Dashboard "Mark Posted" button
 //   - postedAt, postUrl                          ← Dashboard "Mark Posted" button
+//   - videoUrl/videoStatus/renderedAt            ← renderPostVideo Cloud Function
 //
 // Local file wins for every other field (copy, scheduledTime, examFocus, video,
 // hook, cta) — that's the source of truth for content.
 const GRADE_FIELDS  = ["metrics", "grade", "gradeNotes", "recommendations"];
 const POSTED_FIELDS = ["postedAt", "postUrl"];
+const VIDEO_FIELDS  = ["videoUrl", "videoStatus", "renderedAt", "videoJobId"];
 
 // ---- Firestore REST <-> JS conversion ----
 
@@ -136,6 +138,7 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
   const remoteById = new Map(remotePosts.posts.map(p => [p.id, p]));
   let preservedGrade = 0;
   let preservedPosted = 0;
+  let preservedVideo = 0;
 
   const merged = {
     ...localPosts,
@@ -145,6 +148,7 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
       const out = { ...localPost };
       let gradeChanged  = false;
       let postedChanged = false;
+      let videoChanged  = false;
 
       // GRADE_FIELDS: prefer remote if non-empty
       for (const f of GRADE_FIELDS) {
@@ -159,6 +163,15 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
         if (hasRealValue(remote[f])) {
           out[f] = remote[f];
           postedChanged = true;
+        }
+      }
+
+      // VIDEO_FIELDS: prefer remote if non-empty — a re-seed must never wipe
+      // out a video the Generate Video pipeline already attached.
+      for (const f of VIDEO_FIELDS) {
+        if (hasRealValue(remote[f])) {
+          out[f] = remote[f];
+          videoChanged = true;
         }
       }
 
@@ -191,6 +204,7 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
 
       if (gradeChanged)  preservedGrade++;
       if (postedChanged) preservedPosted++;
+      if (videoChanged)  preservedVideo++;
 
       if (gradeChanged && postedChanged) {
         console.log(`     · preserved grade + post-status for ${localPost.id} (status=${out.status}, grade=${out.grade ?? "—"})`);
@@ -199,14 +213,17 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
       } else if (postedChanged) {
         console.log(`     · preserved post-status for ${localPost.id} (status=${out.status}, postUrl=${out.postUrl ? "yes" : "no"})`);
       }
+      if (videoChanged) {
+        console.log(`     · preserved video for ${localPost.id} (videoStatus=${out.videoStatus ?? "—"})`);
+      }
       return out;
     }),
   };
 
-  if (preservedGrade === 0 && preservedPosted === 0) {
+  if (preservedGrade === 0 && preservedPosted === 0 && preservedVideo === 0) {
     console.log("     · nothing to preserve from Firestore");
   } else {
-    console.log(`     · preserved: ${preservedGrade} grade${preservedGrade === 1 ? "" : "s"}, ${preservedPosted} post-status update${preservedPosted === 1 ? "" : "s"}`);
+    console.log(`     · preserved: ${preservedGrade} grade${preservedGrade === 1 ? "" : "s"}, ${preservedPosted} post-status update${preservedPosted === 1 ? "" : "s"}, ${preservedVideo} video${preservedVideo === 1 ? "" : "s"}`);
   }
   return merged;
 }
