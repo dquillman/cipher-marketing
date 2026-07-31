@@ -54,6 +54,31 @@ test('Brad handles natural page navigation locally', () => {
   assert.match(hal, /var nav = halFindNav\(text\)/);
 });
 
+test('every app page has shared navigation and expert help', () => {
+  const routes = [...app.matchAll(/<section class="route-section(?: active)?" data-route="([^"]+)">/g)]
+    .map((match) => match[1]);
+  assert.ok(routes.length >= 12);
+  for (const route of routes) {
+    assert.match(hal, new RegExp(`\\b${route}: \\{`), `missing page guide for ${route}`);
+  }
+  assert.match(hal, /funnel: \{/);
+  assert.match(hal, /sprint: \{/);
+  assert.match(hal, /id="halw-page-help"/);
+  assert.match(hal, /function currentPageGuide\(\)/);
+  assert.match(hal, /function findMentionedPageGuide\(value\)/);
+  assert.match(hal, /function pageContextQuestion\(question\)/);
+  assert.match(hal, /\[CURRENT APP PAGE\]/);
+  assert.match(hal, /Explain this page and tell me exactly what I should do first\./);
+});
+
+test('Brad, HAL, and JARVIS share the page tools', () => {
+  assert.match(hal, /b\.textContent = f === "assistant" \? "BRAD" : f === "hal" \? "HAL" : "JARVIS"/);
+  assert.doesNotMatch(hal, /\.hal-faces,\.hal-model-row/);
+  assert.match(hal, /activatePage\(nav\)/);
+  assert.match(hal, /pageHelpReply\(helpGuide\)/);
+  assert.match(hal, /localStorage\.getItem\("hal-console-face"\)/);
+});
+
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {
   assert.match(app, /window\.location\.protocol === 'file:'/);
   assert.match(app, /window\.__cipherFileMode = true/);

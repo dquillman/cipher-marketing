@@ -34,6 +34,164 @@
       });
     }
 
+    // One shared source of truth for navigation, instant page help, and the
+    // page context sent to the local app expert. Every persona uses this map.
+    var PAGE_GUIDES = {
+      today: {
+        label: "Today", route: "today", aliases: ["home", "daily plan", "daily command center"],
+        purpose: "Your daily command center: the next action, this week's draft load, priorities, and today's sequence.",
+        steps: ["Read the Right now card", "Work through Today's sequence from top to bottom", "Open Create when a draft needs review"],
+        start: "Start with the Right now card."
+      },
+      posts: {
+        label: "Create", route: "posts", aliases: ["posts", "drafts", "create posts", "manage posts"],
+        purpose: "Create and review campaign posts, organized by publishing week.",
+        steps: ["Open one week", "Review one draft at a time", "Ask Brad for revisions or approve copy when it is ready"],
+        start: "Open the earliest week with pending drafts."
+      },
+      schedule: {
+        label: "Publish", route: "schedule", aliases: ["schedule", "publishing", "calendar"],
+        purpose: "Turn approved drafts into published posts and record their live URLs.",
+        steps: ["Check what is due next", "Publish on the named channel", "Save the live URL and confirm the posted status"],
+        start: "Open the next approved post due for publication."
+      },
+      dashboard: {
+        label: "Results", route: "dashboard", aliases: ["dashboard", "performance", "metrics", "analytics"],
+        purpose: "See campaign performance, conversion health, blockers, and post results.",
+        steps: ["Review the headline metrics", "Open the highest-priority blocker", "Enter post metrics after 24 to 48 hours"],
+        start: "Resolve the highest-priority blocker before optimizing anything else."
+      },
+      strategy: {
+        label: "Strategy", route: "strategy", aliases: ["campaign strategy", "plan", "priorities"],
+        purpose: "Understand why the campaign targets each exam, how success is measured, and when to scale.",
+        steps: ["Review the exam scoring matrix", "Check KPIs and budget assumptions", "Use scaling triggers for campaign decisions"],
+        start: "Start with the per-exam scoring matrix."
+      },
+      content: {
+        label: "Content", route: "content", aliases: ["content library", "library", "emails", "social content"],
+        purpose: "Find the campaign's reusable social posts, cornerstone content, and onboarding emails.",
+        steps: ["Choose the asset type", "Open the relevant content card", "Copy or adapt it without changing the campaign promise"],
+        start: "Choose the channel or asset you need right now."
+      },
+      landing: {
+        label: "Landing Pages", route: "landing", aliases: ["landing", "landing page drafts", "lp drafts"],
+        purpose: "Review campaign landing-page drafts, positioning, pricing, and calls to action.",
+        steps: ["Choose the exam landing page", "Review the promise and proof", "Confirm pricing and the Start Free Trial CTA"],
+        start: "Review the landing page for the active exam."
+      },
+      engineering: {
+        label: "Engineering", route: "engineering", aliases: ["engineering handoff", "implementation", "technical checklist"],
+        purpose: "Track the product and measurement work that must be complete before campaign traffic starts.",
+        steps: ["Check conversion tracking", "Complete the highest-risk implementation item", "Verify each item before marking it done"],
+        start: "Start with any incomplete conversion-tracking requirement."
+      },
+      voice: {
+        label: "Brand Voice", route: "voice", aliases: ["voice", "brand", "brand review", "copy standards"],
+        purpose: "Check campaign assets against CipherExam's voice, claims, and messaging standards.",
+        steps: ["Review blockers and warnings first", "Read the asset-specific notes", "Apply only changes that strengthen clarity and trust"],
+        start: "Start with any BLOCK or WARN finding."
+      },
+      competitors: {
+        label: "Competitors", route: "competitors", aliases: ["competitor intel", "competition", "competitive research"],
+        purpose: "Understand competitor positioning, gaps, and specific angles CipherExam can exploit.",
+        steps: ["Open the latest report", "Compare product claims with verified evidence", "Turn one useful gap into a campaign angle"],
+        start: "Read the newest competitor summary."
+      },
+      testimonials: {
+        label: "Testimonials", route: "testimonials", aliases: ["proof", "customer proof", "reviews"],
+        purpose: "Find approved customer proof that can support campaign claims.",
+        steps: ["Filter for the relevant exam or outcome", "Choose the strongest accurate proof", "Use it without changing the customer's meaning"],
+        start: "Find proof that matches the claim you are trying to support."
+      },
+      settings: {
+        label: "Settings", route: "settings", aliases: ["campaign settings", "maintenance", "reset"],
+        purpose: "Handle deliberate campaign maintenance and interface preferences.",
+        steps: ["Read the warning before any reset", "Confirm the archive and replacement scope", "Use reset only when starting a genuinely new campaign"],
+        start: "Do not reset anything unless you intend to replace the current campaign."
+      },
+      funnel: {
+        label: "Funnel Diagnostic", path: "funnel.html", aliases: ["funnel", "conversion funnel", "funnel diagnostics"],
+        purpose: "Diagnose where acquisition, signup, activation, or conversion is breaking down.",
+        steps: ["Review each funnel stage", "Find the largest verified drop-off", "Fix one bottleneck and measure again"],
+        start: "Start with the largest measured drop-off."
+      },
+      sprint: {
+        label: "Activation Sprint", path: "sprint.html", aliases: ["sprint", "activation", "activation plan"],
+        purpose: "Run the focused activation work needed to turn signups into returning users.",
+        steps: ["Review the sprint objective", "Complete tasks in priority order", "Measure activation and Day-2 return"],
+        start: "Start with the first incomplete priority."
+      }
+    };
+
+    function normalizePageName(value) {
+      return String(value || "").toLowerCase()
+        .replace(/\b(tab|page|section|view)\b/g, " ")
+        .replace(/[^a-z0-9+ ]/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function findPageGuide(value) {
+      var target = normalizePageName(value);
+      if (!target) return null;
+      var keys = Object.keys(PAGE_GUIDES);
+      for (var i = 0; i < keys.length; i++) {
+        var guide = PAGE_GUIDES[keys[i]];
+        var names = [keys[i], guide.label].concat(guide.aliases || []);
+        for (var j = 0; j < names.length; j++) {
+          var name = normalizePageName(names[j]);
+          if (target === name || target.indexOf(name + " ") === 0 || name.indexOf(target + " ") === 0) {
+            return guide;
+          }
+        }
+      }
+      return null;
+    }
+
+    function findMentionedPageGuide(value) {
+      var target = " " + normalizePageName(value) + " ";
+      var keys = Object.keys(PAGE_GUIDES);
+      for (var i = 0; i < keys.length; i++) {
+        var guide = PAGE_GUIDES[keys[i]];
+        var names = [keys[i], guide.label].concat(guide.aliases || []);
+        for (var j = 0; j < names.length; j++) {
+          var name = normalizePageName(names[j]);
+          if (name && target.indexOf(" " + name + " ") >= 0) return guide;
+        }
+      }
+      return null;
+    }
+
+    function currentPageGuide() {
+      var file = (location.pathname.split("/").pop() || "").toLowerCase();
+      if (file === "funnel.html") return PAGE_GUIDES.funnel;
+      if (file === "sprint.html") return PAGE_GUIDES.sprint;
+      var active = document.querySelector(".route-section.active[data-route]");
+      var route = (location.hash || "").replace(/^#/, "") ||
+        (active && active.getAttribute("data-route")) || "today";
+      return PAGE_GUIDES[route] || PAGE_GUIDES.today;
+    }
+
+    function activatePage(guide) {
+      if (!guide) return;
+      if (guide.route && typeof window.cipherShow === "function") {
+        window.cipherShow(guide.route);
+      } else if (guide.route) {
+        window.location.href = "app.html#" + guide.route;
+      } else if (guide.path) {
+        window.location.href = guide.path;
+      }
+    }
+
+    function pageContextQuestion(question) {
+      var guide = currentPageGuide();
+      return "[CURRENT APP PAGE]\n" +
+        "Page: " + guide.label + "\n" +
+        "Purpose: " + guide.purpose + "\n" +
+        "Recommended workflow: " + guide.steps.join("; ") + "\n" +
+        "Best first action: " + guide.start + "\n\n" +
+        "Answer as an expert on this exact Cipher Marketing page. Explain unfamiliar terms in plain language and give Dave a concrete next action.\n\n" +
+        "Dave's question: " + question;
+    }
+
     // ---- styles ------------------------------------------------------------
     var css = `
 :root { --hal-rail-w: 380px; --hal-top: 0px; }
@@ -115,9 +273,13 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-status { letter-spacing:.3em; color:#5a6578; font-size:10px; }
 .hal-spacer { flex:1; }
 .hal-faces { display:flex; gap:9px; align-items:center; margin-top:2px; }
-.hal-faces button { width:13px; height:13px; border-radius:9999px; border:none; cursor:pointer;
-  opacity:.4; transition:all .15s; }
-.hal-faces button.on { opacity:1; box-shadow:0 0 8px 1px currentColor; }
+.hal-faces button { width:auto; height:auto; border-radius:4px; border:1px solid #2a2e38;
+  background:#0a0b10; color:#7a8494; cursor:pointer; opacity:.65; transition:all .15s;
+  padding:5px 7px; font:700 9px/1 "Bahnschrift","Arial Narrow",Arial,sans-serif; letter-spacing:.08em; }
+.hal-faces button[data-face="assistant"] { color:#b8c4d4; }
+.hal-faces button[data-face="hal"] { color:#ff6a4a; }
+.hal-faces button[data-face="jarvis"] { color:#7dcfff; }
+.hal-faces button.on { opacity:1; border-color:currentColor; box-shadow:0 0 8px rgba(255,255,255,.18); }
 .hal-faces button:hover { transform:scale(1.3); opacity:.9; }
 @keyframes halBreathe { 0%,100% { filter:brightness(.92);} 50% { filter:brightness(1.12);} }
 @keyframes halSpeak { 0%,100% { filter:brightness(.95); box-shadow:0 0 8px 2px rgba(255,42,0,.5);}
@@ -138,6 +300,11 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-btn:hover { border-color:#8a1200; color:#ff6a4a; }
 .hal-btn:disabled { opacity:.4; cursor:default; }
 .hal-btn.live { border-color:#b31500; color:#ff4020; box-shadow:0 0 12px rgba(255,42,0,.35); }
+.hal-page-strip { flex:1 1 100%; display:flex; align-items:center; justify-content:space-between;
+  gap:8px; padding:7px 8px; border:1px solid #23262e; border-radius:4px; background:#080a0f; }
+.hal-page-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  color:#8da2c4; font-size:10px; letter-spacing:.12em; }
+.hal-page-help { padding:6px 8px; font-size:9px; }
 /* MODEL picker (HAL_SPEC 3c) - copied from the hal.py console reference. */
 /* wrap: the rail is 380px (330px under 1100px viewport) and four model buttons
    plus the label do not fit on one line - without this they overflow the form. */
@@ -147,9 +314,9 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-model-btn { display:flex; flex-direction:column; align-items:center; gap:2px; line-height:1; }
 .hal-model-cost { font-size:9px; color:#5a6578; letter-spacing:.04em; font-weight:400; }
 .hal-btn.model-on .hal-model-cost { color:#5DCAA5; opacity:.75; }
-/* Cipher Marketing has one assistant. Advanced persona/model controls belong
-   in the Second Brain console, not in the daily marketing workspace. */
-.hal-faces,.hal-model-row,#halw-dream,#halw-lastdream { display:none !important; }
+/* Keep advanced model/dream controls in the Second Brain console. The three
+   personas remain visible here because all three share app-wide page expertise. */
+.hal-model-row,#halw-dream,#halw-lastdream { display:none !important; }
 `;
     var styleEl = document.createElement("style");
     styleEl.id = "hal-rail-style";
@@ -158,8 +325,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 
     // ---- markup ------------------------------------------------------------
     var railHTML =
-      '<aside class="hal-rail" id="halw-rail" aria-label="Brad marketing assistant">' +
-      '  <button class="hal-handle" id="halw-collapse" title="Open or close Brad" aria-label="Open or close Brad">' +
+      '<aside class="hal-rail" id="halw-rail" aria-label="Cipher Marketing assistant">' +
+      '  <button class="hal-handle" id="halw-collapse" title="Open or close assistant" aria-label="Open or close assistant">' +
       '    <span class="hal-handle-eye"></span>' +
       '    <span class="hal-handle-label">BRAD</span>' +
       '    <span class="hal-handle-chev" id="halw-chev">&#8250;</span>' +
@@ -173,6 +340,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       '    </div>' +
       '    <div class="hal-log" id="halw-log"></div>' +
       '    <form class="hal-controls" id="halw-form">' +
+      '      <div class="hal-page-strip">' +
+      '        <span class="hal-page-name" id="halw-page">PAGE: TODAY</span>' +
+      '        <button type="button" class="hal-btn hal-page-help" id="halw-page-help">EXPLAIN PAGE</button>' +
+      '      </div>' +
       '      <input class="hal-input" id="halw-input" placeholder="Ask Brad about the campaign&#8230;" autocomplete="off">' +
       '      <button type="submit" class="hal-btn" id="halw-send">SEND</button>' +
       '      <button type="button" class="hal-btn" id="halw-mic" style="display:none">MIC</button>' +
@@ -236,6 +407,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
           "Welcome back, sir. Shall I pull something from the campaign?"] }
     };
     var face = "assistant";
+    try {
+      var savedFace = localStorage.getItem("hal-console-face");
+      if (savedFace && FACES[savedFace]) face = savedFace;
+    } catch (e) {}
     // MODEL picker (HAL_SPEC 3c). "hal-model" is the SAME key every HAL surface
     // uses, so Dave's choice follows him between HALs. The server validates it,
     // so an unknown value can only fall back to the default.
@@ -247,7 +422,8 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         log = document.getElementById("halw-log"), input = document.getElementById("halw-input"),
         sendBtn = document.getElementById("halw-send"), micBtn = document.getElementById("halw-mic"),
         liveBtn = document.getElementById("halw-live"),
-        pauseBtn = document.getElementById("halw-pause"), muteBtn = document.getElementById("halw-mute");
+        pauseBtn = document.getElementById("halw-pause"), muteBtn = document.getElementById("halw-mute"),
+        pageEl = document.getElementById("halw-page"), pageHelpBtn = document.getElementById("halw-page-help");
 
     // Paint the active persona's eye — HAL red lens, JARVIS blue arc reactor,
     // assistant neutral (desaturated) lens. Rebuilt only on face change (not on
@@ -277,8 +453,13 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       muteBtn.classList.toggle("live", !voiceOn);
       liveBtn.textContent = live ? "LIVE ON" : "LIVE";
       liveBtn.classList.toggle("live", live);
+      var guide = currentPageGuide();
+      pageEl.textContent = "PAGE: " + guide.label.toUpperCase();
+      pageHelpBtn.title = "Explain how to use " + guide.label;
     }
     input.addEventListener("input", setState);
+    window.addEventListener("hashchange", setState);
+    window.addEventListener("popstate", setState);
 
     // ---- MODEL selector (HAL_SPEC 3c) -------------------------------------
     // Copied from the hal.py console reference rather than re-derived.
@@ -350,7 +531,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     // Client-side navigation: "go to the Dashboard", "show me Posts", "open the
     // schedule tab" - HAL switches the app page/tab itself by driving the page's own
     // nav, with no server round-trip (works even when the HAL server is down).
-    // Returns the nav element to activate, or null if it's not a navigation command.
+    // Returns a page guide to activate, or null if it is not a navigation command.
     function halFindNav(text) {
       var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
       var target = null;
@@ -358,18 +539,28 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (m) { target = m[1]; }
       else { var b = t.match(/^(?:the\s+)?(.+?)\s+(?:tab|page|section|view)$/); if (b) { target = b[1]; } }
       if (!target) { return null; }
-      target = target.replace(/\s+(tab|page|section|view)$/, "").replace(/[^a-z0-9+ ]/g, " ").replace(/\s+/g, " ").trim();
-      if (target.length < 2) { return null; }
-      var cands = [];
-      [].slice.call(document.querySelectorAll(".nav-link, .nav a, .topbar a, [data-route]")).forEach(function (el) {
-        var label = (el.textContent || "").toLowerCase().replace(/[^a-z0-9+ ]/g, " ").replace(/\s+/g, " ").trim();
-        if (label) { cands.push({ label: label, el: el }); }
-      });
-      function pick(pred) { for (var i = 0; i < cands.length; i++) { if (pred(cands[i].label)) { return cands[i]; } } return null; }
-      return pick(function (l) { return l === target; })
-          || pick(function (l) { return l.indexOf(target) === 0; })
-          || pick(function (l) { return target.indexOf(l + " ") === 0; })
-          || pick(function (l) { return l.split(" ").indexOf(target) > -1; });
+      return findPageGuide(target);
+    }
+
+    function halFindPageHelp(text) {
+      var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
+      if (!/(explain|understand|how (?:do|should|can) i use|how to use|what (?:do|should) i do|walk me through|help me (?:with|use))/.test(t)) {
+        return null;
+      }
+      if (/\b(this|current) page\b|\bwhat (?:do|should) i do here\b/.test(t)) {
+        return currentPageGuide();
+      }
+      var guide = findMentionedPageGuide(t);
+      return guide || currentPageGuide();
+    }
+
+    function pageHelpReply(guide) {
+      var intro = face === "jarvis" ? "Of course, sir. " :
+        face === "hal" ? "Certainly, Dave. " : "Here is the practical version, Dave. ";
+      return intro + "You are on " + guide.label + ". " + guide.purpose +
+        "\n\nHow to use it:\n" +
+        guide.steps.map(function (step, index) { return (index + 1) + ". " + step; }).join("\n") +
+        "\n\nStart here: " + guide.start;
     }
 
     // DJ mode: "play music" (default: 70s greatest hits), "play some 80s
@@ -394,17 +585,23 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     function send(raw) {
       var text = (raw !== undefined ? raw : input.value).trim();
       if (!text || busy) return;
+      var helpGuide = halFindPageHelp(text);
+      if (helpGuide) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        var helpReply = pageHelpReply(helpGuide);
+        append("assistant", helpReply); speak(helpReply); setState();
+        return;
+      }
       var nav = halFindNav(text);
       if (nav) {
         pendingGreeting = null; input.value = ""; append("user", text);
-        var name = (nav.label.replace(/[^a-z0-9+ ]/gi, "").trim() || "there")
-          .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        var name = nav.label;
         var who = FACES[face].name;
         var line = who === "J.A.R.V.I.S." ? ("Right away, sir - " + name + ".")
                  : who === "HAL 9000" ? ("Certainly, Dave. Bringing up " + name + ".")
                  : ("Opening " + name + ".");
         append("assistant", line); speak(line);
-        setTimeout(function () { try { nav.el.click(); } catch (e) {} }, 80);
+        setTimeout(function () { try { activatePage(nav); setState(); } catch (e) {} }, 80);
         setState();
         return;
       }
@@ -425,7 +622,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       pendingGreeting = null; input.value = ""; append("user", text); busy = true; setState();
       halAskHeaders().then(function (headers) {
         return fetch(HAL_API + "/api/ask", { method: "POST", headers: headers,
-          body: JSON.stringify({ question: text, history: chat.slice(-16), face: face, model: halModel }) });
+          body: JSON.stringify({ question: pageContextQuestion(text), history: chat.slice(-16), face: face, model: halModel }) });
       })
         .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { res: res, d: d }; }); })
         .then(function (x) {
@@ -441,6 +638,9 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         .then(function () { busy = false; setState(); });
     }
     document.getElementById("halw-form").addEventListener("submit", function (e) { e.preventDefault(); send(); });
+    pageHelpBtn.addEventListener("click", function () {
+      send("Explain this page and tell me exactly what I should do first.");
+    });
     // PAUSE freezes the current reply mid-sentence; click again (RESUME) to continue.
     // The keepAlive interval above checks `paused`, so it won't auto-resume a hold.
     pauseBtn.addEventListener("click", function () {
@@ -575,9 +775,13 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       });
     }
 
-    var facesEl = document.getElementById("halw-faces"), nameEl = document.getElementById("halw-facename");
+    var facesEl = document.getElementById("halw-faces"), nameEl = document.getElementById("halw-facename"),
+        handleLabelEl = document.querySelector("#halw-collapse .hal-handle-label");
     function renderFaces() {
       nameEl.textContent = FACES[face].name;
+      if (handleLabelEl) {
+        handleLabelEl.textContent = face === "assistant" ? "BRAD" : face === "hal" ? "HAL" : "JARVIS";
+      }
       // Name tint per persona: JARVIS gold, ASSISTANT steel, HAL blue-grey.
       nameEl.style.color = face === "jarvis" ? "#ffd47e" : face === "assistant" ? "#b8c4d4" : "#9db4ff";
       paintEye();
@@ -587,7 +791,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     Object.keys(FACES).forEach(function (f) {
       var b = document.createElement("button"); b.setAttribute("data-face", f); b.title = FACES[f].name;
       b.setAttribute("aria-label", "Talk to " + FACES[f].name);
-      b.style.background = FACES[f].dot; b.style.color = FACES[f].dot;
+      b.textContent = f === "assistant" ? "BRAD" : f === "hal" ? "HAL" : "JARVIS";
       b.addEventListener("click", function () {
         if (face === f) return;
         window.speechSynthesis && window.speechSynthesis.cancel(); speaking = false; paused = false; face = f;
