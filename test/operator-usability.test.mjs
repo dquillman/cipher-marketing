@@ -94,8 +94,8 @@ test('all fourteen pages have reviewed expert knowledge', () => {
 });
 
 test('page knowledge loads before the assistant rail', () => {
-  const knowledgeIndex = app.indexOf('assets/page-knowledge.js?v=1.10.3');
-  const halIndex = app.indexOf('assets/hal-rail.js?v=1.10.3');
+  const knowledgeIndex = app.indexOf('assets/page-knowledge.js?v=1.10.4');
+  const halIndex = app.indexOf('assets/hal-rail.js?v=1.10.4');
   assert.ok(knowledgeIndex >= 0);
   assert.ok(halIndex > knowledgeIndex);
 });
@@ -116,9 +116,17 @@ test('Cipher Marketing sends the branded Brad persona to the app expert', () => 
 });
 
 test('the assistant rail URL is release-versioned to prevent stale page help', () => {
-  assert.match(app, /Dashboard version">v1\.10\.3</);
-  assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.3/);
-  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.3/);
+  assert.match(app, /Dashboard version">v1\.10\.4</);
+  assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.4/);
+  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.4/);
+});
+
+test('hidden legacy model preferences migrate to the subscription expert', () => {
+  assert.match(hal, /if \(m0 === "sonnet"\) halModel = "sonnet"/);
+  assert.doesNotMatch(
+    hal,
+    /if \(MODELS\.indexOf\(m0\) >= 0\) halModel = m0/
+  );
 });
 
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {

@@ -340,12 +340,18 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       var savedFace = localStorage.getItem("hal-console-face");
       if (savedFace && FACES[savedFace]) face = savedFace;
     } catch (e) {}
-    // MODEL picker (HAL_SPEC 3c). "hal-model" is the SAME key every HAL surface
-    // uses, so Dave's choice follows him between HALs. The server validates it,
-    // so an unknown value can only fall back to the default.
+    // Cipher Marketing's embedded assistant always uses the subscription-backed
+    // app expert. The model controls are intentionally hidden on this surface,
+    // so migrate stale OFFLINE/OLLAMA preferences instead of trapping Dave in a
+    // mode he cannot change here. SONNET remains an intentional advanced-console
+    // preference; everything else resolves to the fast HAIKU subscription path.
     var MODELS = ["offline", "haiku", "sonnet", "ollama"];
     var halModel = "haiku";
-    try { var m0 = localStorage.getItem("hal-model"); if (MODELS.indexOf(m0) >= 0) halModel = m0; } catch (e) {}
+    try {
+      var m0 = localStorage.getItem("hal-model");
+      if (m0 === "sonnet") halModel = "sonnet";
+      if (m0 !== halModel) localStorage.setItem("hal-model", halModel);
+    } catch (e) {}
     var busy = false, speaking = false, listening = false, voiceOn = true, paused = false, live = false, pendingGreeting = null, chat = [];
     var eye = document.getElementById("halw-eye"), statusEl = document.getElementById("halw-status"),
         log = document.getElementById("halw-log"), input = document.getElementById("halw-input"),
