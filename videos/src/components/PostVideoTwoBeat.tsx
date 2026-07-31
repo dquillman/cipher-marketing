@@ -71,7 +71,11 @@ export const PostVideoTwoBeat: React.FC<PostVideoTwoBeatProps> = ({
   const lockupOpacity = fade(frame, BEAT3_IN + 14, BEAT3_HOLD + 6);
   const lockupScale = interpolate(lockupSpring, [0, 1], [0.9, 1]);
 
-  // CTA: visible from frame 0; soft pulse once the lockup lands.
+  // CTA: enters at 2s like the single-beat template (consistent delay across
+  // all videos — Dave, 2026-07-31); soft pulse once the lockup lands.
+  const CTA_IN = 120;
+  const ctaOpacity = fade(frame, CTA_IN, CTA_IN + 45);
+  const ctaRise = interpolate(frame, [CTA_IN, CTA_IN + 45], [30, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const ctaPulse = frame >= BEAT3_HOLD ? 1 + 0.03 * Math.sin(((frame - BEAT3_HOLD) / fps) * Math.PI * 1.6) : 1;
 
   const centerText: React.CSSProperties = {
@@ -169,7 +173,7 @@ export const PostVideoTwoBeat: React.FC<PostVideoTwoBeatProps> = ({
             styled as a button: nothing in a video is clickable, so a
             button-look invites dead taps (Dave, 2026-07-31). A URL is
             something a viewer can actually act on. */}
-        <div style={{ textAlign: "center", transform: `scale(${ctaPulse})` }}>
+        <div style={{ textAlign: "center", opacity: ctaOpacity, transform: `translateY(${ctaRise}px) scale(${ctaPulse})` }}>
           <div style={{ fontFamily: fontHeading, fontWeight: 700, fontSize: 52, letterSpacing: "-0.01em", color: theme.fg }}>
             Start free at <span style={{ color: theme.accent }}>cipherexam.com</span>
           </div>
