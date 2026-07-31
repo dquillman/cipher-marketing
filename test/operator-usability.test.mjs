@@ -4,10 +4,15 @@ import test from 'node:test';
 
 const appPath = new URL('../site/app.html', import.meta.url);
 const halPath = new URL('../site/assets/hal-rail.js', import.meta.url);
+const pageKnowledgePath = new URL('../site/assets/page-knowledge.js', import.meta.url);
 const authPath = new URL('../site/assets/operator-auth.js', import.meta.url);
 const launcherPath = new URL('../Open Cipher Marketing.vbs', import.meta.url);
 const app = fs.readFileSync(appPath, 'utf8');
 const hal = fs.readFileSync(halPath, 'utf8');
+const pageKnowledgeSource = fs.readFileSync(pageKnowledgePath, 'utf8');
+const pageKnowledge = JSON.parse(
+  pageKnowledgeSource.match(/window\.CIPHER_PAGE_KNOWLEDGE\s*=\s*(\{[\s\S]*\})\s*;\s*\}\)\(\)/)?.[1] ?? '{}'
+);
 const auth = fs.readFileSync(authPath, 'utf8');
 const launcher = fs.readFileSync(launcherPath, 'utf8');
 
@@ -59,10 +64,11 @@ test('every app page has shared navigation and expert help', () => {
     .map((match) => match[1]);
   assert.ok(routes.length >= 12);
   for (const route of routes) {
-    assert.match(hal, new RegExp(`\\b${route}: \\{`), `missing page guide for ${route}`);
+    assert.ok(pageKnowledge[route], `missing page guide for ${route}`);
   }
-  assert.match(hal, /funnel: \{/);
-  assert.match(hal, /sprint: \{/);
+  assert.ok(pageKnowledge.funnel);
+  assert.ok(pageKnowledge.sprint);
+  assert.match(hal, /window\.CIPHER_PAGE_KNOWLEDGE/);
   assert.match(hal, /id="halw-page-help"/);
   assert.match(hal, /function currentPageGuide\(\)/);
   assert.match(hal, /function findMentionedPageGuide\(value\)/);
@@ -71,6 +77,27 @@ test('every app page has shared navigation and expert help', () => {
   assert.match(hal, /Explain this page and tell me exactly what I should do first\./);
   assert.match(hal, /what\(\?:'s\| is\) \(\?:on\|in\)/);
   assert.match(hal, /what does \(\?:this\|the current\) page/);
+});
+
+test('all fourteen pages have reviewed expert knowledge', () => {
+  assert.equal(Object.keys(pageKnowledge).length, 14);
+  for (const [key, guide] of Object.entries(pageKnowledge)) {
+    assert.ok(guide.label, `${key} needs a label`);
+    assert.ok(guide.purpose?.length > 40, `${key} needs a useful purpose`);
+    assert.ok(guide.sections?.length >= 3, `${key} needs key sections`);
+    assert.ok(guide.steps?.length >= 3, `${key} needs a workflow`);
+    assert.ok(guide.start?.length > 20, `${key} needs a first action`);
+    assert.ok(guide.terms?.length >= 2, `${key} needs plain-language terms`);
+    assert.ok(guide.watchFor?.length > 20, `${key} needs a caution`);
+    assert.ok(guide.related?.length >= 2, `${key} needs related pages`);
+  }
+});
+
+test('page knowledge loads before the assistant rail', () => {
+  const knowledgeIndex = app.indexOf('assets/page-knowledge.js?v=1.10.3');
+  const halIndex = app.indexOf('assets/hal-rail.js?v=1.10.3');
+  assert.ok(knowledgeIndex >= 0);
+  assert.ok(halIndex > knowledgeIndex);
 });
 
 test('Brad, HAL, and JARVIS share the page tools', () => {
@@ -89,7 +116,8 @@ test('Cipher Marketing sends the branded Brad persona to the app expert', () => 
 });
 
 test('the assistant rail URL is release-versioned to prevent stale page help', () => {
-  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.2/);
+  assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.3/);
+  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.3/);
 });
 
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {

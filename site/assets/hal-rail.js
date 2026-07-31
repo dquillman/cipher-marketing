@@ -34,94 +34,12 @@
       });
     }
 
-    // One shared source of truth for navigation, instant page help, and the
-    // page context sent to the local app expert. Every persona uses this map.
-    var PAGE_GUIDES = {
-      today: {
-        label: "Today", route: "today", aliases: ["home", "daily plan", "daily command center"],
-        purpose: "Your daily command center: the next action, this week's draft load, priorities, and today's sequence.",
-        steps: ["Read the Right now card", "Work through Today's sequence from top to bottom", "Open Create when a draft needs review"],
-        start: "Start with the Right now card."
-      },
-      posts: {
-        label: "Create", route: "posts", aliases: ["posts", "drafts", "create posts", "manage posts"],
-        purpose: "Create and review campaign posts, organized by publishing week.",
-        steps: ["Open one week", "Review one draft at a time", "Ask Brad for revisions or approve copy when it is ready"],
-        start: "Open the earliest week with pending drafts."
-      },
-      schedule: {
-        label: "Publish", route: "schedule", aliases: ["schedule", "publishing", "calendar"],
-        purpose: "Turn approved drafts into published posts and record their live URLs.",
-        steps: ["Check what is due next", "Publish on the named channel", "Save the live URL and confirm the posted status"],
-        start: "Open the next approved post due for publication."
-      },
-      dashboard: {
-        label: "Results", route: "dashboard", aliases: ["dashboard", "performance", "metrics", "analytics"],
-        purpose: "See campaign performance, conversion health, blockers, and post results.",
-        steps: ["Review the headline metrics", "Open the highest-priority blocker", "Enter post metrics after 24 to 48 hours"],
-        start: "Resolve the highest-priority blocker before optimizing anything else."
-      },
-      strategy: {
-        label: "Strategy", route: "strategy", aliases: ["campaign strategy", "plan", "priorities"],
-        purpose: "Understand why the campaign targets each exam, how success is measured, and when to scale.",
-        steps: ["Review the exam scoring matrix", "Check KPIs and budget assumptions", "Use scaling triggers for campaign decisions"],
-        start: "Start with the per-exam scoring matrix."
-      },
-      content: {
-        label: "Content", route: "content", aliases: ["content library", "library", "emails", "social content"],
-        purpose: "Find the campaign's reusable social posts, cornerstone content, and onboarding emails.",
-        steps: ["Choose the asset type", "Open the relevant content card", "Copy or adapt it without changing the campaign promise"],
-        start: "Choose the channel or asset you need right now."
-      },
-      landing: {
-        label: "Landing Pages", route: "landing", aliases: ["landing", "landing page drafts", "lp drafts"],
-        purpose: "Review campaign landing-page drafts, positioning, pricing, and calls to action.",
-        steps: ["Choose the exam landing page", "Review the promise and proof", "Confirm pricing and the Start Free Trial CTA"],
-        start: "Review the landing page for the active exam."
-      },
-      engineering: {
-        label: "Engineering", route: "engineering", aliases: ["engineering handoff", "implementation", "technical checklist"],
-        purpose: "Track the product and measurement work that must be complete before campaign traffic starts.",
-        steps: ["Check conversion tracking", "Complete the highest-risk implementation item", "Verify each item before marking it done"],
-        start: "Start with any incomplete conversion-tracking requirement."
-      },
-      voice: {
-        label: "Brand Voice", route: "voice", aliases: ["voice", "brand", "brand review", "copy standards"],
-        purpose: "Check campaign assets against CipherExam's voice, claims, and messaging standards.",
-        steps: ["Review blockers and warnings first", "Read the asset-specific notes", "Apply only changes that strengthen clarity and trust"],
-        start: "Start with any BLOCK or WARN finding."
-      },
-      competitors: {
-        label: "Competitors", route: "competitors", aliases: ["competitor intel", "competition", "competitive research"],
-        purpose: "Understand competitor positioning, gaps, and specific angles CipherExam can exploit.",
-        steps: ["Open the latest report", "Compare product claims with verified evidence", "Turn one useful gap into a campaign angle"],
-        start: "Read the newest competitor summary."
-      },
-      testimonials: {
-        label: "Testimonials", route: "testimonials", aliases: ["proof", "customer proof", "reviews"],
-        purpose: "Find approved customer proof that can support campaign claims.",
-        steps: ["Filter for the relevant exam or outcome", "Choose the strongest accurate proof", "Use it without changing the customer's meaning"],
-        start: "Find proof that matches the claim you are trying to support."
-      },
-      settings: {
-        label: "Settings", route: "settings", aliases: ["campaign settings", "maintenance", "reset"],
-        purpose: "Handle deliberate campaign maintenance and interface preferences.",
-        steps: ["Read the warning before any reset", "Confirm the archive and replacement scope", "Use reset only when starting a genuinely new campaign"],
-        start: "Do not reset anything unless you intend to replace the current campaign."
-      },
-      funnel: {
-        label: "Funnel Diagnostic", path: "funnel.html", aliases: ["funnel", "conversion funnel", "funnel diagnostics"],
-        purpose: "Diagnose where acquisition, signup, activation, or conversion is breaking down.",
-        steps: ["Review each funnel stage", "Find the largest verified drop-off", "Fix one bottleneck and measure again"],
-        start: "Start with the largest measured drop-off."
-      },
-      sprint: {
-        label: "Activation Sprint", path: "sprint.html", aliases: ["sprint", "activation", "activation plan"],
-        purpose: "Run the focused activation work needed to turn signups into returning users.",
-        steps: ["Review the sprint objective", "Complete tasks in priority order", "Measure activation and Day-2 return"],
-        start: "Start with the first incomplete priority."
-      }
-    };
+    // The client and local app expert both consume this canonical review.
+    var PAGE_GUIDES = window.CIPHER_PAGE_KNOWLEDGE || {};
+    if (!PAGE_GUIDES.today) {
+      console.error("[HAL] assets/page-knowledge.js must load before hal-rail.js");
+      return;
+    }
 
     function normalizePageName(value) {
       return String(value || "").toLowerCase()
@@ -186,8 +104,12 @@
       return "[CURRENT APP PAGE]\n" +
         "Page: " + guide.label + "\n" +
         "Purpose: " + guide.purpose + "\n" +
+        "Key sections: " + (guide.sections || []).join("; ") + "\n" +
         "Recommended workflow: " + guide.steps.join("; ") + "\n" +
-        "Best first action: " + guide.start + "\n\n" +
+        "Best first action: " + guide.start + "\n" +
+        "Terms: " + (guide.terms || []).join("; ") + "\n" +
+        "Important caution: " + (guide.watchFor || "None") + "\n" +
+        "Related pages: " + (guide.related || []).join("; ") + "\n\n" +
         "Answer as an expert on this exact Cipher Marketing page. Explain unfamiliar terms in plain language and give Dave a concrete next action.\n\n" +
         "Dave's question: " + question;
     }
@@ -565,9 +487,12 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       var intro = face === "jarvis" ? "Of course, sir. " :
         face === "hal" ? "Certainly, Dave. " : "Here is the practical version, Dave. ";
       return intro + "You are on " + guide.label + ". " + guide.purpose +
+        "\n\nWhat is on this page:\n" +
+        (guide.sections || []).map(function (section) { return "- " + section; }).join("\n") +
         "\n\nHow to use it:\n" +
         guide.steps.map(function (step, index) { return (index + 1) + ". " + step; }).join("\n") +
-        "\n\nStart here: " + guide.start;
+        "\n\nStart here: " + guide.start +
+        (guide.watchFor ? "\n\nImportant: " + guide.watchFor : "");
     }
 
     // DJ mode: "play music" (default: 70s greatest hits), "play some 80s

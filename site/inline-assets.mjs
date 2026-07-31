@@ -104,7 +104,10 @@ for (const f of files) {
   // directly via a <!--HAL-RAIL--> tag maintained by hand.
   const HAL_OPEN = "<!--HAL-RAIL-->", HAL_CLOSE = "<!--/HAL-RAIL-->";
   html = html.replace(new RegExp(`\\n?${HAL_OPEN}[\\s\\S]*?${HAL_CLOSE}\\n?`, "g"), "\n");
-  const halBlock = `${HAL_OPEN}\n<script src="assets/hal-rail.js?v=${APP_VERSION}"></script>\n${HAL_CLOSE}`;
+  const halBlock = `${HAL_OPEN}
+<script src="assets/page-knowledge.js?v=${APP_VERSION}"></script>
+<script src="assets/hal-rail.js?v=${APP_VERSION}"></script>
+${HAL_CLOSE}`;
   if (html.includes("</body>")) html = html.replace("</body>", `${halBlock}\n</body>`);
 
   if (html !== before) {
