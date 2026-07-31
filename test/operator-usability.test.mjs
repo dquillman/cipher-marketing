@@ -94,8 +94,8 @@ test('all fourteen pages have reviewed expert knowledge', () => {
 });
 
 test('page knowledge loads before the assistant rail', () => {
-  const knowledgeIndex = app.indexOf('assets/page-knowledge.js?v=1.10.4');
-  const halIndex = app.indexOf('assets/hal-rail.js?v=1.10.4');
+  const knowledgeIndex = app.indexOf('assets/page-knowledge.js?v=1.10.5');
+  const halIndex = app.indexOf('assets/hal-rail.js?v=1.10.5');
   assert.ok(knowledgeIndex >= 0);
   assert.ok(halIndex > knowledgeIndex);
 });
@@ -116,9 +116,9 @@ test('Cipher Marketing sends the branded Brad persona to the app expert', () => 
 });
 
 test('the assistant rail URL is release-versioned to prevent stale page help', () => {
-  assert.match(app, /Dashboard version">v1\.10\.4</);
-  assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.4/);
-  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.4/);
+  assert.match(app, /Dashboard version">v1\.10\.5</);
+  assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.5/);
+  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.5/);
 });
 
 test('hidden legacy model preferences migrate to the subscription expert', () => {
@@ -127,6 +127,17 @@ test('hidden legacy model preferences migrate to the subscription expert', () =>
     hal,
     /if \(MODELS\.indexOf\(m0\) >= 0\) halModel = m0/
   );
+});
+
+test('voice input waits through natural pauses before sending', () => {
+  assert.match(hal, /var VOICE_SILENCE_MS = 3500/);
+  assert.match(hal, /rec\.continuous = true/);
+  assert.match(hal, /rec\.interimResults = true/);
+  assert.match(hal, /setTimeout\(finishVoiceTurn, VOICE_SILENCE_MS\)/);
+  assert.match(hal, /setTimeout\(openRecognitionCycle, 120\)/);
+  assert.match(hal, /micBtn\.textContent = "DONE"/);
+  assert.match(hal, /LISTENING - TAKE YOUR TIME/);
+  assert.doesNotMatch(hal, /rec\.onresult = function \(e\) \{[^}]*send\(t\)/);
 });
 
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {

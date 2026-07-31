@@ -376,7 +376,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       // Idle status word matches the qcode consoles per persona: JARVIS reads
       // ONLINE, HAL/assistant read OPERATIONAL.
       var idle = face === "jarvis" ? "ONLINE" : "OPERATIONAL";
-      statusEl.textContent = listening ? "LISTENING" : paused ? "PAUSED" : speaking ? "SPEAKING" : busy ? "PROCESSING" : idle;
+      statusEl.textContent = listening ? "LISTENING - TAKE YOUR TIME" : paused ? "PAUSED" : speaking ? "SPEAKING" : busy ? "PROCESSING" : idle;
       eye.className = "hal-eye" + (speaking ? " speaking" : busy ? " thinking" : "");
       sendBtn.disabled = busy || !input.value.trim();
       // PAUSE + MUTE are ALWAYS visible (ops-hal / MFI layout). PAUSE greys out until
@@ -653,6 +653,11 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 
     var Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
     var recActive = null;
+    var VOICE_SILENCE_MS = 3500;
+    var voiceDraft = "";
+    var voiceInterim = "";
+    var voiceCommitTimer = null;
+    var voiceFinishing = false;
     var MIC_ERRORS = {
       "not-allowed": "My ears are blocked, Dave - the browser is denying microphone access for this page. Click the lock icon in the address bar, set Microphone to Allow, and try again.",
       "service-not-allowed": "The browser blocked the speech service for this page - check Site settings, Microphone.",
@@ -660,28 +665,107 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       "network": "The speech service is unreachable - Chrome's recognition needs internet.",
       "no-speech": "I didn't catch anything, Dave. Try again, a little closer to the microphone."
     };
+    function voiceText() {
+      return (voiceDraft + " " + voiceInterim).replace(/\s+/g, " ").trim();
+    }
+    function clearVoiceTimer() {
+      if (voiceCommitTimer) clearTimeout(voiceCommitTimer);
+      voiceCommitTimer = null;
+    }
+    function resetVoiceDraft() {
+      clearVoiceTimer();
+      voiceDraft = "";
+      voiceInterim = "";
+    }
+    function finishVoiceTurn() {
+      var transcript = voiceText();
+      if (!transcript) return;
+      clearVoiceTimer();
+      voiceFinishing = true;
+      if (recActive) {
+        try { recActive.stop(); } catch (e) {}
+      }
+      recActive = null;
+      listening = false;
+      micBtn.textContent = "MIC";
+      micBtn.classList.remove("live");
+      resetVoiceDraft();
+      setState();
+      send(transcript);
+    }
+    function cancelVoiceTurn() {
+      clearVoiceTimer();
+      voiceFinishing = true;
+      var active = recActive;
+      recActive = null;
+      listening = false;
+      resetVoiceDraft();
+      micBtn.textContent = "MIC";
+      micBtn.classList.remove("live");
+      if (active) {
+        try { active.stop(); } catch (e) { voiceFinishing = false; }
+      } else {
+        voiceFinishing = false;
+      }
+      setState();
+    }
+    function armVoiceCommit() {
+      clearVoiceTimer();
+      voiceCommitTimer = setTimeout(finishVoiceTurn, VOICE_SILENCE_MS);
+    }
     // Re-arm the ears in LIVE mode once HAL is idle (not busy, speaking, or already listening).
     function relisten(delay) { if (live) setTimeout(function () { if (live && !busy && !speaking && !listening) startListen(); }, delay || 300); }
-    // Hoisted so speak()'s finish handler and the LIVE loop can both call it.
-    function startListen() {
-      if (!Rec || listening || busy) return;
-      if (location.protocol === "file:") {
-        append("assistant", "Voice input cannot work from a double-clicked file - the browser refuses microphone access to file:// pages. Open the dashboard over http:// instead.");
-        live = false; setState(); return;
-      }
+    function openRecognitionCycle() {
+      if (!Rec || recActive || voiceFinishing || !listening) return;
       var clickedAt = Date.now();
-      var rec = new Rec(); rec.lang = "en-US"; rec.continuous = false; rec.interimResults = false; recActive = rec;
-      rec.onresult = function (e) { var t = (e.results[0] && e.results[0][0] && e.results[0][0].transcript) || ""; if (t) send(t); };
+      var rec = new Rec();
+      rec.lang = "en-US";
+      rec.continuous = true;
+      rec.interimResults = true;
+      recActive = rec;
+      rec.onresult = function (e) {
+        var interim = "";
+        for (var i = e.resultIndex || 0; i < e.results.length; i++) {
+          var part = (e.results[i][0] && e.results[i][0].transcript) || "";
+          if (e.results[i].isFinal) {
+            voiceDraft = (voiceDraft + " " + part).replace(/\s+/g, " ").trim();
+          } else {
+            interim += " " + part;
+          }
+        }
+        voiceInterim = interim.replace(/\s+/g, " ").trim();
+        if (voiceText()) armVoiceCommit();
+      };
       rec.onend = function () {
-        listening = false; recActive = null; micBtn.textContent = "MIC"; micBtn.classList.remove("live"); setState();
+        if (recActive === rec) recActive = null;
+        if (voiceFinishing) {
+          voiceFinishing = false;
+          listening = false;
+          micBtn.textContent = "MIC";
+          micBtn.classList.remove("live");
+          setState();
+          return;
+        }
+        // Chrome may close a recognition cycle after a short pause. Keep the
+        // same turn open and restart the ears while our longer silence timer is
+        // still running, so Dave can continue speaking at a natural pace.
+        if (listening && voiceText()) {
+          setTimeout(openRecognitionCycle, 120);
+          return;
+        }
+        listening = false;
+        micBtn.textContent = "MIC";
+        micBtn.classList.remove("live");
+        setState();
         relisten();  // if LIVE and nothing was said, keep the ears open
       };
       rec.onerror = function (e) {
         var code = (e && e.error) || "unknown";
         // Permission/hardware failures are fatal to hands-free mode - leave LIVE.
         if (code === "not-allowed" || code === "service-not-allowed" || code === "audio-capture") live = false;
-        // Suppress the chatty "no-speech" notice while hands-free (onend re-arms).
-        if (!(live && code === "no-speech")) {
+        // Suppress a no-speech notice while hands-free or while waiting through
+        // a natural pause in an otherwise valid turn.
+        if (!((live || voiceText()) && code === "no-speech")) {
           var instant = (Date.now() - clickedAt) < 400;
           append("assistant", (MIC_ERRORS[code] || ("Microphone error: " + code + ".")) +
             (instant ? " (This failed instantly - the LISTENING state reverted before it was visible.)" : ""));
@@ -690,8 +774,31 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         }
         // onend fires after onerror and handles listening reset + relisten.
       };
-      listening = true; micBtn.textContent = "LISTENING"; micBtn.classList.add("live"); setState();
-      try { rec.start(); } catch (err) { listening = false; recActive = null; append("assistant", "The microphone could not be started in this window, Dave: " + err.message); setState(); }
+      try {
+        rec.start();
+      } catch (err) {
+        listening = false;
+        recActive = null;
+        resetVoiceDraft();
+        append("assistant", "The microphone could not be started in this window, Dave: " + err.message);
+        setState();
+      }
+    }
+    // Hoisted so speak()'s finish handler and the LIVE loop can both call it.
+    function startListen() {
+      if (!Rec || listening || busy) return;
+      if (location.protocol === "file:") {
+        append("assistant", "Voice input cannot work from a double-clicked file - the browser refuses microphone access to file:// pages. Open the dashboard over http:// instead.");
+        live = false; setState(); return;
+      }
+      resetVoiceDraft();
+      voiceFinishing = false;
+      listening = true;
+      micBtn.textContent = "DONE";
+      micBtn.title = "HAL is listening. Pause naturally, or press DONE to send now.";
+      micBtn.classList.add("live");
+      setState();
+      openRecognitionCycle();
     }
     if (Rec) {
       micBtn.style.display = ""; liveBtn.style.display = "";
@@ -699,7 +806,11 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       // already listening). Works even while HAL is speaking - that's the point.
       micBtn.addEventListener("click", function () {
         if (speaking) { window.speechSynthesis && window.speechSynthesis.cancel(); speaking = false; paused = false; }
-        if (listening) { if (recActive) recActive.stop(); return; }
+        if (listening) {
+          if (voiceText()) finishVoiceTurn();
+          else cancelVoiceTurn();
+          return;
+        }
         if (busy) { append("assistant", "(One moment - still finishing the previous request. Try the mic again in a second.)"); setState(); return; }
         startListen();
       });
@@ -709,7 +820,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       liveBtn.addEventListener("click", function () {
         live = !live; setState();
         if (live) { if (!busy && !speaking && !listening) startListen(); }
-        else if (listening && recActive) recActive.stop();
+        else if (listening) cancelVoiceTurn();
       });
     }
 
