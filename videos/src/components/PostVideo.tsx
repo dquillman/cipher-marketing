@@ -25,6 +25,8 @@ export type PostVideoProps = {
   hookText: string;
   ctaText?: string;
   themeId?: string;
+  chipLabel?: string | null;
+  chipValue?: string | null;
 };
 
 export const PostVideo: React.FC<PostVideoProps> = ({
@@ -33,6 +35,8 @@ export const PostVideo: React.FC<PostVideoProps> = ({
   hookText,
   ctaText = "Start Free Trial",
   themeId,
+  chipLabel,
+  chipValue,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -129,7 +133,7 @@ export const PostVideo: React.FC<PostVideoProps> = ({
             </div>
           </div>
 
-          {examPrice != null && (
+          {chipValue != null && (
             <div
               style={{
                 display: "flex",
@@ -142,8 +146,9 @@ export const PostVideo: React.FC<PostVideoProps> = ({
                 boxShadow: `0 0 ${18 + tagPulse * 10}px -6px ${t.accent}55`,
               }}
             >
-              {/* "exam fee" spelled out — "$425 to sit" was too easy to
-                  misread as CipherExam's own price (Dave, 2026-07-31) */}
+              {/* Contextual chip — states the fact that supports THIS post.
+                  The $425 fee is reserved for cost/risk posts so it keeps its
+                  punch instead of becoming wallpaper (Dave, 2026-07-31). */}
               <div
                 style={{
                   fontSize: 24,
@@ -153,7 +158,7 @@ export const PostVideo: React.FC<PostVideoProps> = ({
                   textTransform: "uppercase",
                 }}
               >
-                {examName} exam fee
+                {chipLabel}
               </div>
               <div
                 style={{
@@ -163,7 +168,7 @@ export const PostVideo: React.FC<PostVideoProps> = ({
                   fontFamily: fontHeading,
                 }}
               >
-                ${examPrice}
+                {chipValue}
               </div>
             </div>
           )}

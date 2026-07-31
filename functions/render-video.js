@@ -27,6 +27,7 @@ import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { lookupExamSitFee } from "./remotion/examPricing.js";
 import { pickTheme } from "./remotion/videoThemes.js";
+import { pickChip } from "./remotion/postChip.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GMAIL_APP_PASSWORD = defineSecret("GMAIL_APP_PASSWORD");
@@ -175,12 +176,17 @@ export const renderPostVideo = onDocumentCreated(
       const hookText = deriveHookText(post.copy);
       // Visual format rotates by scheduled week (post.videoTheme pins one).
       const chosenTheme = pickTheme(post.scheduled, post.videoTheme);
+      // Chip states the fact that supports THIS post — the fee is reserved
+      // for cost/risk posts so it stays a jolt instead of wallpaper.
+      const chip = pickChip(post, examName, examPrice);
       const inputProps = {
         examName,
         examPrice,
         hookText,
         ctaText: "Start Free Trial",
         themeId: chosenTheme.id,
+        chipLabel: chip ? chip.label : null,
+        chipValue: chip ? chip.value : null,
       };
 
       await ensureBrowser();
