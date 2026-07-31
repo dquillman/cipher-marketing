@@ -79,6 +79,13 @@ test('Brad, HAL, and JARVIS share the page tools', () => {
   assert.match(hal, /localStorage\.getItem\("hal-console-face"\)/);
 });
 
+test('Cipher Marketing sends the branded Brad persona to the app expert', () => {
+  assert.match(hal, /function apiFace\(\)/);
+  assert.match(hal, /return face === "assistant" \? "brad" : face/);
+  assert.match(hal, /face: apiFace\(\)/);
+  assert.doesNotMatch(hal, /face: face, model: halModel/);
+});
+
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {
   assert.match(app, /window\.location\.protocol === 'file:'/);
   assert.match(app, /window\.__cipherFileMode = true/);

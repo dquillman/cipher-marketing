@@ -192,6 +192,13 @@
         "Dave's question: " + question;
     }
 
+    function apiFace() {
+      // The steel-eye persona is branded BRAD in Cipher Marketing. The shared
+      // HAL server calls that persona "brad"; sending "assistant" silently
+      // downgraded him to the generic Second Brain assistant.
+      return face === "assistant" ? "brad" : face;
+    }
+
     // ---- styles ------------------------------------------------------------
     var css = `
 :root { --hal-rail-w: 380px; --hal-top: 0px; }
@@ -622,7 +629,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       pendingGreeting = null; input.value = ""; append("user", text); busy = true; setState();
       halAskHeaders().then(function (headers) {
         return fetch(HAL_API + "/api/ask", { method: "POST", headers: headers,
-          body: JSON.stringify({ question: pageContextQuestion(text), history: chat.slice(-16), face: face, model: halModel }) });
+          body: JSON.stringify({ question: pageContextQuestion(text), history: chat.slice(-16), face: apiFace(), model: halModel }) });
       })
         .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { res: res, d: d }; }); })
         .then(function (x) {
