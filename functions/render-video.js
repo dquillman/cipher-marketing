@@ -79,21 +79,27 @@ function deriveHookText(copy) {
   return collapsed.slice(0, 137).trimEnd() + "…";
 }
 
+// Transactional: every post lives inside the single campaign/posts document,
+// so concurrent renders doing read-modify-write clobber each other — with 4
+// videos queued at once, two finished renders had their videoUrl silently
+// overwritten by a slower sibling's stale snapshot (observed 2026-07-31).
 async function updatePostRecord(postId, patch) {
   const db = getFirestore();
   const postsRef = db.collection("campaign").doc("posts");
-  const snap = await postsRef.get();
-  if (!snap.exists) return;
-  const data = snap.data();
-  const idx = data.posts.findIndex((p) => p.id === postId);
-  if (idx === -1) return;
-  data.posts[idx] = { ...data.posts[idx], ...patch };
-  data._meta = {
-    ...(data._meta || {}),
-    lastUpdatedAt: new Date().toISOString(),
-    lastUpdatedBy: "render-post-video-fn",
-  };
-  await postsRef.set(data);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(postsRef);
+    if (!snap.exists) return;
+    const data = snap.data();
+    const idx = data.posts.findIndex((p) => p.id === postId);
+    if (idx === -1) return;
+    data.posts[idx] = { ...data.posts[idx], ...patch };
+    data._meta = {
+      ...(data._meta || {}),
+      lastUpdatedAt: new Date().toISOString(),
+      lastUpdatedBy: "render-post-video-fn",
+    };
+    tx.set(postsRef, data);
+  });
 }
 
 async function sendCompletionEmail({ post, videoUrl }) {
