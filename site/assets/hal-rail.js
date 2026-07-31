@@ -22,6 +22,18 @@
     if (document.getElementById("halw-rail")) return;
     var HAL_API = "http://127.0.0.1:9142";  // hal app cipher-marketing (campaign-expert)
 
+    function halAskHeaders() {
+      if (!window.cipherAuthHeaders) {
+        return Promise.reject(new Error("Cipher Marketing operator authentication is unavailable."));
+      }
+      return window.cipherAuthHeaders().then(function (auth) {
+        return {
+          "Content-Type": "application/json",
+          "Authorization": auth.Authorization
+        };
+      });
+    }
+
     // ---- styles ------------------------------------------------------------
     var css = `
 :root { --hal-rail-w: 380px; --hal-top: 0px; }
@@ -411,8 +423,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         return;
       }
       pendingGreeting = null; input.value = ""; append("user", text); busy = true; setState();
-      fetch(HAL_API + "/api/ask", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: text, history: chat.slice(-16), face: face, model: halModel }) })
+      halAskHeaders().then(function (headers) {
+        return fetch(HAL_API + "/api/ask", { method: "POST", headers: headers,
+          body: JSON.stringify({ question: text, history: chat.slice(-16), face: face, model: halModel }) });
+      })
         .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { res: res, d: d }; }); })
         .then(function (x) {
           var reply = !x.res.ok ? ("I've just picked up a fault in the AE-35 unit. " + (x.d.error || ("Error " + x.res.status + ".")))
