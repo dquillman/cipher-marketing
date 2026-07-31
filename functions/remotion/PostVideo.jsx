@@ -83,31 +83,20 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
           </div>
         </div>
 
+        {/* Deliberately NOT styled as a button: nothing in a video is
+            clickable, so a button-look invites dead taps (Dave, 2026-07-31).
+            A URL is something a viewer can actually act on. */}
         <div
           style={{
             opacity: ctaOpacity,
             transform: `translateY(${ctaY}px)`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 24,
+            textAlign: "center",
           }}
         >
-          <div
-            style={{
-              fontFamily: fontHeading,
-              fontWeight: 700,
-              fontSize: 30,
-              letterSpacing: 0.5,
-              backgroundColor: theme.accent,
-              color: "#06121a",
-              borderRadius: 14,
-              padding: "20px 36px",
-            }}
-          >
-            {ctaText}
+          <div style={{ fontFamily: fontHeading, fontWeight: 700, fontSize: 52, letterSpacing: "-0.01em", color: theme.fg }}>
+            Start free at <span style={{ color: theme.accent }}>cipherexam.com</span>
           </div>
-          <div style={{ fontFamily: fontHeading, fontSize: 20, letterSpacing: 1, color: theme.fgMuted }}>
+          <div style={{ marginTop: 12, fontFamily: fontHeading, fontSize: 26, letterSpacing: 1, color: theme.fgMuted }}>
             7-day free trial · no credit card
           </div>
         </div>

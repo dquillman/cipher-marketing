@@ -7,6 +7,7 @@ import { DomainWeights } from "./components/DomainWeights";
 import { PbqWalkthrough } from "./components/PbqWalkthrough";
 import { AdAllFour } from "./components/AdAllFour";
 import { PostVideo, type PostVideoProps } from "./components/PostVideo";
+import { PostVideoTwoBeat, type PostVideoTwoBeatProps } from "./components/PostVideoTwoBeat";
 import type { ExamVariant } from "./data/examVariants";
 
 const FontLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -174,6 +175,27 @@ export const RemotionRoot: React.FC = () => {
           examName: "PMP",
           examPrice: 425,
           hookText: "Cert prep tools haven't changed since 2010.",
+          ctaText: "Start Free Trial",
+        }}
+      />
+      {/* Two-beat variant: hook → supporting line → price/CTA lockup. */}
+      <Composition
+        key="post-video-2beat"
+        id="post-video-2beat"
+        component={(props: PostVideoTwoBeatProps) => (
+          <FontLoader>
+            <PostVideoTwoBeat {...props} />
+          </FontLoader>
+        )}
+        durationInFrames={480}
+        fps={60}
+        width={1080}
+        height={1080}
+        defaultProps={{
+          examName: "PMP",
+          examPrice: 425,
+          hookText: "The PMP exam changed on July 9, 2026.",
+          supportText: "PMI increased Business Environment from 8% to 26%.",
           ctaText: "Start Free Trial",
         }}
       />
