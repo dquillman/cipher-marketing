@@ -73,9 +73,10 @@ export const PostVideoTwoBeat: React.FC<PostVideoTwoBeatProps> = ({
 
   // CTA: enters at 2s like the single-beat template (consistent delay across
   // all videos — Dave, 2026-07-31); soft pulse once the lockup lands.
-  const CTA_IN = 120;
-  const ctaOpacity = fade(frame, CTA_IN, CTA_IN + 45);
-  const ctaRise = interpolate(frame, [CTA_IN, CTA_IN + 45], [30, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const CTA_VISIBLE_AT = 120;
+  const CTA_FADE = 18;
+  const ctaOpacity = fade(frame, CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT);
+  const ctaRise = interpolate(frame, [CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT], [24, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const ctaPulse = frame >= BEAT3_HOLD ? 1 + 0.03 * Math.sin(((frame - BEAT3_HOLD) / fps) * Math.PI * 1.6) : 1;
 
   const centerText: React.CSSProperties = {

@@ -23,14 +23,14 @@ export const PostVideo = ({ examName, examPrice, hookText, ctaText = "Start Free
   const tagSpring = spring({ frame, fps, config: { damping: 16, stiffness: 120 } });
   const tagScale = interpolate(tagSpring, [0, 1], [0.9, 1]);
 
-  // CTA enters at 2s with a slow rise — late enough that its appearance
-  // is a noticeable event after the hook lands, not lost in the first blink
-  // (Dave, 2026-07-31). Tradeoff: the frame-0 thumbnail shows hook + price
-  // but not the CTA; the post copy carries the clickable CTA regardless.
-  const CTA_IN = 120;
-  const ctaSpring = spring({ frame: frame - CTA_IN, fps, config: { damping: 18, stiffness: 60 } });
-  const ctaOpacity = fade(frame, CTA_IN, CTA_IN + 45);
-  const ctaY = interpolate(ctaSpring, [0, 1], [30, 0]);
+  // CTA must be FULLY visible at the 2s mark (Dave, 2026-07-31) — the fade
+  // starts at ~1.7s and completes at exactly 2.0s. The earlier version
+  // STARTED its slow fade at 2s and did not finish settling until ~3s,
+  // which read as arriving much later than 2s.
+  const CTA_VISIBLE_AT = 120; // frame the CTA is fully planted (2s @60fps)
+  const CTA_FADE = 18;
+  const ctaOpacity = fade(frame, CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT);
+  const ctaY = interpolate(frame, [CTA_VISIBLE_AT - CTA_FADE, CTA_VISIBLE_AT], [24, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg, fontFamily: fontBody, overflow: "hidden" }}>
