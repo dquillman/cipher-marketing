@@ -48,6 +48,12 @@ test('Brad starts collapsed and keeps the essential controls', () => {
   assert.match(hal, /id="halw-mute"/);
 });
 
+test('Brad handles natural page navigation locally', () => {
+  assert.match(hal, /\(\?:hey\\s\+\)\?\(\?:hal\|brad\|jarvis\|assistant\)/);
+  assert.match(hal, /\|change to\|/);
+  assert.match(hal, /var nav = halFindNav\(text\)/);
+});
+
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {
   assert.match(app, /window\.location\.protocol === 'file:'/);
   assert.match(app, /window\.__cipherFileMode = true/);

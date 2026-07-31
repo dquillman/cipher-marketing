@@ -354,7 +354,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     function halFindNav(text) {
       var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
       var target = null;
-      var m = t.match(/^(?:(?:hal|jarvis|assistant)[,:\s]+|please\s+)*(?:go(?:\s*to)?|goto|show(?:\s*me)?|open|take me to|switch to|navigate to|jump to|bring up|pull up|let'?s see)\s+(?:the\s+)?(.+)$/);
+      var m = t.match(/^(?:(?:hey\s+)?(?:hal|brad|jarvis|assistant)[,:\s]+|please\s+)*(?:go(?:\s*to)?|goto|show(?:\s*me)?|open|take me to|switch to|change to|navigate to|jump to|bring up|pull up|let'?s see)\s+(?:the\s+)?(.+)$/);
       if (m) { target = m[1]; }
       else { var b = t.match(/^(?:the\s+)?(.+?)\s+(?:tab|page|section|view)$/); if (b) { target = b[1]; } }
       if (!target) { return null; }
