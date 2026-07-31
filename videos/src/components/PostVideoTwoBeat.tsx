@@ -111,12 +111,13 @@ export const PostVideoTwoBeat: React.FC<PostVideoTwoBeatProps> = ({
                 boxShadow: `0 0 ${18 + tagPulse * 10}px -6px ${theme.warn}55`,
               }}
             >
-              <div style={{ fontSize: 20, color: theme.fgDim, fontWeight: 500 }}>{examName}</div>
+              {/* "exam fee" spelled out — "$425 to sit" was too easy to
+                  misread as CipherExam's own price (Dave, 2026-07-31) */}
+              <div style={{ fontSize: 19, color: theme.fgDim, fontWeight: 600, letterSpacing: 0.5, textTransform: "uppercase" }}>
+                {examName} exam fee
+              </div>
               <div style={{ fontSize: 24, color: theme.warn, fontWeight: 800, fontFamily: fontHeading }}>
                 ${examPrice}
-              </div>
-              <div style={{ fontSize: 16, color: theme.fgMuted, letterSpacing: 0.5, textTransform: "uppercase" }}>
-                to sit
               </div>
             </div>
           )}
@@ -146,7 +147,7 @@ export const PostVideoTwoBeat: React.FC<PostVideoTwoBeatProps> = ({
                   ${examPrice}
                 </div>
                 <div style={{ marginTop: 18, fontFamily: fontHeading, fontWeight: 700, fontSize: 42, color: theme.fg }}>
-                  to sit the {examName}.
+                  just to take the {examName} exam.
                 </div>
                 <div style={{ marginTop: 12, fontSize: 30, color: theme.fgDim, fontFamily: fontBody }}>
                   Walk in knowing how it thinks.

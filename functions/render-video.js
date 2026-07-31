@@ -32,6 +32,33 @@ const GMAIL_APP_PASSWORD = defineSecret("GMAIL_APP_PASSWORD");
 const NOTIFY_EMAIL = "dquillman2112@gmail.com";
 const COMPOSITION_ID = "post-video";
 
+// One-time (per instance) bucket CORS setup so the dashboard can fetch
+// rendered MP4s as blobs for the Download button — the default bucket ships
+// with no CORS config, which blocks page-context fetch() of videoUrl. Runs
+// under the function's service account (local dev credentials can't do
+// this). Idempotent: skips if a CORS config already exists.
+let corsEnsured = false;
+async function ensureBucketCors(bucket) {
+  if (corsEnsured) return;
+  try {
+    const [meta] = await bucket.getMetadata();
+    if (!meta.cors || meta.cors.length === 0) {
+      await bucket.setCorsConfiguration([
+        {
+          origin: ["*"],
+          method: ["GET", "HEAD"],
+          maxAgeSeconds: 3600,
+          responseHeader: ["Content-Type", "Range", "Content-Length", "Content-Range"],
+        },
+      ]);
+      console.log("[render-video] bucket CORS configured");
+    }
+    corsEnsured = true;
+  } catch (error) {
+    console.warn("[render-video] could not ensure bucket CORS:", error.message);
+  }
+}
+
 // Cached across warm invocations of the same container instance.
 let bundleLocationPromise = null;
 function getBundleLocation() {
@@ -177,6 +204,7 @@ export const renderPostVideo = onDocumentCreated(
 
       const storagePath = `post-videos/${postId}/${jobId}.mp4`;
       const bucket = getStorage().bucket();
+      await ensureBucketCors(bucket);
       await bucket.upload(outputPath, {
         destination: storagePath,
         metadata: { contentType: "video/mp4", cacheControl: "public, max-age=31536000" },

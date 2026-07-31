@@ -1979,7 +1979,8 @@ details[open] summary::before { transform: rotate(90deg); }
     var videoBtn = '';
     if (p.videoStatus === 'ready' && p.videoUrl) {
       videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">▶ Preview video</button>' +
-        '<button class="btn-secondary" type="button" data-generate-video="' + esc(p.id) + '">Regenerate video</button>';
+        '<button class="btn-secondary" type="button" data-generate-video="' + esc(p.id) + '">Regenerate video</button>' +
+        '<button class="btn-secondary" type="button" data-video-download="' + esc(p.id) + '">⬇ Download video</button>';
     } else if (p.videoStatus === 'queued' || p.videoStatus === 'rendering') {
       videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">Generating video…</button>';
     } else if (p.status === 'draft') {
@@ -4979,7 +4980,31 @@ if (document.readyState === 'loading') {
     }
   }
 
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
+    var dlBtn = e.target.closest && e.target.closest('[data-video-download]');
+    if (dlBtn) {
+      e.preventDefault();
+      var dlPost = findPost(dlBtn.getAttribute('data-video-download'));
+      if (!dlPost || !dlPost.videoUrl) return;
+      var fileName = dlPost.id + '.mp4';
+      try {
+        var resp = await fetch(dlPost.videoUrl);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        var blob = await resp.blob();
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 10000);
+      } catch (err) {
+        // Bucket CORS not set yet (or offline): open the file directly and
+        // let the user save it from the player's download control.
+        window.open(dlPost.videoUrl, '_blank');
+      }
+      return;
+    }
     var genBtn = e.target.closest && e.target.closest('[data-generate-video]');
     if (genBtn) {
       e.preventDefault();

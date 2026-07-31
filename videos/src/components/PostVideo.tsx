@@ -39,13 +39,18 @@ export const PostVideo: React.FC<PostVideoProps> = ({
   const tagSpring = spring({ frame, fps, config: { damping: 16, stiffness: 120 } });
   const tagScale = interpolate(tagSpring, [0, 1], [0.9, 1]);
 
+  // CTA enters at 2s with a slow rise — late enough that its appearance
+  // is a noticeable event after the hook lands, not lost in the first blink
+  // (Dave, 2026-07-31). Tradeoff: the frame-0 thumbnail shows hook + price
+  // but not the CTA; the post copy carries the clickable CTA regardless.
+  const CTA_IN = 120;
   const ctaSpring = spring({
-    frame: frame - 20,
+    frame: frame - CTA_IN,
     fps,
-    config: { damping: 16, stiffness: 120 },
+    config: { damping: 18, stiffness: 60 },
   });
-  const ctaOpacity = fade(frame, 20, 38);
-  const ctaY = interpolate(ctaSpring, [0, 1], [14, 0]);
+  const ctaOpacity = fade(frame, CTA_IN, CTA_IN + 45);
+  const ctaY = interpolate(ctaSpring, [0, 1], [30, 0]);
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg, fontFamily: fontBody, overflow: "hidden" }}>
@@ -87,12 +92,13 @@ export const PostVideo: React.FC<PostVideoProps> = ({
                 boxShadow: `0 0 ${18 + tagPulse * 10}px -6px ${theme.warn}55`,
               }}
             >
-              <div style={{ fontSize: 20, color: theme.fgDim, fontWeight: 500 }}>{examName}</div>
+              {/* "exam fee" spelled out — "$425 to sit" was too easy to
+                  misread as CipherExam's own price (Dave, 2026-07-31) */}
+              <div style={{ fontSize: 19, color: theme.fgDim, fontWeight: 600, letterSpacing: 0.5, textTransform: "uppercase" }}>
+                {examName} exam fee
+              </div>
               <div style={{ fontSize: 24, color: theme.warn, fontWeight: 800, fontFamily: fontHeading }}>
                 ${examPrice}
-              </div>
-              <div style={{ fontSize: 16, color: theme.fgMuted, letterSpacing: 0.5, textTransform: "uppercase" }}>
-                to sit
               </div>
             </div>
           )}
