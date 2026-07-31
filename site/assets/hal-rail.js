@@ -551,10 +551,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 
     function halFindPageHelp(text) {
       var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
-      if (!/(explain|understand|how (?:do|should|can) i use|how to use|what (?:do|should) i do|walk me through|help me (?:with|use))/.test(t)) {
+      if (!/(explain|understand|how (?:do|should|can) i use|how to use|what (?:do|should) i do|what(?:'s| is) (?:on|in)|what does (?:this|the current) page|tell me about|walk me through|help me (?:with|use))/.test(t)) {
         return null;
       }
-      if (/\b(this|current) page\b|\bwhat (?:do|should) i do here\b/.test(t)) {
+      if (/\b(this|current) page\b|\bwhat (?:do|should) i do here\b|\bwhat(?:'s| is) (?:on|in) here\b/.test(t)) {
         return currentPageGuide();
       }
       var guide = findMentionedPageGuide(t);

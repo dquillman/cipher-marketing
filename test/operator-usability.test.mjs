@@ -69,6 +69,8 @@ test('every app page has shared navigation and expert help', () => {
   assert.match(hal, /function pageContextQuestion\(question\)/);
   assert.match(hal, /\[CURRENT APP PAGE\]/);
   assert.match(hal, /Explain this page and tell me exactly what I should do first\./);
+  assert.match(hal, /what\(\?:'s\| is\) \(\?:on\|in\)/);
+  assert.match(hal, /what does \(\?:this\|the current\) page/);
 });
 
 test('Brad, HAL, and JARVIS share the page tools', () => {
@@ -84,6 +86,10 @@ test('Cipher Marketing sends the branded Brad persona to the app expert', () => 
   assert.match(hal, /return face === "assistant" \? "brad" : face/);
   assert.match(hal, /face: apiFace\(\)/);
   assert.doesNotMatch(hal, /face: face, model: halModel/);
+});
+
+test('the assistant rail URL is release-versioned to prevent stale page help', () => {
+  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.2/);
 });
 
 test('direct file opening is intercepted with a one-click Windows recovery path', () => {

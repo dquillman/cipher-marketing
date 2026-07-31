@@ -12,6 +12,9 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 
 const css = readFileSync(join(HERE, "assets/shared.css"), "utf8");
 const js = readFileSync(join(HERE, "assets/site.js"), "utf8");
+const APP_VERSION = JSON.parse(
+  readFileSync(join(HERE, "..", "package.json"), "utf8")
+).version;
 
 const INLINE_OPEN = "<!--INLINE-ASSETS-->";
 const INLINE_CLOSE = "<!--/INLINE-ASSETS-->";
@@ -101,7 +104,7 @@ for (const f of files) {
   // directly via a <!--HAL-RAIL--> tag maintained by hand.
   const HAL_OPEN = "<!--HAL-RAIL-->", HAL_CLOSE = "<!--/HAL-RAIL-->";
   html = html.replace(new RegExp(`\\n?${HAL_OPEN}[\\s\\S]*?${HAL_CLOSE}\\n?`, "g"), "\n");
-  const halBlock = `${HAL_OPEN}\n<script src="assets/hal-rail.js"></script>\n${HAL_CLOSE}`;
+  const halBlock = `${HAL_OPEN}\n<script src="assets/hal-rail.js?v=${APP_VERSION}"></script>\n${HAL_CLOSE}`;
   if (html.includes("</body>")) html = html.replace("</body>", `${halBlock}\n</body>`);
 
   if (html !== before) {
