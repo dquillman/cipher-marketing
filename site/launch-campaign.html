@@ -73,7 +73,7 @@ textarea {
 }
 textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 button {
-  background: var(--accent);
+  background: var(--accent, var(--cyan, #7ad6ff));
   color: #001423;
   border: 0;
   border-radius: 8px;
@@ -1628,7 +1628,7 @@ details[open] summary::before { transform: rotate(90deg); }
   word-break: break-all;
 }
 .copy-post-btn {
-  background: var(--accent);
+  background: var(--accent, var(--cyan, #7ad6ff));
   color: #001423;
   border: 0;
   border-radius: 6px;
@@ -1978,7 +1978,8 @@ details[open] summary::before { transform: rotate(90deg); }
 
     var videoBtn = '';
     if (p.videoStatus === 'ready' && p.videoUrl) {
-      videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">▶ Preview video</button>';
+      videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">▶ Preview video</button>' +
+        '<button class="btn-secondary" type="button" data-generate-video="' + esc(p.id) + '">Regenerate video</button>';
     } else if (p.videoStatus === 'queued' || p.videoStatus === 'rendering') {
       videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">Generating video…</button>';
     } else if (p.status === 'draft') {
