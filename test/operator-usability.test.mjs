@@ -116,6 +116,7 @@ test('Cipher Marketing sends the branded Brad persona to the app expert', () => 
 });
 
 test('the assistant rail URL is release-versioned to prevent stale page help', () => {
+  assert.match(app, /Dashboard version">v1\.10\.3</);
   assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.3/);
   assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.3/);
 });
