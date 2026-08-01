@@ -4996,14 +4996,35 @@ function cipherStaleVideoPosts() {
     return bar;
   }
 
+  // Renders queue instantly but take ~a minute each and run serially, so the
+  // bar must show in-flight work — otherwise clicking Regenerate looks like it
+  // did nothing: the button resets on queue while the stale count only drops
+  // as each render finishes.
   function refreshStaleBar() {
     var stale = cipherStaleVideoPosts();
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var inFlight = posts.filter(function (p) {
+      return p.videoStatus === 'queued' || p.videoStatus === 'rendering';
+    });
     var bar = ensureStaleBar();
     var txt = document.getElementById('stale-video-text');
-    if (!stale.length) { bar.classList.remove('show'); return; }
-    if (txt) {
-      txt.textContent = stale.length + ' video' + (stale.length === 1 ? '' : 's') +
-        ' rendered with an older template. Regenerate to pick up the current look.';
+    var btn = bar.querySelector('[data-regen-stale]');
+
+    if (!stale.length && !inFlight.length) { bar.classList.remove('show'); return; }
+
+    if (inFlight.length) {
+      if (txt) {
+        txt.textContent = 'Rendering ' + inFlight.length + ' video' +
+          (inFlight.length === 1 ? '' : 's') + '… one at a time, about a minute each. ' +
+          'This clears as each finishes.';
+      }
+      if (btn) { btn.disabled = true; btn.textContent = 'Rendering…'; }
+    } else {
+      if (txt) {
+        txt.textContent = stale.length + ' video' + (stale.length === 1 ? '' : 's') +
+          ' rendered with an older template. Regenerate to pick up the current look.';
+      }
+      if (btn) { btn.disabled = false; btn.textContent = 'Regenerate outdated videos'; }
     }
     bar.classList.add('show');
   }
@@ -5111,11 +5132,10 @@ function cipherStaleVideoPosts() {
       regen.disabled = true;
       regen.textContent = 'Queueing…';
       queueRender(stale.map(function (p) { return p.id; })).then(function (n) {
-        regen.disabled = false;
-        regen.textContent = 'Regenerate outdated videos';
         if (typeof cipherToast === 'function') {
-          cipherToast('Queued ' + n + ' render' + (n === 1 ? '' : 's') + ' — they run one at a time.');
+          cipherToast('Queued ' + n + ' render' + (n === 1 ? '' : 's') + ' — watch the bar; about a minute each.');
         }
+        refreshStaleBar();
       }).catch(function (err) {
         regen.disabled = false;
         regen.textContent = 'Regenerate outdated videos';
