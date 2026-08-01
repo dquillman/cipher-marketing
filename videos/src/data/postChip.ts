@@ -6,22 +6,54 @@
 // impression with "$425" anchors the brand to the candidate's expense
 // rather than to what CipherExam does. (Dave, 2026-07-31.)
 //
-// So the chip now states a fact that supports THAT post's argument, and the
-// fee is reserved for posts actually about cost/risk/retakes — roughly one
-// in four, which is what keeps it punchy.
+// TWO EARLIER ATTEMPTS FAILED — learn from both before editing:
+//  1. Substring matching on the copy fired the fee chip on "feeling"
+//     (contains "fee") and on "they fail a test". Cert-prep copy is full of
+//     fail/feel/become/record, so bare substrings always misfire.
+//  2. Whole-word matching on the copy was still wrong: a campaign week
+//     about the July 2026 ECO change mentions "change"/"update" in nearly
+//     every post, so the news chip landed on 7 of 12 posts including polls.
+//
+// So classification reads the HOOK SLUG — the editorial label already
+// assigned per post — and only consults the copy for a literal dollar
+// amount. Insight posts (the majority) rotate through several true brand
+// facts keyed off the post id, so consecutive posts don't repeat one chip.
 //
 // Mirrored by functions/remotion/postChip.js — keep the two in sync.
 
-const FEE_WORDS = ["cost", "fee", "price", "retake", "fail", "wasted", "worth", "expensive", "money", "afford"];
-const UPDATE_WORDS = ["changed", "change", "eco", "updated", "update", "new-exam", "business-environment", "july", "2026 exam"];
-const QUIET_WORDS = ["poll", "challenge", "checklist", "quiz", "question-of"];
+// Engagement formats: the hook IS the post, a chip only competes with it.
+const QUIET_HOOKS = ["poll", "vote", "challenge", "checklist", "quiz"];
+// Genuine money/risk angles.
+const FEE_HOOKS = ["cost", "fee", "price", "retake", "worth", "expensive", "afford"];
+// Genuine exam-change / news angles.
+const UPDATE_HOOKS = ["changed", "change", "eco", "updated", "update", "revision", "2026"];
 
-type ChipPost = { hook?: string | null; copy?: string | null };
+// Rotating facts for everything else. All verifiable: PMP full mock is
+// 180 questions / 230 minutes, 11 certifications are live, and every
+// question is Bloom's-classified (the core IP). Keep additions TRUE.
+const LENS_CHIPS = [
+  { label: "Exam Lens", value: "WHY, NOT JUST WHAT" },
+  { label: "PMP full mock", value: "180 Q · 230 MIN" },
+  { label: "CipherExam", value: "11 CERTIFICATIONS" },
+  { label: "Every question", value: "BLOOM'S-CLASSIFIED" },
+];
+
+const DOLLAR_AMOUNT = /\$\s?\d/;
+
+type ChipPost = { id?: string | null; hook?: string | null; copy?: string | null };
 
 export type PostChip = { label: string; value: string };
 
-function haystack(post: ChipPost) {
-  return [post.hook || "", post.copy || ""].join(" ").toLowerCase();
+function hasWord(text: string, words: string[]) {
+  return words.some((w) => new RegExp("\\b" + w + "\\b", "i").test(text));
+}
+
+// Stable per-post index so the same post always gets the same fact, but
+// different posts spread across the set.
+function stableIndex(id: string, len: number) {
+  let h = 0;
+  for (let i = 0; i < String(id).length; i++) h = (h * 31 + String(id).charCodeAt(i)) >>> 0;
+  return h % len;
 }
 
 export function pickChip(
@@ -29,19 +61,21 @@ export function pickChip(
   examName?: string | null,
   examPrice?: number | null
 ): PostChip | null {
-  const text = haystack(post);
+  const hook = String(post.hook || "").replace(/-/g, " ");
+  const copy = String(post.copy || "");
   const exam = examName || "";
 
-  if (FEE_WORDS.some((w) => text.includes(w)) && examPrice != null) {
+  if (hasWord(hook, QUIET_HOOKS)) return null;
+
+  if (examPrice != null && (hasWord(hook, FEE_HOOKS) || DOLLAR_AMOUNT.test(copy))) {
     return { label: `${exam} exam fee`, value: `$${examPrice}` };
   }
-  if (UPDATE_WORDS.some((w) => text.includes(w))) {
+
+  if (hasWord(hook, UPDATE_HOOKS)) {
     return { label: `${exam} exam`, value: "UPDATED 2026" };
   }
-  // Engagement posts (polls, challenges, checklists) carry no chip — the
-  // hook is the whole point and a chip just competes with it.
-  if (QUIET_WORDS.some((w) => text.includes(w))) {
-    return null;
-  }
-  return { label: "Exam Lens", value: "WHY, NOT JUST WHAT" };
+
+  const pmpOnly = /^pmp$/i.test(exam);
+  const pool = pmpOnly ? LENS_CHIPS : LENS_CHIPS.filter((c) => !c.label.startsWith("PMP"));
+  return pool[stableIndex(post.id || hook, pool.length)];
 }
