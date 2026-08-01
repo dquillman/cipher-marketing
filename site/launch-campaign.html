@@ -829,7 +829,10 @@ details[open] summary::before { transform: rotate(90deg); }
   white-space:pre-wrap; font-size:0.88rem; line-height:1.5; color:var(--fg);
   background:var(--bg-elev, rgba(255,255,255,0.03)); border:1px solid var(--border);
   border-radius:8px; padding:12px 14px; max-height:260px; overflow:auto;
+  user-select:text; -webkit-user-select:text; cursor:text;
 }
+#publish-next .pn-copy:hover { border-color:var(--cyan, #7ad6ff); }
+#publish-next .pn-copy-hint { font-size:0.72rem; color:var(--dim); margin-top:4px; }
 #publish-next .pn-meta { font-size:0.72rem; color:var(--dim); margin-top:6px; }
 #publish-next .pn-meta code { font-size:0.72rem; }
 #publish-next .pn-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px; }
@@ -1916,20 +1919,6 @@ details[open] summary::before { transform: rotate(90deg); }
       ? graded.map(renderPost).join('')
       : '<p class="empty-state">No graded posts yet.</p>';
 
-    document.querySelectorAll('[data-copy-id]').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var id = btn.getAttribute('data-copy-id');
-        var post = posts.find(function(p){ return p.id === id; });
-        if (!post) return;
-        var text = post.copy;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(function(){
-            btn.textContent = '✓ Copied';
-            setTimeout(function(){ btn.textContent = 'Copy post'; }, 1800);
-          });
-        }
-      });
-    });
   }
 
   function summaryCard(label, value, valueClass) {
@@ -5324,6 +5313,69 @@ function cipherFormatLine(p) {
   }
 })();
 
+  // Copy-to-clipboard is delegated from the document rather than bound at
+  // render time. The old binding used querySelectorAll inside the posts
+  // render, so it only wired buttons that existed at that instant — the
+  // Publish next panel renders separately and its Copy button silently did
+  // nothing, which left the clipboard empty at the composer (Dave, 2026-08-01).
+  // Delegation also stops duplicate listeners stacking up on re-render.
+  document.addEventListener('click', async function (e) {
+    var btn = e.target.closest && e.target.closest('[data-copy-id]');
+    if (!btn) return;
+    e.preventDefault();
+    var id = btn.getAttribute('data-copy-id');
+    var post = ((window.__POSTS__ && window.__POSTS__.posts) || []).find(function (p) { return p.id === id; });
+    if (!post) return;
+    var original = btn.textContent;
+    var text = post.copy || '';
+    var ok = false;
+
+    // The async clipboard API refuses to write unless the document is focused,
+    // which silently fails the moment another tab (the composer) takes focus.
+    // execCommand on a temporary textarea has no such requirement, so it is
+    // the fallback rather than the other way round.
+    try {
+      await navigator.clipboard.writeText(text);
+      ok = true;
+    } catch (err) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        ok = document.execCommand('copy');
+        ta.remove();
+      } catch (err2) {
+        ok = false;
+      }
+    }
+
+    if (ok) {
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = original; }, 1800);
+      if (typeof cipherToast === 'function') cipherToast('Post text copied - paste it into the composer.');
+    } else if (typeof cipherToast === 'function') {
+      cipherToast('Could not reach the clipboard - click the copy text above to select it, then Ctrl+C.', true);
+    }
+  });
+
+  // Click the copy box to select all of it — a manual Ctrl+C path for when the
+  // browser refuses clipboard access (it needs focus + a secure context).
+  document.addEventListener('click', function (e) {
+    var box = e.target.closest && e.target.closest('.pn-copy');
+    if (!box) return;
+    var range = document.createRange();
+    range.selectNodeContents(box);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  });
+
 // ---- Publish next -----------------------------------------------------------
 // One surface answering "what do I post right now?", and the fix for the
 // near-miss on 2026-08-01 where LinkedIn restored an old draft and the
@@ -5374,6 +5426,7 @@ function cipherNextToPublish() {
         '<div>' +
           '<div class="pn-label">Copy to paste — compare this against the composer</div>' +
           '<div class="pn-copy">' + cipherEsc(p.copy || '') + '</div>' +
+          '<div class="pn-copy-hint">Click the text to select all of it, then Ctrl+C.</div>' +
         '</div>' +
         '<div>' +
           '<div class="pn-label">Media</div>' + videoBlock +
