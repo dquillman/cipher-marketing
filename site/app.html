@@ -1615,7 +1615,46 @@ function cipherHelp() {
   <!-- Trend Scout latest scan -->
   <h2>Trend Scout — latest scan</h2>
   <p style="color:var(--dim);font-size:0.92rem;">Three ranked angles from the latest market scan. Brad checks these before drafting new posts.</p>
+  <button id="run-trend-scout" type="button" class="btn-primary" style="padding:10px 18px;margin-bottom:10px;">Run Trend Scout</button>
   <div id="trend-scout-panel" class="trend-scout-panel"><div class="trend-scout-empty">Loading latest scan…</div></div>
+  <script>
+  // The trend scout is a Claude Code subagent, not an HTTP service — there is
+  // no /api endpoint to call. So this hands the job to Brad through the same
+  // cipherAskBrad bridge the other "do this for me" buttons use (Create posts,
+  // Explain the choices, Generate weekly report), and falls back to the
+  // clipboard when the rail isn't open. The scan lands in the panel below once
+  // Brad writes it back to campaign state.
+  (function () {
+    var btn = document.getElementById('run-trend-scout');
+    if (!btn) return;
+    var REQUEST = 'Brad, run the cipher-trend-scout subagent now: scan Reddit, LinkedIn and X for the last 7 days, '
+                + 'return the three strongest angles for the active exam clusters, and write the scan back to campaign '
+                + 'state so the Trend Scout panel updates.';
+    btn.addEventListener('click', function () {
+      if (btn.disabled) return;
+      var original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Running scout…';
+      try {
+        if (window.cipherAskBrad) {
+          window.cipherAskBrad(REQUEST);
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(REQUEST);
+          window.alert('Brad is unavailable. The scout request was copied so you can paste it into Brad.');
+        } else {
+          window.alert('Open Brad from the right edge and ask him to run the trend scout.');
+        }
+      } finally {
+        // Dispatch is fire-and-forget — Brad reports back in the rail, so
+        // "complete" here means the request was handed off.
+        setTimeout(function () {
+          btn.disabled = false;
+          btn.textContent = original;
+        }, 1500);
+      }
+    });
+  })();
+  </script>
 
   <!-- Scratchpad + copy-for-Claude -->
   <h2>Today's scratchpad</h2>
