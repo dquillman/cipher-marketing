@@ -1,8 +1,9 @@
 {
   "_meta": {
     "purpose": "Canonical competitor list for CipherExam. The competitors.html page currently hardcodes a reference table; this file is the single source of truth going forward. When Brad adds a competitor here, also mirror it into competitors.html until that page is wired to fetch this file.",
-    "lastUpdatedAt": "2026-07-15T00:00:00Z",
-    "owner": "Brad (CipherExam marketing orchestrator)"
+    "lastUpdatedAt": "2026-08-01T00:00:00Z",
+    "owner": "Brad (CipherExam marketing orchestrator)",
+    "refreshNote_2026_08_01": "Monthly automated refresh. Two material changes: (1) the Pocket Prep entry was STALE — they ship detailed explanations with textbook references, contradicting our 'no explanations' premise; any copy built on it must be rewritten. (2) 'No AI layer' is no longer true of the category — Mindirus and the AI-tutor app cohort are added, both selling AI coaching on our priority certs. 'AI-powered' is now the category description, not a differentiator."
   },
   "competitors": [
     {
@@ -10,20 +11,70 @@
       "name": "Pocket Prep",
       "category": "broad-cert mobile question bank",
       "exams": ["PMP", "Security+", "many"],
-      "primaryStrength": "Mobile-first, huge question bank",
-      "knownWeakness": "No answer explanations; pure memorization loop",
+      "primaryStrength": "Mobile-first native iOS/Android apps. 22,000+ questions across 21 professional certifications (2,450 PMP, 1,600 SHRM-CP, full CompTIA family). Expert-written explanations WITH textbook references. Adaptive practice weighted to demonstrated weak domains. Mock exams. In market since 2011 — large app-store review footprint and real brand trust. Active content operation publishing timely exam-change explainers.",
+      "knownWeakness": "Feedback resolves to the DOMAIN, never to the person — explanations are authored once for everyone and adaptivity says 'you're weak in Risk' and stops. No per-user reasoning-pattern tracking. Single-MCQ drill format structurally cannot rehearse performance-based questions (Security+/Network+/A+). Per-exam purchase model penalizes multi-cert candidates. Reported issues: cross-device licensing confusion (iPad purchase not unlocking iPhone), occasional incorrect answers surfaced in review, refund policy conditioned on scores in their own quizzes.",
       "threat": "high",
-      "addedAt": "2026-05-11"
+      "pricing": {
+        "subscription": "$14.99-$29.99/mo",
+        "perExam": "~$9.99-$20 depending on bank size"
+      },
+      "correction_2026_08_01": "PREVIOUS ENTRY WAS STALE AND WRONG. It claimed 'No answer explanations; pure memorization loop.' Pocket Prep ships detailed expert-written explanations with textbook references. Any CipherExam copy asserting competitors don't explain answers is factually false and trivially disprovable by a prospect. The surviving wedge is DIAGNOSIS (per-user reasoning-trap tracking + Bloom's cognitive-level classification), not the existence of explanations. Rewrite any copy built on the old premise.",
+      "addedAt": "2026-05-11",
+      "lastVerifiedAt": "2026-08-01",
+      "source": "Monthly automated intel refresh 2026-08-01 — web research pass (app-store listings, review aggregators, pocketprep.com exam pages)"
     },
     {
       "id": "examzify",
       "name": "Examzify",
       "category": "static question bank",
       "exams": ["IT certs"],
-      "primaryStrength": "Clean UI, popular for IT certs",
-      "knownWeakness": "Static questions, no AI layer, no adaptive routing",
+      "primaryStrength": "Free. Clean UI. Very broad long-tail exam coverage (well beyond IT — health, trades, citizenship, niche professional certs). Flashcards + MCQ with hints and explanations per item. Subdomain-per-exam SEO footprint captures long-tail search.",
+      "knownWeakness": "Free-tier economics mean thin, uneven, inconsistently maintained banks. No progress model, no diagnosis, no accountability. Breadth is a mile wide and an inch deep — not a serious PMP/Security+/SHRM-CP preparation path.",
+      "threat": "medium",
+      "threatNote": "Downgraded from high 2026-08-01. They do not take our paying customer — they take our organic search traffic and undercut the reason our free tier exists, which is upstream of the paying customer. Compete on the search lane, not on price. Never attack 'free' directly.",
+      "addedAt": "2026-05-11",
+      "lastVerifiedAt": "2026-08-01"
+    },
+    {
+      "id": "mindirus",
+      "name": "Mindirus",
+      "category": "AI-native multi-cert adaptive platform",
+      "url": "https://mindirus.com",
+      "exams": ["CISSP", "AWS", "Azure", "CompTIA (incl. Security+)", "PMP", "NCLEX", "MCAT", "16 total"],
+      "primaryStrength": "AI coaching + adaptive spaced repetition across 16 certification exams on a bank reported at 51,000-54,000 questions. AI-generated explanations, study plans, progress tracking. Free tier to start. Covers CISSP and AWS — #2 and #3 in CipherExam's exam priority order and both still 'coming soon' for us.",
+      "knownWeakness": "UNVERIFIED. We have not signed up or inspected a single question. Unknown whether their AI explanation is metacognitive or merely fluent, whether anything is classified by cognitive level, and whether 'adaptive' means more than spaced repetition on missed items. Bank size claims are self-reported and inconsistent across surfaces (51,000 vs 54,000).",
       "threat": "high",
-      "addedAt": "2026-05-11"
+      "threatNote": "Closest structural analogue to CipherExam that has ever appeared in this file — same audience, same certifications, same claimed mechanism. Do NOT write copy against them from assumptions; we just got burned doing exactly that with Pocket Prep's explanations. A candidate who wants one platform across several certifications can get one from them today and cannot from us.",
+      "exploitableAngles": [
+        "Hold until verified. The required next step is a hands-on pass, not a positioning exercise."
+      ],
+      "openQuestions": [
+        "What does one of their AI explanations actually say on a PMP scenario question? Depth, structure, does it address reasoning or restate the answer?",
+        "Is there any cognitive-level classification underneath, or is 'adaptive' just spaced repetition on missed items?",
+        "Pricing tiers and free-tier limits — not published in search results.",
+        "Do they handle CompTIA performance-based questions, or MCQ only?"
+      ],
+      "addedAt": "2026-08-01",
+      "lastVerifiedAt": "2026-08-01",
+      "source": "Monthly automated intel refresh 2026-08-01 — surfaced via web search for AI-native cert prep entrants. Site returned 403 to automated fetch; details from search-result summaries only."
+    },
+    {
+      "id": "ai-tutor-app-cohort",
+      "name": "AI-tutor app cohort (FlashGenius, 'PMP Exam Prep 2026: AI Tutor', et al.)",
+      "category": "AI-wrapper flashcard/simulation apps",
+      "url": "https://flashgenius.net",
+      "exams": ["PMP", "CISSP", "AWS", "Security+", "CCNA"],
+      "primaryStrength": "AI flashcards, exam simulations, personalized learning paths, named AI mentor characters. One markets a study mentor that analyzes performance and directs study, claiming 2,000+ PMP questions updated for the 2026 format and top-app positioning in AI-powered PMP practice.",
+      "knownWeakness": "Individually thinner than CipherExam — flashcard-and-simulation layers with a conversational wrapper, mostly single-cert or shallow-multi-cert, no evidence of a classification pipeline or per-user pattern tracking underneath.",
+      "threat": "high (message) / medium (product)",
+      "threatNote": "The damage is linguistic, not competitive. Collectively this cohort is commoditizing 'AI-powered certification prep' faster than any one of them could take a customer. That phrase can no longer carry our headline. Fight the phrase, not the products.",
+      "exploitableAngles": [
+        "Move the lead claim off 'AI-powered' and onto verifiable mechanisms: Bloom's cognitive-level classification, per-user thinking-traps tracking, native PBQ support on the CompTIA family.",
+        "Depth over wrapper — a named AI mentor character is a UI choice, not a pedagogy. Our Exam Lens is a per-exam framework tied to the actual standard the exam tests against."
+      ],
+      "addedAt": "2026-08-01",
+      "lastVerifiedAt": "2026-08-01",
+      "source": "Monthly automated intel refresh 2026-08-01 — web search. Detail is thin; treat as a cohort signal rather than a profiled competitor."
     },
     {
       "id": "kaplan-it",

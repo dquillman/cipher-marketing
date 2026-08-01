@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "claude-hold-lift",
-    "lastUpdatedAt": "2026-07-16T00:00:00.000Z",
+    "lastUpdatedBy": "cipher-competitor-intel-refresh",
+    "lastUpdatedAt": "2026-08-01T14:17:26.178Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -547,6 +547,10 @@
     {
       "date": "2026-05-26",
       "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
+    },
+    {
+      "date": "2026-08-01",
+      "entry": "Competitor intel refreshed (monthly automated run). Two material findings. (1) STALE PREMISE CORRECTED: Pocket Prep ships detailed expert-written explanations with textbook references — our file claimed they had none. Any copy asserting competitors don't explain answers is factually false; the surviving wedge is DIAGNOSIS (per-user thinking-traps + Bloom's classification), not the existence of explanations. (2) 'No AI layer' is dead as a category assumption — added Mindirus (AI coaching + spaced repetition, 16 exams incl. CISSP and AWS, 51k+ questions) and an AI-tutor app cohort (FlashGenius, 'PMP Exam Prep 2026: AI Tutor'). 'AI-powered' is now the category description, not our differentiator. All three reports regenerated to site/data/competitor-intel/*.md. BLOCKED: Firestore push failed — firestore.rules now requires a marketingAdmin claim (commit e7f3f4b, 2026-07-29), so both the API-key REST path and firebase-admin ADC return PERMISSION_DENIED. competitor_intel/* docs and campaign/competitors are NOT updated in Firestore; the dashboard still shows last month's reports. Needs a service-account key (GOOGLE_APPLICATION_CREDENTIALS) with Cloud Datastore User, then: node scripts/write-competitor-intel.mjs && node scripts/push-competitors-doc.mjs"
     }
   ],
   "boardPriorities": {
