@@ -997,6 +997,16 @@ details[open] summary::before { transform: rotate(90deg); }
   flex:1; min-width:240px; background:var(--surface); color:#e6e8ee;
   border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:0.86rem;
 }
+#publish-next .pn-steps { margin:16px 0 0; padding-left:22px; display:grid; gap:10px; }
+#publish-next .pn-steps li { font-size:0.88rem; color:var(--fg); }
+#publish-next .pn-steps li span.pn-step-text { margin-right:10px; }
+#publish-next .pn-steps li input[type=url] {
+  display:block; margin-top:6px; width:100%; max-width:460px;
+  background:var(--surface); color:#e6e8ee; border:1px solid var(--border);
+  border-radius:8px; padding:8px 12px; font-size:0.84rem;
+}
+#publish-next .pn-steps li button { margin-top:4px; }
+
 #publish-next .pn-err { color:#fca5a5; font-size:0.82rem; min-height:1.1em; margin-top:6px; }
 
 /* ---- Grade color scale: A = gold, B = green, C = yellow, D = red ---- */
@@ -1509,9 +1519,9 @@ details[open] summary::before { transform: rotate(90deg); }
 
     // Publish kit: copies the copy, downloads the MP4, opens the composer.
     // Only offered once a post is approved (status scheduled) and not live yet.
-    var publishKitBtn = (p.status === 'scheduled' && !p.postUrl)
-      ? '<button class="btn-publish-kit" type="button" data-publish-kit="' + esc(p.id) + '">Publish kit</button>'
-      : '';
+    // Publishing is driven from the "Publish next" panel, which walks the
+    // steps explicitly. Cards keep Copy post / Download video only.
+    var publishKitBtn = '';
 
     var videoBtn = '';
     if (p.videoStatus === 'ready' && p.videoUrl) {
@@ -2852,7 +2862,7 @@ function cipherStaleVideoPosts() {
   // Publish kit — prepares everything for a manual post. It never publishes:
   // the composer opens with the copy on the clipboard and the MP4 downloaded,
   // and the actual posting stays a human action.
-  async function publishKit(postId) {
+  async function openComposer(postId) {
     var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
     var p = posts.find(function (x) { return x.id === postId; });
     if (!p) return;
@@ -2908,10 +2918,10 @@ function cipherStaleVideoPosts() {
   }
 
   document.addEventListener('click', function (e) {
-    var kit = e.target.closest && e.target.closest('[data-publish-kit]');
+    var kit = e.target.closest && e.target.closest('[data-open-composer]');
     if (kit) {
       e.preventDefault();
-      publishKit(kit.getAttribute('data-publish-kit'));
+      openComposer(kit.getAttribute('data-open-composer'));
       return;
     }
     var regen = e.target.closest && e.target.closest('[data-regen-stale]');
@@ -3092,6 +3102,8 @@ function cipherNextToPublish() {
       return;
     }
 
+    var isX = (p.channel || '') === 'x';
+
     var videoBlock = p.videoUrl
       // #t=0.5 makes the browser seek and paint a real frame instead of
       // showing a black rectangle until play is pressed.
@@ -3116,12 +3128,20 @@ function cipherNextToPublish() {
           '<div class="pn-label">Media</div>' + videoBlock +
         '</div>' +
       '</div>' +
-      '<div class="pn-actions">' +
-        '<button class="copy-post-btn" type="button" data-copy-id="' + cipherEsc(p.id) + '">Copy post</button>' +
-        '<button class="btn-publish-kit" type="button" data-publish-kit="' + cipherEsc(p.id) + '">Publish kit</button>' +
-        '<input type="url" id="pn-url" placeholder="Paste the live post URL after publishing" />' +
-        '<button class="btn-approve" type="button" data-mark-posted="' + cipherEsc(p.id) + '">Mark posted</button>' +
-      '</div>' +
+      '<ol class="pn-steps">' +
+        '<li><span class="pn-step-text">Copy the post text</span>' +
+          '<button class="copy-post-btn" type="button" data-copy-id="' + cipherEsc(p.id) + '">Copy text</button></li>' +
+        (p.videoUrl
+          ? '<li><span class="pn-step-text">Save the video to your computer</span>' +
+            '<button class="btn-secondary" type="button" data-video-download="' + cipherEsc(p.id) + '">Download video</button></li>'
+          : '') +
+        '<li><span class="pn-step-text">Open ' + (isX ? 'X' : 'LinkedIn') + ' and clear anything already in the box</span>' +
+          '<button class="btn-publish-kit" type="button" data-open-composer="' + cipherEsc(p.id) + '">Open ' + (isX ? 'X' : 'LinkedIn') + '</button></li>' +
+        '<li><span class="pn-step-text">Paste the text' + (p.videoUrl ? ', attach the video' : '') + ', then press Post there</span></li>' +
+        '<li><span class="pn-step-text">Bring the live link back here</span>' +
+          '<input type="url" id="pn-url" placeholder="https://www.linkedin.com/feed/update/..." />' +
+          '<button class="btn-approve" type="button" data-mark-posted="' + cipherEsc(p.id) + '">Mark posted</button></li>' +
+      '</ol>' +
       '<div class="pn-err" id="pn-err"></div>';
   }
 
