@@ -28,6 +28,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getDb, credentialHelp } from "./lib/firestore-access.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DATA = join(HERE, "../site/data");
@@ -101,30 +102,15 @@ function fromFirestoreFields(fields) {
 // ---- REST ops ----
 
 async function getDoc(collection, docId) {
-  const url = `${BASE_URL}/${collection}/${docId}?key=${API_KEY}`;
-  const res = await fetch(url);
-  if (res.status === 404) return null;
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Firestore GET ${collection}/${docId} → ${res.status}: ${err}`);
-  }
-  const json = await res.json();
-  return fromFirestoreFields(json.fields || {});
+  const db = await getDb();
+  const snap = await db.collection(collection).doc(docId).get();
+  return snap.exists ? snap.data() : null;
 }
 
 async function upsert(collection, docId, data) {
-  const url = `${BASE_URL}/${collection}/${docId}?key=${API_KEY}`;
-  const body = JSON.stringify(toFirestoreDoc(data));
-  const res = await fetch(url, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body,
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Firestore PATCH ${collection}/${docId} → ${res.status}: ${err}`);
-  }
-  return res.json();
+  const db = await getDb();
+  await db.collection(collection).doc(docId).set(data);
+  return { ok: true };
 }
 
 // ---- Merge logic ----
@@ -284,8 +270,14 @@ async function runSeed() {
 
 // ---- Entrypoint ----
 
-if (PULL_ONLY) {
-  await runPull();
-} else {
-  await runSeed();
+try {
+  if (PULL_ONLY) await runPull();
+  else await runSeed();
+} catch (err) {
+  if (/credential|PERMISSION_DENIED|UNAUTHENTICATED|project/i.test(err.message)) {
+    console.error(credentialHelp());
+  }
+  console.error(`  error: ${err.message}
+`);
+  process.exitCode = 1;
 }

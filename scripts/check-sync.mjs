@@ -17,13 +17,10 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getDb, credentialHelp } from "./lib/firestore-access.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const LOCAL = join(HERE, "../site/data/posts.json");
-
-const API_KEY = "AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts";
-const PROJECT = "cipher-marketing-daveq";
-const URL = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/campaign/posts?key=${API_KEY}`;
 
 // Fields the dashboard/Cloud Function own — local is expected to lag on these,
 // so they are reported as informational rather than as drift to fix.
@@ -51,28 +48,25 @@ function fromFields(fields) {
 }
 
 const local = JSON.parse(readFileSync(LOCAL, "utf8"));
-const res = await fetch(URL);
-if (res.status === 403) {
-  // firestore.rules requires request.auth.token.marketingAdmin — the
-  // unauthenticated REST path stopped working when the dashboard was locked
-  // down. seed-firestore.mjs still assumes open rules and will fail the same
-  // way on --pull / grade-preserving seeds.
-  console.error([
-    "",
-    "Firestore denied the read (HTTP 403).",
-    "campaign/* now requires an authenticated marketingAdmin, so the",
-    "unauthenticated REST path used here (and by seed-firestore.mjs) no",
-    "longer works. To compare, either:",
-    "  · run this with a service-account credential for cipher-marketing-daveq, or",
-    "  · read live state from the signed-in dashboard (window.__POSTS__).",
-    "",
-  ].join("\n"));
+
+let remote;
+try {
+  const db = await getDb();
+  const snap = await db.collection("campaign").doc("posts").get();
+  if (!snap.exists) {
+    console.error("campaign/posts does not exist in Firestore.");
+    process.exitCode = 2;
+  }
+  remote = snap.data() || {};
+  console.log(`  (read via ${db.__via})`);
+} catch (err) {
+  console.error(credentialHelp());
+  console.error(`  underlying error: ${err.message}
+`);
   process.exitCode = 2;
-} else if (!res.ok) {
-  console.error(`Firestore read failed: HTTP ${res.status}`);
-  process.exitCode = 2;
-} else {
-const remote = fromFields((await res.json()).fields || {});
+}
+
+if (remote) {
 
 const localPosts = local.posts || [];
 const remotePosts = remote.posts || [];
