@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 // Seeds Firestore with the current local posts.json + campaign-state.json.
-// Uses the Firestore REST API — no service account required (rules are open).
+// Uses the Firestore REST API.
+//
+// ⚠ STALE ASSUMPTION FIXED 2026-08-01: this said "no service account required
+// (rules are open)". firestore.rules now requires an authenticated
+// marketingAdmin for campaign/*, so unauthenticated REST reads and writes
+// return HTTP 403 — every mode below (including --pull and the
+// grade-preserving merge) needs a credential. Run with a service account for
+// cipher-marketing-daveq, or make changes through the signed-in dashboard.
 //
 // IMPORTANT: For campaign/posts this script MERGES grade fields from the live
 // Firestore doc into the local data before pushing, so seeding to update

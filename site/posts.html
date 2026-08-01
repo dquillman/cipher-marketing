@@ -964,6 +964,19 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 #stale-video-bar.show { display: flex; }
 
+.fmt-line {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin-top: 8px; font-size: 0.78rem; color: var(--dim);
+}
+.fmt-line .fmt-key { text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; opacity: 0.7; }
+.fmt-line .fmt-sep { opacity: 0.35; }
+.fmt-line .fmt-dim { opacity: 0.6; }
+.fmt-line .fmt-pin { color: #7ad6ff; font-weight: 700; }
+.fmt-select {
+  background: var(--surface); color: #e6e8ee; border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; margin-left: auto; cursor: pointer;
+}
+
 /* ---- Grade color scale: A = gold, B = green, C = yellow, D = red ---- */
 .post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
 .post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
@@ -1224,6 +1237,10 @@ details[open] summary::before { transform: rotate(90deg); }
   <p style="color:var(--dim);font-size:0.92rem;">Brad drafts here. After you publish, paste the metrics into Claude — the <code>post-performance-grader</code> subagent grades each post and updates this view. State lives in <code>data/posts.json</code>.</p>
 
   <div class="scorecard-summary" id="posts-summary">Loading…</div>
+
+  <h2>Video format performance</h2>
+  <p style="color:var(--dim);font-size:0.92rem;">Which visual format each rendered video used, and how those posts graded. Formats rotate weekly; pin one per post from its card below.</p>
+  <div id="format-performance" class="card"><div class="trend-scout-empty">Loading…</div></div>
 
   <h2>Drafts by week</h2>
   <p style="color:var(--dim);font-size:0.88rem;margin-top:-6px;">Open one week, then open only the post you want to review. Weeks are ordered by publishing date.</p>
@@ -1509,6 +1526,7 @@ details[open] summary::before { transform: rotate(90deg); }
           gradeBtn +
         '</div>' +
         videoEmbed +
+        cipherFormatLine(p) +
         fields +
         metrics +
         gradeBlock +
@@ -2855,6 +2873,132 @@ function cipherStaleVideoPosts() {
       return;
     }
   });
+})();
+
+function cipherEsc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ---- Format preview + format-performance panel -----------------------------
+// The visual format rotates by the post's scheduled ISO week. That maths is
+// small and stable, so it is duplicated here to preview the format BEFORE
+// spending ~60s on a render. Chip classification is NOT duplicated — it reads
+// the post's hook and would be a fourth copy to keep in sync, so the chip is
+// shown only after a render, from the recorded videoChipUsed.
+var CIPHER_FORMAT_IDS = ['signal', 'blueprint', 'amber', 'split', 'spotlight'];
+
+function cipherIsoWeekIndex(dateStr) {
+  if (!dateStr) return 0;
+  var parts = String(dateStr).slice(0, 10).split('-').map(Number);
+  if (parts.length < 3 || parts.some(function (n) { return isNaN(n); })) return 0;
+  var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+  var day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  var week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return d.getUTCFullYear() * 53 + week;
+}
+
+function cipherFormatFor(post) {
+  if (post && post.videoTheme) return post.videoTheme;
+  return CIPHER_FORMAT_IDS[cipherIsoWeekIndex(post && post.scheduled) % CIPHER_FORMAT_IDS.length];
+}
+
+// Small line under the action row: what this post will look like, and what it
+// actually used once rendered.
+function cipherFormatLine(p) {
+  var planned = cipherFormatFor(p);
+  var bits = ['<span class="fmt-key">Format</span> ' + cipherEsc(planned) +
+              (p.videoTheme ? ' <span class="fmt-pin">pinned</span>' : ' <span class="fmt-dim">(week)</span>')];
+  if (p.videoChipUsed) {
+    bits.push('<span class="fmt-key">Chip</span> ' +
+      (p.videoChipUsed === 'none' ? '<span class="fmt-dim">none</span>' : cipherEsc(p.videoChipUsed)));
+  }
+  if (p.videoAspect) bits.push('<span class="fmt-key">Aspect</span> ' + cipherEsc(p.videoAspect));
+  var select = '<select class="fmt-select" data-pin-format="' + cipherEsc(p.id) + '" title="Pin a format for this post">' +
+    '<option value="">auto (by week)</option>' +
+    CIPHER_FORMAT_IDS.map(function (id) {
+      return '<option value="' + id + '"' + (p.videoTheme === id ? ' selected' : '') + '>' + id + '</option>';
+    }).join('') + '</select>';
+  return '<div class="fmt-line">' + bits.join('<span class="fmt-sep">·</span>') + select + '</div>';
+}
+
+(function () {
+  // Pin/unpin a format for one post. Transactional for the same reason every
+  // other post write is: they all share one document.
+  document.addEventListener('change', async function (e) {
+    var sel = e.target.closest && e.target.closest('[data-pin-format]');
+    if (!sel) return;
+    var postId = sel.getAttribute('data-pin-format');
+    var value = sel.value;
+    var db = window._cipherDb;
+    if (!db) return;
+    var docRef = db.collection('campaign').doc('posts');
+    try {
+      await db.runTransaction(async function (tx) {
+        var snap = await tx.get(docRef);
+        var data = snap.data() || {};
+        var idx = (data.posts || []).findIndex(function (p) { return p.id === postId; });
+        if (idx === -1) throw new Error('Post not found');
+        if (value) data.posts[idx].videoTheme = value;
+        else delete data.posts[idx].videoTheme;
+        data._meta = data._meta || {};
+        data._meta.lastUpdatedAt = new Date().toISOString();
+        data._meta.lastUpdatedBy = 'dashboard pin-format';
+        tx.set(docRef, data);
+      });
+      if (typeof cipherToast === 'function') {
+        cipherToast(value ? ('Format pinned to ' + value + ' — regenerate to apply.')
+                          : 'Format back to the weekly rotation — regenerate to apply.');
+      }
+    } catch (err) {
+      if (typeof cipherToast === 'function') cipherToast('Could not pin format: ' + (err.message || 'error'), true);
+    }
+  });
+
+  // Which format/chip actually earns engagement. Write-only data is useless,
+  // so this is the read side of videoThemeUsed / videoChipUsed. Honest empty
+  // state: with nothing graded yet it says so rather than implying a signal.
+  function gradeNum(g) { return ({ A: 4, B: 3, C: 2, D: 1 })[g] || 0; }
+
+  function renderFormatPerformance() {
+    var host = document.getElementById('format-performance');
+    if (!host) return;
+    var posts = ((window.__POSTS__ && window.__POSTS__.posts) || []).filter(function (p) { return p.videoThemeUsed; });
+    if (!posts.length) {
+      host.innerHTML = '<div class="trend-scout-empty">No videos rendered yet.</div>';
+      return;
+    }
+    var graded = posts.filter(function (p) { return p.grade; });
+    var groups = {};
+    posts.forEach(function (p) {
+      var k = p.videoThemeUsed;
+      groups[k] = groups[k] || { rendered: 0, graded: 0, gradeSum: 0 };
+      groups[k].rendered++;
+      if (p.grade) { groups[k].graded++; groups[k].gradeSum += gradeNum(p.grade); }
+    });
+    var rows = Object.keys(groups).sort().map(function (k) {
+      var g = groups[k];
+      var avg = g.graded ? (g.gradeSum / g.graded).toFixed(2) : '—';
+      return '<tr><td>' + cipherEsc(k) + '</td><td>' + g.rendered + '</td><td>' + g.graded + '</td><td>' + avg + '</td></tr>';
+    }).join('');
+    var note = graded.length
+      ? ''
+      : '<p class="fmt-dim" style="margin:8px 0 0;font-size:0.85rem;">Nothing graded yet — rendered counts only. Averages appear once posts are published and graded.</p>';
+    host.innerHTML = '<table class="metrics-table"><thead><tr>' +
+      '<th style="text-align:left;">Format</th><th style="text-align:left;">Rendered</th>' +
+      '<th style="text-align:left;">Graded</th><th style="text-align:left;">Avg grade</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>' + note;
+  }
+
+  document.addEventListener('cipher:posts-updated', renderFormatPerformance);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderFormatPerformance);
+  } else {
+    renderFormatPerformance();
+  }
 })();
 
 // ---- Generate Video modal --------------------------------------------------

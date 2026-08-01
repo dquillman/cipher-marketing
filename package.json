@@ -19,7 +19,9 @@
     "render:exam": "node scripts/render-exam.mjs",
     "videos:install": "cd videos && npm install",
     "videos:render:all": "cd videos && npm run render:all",
-    "videos:studio": "cd videos && npm run studio"
+    "videos:studio": "cd videos && npm run studio",
+    "verify:video": "node scripts/verify-video.mjs",
+    "check:sync": "node scripts/check-sync.mjs"
   },
   "repository": {
     "type": "git",

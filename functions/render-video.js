@@ -33,7 +33,9 @@ import { VIDEO_TEMPLATE_VERSION } from "./remotion/templateVersion.js";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GMAIL_APP_PASSWORD = defineSecret("GMAIL_APP_PASSWORD");
 const NOTIFY_EMAIL = "dquillman2112@gmail.com";
-const COMPOSITION_ID = "post-video";
+// LinkedIn recommends 4:5 (more feed height); X and the rest take 1:1.
+const COMPOSITION_1X1 = "post-video";
+const COMPOSITION_4X5 = "post-video-4x5";
 
 // One-time (per instance) bucket CORS setup so the dashboard can fetch
 // rendered MP4s as blobs for the Download button — the default bucket ships
@@ -192,9 +194,11 @@ export const renderPostVideo = onDocumentCreated(
 
       await ensureBrowser();
       const serveUrl = await getBundleLocation();
+      const compositionId =
+        (post.channel || "") === "linkedin" ? COMPOSITION_4X5 : COMPOSITION_1X1;
       const composition = await selectComposition({
         serveUrl,
-        id: COMPOSITION_ID,
+        id: compositionId,
         inputProps,
       });
 
@@ -241,6 +245,8 @@ export const renderPostVideo = onDocumentCreated(
         videoStatus: "ready",
         renderedAt,
         videoThemeUsed: chosenTheme.id,
+        videoChipUsed: chip ? chip.value : "none",
+        videoAspect: compositionId === COMPOSITION_4X5 ? "4:5" : "1:1",
         videoTemplateVersion: VIDEO_TEMPLATE_VERSION,
       });
       await jobRef.set(
