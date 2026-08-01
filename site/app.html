@@ -6926,8 +6926,26 @@ function cipherStaleVideoPosts() {
     if (!p) return;
     var isX = (p.channel || '') === 'x';
 
-    // Opened first and synchronously — a window.open after an await is
-    // treated as an unrequested popup and gets blocked.
+    // LinkedIn restores your last unsent draft when the share box opens, so
+    // the composer can come up holding OLD media and no copy — which looks
+    // exactly like this tool posted the wrong thing (Dave hit this 2026-08-01).
+    // Confirm before opening so an existing draft is never mistaken for ours.
+    if (!isX) {
+      var ok = window.confirm(
+        'Opening the LinkedIn composer.
+
+' +
+        'LinkedIn may restore an earlier unsent draft — if the box already has ' +
+        'text or a video in it, that is LinkedIn's old draft, NOT this post. ' +
+        'Discard it before pasting.
+
+Continue?'
+      );
+      if (!ok) return;
+    }
+
+    // Opened synchronously — a window.open after an await is treated as an
+    // unrequested popup and gets blocked.
     var composer = isX
       ? 'https://x.com/compose/post?text=' + encodeURIComponent(p.copy || '')
       : 'https://www.linkedin.com/feed/?shareActive=true';
@@ -6957,7 +6975,8 @@ function cipherStaleVideoPosts() {
     }
 
     if (typeof cipherToast === 'function') {
-      cipherToast(steps.join(' · ') + '. Paste in the composer, then Mark Posted with the live URL.');
+      cipherToast(steps.join(' · ') +
+        '. Clear any restored LinkedIn draft first, then paste + attach ' + (p.id) + '.mp4.');
     }
   }
 
