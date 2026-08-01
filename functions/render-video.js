@@ -28,6 +28,7 @@ import { fileURLToPath } from "node:url";
 import { lookupExamSitFee } from "./remotion/examPricing.js";
 import { pickTheme } from "./remotion/videoThemes.js";
 import { pickChip } from "./remotion/postChip.js";
+import { VIDEO_TEMPLATE_VERSION } from "./remotion/templateVersion.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GMAIL_APP_PASSWORD = defineSecret("GMAIL_APP_PASSWORD");
@@ -240,6 +241,7 @@ export const renderPostVideo = onDocumentCreated(
         videoStatus: "ready",
         renderedAt,
         videoThemeUsed: chosenTheme.id,
+        videoTemplateVersion: VIDEO_TEMPLATE_VERSION,
       });
       await jobRef.set(
         { status: "ready", stage: "done", progress: 100, videoUrl, completedAt: renderedAt },

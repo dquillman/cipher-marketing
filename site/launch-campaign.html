@@ -785,6 +785,25 @@ details[open] summary::before { transform: rotate(90deg); }
 #cipher-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #cipher-toast.err { border-color: rgba(248,113,113,0.6); }
 
+.btn-publish-kit {
+  background: rgba(125,211,252,0.16); color: #7dd3fc;
+  border: 1px solid rgba(125,211,252,0.5); border-radius: 8px;
+  padding: 9px 16px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 700; font-size: 0.86rem; cursor: pointer;
+}
+.btn-publish-kit:hover { background: rgba(125,211,252,0.28); }
+.video-stale-badge {
+  display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 100px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  background: rgba(251,191,36,0.16); color: #fbbf24; border: 1px solid rgba(251,191,36,0.45);
+}
+#stale-video-bar {
+  display: none; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 0.9rem; color: #fbbf24;
+}
+#stale-video-bar.show { display: flex; }
+
 /* ---- Grade color scale: A = gold, B = green, C = yellow, D = red ---- */
 .post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
 .post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
@@ -2006,6 +2025,22 @@ details[open] summary::before { transform: rotate(90deg); }
       approveBtn = '<button class="btn-secondary" type="button" data-unapprove-post="' + esc(p.id) + '">Unapprove</button>';
     }
 
+
+    // Videos are frozen files: a template change never retro-applies, so a
+    // video rendered before the newest template still shows the old look.
+    // cipherCurrentTemplateVersion() is the highest version seen across all
+    // posts, so no constant needs syncing between here and the function.
+    var staleBadge = '';
+    if (p.videoUrl && Number(p.videoTemplateVersion || 0) < cipherCurrentTemplateVersion()) {
+      staleBadge = '<span class="video-stale-badge" title="Rendered with an older template - regenerate to pick up the current look">outdated</span>';
+    }
+
+    // Publish kit: copies the copy, downloads the MP4, opens the composer.
+    // Only offered once a post is approved (status scheduled) and not live yet.
+    var publishKitBtn = (p.status === 'scheduled' && !p.postUrl)
+      ? '<button class="btn-publish-kit" type="button" data-publish-kit="' + esc(p.id) + '">Publish kit</button>'
+      : '';
+
     var videoBtn = '';
     if (p.videoStatus === 'ready' && p.videoUrl) {
       videoBtn = '<button class="btn-secondary" type="button" data-video-open="' + esc(p.id) + '">▶ Preview video</button>' +
@@ -2026,7 +2061,7 @@ details[open] summary::before { transform: rotate(90deg); }
       '<div class="post-head">' +
         '<span class="post-pill channel-' + esc(p.channel || 'other') + '">' + esc(channelLabel) + '</span>' +
         (p.examFocus ? '<span class="post-pill exam">' + esc(p.examFocus) + '</span>' : '') +
-        '<span class="post-pill">' + esc(p.status || 'draft') + '</span>' +
+        '<span class="post-pill">' + esc(p.status || 'draft') + '</span>' + staleBadge +
         gradePill +
         '<span class="post-meta">' + esc(p.scheduled || '') + '</span>' +
         '<span class="post-toggle">›</span>' +
@@ -2040,6 +2075,7 @@ details[open] summary::before { transform: rotate(90deg); }
           '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
           reviseBtn +
           approveBtn +
+          publishKitBtn +
           videoBtn +
           gradeBtn +
         '</div>' +
@@ -4906,6 +4942,171 @@ if (document.readyState === 'loading') {
       return;
     }
   });
+
+// ---- Video template freshness + publish kit --------------------------------
+// A rendered MP4 is a frozen file: changing the template never updates videos
+// that already exist. Rather than sync a version constant into three HTML
+// files, "current" is simply the highest videoTemplateVersion seen across all
+// posts — so the first regenerate after a template change lights up the rest.
+function cipherCurrentTemplateVersion() {
+  var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+  return posts.reduce(function (max, p) {
+    var v = Number(p.videoTemplateVersion || 0);
+    return v > max ? v : max;
+  }, 0);
+}
+
+function cipherStaleVideoPosts() {
+  var current = cipherCurrentTemplateVersion();
+  if (!current) return [];
+  return ((window.__POSTS__ && window.__POSTS__.posts) || []).filter(function (p) {
+    return p.videoUrl && Number(p.videoTemplateVersion || 0) < current;
+  });
+}
+
+(function () {
+  function ensureStaleBar() {
+    var bar = document.getElementById('stale-video-bar');
+    if (bar) return bar;
+    bar = document.createElement('div');
+    bar.id = 'stale-video-bar';
+    bar.innerHTML = '<span id="stale-video-text"></span>' +
+      '<button class="btn-warn" type="button" data-regen-stale>Regenerate outdated videos</button>';
+    var host = document.querySelector('h1');
+    if (host && host.parentNode) host.parentNode.insertBefore(bar, host.nextSibling);
+    else document.body.insertBefore(bar, document.body.firstChild);
+    return bar;
+  }
+
+  function refreshStaleBar() {
+    var stale = cipherStaleVideoPosts();
+    var bar = ensureStaleBar();
+    var txt = document.getElementById('stale-video-text');
+    if (!stale.length) { bar.classList.remove('show'); return; }
+    if (txt) {
+      txt.textContent = stale.length + ' video' + (stale.length === 1 ? '' : 's') +
+        ' rendered with an older template. Regenerate to pick up the current look.';
+    }
+    bar.classList.add('show');
+  }
+
+  document.addEventListener('cipher:posts-updated', refreshStaleBar);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', refreshStaleBar);
+  } else {
+    refreshStaleBar();
+  }
+
+  // Queue renders for a set of posts. Transactional: all posts live in one
+  // document, so a plain read-modify-write would clobber siblings mid-render.
+  async function queueRender(postIds) {
+    var db = window._cipherDb;
+    if (!db) throw new Error('Live campaign data is unavailable.');
+    var uid = (window._cipherAuth && window._cipherAuth.currentUser && window._cipherAuth.currentUser.uid) || null;
+    var docRef = db.collection('campaign').doc('posts');
+    var jobs = [];
+    await db.runTransaction(async function (tx) {
+      var snap = await tx.get(docRef);
+      var data = snap.data() || {};
+      jobs = [];
+      postIds.forEach(function (id) {
+        var idx = (data.posts || []).findIndex(function (p) { return p.id === id; });
+        if (idx === -1) return;
+        var jobRef = db.collection('videoRenderQueue').doc();
+        data.posts[idx].videoStatus = 'queued';
+        data.posts[idx].videoJobId = jobRef.id;
+        jobs.push({ id: id, ref: jobRef });
+      });
+      data._meta = data._meta || {};
+      data._meta.lastUpdatedAt = new Date().toISOString();
+      data._meta.lastUpdatedBy = 'dashboard regenerate-video';
+      tx.set(docRef, data);
+    });
+    for (var i = 0; i < jobs.length; i++) {
+      await jobs[i].ref.set({
+        postId: jobs[i].id,
+        status: 'queued',
+        requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        requestedBy: uid,
+      });
+    }
+    return jobs.length;
+  }
+
+  // Publish kit — prepares everything for a manual post. It never publishes:
+  // the composer opens with the copy on the clipboard and the MP4 downloaded,
+  // and the actual posting stays a human action.
+  async function publishKit(postId) {
+    var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+    var p = posts.find(function (x) { return x.id === postId; });
+    if (!p) return;
+    var isX = (p.channel || '') === 'x';
+
+    // Opened first and synchronously — a window.open after an await is
+    // treated as an unrequested popup and gets blocked.
+    var composer = isX
+      ? 'https://x.com/compose/post?text=' + encodeURIComponent(p.copy || '')
+      : 'https://www.linkedin.com/feed/?shareActive=true';
+    window.open(composer, '_blank', 'noopener');
+
+    var steps = [];
+    try {
+      await navigator.clipboard.writeText(p.copy || '');
+      steps.push('copy on clipboard');
+    } catch (e) {
+      steps.push('could not copy — use Copy post');
+    }
+
+    if (p.videoUrl) {
+      try {
+        var resp = await fetch(p.videoUrl);
+        var blob = await resp.blob();
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = p.id + '.mp4';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 10000);
+        steps.push('video downloaded');
+      } catch (e) {
+        steps.push('video download failed');
+      }
+    }
+
+    if (typeof cipherToast === 'function') {
+      cipherToast(steps.join(' · ') + '. Paste in the composer, then Mark Posted with the live URL.');
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var kit = e.target.closest && e.target.closest('[data-publish-kit]');
+    if (kit) {
+      e.preventDefault();
+      publishKit(kit.getAttribute('data-publish-kit'));
+      return;
+    }
+    var regen = e.target.closest && e.target.closest('[data-regen-stale]');
+    if (regen) {
+      e.preventDefault();
+      var stale = cipherStaleVideoPosts();
+      if (!stale.length) return;
+      if (!window.confirm('Regenerate ' + stale.length + ' outdated video' + (stale.length === 1 ? '' : 's') + '?')) return;
+      regen.disabled = true;
+      regen.textContent = 'Queueing…';
+      queueRender(stale.map(function (p) { return p.id; })).then(function (n) {
+        regen.disabled = false;
+        regen.textContent = 'Regenerate outdated videos';
+        if (typeof cipherToast === 'function') {
+          cipherToast('Queued ' + n + ' render' + (n === 1 ? '' : 's') + ' — they run one at a time.');
+        }
+      }).catch(function (err) {
+        regen.disabled = false;
+        regen.textContent = 'Regenerate outdated videos';
+        if (typeof cipherToast === 'function') cipherToast('Could not queue: ' + (err.message || 'unknown error'), true);
+      });
+      return;
+    }
+  });
+})();
 
 // ---- Generate Video modal --------------------------------------------------
 // "Generate Video" writes a job doc to `videoRenderQueue`; a Firestore-
