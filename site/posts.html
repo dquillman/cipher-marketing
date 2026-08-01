@@ -985,12 +985,13 @@ details[open] summary::before { transform: rotate(90deg); }
   font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;
   font-weight:700; color:var(--dim); margin-bottom:6px;
 }
-#publish-next .pn-copy {
-  white-space:pre-wrap; font-size:0.88rem; line-height:1.5; color:var(--fg);
+#publish-next textarea.pn-copy {
+  display:block; width:100%; font-size:0.88rem; line-height:1.5; color:var(--fg);
+  font-family:'General Sans', system-ui, sans-serif;
   background:var(--bg-elev, rgba(255,255,255,0.03)); border:1px solid var(--border);
-  border-radius:8px; padding:12px 14px; max-height:260px; overflow:auto;
-  user-select:text; -webkit-user-select:text; cursor:text;
+  border-radius:8px; padding:12px 14px; resize:vertical; cursor:text;
 }
+#publish-next textarea.pn-copy:focus { outline:2px solid var(--cyan, #7ad6ff); outline-offset:1px; }
 #publish-next .pn-copy:hover { border-color:var(--cyan, #7ad6ff); }
 #publish-next .pn-copy-hint { font-size:0.72rem; color:var(--dim); margin-top:4px; }
 #publish-next .pn-meta { font-size:0.72rem; color:var(--dim); margin-top:6px; }
@@ -3079,6 +3080,17 @@ function cipherFormatLine(p) {
     var text = post.copy || '';
     var ok = false;
 
+    // navigator.clipboard.writeText can RESOLVE without the text ever reaching
+    // the system clipboard — verified 2026-08-01 by writing a probe, getting a
+    // successful promise, and pasting nothing. So always leave the text
+    // selected: the user's own Ctrl+C needs no API and cannot silently fail.
+    var box = document.getElementById('pn-copy-box');
+    if (box && box.value === text) {
+      box.focus();
+      box.select();
+      try { box.setSelectionRange(0, text.length); } catch (e) {}
+    }
+
     // The async clipboard API refuses to write unless the document is focused,
     // which silently fails the moment another tab (the composer) takes focus.
     // execCommand on a temporary textarea has no such requirement, so it is
@@ -3107,9 +3119,15 @@ function cipherFormatLine(p) {
     if (ok) {
       btn.textContent = 'Copied';
       setTimeout(function () { btn.textContent = original; }, 1800);
-      if (typeof cipherToast === 'function') cipherToast('Post text copied - paste it into the composer.');
-    } else if (typeof cipherToast === 'function') {
-      cipherToast('Could not reach the clipboard - click the copy text above to select it, then Ctrl+C.', true);
+      if (typeof cipherToast === 'function') {
+        cipherToast('Copied. If it pastes empty, the text is already selected - press Ctrl+C.');
+      }
+    } else {
+      btn.textContent = 'Selected - press Ctrl+C';
+      setTimeout(function () { btn.textContent = original; }, 3000);
+      if (typeof cipherToast === 'function') {
+        cipherToast('Text is selected in the box - press Ctrl+C to copy it.', true);
+      }
     }
   });
 
@@ -3118,11 +3136,9 @@ function cipherFormatLine(p) {
   document.addEventListener('click', function (e) {
     var box = e.target.closest && e.target.closest('.pn-copy');
     if (!box) return;
-    var range = document.createRange();
-    range.selectNodeContents(box);
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    box.focus();
+    box.select();
+    try { box.setSelectionRange(0, (box.value || '').length); } catch (err) {}
   });
 
 // ---- Publish next -----------------------------------------------------------
@@ -3174,8 +3190,8 @@ function cipherNextToPublish() {
       '<div class="pn-grid">' +
         '<div>' +
           '<div class="pn-label">Copy to paste — compare this against the composer</div>' +
-          '<div class="pn-copy">' + cipherEsc(p.copy || '') + '</div>' +
-          '<div class="pn-copy-hint">Click the text to select all of it, then Ctrl+C.</div>' +
+          '<textarea class="pn-copy" id="pn-copy-box" readonly rows="9">' + cipherEsc(p.copy || '') + '</textarea>' +
+          '<div class="pn-copy-hint">Copy selects this text for you. If pasting comes up empty, click in the box and press Ctrl+C.</div>' +
         '</div>' +
         '<div>' +
           '<div class="pn-label">Media</div>' + videoBlock +
