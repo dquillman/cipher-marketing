@@ -21,7 +21,9 @@
     "videos:render:all": "cd videos && npm run render:all",
     "videos:studio": "cd videos && npm run studio",
     "verify:video": "node scripts/verify-video.mjs",
-    "check:sync": "node scripts/check-sync.mjs"
+    "check:sync": "node scripts/check-sync.mjs",
+    "check:js": "node scripts/check-html-js.mjs",
+    "predeploy:hosting": "node scripts/check-html-js.mjs"
   },
   "repository": {
     "type": "git",

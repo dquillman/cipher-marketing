@@ -886,6 +886,28 @@ details[open] summary::before { transform: rotate(90deg); }
   border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; margin-left: auto; cursor: pointer;
 }
 
+#publish-next { }
+#publish-next .pn-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+#publish-next .pn-grid { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:start; }
+@media (max-width:820px){ #publish-next .pn-grid { grid-template-columns:1fr; } }
+#publish-next .pn-label {
+  font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;
+  font-weight:700; color:var(--dim); margin-bottom:6px;
+}
+#publish-next .pn-copy {
+  white-space:pre-wrap; font-size:0.88rem; line-height:1.5; color:var(--fg);
+  background:var(--bg-elev, rgba(255,255,255,0.03)); border:1px solid var(--border);
+  border-radius:8px; padding:12px 14px; max-height:260px; overflow:auto;
+}
+#publish-next .pn-meta { font-size:0.72rem; color:var(--dim); margin-top:6px; }
+#publish-next .pn-meta code { font-size:0.72rem; }
+#publish-next .pn-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px; }
+#publish-next .pn-actions input[type=url] {
+  flex:1; min-width:240px; background:var(--surface); color:#e6e8ee;
+  border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:0.86rem;
+}
+#publish-next .pn-err { color:#fca5a5; font-size:0.82rem; min-height:1.1em; margin-top:6px; }
+
 /* ---- Grade color scale: A = gold, B = green, C = yellow, D = red ---- */
 .post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
 .post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
@@ -2686,6 +2708,10 @@ details.post-card > summary .post-head { margin-bottom: 0; }
 
   <div class="scorecard-summary" id="posts-summary">Loading…</div>
 
+  <h2>Publish next</h2>
+  <p style="color:var(--dim);font-size:0.92rem;">The next approved post, with its exact copy and video side by side. Compare these against the composer before posting — LinkedIn can restore an unrelated draft.</p>
+  <div id="publish-next" class="card"><div class="trend-scout-empty">Loading…</div></div>
+
   <h2>Video format performance</h2>
   <p style="color:var(--dim);font-size:0.92rem;">Which visual format each rendered video used, and how those posts graded. Formats rotate weekly; pin one per post from its card below.</p>
   <div id="format-performance" class="card"><div class="trend-scout-empty">Loading…</div></div>
@@ -2971,7 +2997,9 @@ details.post-card > summary .post-head { margin-bottom: 0; }
     // Inline player in the card once the video is ready — no modal needed
     // to watch the video the draft was made for.
     var videoEmbed = (p.videoStatus === 'ready' && p.videoUrl)
-      ? '<video controls preload="metadata" src="' + esc(p.videoUrl) + '" style="width:100%;max-width:420px;border-radius:10px;margin-top:10px;background:#000;display:block;"></video>'
+      // #t=0.5 makes the browser seek to and paint a real frame, so the card
+      // shows the video's opening instead of a black rectangle (Dave, 2026-08-01).
+      ? '<video controls preload="metadata" src="' + esc(p.videoUrl) + '#t=0.5" style="width:100%;max-width:420px;border-radius:10px;margin-top:10px;background:#000;display:block;"></video>'
       : '';
     var isGraded = !!p.grade;
     var summaryHead = '<summary>' +
@@ -6932,14 +6960,9 @@ function cipherStaleVideoPosts() {
     // Confirm before opening so an existing draft is never mistaken for ours.
     if (!isX) {
       var ok = window.confirm(
-        'Opening the LinkedIn composer.
-
-' +
-        'LinkedIn may restore an earlier unsent draft — if the box already has ' +
-        'text or a video in it, that is LinkedIn's old draft, NOT this post. ' +
-        'Discard it before pasting.
-
-Continue?'
+        'Opening the LinkedIn composer. LinkedIn may restore an earlier unsent ' +
+        'draft — if the box already has text or a video in it, that is ' +
+        'LinkedIn’s old draft, NOT this post. Discard it before pasting. Continue?'
       );
       if (!ok) return;
     }
@@ -7134,6 +7157,115 @@ function cipherFormatLine(p) {
   } else {
     renderFormatPerformance();
   }
+})();
+
+// ---- Publish next -----------------------------------------------------------
+// One surface answering "what do I post right now?", and the fix for the
+// near-miss on 2026-08-01 where LinkedIn restored an old draft and the
+// composer's contents could not be compared against the intended post.
+// Everything needed to publish — the exact copy, the exact video, the kit
+// button, and the live-URL field — sits together so the composer can always
+// be eyeball-matched against the source of truth before hitting Post.
+function cipherNextToPublish() {
+  var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+  var ready = posts.filter(function (p) { return p.status === 'scheduled' && !p.postUrl; });
+  ready.sort(function (a, b) { return String(a.scheduled || '').localeCompare(String(b.scheduled || '')); });
+  return ready[0] || null;
+}
+
+(function () {
+  function render() {
+    var host = document.getElementById('publish-next');
+    if (!host) return;
+    var p = cipherNextToPublish();
+
+    if (!p) {
+      var drafts = ((window.__POSTS__ && window.__POSTS__.posts) || [])
+        .filter(function (x) { return x.status === 'draft'; }).length;
+      host.innerHTML = '<div class="trend-scout-empty">' +
+        (drafts ? 'Nothing approved yet — hit Approve on a draft below to queue it here.'
+                : 'No drafts waiting.') + '</div>';
+      return;
+    }
+
+    var videoBlock = p.videoUrl
+      // #t=0.5 makes the browser seek and paint a real frame instead of
+      // showing a black rectangle until play is pressed.
+      ? '<video controls preload="metadata" src="' + cipherEsc(p.videoUrl) + '#t=0.5" ' +
+        'style="width:100%;max-width:300px;border-radius:10px;background:#000;display:block;"></video>' +
+        '<div class="pn-meta">' + cipherEsc(p.videoAspect || '1:1') + ' · ' +
+        cipherEsc(p.videoThemeUsed || '—') + ' · attach <code>' + cipherEsc(p.id) + '.mp4</code></div>'
+      : '<div class="trend-scout-empty" style="margin:0;">No video — Generate one below, or post copy only.</div>';
+
+    host.innerHTML =
+      '<div class="pn-head">' +
+        '<span class="post-pill channel-' + cipherEsc(p.channel || 'other') + '">' + cipherEsc(p.channel || '') + '</span>' +
+        (p.examFocus ? '<span class="post-pill exam">' + cipherEsc(p.examFocus) + '</span>' : '') +
+        '<span class="post-meta">' + cipherEsc(p.scheduled || '') + '</span>' +
+      '</div>' +
+      '<div class="pn-grid">' +
+        '<div>' +
+          '<div class="pn-label">Copy to paste — compare this against the composer</div>' +
+          '<div class="pn-copy">' + cipherEsc(p.copy || '') + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="pn-label">Media</div>' + videoBlock +
+        '</div>' +
+      '</div>' +
+      '<div class="pn-actions">' +
+        '<button class="copy-post-btn" type="button" data-copy-id="' + cipherEsc(p.id) + '">Copy post</button>' +
+        '<button class="btn-publish-kit" type="button" data-publish-kit="' + cipherEsc(p.id) + '">Publish kit</button>' +
+        '<input type="url" id="pn-url" placeholder="Paste the live post URL after publishing" />' +
+        '<button class="btn-approve" type="button" data-mark-posted="' + cipherEsc(p.id) + '">Mark posted</button>' +
+      '</div>' +
+      '<div class="pn-err" id="pn-err"></div>';
+  }
+
+  document.addEventListener('cipher:posts-updated', render);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+  else render();
+
+  document.addEventListener('click', async function (e) {
+    var btn = e.target.closest && e.target.closest('[data-mark-posted]');
+    if (!btn) return;
+    e.preventDefault();
+    var postId = btn.getAttribute('data-mark-posted');
+    var input = document.getElementById('pn-url');
+    var err = document.getElementById('pn-err');
+    var url = input ? input.value.trim() : '';
+    if (!/^https?:\/\//i.test(url)) {
+      if (err) err.textContent = 'Paste the live post URL first (starts with http).';
+      return;
+    }
+    if (err) err.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    var db = window._cipherDb;
+    try {
+      if (!db) throw new Error('Live campaign data is unavailable.');
+      var docRef = db.collection('campaign').doc('posts');
+      await db.runTransaction(async function (tx) {
+        var snap = await tx.get(docRef);
+        var data = snap.data() || {};
+        var idx = (data.posts || []).findIndex(function (x) { return x.id === postId; });
+        if (idx === -1) throw new Error('Post not found');
+        data.posts[idx].status = 'posted';
+        data.posts[idx].postedAt = new Date().toISOString();
+        data.posts[idx].postUrl = url;
+        data._meta = data._meta || {};
+        data._meta.lastUpdatedAt = new Date().toISOString();
+        data._meta.lastUpdatedBy = 'dashboard mark-posted';
+        tx.set(docRef, data);
+      });
+      if (typeof cipherToast === 'function') {
+        cipherToast('Marked posted — grade it in 24–48h from the Results tab.');
+      }
+    } catch (e2) {
+      if (err) err.textContent = 'Could not save: ' + (e2.message || 'unknown error');
+      btn.disabled = false;
+      btn.textContent = 'Mark posted';
+    }
+  });
 })();
 
 // ---- Generate Video modal --------------------------------------------------
