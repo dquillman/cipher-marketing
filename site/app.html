@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.14.1</span>
+      <span class="version-bar" title="Dashboard version">v1.14.2</span>
     </div>
   </div>
 </nav>
@@ -6958,20 +6958,16 @@ function cipherStaleVideoPosts() {
     // the composer can come up holding OLD media and no copy — which looks
     // exactly like this tool posted the wrong thing (Dave hit this 2026-08-01).
     // Confirm before opening so an existing draft is never mistaken for ours.
-    if (!isX) {
-      var ok = window.confirm(
-        'Opening the LinkedIn composer. LinkedIn may restore an earlier unsent ' +
-        'draft — if the box already has text or a video in it, that is ' +
-        'LinkedIn’s old draft, NOT this post. Discard it before pasting. Continue?'
-      );
-      if (!ok) return;
-    }
-
+    // Do NOT deep-link to ?shareActive=true: the auto-opened composer leaves
+    // keyboard focus on the dialog frame instead of the text editor, so a
+    // paste goes nowhere — verified 2026-08-02 (activeElement was the DIALOG,
+    // editor unfocused). A composer the user opens by clicking "Start a post"
+    // is focused correctly and pastes fine, so the flow sends them there.
     // Opened synchronously — a window.open after an await is treated as an
     // unrequested popup and gets blocked.
     var composer = isX
       ? 'https://x.com/compose/post?text=' + encodeURIComponent(p.copy || '')
-      : 'https://www.linkedin.com/feed/?shareActive=true';
+      : 'https://www.linkedin.com/feed/';
     window.open(composer, '_blank', 'noopener');
 
     var steps = [];
@@ -7300,9 +7296,9 @@ function cipherNextToPublish() {
           ? '<li><span class="pn-step-text">Save the video to your computer</span>' +
             '<button class="btn-secondary" type="button" data-video-download="' + cipherEsc(p.id) + '">Download video</button></li>'
           : '') +
-        '<li><span class="pn-step-text">Open ' + (isX ? 'X' : 'LinkedIn') + ' and clear anything already in the box</span>' +
+        '<li><span class="pn-step-text">' + (isX ? 'Open X' : 'Open LinkedIn, then click “Start a post” yourself') + '</span>' +
           '<button class="btn-publish-kit" type="button" data-open-composer="' + cipherEsc(p.id) + '">Open ' + (isX ? 'X' : 'LinkedIn') + '</button></li>' +
-        '<li><span class="pn-step-text">Paste the text' + (p.videoUrl ? ', attach the video' : '') + ', then press Post there</span></li>' +
+        '<li><span class="pn-step-text">Click inside the box, paste the text' + (p.videoUrl ? ', attach the video' : '') + ', then press Post there</span></li>' +
         '<li><span class="pn-step-text">Bring the live link back here</span>' +
           '<input type="url" id="pn-url" placeholder="https://www.linkedin.com/feed/update/..." />' +
           '<button class="btn-approve" type="button" data-mark-posted="' + cipherEsc(p.id) + '">Mark posted</button></li>' +
@@ -7735,8 +7731,8 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.14.1"></script>
-<script src="assets/hal-rail.js?v=1.14.1"></script>
+<script src="assets/page-knowledge.js?v=1.14.2"></script>
+<script src="assets/hal-rail.js?v=1.14.2"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
