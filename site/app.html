@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.14.2</span>
+      <span class="version-bar" title="Dashboard version">v1.14.3</span>
     </div>
   </div>
 </nav>
@@ -7172,54 +7172,50 @@ function cipherFormatLine(p) {
     var text = post.copy || '';
     var ok = false;
 
-    // navigator.clipboard.writeText can RESOLVE without the text ever reaching
-    // the system clipboard — verified 2026-08-01 by writing a probe, getting a
-    // successful promise, and pasting nothing. So always leave the text
-    // selected: the user's own Ctrl+C needs no API and cannot silently fail.
+    // navigator.clipboard.writeText is NOT used here at all: on this machine
+    // it RESOLVES SUCCESSFULLY without writing (probe-verified 2026-08-01),
+    // which made the button claim "Copied" over an empty clipboard twice.
+    // The only trustworthy signal is the browser's real `copy` event, which
+    // fires only when a copy genuinely happened — so the flow is: select the
+    // text, attempt execCommand (honest boolean), and otherwise wait for the
+    // user's own Ctrl+C, confirming only when the copy event fires.
     var box = document.getElementById('pn-copy-box');
     if (box && box.value === text) {
       box.focus();
       box.select();
       try { box.setSelectionRange(0, text.length); } catch (e) {}
-    }
-
-    // The async clipboard API refuses to write unless the document is focused,
-    // which silently fails the moment another tab (the composer) takes focus.
-    // execCommand on a temporary textarea has no such requirement, so it is
-    // the fallback rather than the other way round.
-    try {
-      await navigator.clipboard.writeText(text);
-      ok = true;
-    } catch (err) {
-      try {
-        var ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.style.position = 'fixed';
-        ta.style.top = '-1000px';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        ta.setSelectionRange(0, text.length);
-        ok = document.execCommand('copy');
-        ta.remove();
-      } catch (err2) {
-        ok = false;
+      if (!box._copyConfirmWired) {
+        box._copyConfirmWired = true;
+        box.addEventListener('copy', function () {
+          btn.textContent = 'Copied ✓';
+          setTimeout(function () { btn.textContent = original; }, 2500);
+          if (typeof cipherToast === 'function') {
+            cipherToast('Copied for real — now paste with Ctrl+V in the composer.');
+          }
+        });
       }
     }
+
+    // execCommand returns an honest boolean on this machine (probe returned
+    // false when the copy did not happen), unlike writeText which lies.
+    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
 
     if (ok) {
-      btn.textContent = 'Copied';
-      setTimeout(function () { btn.textContent = original; }, 1800);
+      btn.textContent = 'Copied ✓';
+      setTimeout(function () { btn.textContent = original; }, 2500);
       if (typeof cipherToast === 'function') {
-        cipherToast('Copied. If it pastes empty, the text is already selected - press Ctrl+C.');
+        cipherToast('Copied — paste with Ctrl+V in the composer.');
       }
     } else {
-      btn.textContent = 'Selected - press Ctrl+C';
-      setTimeout(function () { btn.textContent = original; }, 3000);
+      // Not copied yet. The text is selected; the copy-event listener above
+      // will flip this label the moment the user's Ctrl+C really lands.
+      btn.textContent = 'Now press Ctrl+C';
       if (typeof cipherToast === 'function') {
-        cipherToast('Text is selected in the box - press Ctrl+C to copy it.', true);
+        cipherToast('Text is selected — press Ctrl+C to copy, then Ctrl+V in LinkedIn.', true);
       }
+      setTimeout(function () {
+        if (btn.textContent === 'Now press Ctrl+C') btn.textContent = original;
+      }, 8000);
     }
   });
 
@@ -7283,14 +7279,14 @@ function cipherNextToPublish() {
         '<div>' +
           '<div class="pn-label">Copy to paste — compare this against the composer</div>' +
           '<textarea class="pn-copy" id="pn-copy-box" readonly rows="9">' + cipherEsc(p.copy || '') + '</textarea>' +
-          '<div class="pn-copy-hint">Copy selects this text for you. If pasting comes up empty, click in the box and press Ctrl+C.</div>' +
+          '<div class="pn-copy-hint">Click Copy, then press Ctrl+C when asked — the button turns to “Copied ✓” only when the copy really happened.</div>' +
         '</div>' +
         '<div>' +
           '<div class="pn-label">Media</div>' + videoBlock +
         '</div>' +
       '</div>' +
       '<ol class="pn-steps">' +
-        '<li><span class="pn-step-text">Copy the post text</span>' +
+        '<li><span class="pn-step-text">Copy the post text (press Ctrl+C if the button asks)</span>' +
           '<button class="copy-post-btn" type="button" data-copy-id="' + cipherEsc(p.id) + '">Copy text</button></li>' +
         (p.videoUrl
           ? '<li><span class="pn-step-text">Save the video to your computer</span>' +
@@ -7731,8 +7727,8 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.14.2"></script>
-<script src="assets/hal-rail.js?v=1.14.2"></script>
+<script src="assets/page-knowledge.js?v=1.14.3"></script>
+<script src="assets/hal-rail.js?v=1.14.3"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
