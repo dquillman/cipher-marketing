@@ -5349,6 +5349,28 @@ function cipherFormatLine(p) {
           }
         });
       }
+      // Ctrl+C only copies while the text is SELECTED, and any stray click
+      // clears the selection — which made the manual copy feel random. For
+      // 20s after Copy is clicked, a Ctrl+C anywhere on this page re-selects
+      // the box first (keydown fires before the copy event), so the copy
+      // grabs the full text no matter what was clicked in between.
+      window._pnCopyArmedAt = Date.now();
+      if (!window._pnRearmWired) {
+        window._pnRearmWired = true;
+        document.addEventListener('keydown', function (ev) {
+          if (!(ev.ctrlKey || ev.metaKey) || String(ev.key).toLowerCase() !== 'c') return;
+          if (!window._pnCopyArmedAt || Date.now() - window._pnCopyArmedAt > 20000) return;
+          var b = document.getElementById('pn-copy-box');
+          if (!b) return;
+          var sel = window.getSelection ? String(window.getSelection()) : '';
+          var boxSelected = b.selectionEnd - b.selectionStart > 0 && document.activeElement === b;
+          if (!boxSelected && !sel) {
+            b.focus();
+            b.select();
+            try { b.setSelectionRange(0, (b.value || '').length); } catch (e2) {}
+          }
+        }, true);
+      }
     }
 
     // execCommand returns an honest boolean on this machine (probe returned
