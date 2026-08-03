@@ -23,6 +23,22 @@ const CTA = (hook) =>
 const SEED_NOTE =
   "Reply into 3-5 active PMP / r/pmp-adjacent threads on X BEFORE posting this standalone — Week 1 X lesson (cold-start account needs warm signal).";
 
+// Video file mapping based on hook type
+const VIDEO_MAP = {
+  "the-exam-changed": { file: "launch-teaser-pmp.mp4", format: "9:16" },
+  "experience-trap": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "scenario-poll-1": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "business-environment-26": { file: "domain-weights-pmp.mp4", format: "9:16" },
+  "ai-is-context": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "score-is-not-readiness": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "stakeholder-sequence": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "sustainability-tradeoff": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "scenario-poll-2": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "ten-question-challenge": { file: "ai-tutor-demo-pmp.mp4", format: "9:16" },
+  "practice-quality-checklist": { file: "launch-teaser-pmp.mp4", format: "9:16" },
+  "founder-proof-loop": { file: "launch-teaser-pmp.mp4", format: "9:16" },
+};
+
 // Each entry becomes one X post document appended to campaign/posts.
 const X_POSTS = [
   {
@@ -222,6 +238,7 @@ Try it: ${CTA("founder-proof-loop")}
 ];
 
 function buildPost(x) {
+  const videoInfo = VIDEO_MAP[x.hook] || { file: null, format: "9:16" };
   return {
     id: `x-${x.date}-${x.hook}`,
     channel: "x",
@@ -235,6 +252,8 @@ function buildPost(x) {
     scheduledTimeLocal: `${x.date} 11:30 MT`,
     copy: x.copy,
     cta: CTA(x.hook),
+    video: videoInfo.file,
+    videoFormat: videoInfo.format,
     postingNote: SEED_NOTE,
     imageUrl: null,
     canvaDesignId: null,
