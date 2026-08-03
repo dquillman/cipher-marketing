@@ -82,13 +82,21 @@ async function main() {
     }
 
     if (updated === 0) {
-      console.log("\n✅ Nothing to update — all X posts already have videos.");
-      process.exit(0);
+      console.log("\n✅ Nothing to update — all X posts already have videos (or none matched).");
+    } else {
+      await postsRef.update({ posts });
+      console.log(`\n✅ Updated ${updated} X post(s) with video files (${skipped} skipped).`);
     }
 
-    await postsRef.update({ posts });
-
-    console.log(`\n✅ Updated ${updated} X post(s) with video files (${skipped} skipped).`);
+    // Verification: read back and print video field of every August X post
+    console.log(`\n🔎 Verification — video field on each August X post in Firestore:`);
+    const verify = await postsRef.get();
+    const vposts = (verify.data() || {}).posts || [];
+    vposts
+      .filter((p) => p.channel === "x" && String(p.id).startsWith("x-2026-08-"))
+      .forEach((p) => {
+        console.log(`  ${p.id}: video=${p.video || "(none)"} | format=${p.videoFormat || "(none)"}`);
+      });
     console.log(`\nRefresh your dashboard — the X posts now have videos attached.`);
   } catch (err) {
     console.error("\n❌ Update failed:", err.message);
