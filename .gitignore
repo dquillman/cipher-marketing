@@ -13,6 +13,10 @@ remotion/.remotion/
 _server.cjs
 *.pid
 
+# Service-account keys — full admin access, bypasses firestore.rules. Never commit.
+scripts/*-key.json
+*serviceAccount*.json
+
 # Claude Code worktrees + Firebase local cache
 .claude/
 .firebase/

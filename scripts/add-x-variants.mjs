@@ -15,9 +15,12 @@
 // Usage:
 //   node scripts/add-x-variants.mjs
 
-import { getDb, credentialHelp } from "./lib/firestore-access.mjs";
+import { pathToFileURL } from "node:url";
 
-const CTA = (hook) =>
+import { getDb, credentialHelp } from "./lib/firestore-access.mjs";
+import { assertXCopyFits } from "./lib/x-length.mjs";
+
+export const CTA = (hook) =>
   `https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=pmp_judgment_2026&utm_content=${hook}`;
 
 const SEED_NOTE =
@@ -40,17 +43,21 @@ const VIDEO_MAP = {
 };
 
 // Each entry becomes one X post document appended to campaign/posts.
-const X_POSTS = [
+//
+// HARD CONSTRAINT: every `copy` must be <= 280 weighted characters. X counts a
+// URL as 23 characters regardless of its real length, so trimming UTM params
+// buys nothing — cut body copy instead. Enforced by assertXCopyFits() in main().
+export const X_POSTS = [
   {
     date: "2026-08-03",
     hook: "the-exam-changed",
     status: "scheduled",
     copy:
-`The PMP exam changed on July 9, 2026.
+`The PMP exam changed July 9, 2026.
 
-Business Environment jumped from 8% to 26%, plus AI, sustainability, and value now show up in scenarios.
+Business Environment went from 8% to 26%. AI, sustainability, and value now show up in scenarios.
 
-More questions where several answers are reasonable — one is best.
+More answers look reasonable — one is best.
 
 Does your prep teach why? 7-day free trial, no card:
 ${CTA("the-exam-changed")}
@@ -80,15 +87,15 @@ ${CTA("experience-trap")}
     copy:
 `PMP scenario 👇
 
-A sponsor wants to accelerate delivery by skipping a planned stakeholder review.
+A sponsor wants to speed up delivery by skipping a planned stakeholder review.
 
 Do you:
 A) Comply — the sponsor decides
-B) Skip it but document the risk
+B) Skip it, document the risk
 C) Explain the risk, keep the review
 D) Escalate to the PMO
 
-Reply with your pick. Best answer explained tomorrow.
+Reply with your pick. Best answer tomorrow.
 
 #PMP`,
   },
@@ -269,6 +276,9 @@ function buildPost(x) {
 }
 
 async function main() {
+  // Preflight: refuse to seed copy X will not let Dave post.
+  assertXCopyFits(X_POSTS.map((x) => ({ id: `x-${x.date}-${x.hook}`, copy: x.copy })));
+
   let db;
   try {
     db = await getDb();
@@ -331,4 +341,8 @@ async function main() {
   }
 }
 
-main();
+// Only seed when run directly — importing this file (e.g. from check-x-length.mjs)
+// must not touch Firestore.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}
