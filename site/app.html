@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.15.1</span>
+      <span class="version-bar" title="Dashboard version">v1.16.0</span>
     </div>
   </div>
 </nav>
@@ -1677,8 +1677,9 @@ function cipherHelp() {
     var btn = document.getElementById('run-trend-scout');
     if (!btn) return;
     var REQUEST = 'Brad, run the cipher-trend-scout subagent now: scan Reddit, LinkedIn and X for the last 7 days, '
-                + 'return the three strongest angles for the active exam clusters, and write the scan back to campaign '
-                + 'state so the Trend Scout panel updates.';
+                + 'return the three strongest angles for the active exam clusters, then write the scan to the '
+                + 'Firestore document campaign/trendScout (NOT site/data/trend-scout.json — that file is never '
+                + 'deployed). The Trend Scout panel subscribes to campaign/trendScout and updates live.';
     btn.addEventListener('click', function () {
       if (btn.disabled) return;
       var original = btn.textContent;
@@ -2729,7 +2730,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
     <button type="button" class="btn-secondary" onclick="window.cipherAskBrad ? window.cipherAskBrad('Brad, explain which resources and evidence shaped the current weekly drafts. Summarize the reasoning by week and flag any weak assumptions.') : alert('Open Brad from the right edge.')">Explain the choices</button>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <button type="button" class="btn-primary" onclick="window.cipherAskBrad ? window.cipherAskBrad('Brad, create the next appropriate set of CipherExam posts. Check the current campaign status and existing drafts before creating anything new.') : alert('Open Brad from the right edge, then ask him to create the next posts.')">Create posts with Brad</button>
+    <button type="button" class="btn-primary" onclick="window.cipherAskBrad ? window.cipherAskBrad('Brad, prep next week&#39;s content. Check the current campaign status and existing drafts first, then run the Trend Scout pass before drafting.') : alert('Open Brad from the right edge, then ask him to create the next posts.')">Create posts with Brad</button>
     <button type="button" class="btn-secondary" data-approve-drafts>Approve reviewed drafts</button>
     <span id="approve-drafts-status" role="status" aria-live="polite" style="align-self:center;color:var(--dim);font-size:.86rem;"></span>
   </div>
@@ -5613,16 +5614,54 @@ if (document.readyState === 'loading') {
     el.innerHTML = cells.join('');
   }
 
-  function loadAndRender() {
-    fetch('data/trend-scout.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(renderTrendScout)
-      .catch(function () { renderTrendScout(null); });
+  // firebase.json ignores "data/**", so site/data/*.json is NOT deployed. A
+  // request for one hits the SPA rewrite and comes back as app.html with HTTP
+  // 200 — which sails past an `r.ok` check and only fails at .json(). That made
+  // every one of these panels render its empty state forever, indistinguishable
+  // from having no data. Check the content type, and say so when it's wrong.
+  function fetchLocalJson(path) {
+    return fetch(path, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error(path + ' returned HTTP ' + r.status);
+      var ct = r.headers.get('content-type') || '';
+      if (ct.indexOf('json') === -1) {
+        throw new Error(path + ' is not deployed (got ' + ct + ' — check firebase.json "ignore")');
+      }
+      return r.json();
+    });
+  }
 
-    fetch('data/anchors-index.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
+  // Trend Scout reads Firestore, not a static file: Brad has no deploy step, so
+  // a file he writes could never reach the live dashboard. campaign/trendScout
+  // is covered by the same marketingAdmin rule as the rest of campaign/*.
+  function subscribeTrendScout() {
+    // Gate on _cipherAuthReady like wireFirestore does — subscribing before the
+    // operator claim lands just returns permission-denied.
+    var ready = window._cipherAuthReady || Promise.reject(new Error('not signed in'));
+    ready.then(function () {
+      var db = window._cipherDb;
+      if (!db) throw new Error('Firestore unavailable');
+      db.collection('campaign').doc('trendScout').onSnapshot(
+        function (snap) { renderTrendScout(snap.exists ? snap.data() : null); },
+        function (err) {
+          console.warn('[cipher] trendScout sync error:', err.message);
+          renderTrendScout(null);
+        }
+      );
+    }).catch(function (err) {
+      console.warn('[cipher] trendScout not started:', err.message);
+      renderTrendScout(null);
+    });
+  }
+
+  function loadAndRender() {
+    subscribeTrendScout();
+
+    fetchLocalJson('data/anchors-index.json')
       .then(renderAnchorLibrary)
-      .catch(function () { renderAnchorLibrary(null); });
+      .catch(function (e) {
+        console.warn('[cipher] anchor library:', e.message);
+        renderAnchorLibrary(null);
+      });
 
     renderCooldown();
   }
