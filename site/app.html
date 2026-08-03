@@ -2416,11 +2416,19 @@ function cipherHelp() {
 
     var statusAwaitingGrade = statusPosted && !p.grade;
     var statusGraded        = statusPosted && !!p.grade;
+    // Undo posted: puts a post back to "scheduled" and clears postedAt/postUrl.
+    // Needed when a post went out wrong (bad link, over-length copy) and has to
+    // be deleted on the platform and republished — without this the card is a
+    // dead end. Grades/metrics are deliberately kept; they describe the version
+    // that was live.
+    var unpostBtn = '<button class="btn-secondary" type="button" data-sched-unpost="' + esc(p.id) + '">Undo posted</button>';
+
     var actions = statusGraded
-      ? '<span class="sched-pill status-posted">✓ Posted · Grade ' + esc(p.grade) + '</span>'
+      ? '<span class="sched-pill status-posted">✓ Posted · Grade ' + esc(p.grade) + '</span>' + unpostBtn
       : statusAwaitingGrade
         ? '<span class="sched-pill status-posted">✓ Posted</span>' +
-          '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '">Grade this post</button>'
+          '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '">Grade this post</button>' +
+          unpostBtn
         : '<button class="btn-primary" type="button" data-sched-copy="' + esc(p.id) + '">Copy post text</button>' +
           '<span class="copy-confirm" id="copy-conf-' + esc(p.id) + '">✓ Copied!</span>' +
           '<button class="btn-secondary" type="button" data-sched-cta="' + esc(p.id) + '">Copy CTA link</button>' +
@@ -2966,6 +2974,9 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       approveBtn = '<button class="btn-approve" type="button" data-approve-post="' + esc(p.id) + '">Approve</button>';
     } else if (p.status === 'scheduled' && !p.postUrl) {
       approveBtn = '<button class="btn-secondary" type="button" data-unapprove-post="' + esc(p.id) + '">Unapprove</button>';
+    } else if (p.status === 'posted') {
+      // Same escape hatch as the Publish tab — see renderCard()'s unpostBtn.
+      approveBtn = '<button class="btn-secondary" type="button" data-sched-unpost="' + esc(p.id) + '">Undo posted</button>';
     }
 
 
@@ -6708,6 +6719,64 @@ if (document.readyState === 'loading') {
       if (cform) cform.classList.remove('show');
       var cerr = document.getElementById('pub-err-' + cid);
       if (cerr) { cerr.textContent = ''; cerr.classList.remove('show'); }
+      return;
+    }
+
+    // Undo posted — the inverse of Mark Posted. Reverts status to "scheduled"
+    // and clears postedAt/postUrl so the post re-enters the publish queue.
+    //
+    // This MUST write Firestore: seed-firestore.mjs treats a remote "posted"
+    // status and a non-empty postedAt/postUrl as authoritative and merges them
+    // back over the local posts.json, so clearing it anywhere else does not stick.
+    var unpostBtn = e.target.closest && e.target.closest('[data-sched-unpost]');
+    if (unpostBtn) {
+      e.preventDefault();
+      var uid = unpostBtn.getAttribute('data-sched-unpost');
+      var uPosts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+      var uPost = uPosts.find(function (p) { return p.id === uid; }) || {};
+      var warn = 'Put "' + uid + '" back to scheduled?\n\n' +
+        'This clears the posted timestamp and the saved live URL, and the post ' +
+        'returns to the publish queue.' +
+        (uPost.grade ? '\n\nIts grade (' + uPost.grade + ') and metrics are kept — they describe the version that was live.' : '') +
+        '\n\nThis does NOT delete anything on LinkedIn or X. Delete it there yourself if it is still live.';
+      if (!window.confirm(warn)) return;
+
+      var uOrig = unpostBtn.textContent;
+      unpostBtn.textContent = 'Reverting…';
+      unpostBtn.disabled = true;
+
+      var udb = window._cipherDb;
+      if (!udb) {
+        window.alert('Firebase not loaded — check your connection and refresh.');
+        unpostBtn.textContent = uOrig;
+        unpostBtn.disabled = false;
+        return;
+      }
+      var uRef = udb.collection('campaign').doc('posts');
+      // Transaction, not get()+set(): campaign/posts is one big document that
+      // the video-render Cloud Function also writes. A read-modify-write race
+      // here would silently drop whatever landed in between.
+      udb.runTransaction(function (tx) {
+        return tx.get(uRef).then(function (snap) {
+          var data = snap.data() || {};
+          var list = data.posts || [];
+          var idx = list.findIndex(function (p) { return p.id === uid; });
+          if (idx === -1) throw new Error('Post "' + uid + '" not found in Firestore');
+          var now = new Date().toISOString();
+          list[idx].status   = 'scheduled';
+          list[idx].postedAt = null;
+          list[idx].postUrl  = null;
+          data._meta = data._meta || {};
+          data._meta.lastUpdatedAt = now;
+          data._meta.lastUpdatedBy = 'dashboard undo-posted';
+          tx.set(uRef, data);
+        });
+      })
+        .catch(function (err) {
+          window.alert('Could not revert: ' + (err.message || 'Firestore write failed'));
+          unpostBtn.textContent = uOrig;
+          unpostBtn.disabled = false;
+        });
       return;
     }
 
