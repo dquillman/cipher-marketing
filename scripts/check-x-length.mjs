@@ -32,7 +32,7 @@ async function fromFirestore() {
 
   return (doc.data().posts || [])
     .filter((p) => p.channel === "x")
-    .map((p) => ({ id: p.id, copy: p.copy || "" }));
+    .map((p) => ({ id: p.id, copy: p.copy || "", posted: p.status === "posted" }));
 }
 
 function fromSource() {
@@ -48,13 +48,33 @@ async function main() {
       `against the ${X_MAX_WEIGHTED_LENGTH}-char limit\n`
   );
 
-  const results = entries.map(({ id, copy }) => checkXCopy(copy, id));
-  const overs = results.filter((r) => !r.ok);
+  const results = entries.map(({ id, copy, posted }) => ({
+    ...checkXCopy(copy, id),
+    posted: !!posted,
+  }));
+
+  // An already-published post's stored copy is a historical record, not
+  // something waiting to be posted — flagging it as a blocker is a false alarm.
+  const overs = results.filter((r) => !r.ok && !r.posted);
+  const postedOvers = results.filter((r) => !r.ok && r.posted);
 
   for (const r of results) {
-    const mark = r.ok ? "✓" : "✗";
-    const note = r.ok ? `${X_MAX_WEIGHTED_LENGTH - r.length} left` : `${r.over} OVER`;
+    const mark = r.ok ? "✓" : r.posted ? "•" : "✗";
+    const note = r.ok
+      ? `${X_MAX_WEIGHTED_LENGTH - r.length} left`
+      : r.posted
+        ? `${r.over} over — already posted, record only`
+        : `${r.over} OVER`;
     console.log(`  ${mark} ${String(r.length).padStart(3)}/280  ${r.id.padEnd(42)} ${note}`);
+  }
+
+  if (postedOvers.length > 0) {
+    console.log(
+      `\n⚠  ${postedOvers.length} published post(s) have stored copy over the limit, which means\n` +
+        `   the stored text is NOT what actually went out — X would have rejected it.\n` +
+        `   The dashboard record is inaccurate and the grader will grade the wrong copy:`
+    );
+    for (const r of postedOvers) console.log(`   • ${r.id}`);
   }
 
   if (overs.length === 0) {
