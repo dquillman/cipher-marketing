@@ -806,14 +806,19 @@ details[open] summary::before { transform: rotate(90deg); }
     <a class="nav-brand" href="index.html" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32" style="display:block;"></a>
     <div class="nav-links">
       <a class="nav-link" href="today.html">Today</a>
-      <a class="nav-link" href="index.html">Dashboard</a>
+      <a class="nav-link current" href="index.html">Dashboard</a>
+      <a class="nav-link" href="schedule.html">Schedule</a>
+      <a class="nav-link" href="posts.html">Posts</a>
       <a class="nav-link" href="strategy.html">Strategy</a>
       <a class="nav-link" href="content.html">Content</a>
       <a class="nav-link" href="landing.html">Landing</a>
       <a class="nav-link" href="engineering.html">Engineering</a>
       <a class="nav-link" href="voice.html">Voice</a>
+      <a class="nav-link" href="competitors.html">Competitors</a>
+      <a class="nav-link" href="testimonials.html">Testimonials</a>
     </div>
     <a class="nav-rollup" href="../launch-campaign.html">Full rollup ↗</a>
+    <span class="version-bar" title="Dashboard version">v1.15.0</span>
   </div>
 </nav>
 
@@ -828,6 +833,12 @@ details[open] summary::before { transform: rotate(90deg); }
   <div class="card tier-1" style="margin-bottom:24px;">
     <h3 style="margin-bottom:8px;">Today</h3>
     <div id="index-today-widget">Loading…</div>
+  </div>
+
+  <!-- Post pipeline (live from Firestore) -->
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin-bottom:8px;">Post pipeline</h3>
+    <div id="index-post-pipeline" style="color:var(--dim);">Loading…</div>
   </div>
 
   <!-- KPI summary -->
@@ -913,11 +924,15 @@ details[open] summary::before { transform: rotate(90deg); }
   <h2>Quick links</h2>
   <div class="quick-grid">
     <a href="today.html"><span class="qlabel">Today</span><span class="qdesc">Daily todo with checkboxes</span></a>
+    <a href="schedule.html"><span class="qlabel">Schedule</span><span class="qdesc">Upcoming + posted, copy text, mark posted</span></a>
+    <a href="posts.html"><span class="qlabel">Posts</span><span class="qdesc">All posts — drafts, scheduled, metrics</span></a>
     <a href="strategy.html"><span class="qlabel">Strategy</span><span class="qdesc">Tier matrix · KPIs · $2/day budget · calendar</span></a>
     <a href="content.html"><span class="qlabel">Content</span><span class="qdesc">Cornerstone · 12 social posts · 7-day email</span></a>
     <a href="landing.html"><span class="qlabel">Landing pages</span><span class="qdesc">3 LP drafts (PMP / Sec+ / SHRM-CP)</span></a>
     <a href="engineering.html"><span class="qlabel">Engineering</span><span class="qdesc">Handoff + pre-launch checklist</span></a>
     <a href="voice.html"><span class="qlabel">Voice</span><span class="qdesc">Brand voice review</span></a>
+    <a href="competitors.html"><span class="qlabel">Competitors</span><span class="qdesc">Battlecards and competitor intel</span></a>
+    <a href="testimonials.html"><span class="qlabel">Testimonials</span><span class="qdesc">Approved testimonials and social proof</span></a>
   </div>
 
 </main>
@@ -1605,6 +1620,46 @@ function initIndexState() {
   }
 }
 
+// ---------- POST PIPELINE (live Firestore) ----------
+// Reads campaign/posts.posts[] and shows draft/scheduled/posted/skipped counts.
+// Uses the same auth pattern as loadState().
+async function loadPostPipeline() {
+  const el = document.getElementById('index-post-pipeline');
+  if (!el) return;
+  try {
+    if (!window._cipherAuthReady || !window._cipherDb) {
+      throw new Error('Authenticated Firestore is unavailable.');
+    }
+    await window._cipherAuthReady;
+    const snap = await window._cipherDb.collection('campaign').doc('posts').get();
+    if (!snap.exists) throw new Error('campaign/posts is missing.');
+    const posts = Array.isArray(snap.data().posts) ? snap.data().posts : [];
+    const counts = { draft: 0, scheduled: 0, posted: 0, skipped: 0 };
+    posts.forEach(p => {
+      const s = (p && p.status) ? String(p.status).toLowerCase() : '';
+      if (counts.hasOwnProperty(s)) counts[s] += 1;
+    });
+    const chip = (label, n, color) =>
+      '<span style="display:inline-block;padding:8px 14px;margin:4px 8px 4px 0;border:1px solid var(--border);'
+      + 'border-radius:8px;background:var(--surface-2);">'
+      + '<span style="font-size:1.3rem;font-weight:700;color:' + color + ';">' + n + '</span>'
+      + '<span style="margin-left:8px;color:var(--dim);font-size:0.85rem;">' + label + '</span></span>';
+    el.style.color = 'var(--text)';
+    el.innerHTML =
+      '<div style="margin-bottom:8px;color:var(--dim);font-size:0.85rem;">' + posts.length + ' total posts</div>'
+      + '<div>'
+      + chip('Drafts', counts.draft, 'var(--warn)')
+      + chip('Scheduled', counts.scheduled, 'var(--cyan)')
+      + chip('Posted', counts.posted, 'var(--good)')
+      + chip('Skipped', counts.skipped, 'var(--dim)')
+      + '</div>';
+  } catch (e) {
+    console.warn('[post-pipeline] load failed:', e.message);
+    el.style.color = 'var(--dim)';
+    el.textContent = 'Post pipeline could not be loaded.';
+  }
+}
+
 // ---------- BOOT ----------
 // Run inits via readyState check rather than DOMContentLoaded so this still
 // works if the script tag is encountered after DOMContentLoaded has fired
@@ -1613,6 +1668,7 @@ function initIndexState() {
 async function boot() {
   try { highlightNav(); } catch (e) { console.warn('highlightNav:', e); }
   try { await loadState(); } catch (e) { console.warn('loadState:', e); }
+  try { if (document.getElementById('index-post-pipeline')) loadPostPipeline(); } catch (e) { console.warn('loadPostPipeline:', e); }
   try { if (document.getElementById('today-tasks')) initTodayPage(); } catch (e) { console.warn('initTodayPage:', e); }
   try { if (document.getElementById('index-today-widget')) initIndexWidget(); } catch (e) { console.warn('initIndexWidget:', e); }
   try { if (document.getElementById('index-blockers') || document.getElementById('index-daily-log')) initIndexState(); } catch (e) { console.warn('initIndexState:', e); }
