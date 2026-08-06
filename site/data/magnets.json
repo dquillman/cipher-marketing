@@ -1,0 +1,102 @@
+{
+  "_meta": {
+    "lastUpdatedAt": "2026-08-05T00:00:00.000Z",
+    "purpose": "Lead-magnet registry. One entry per magnet: what it is, where it lives, which posts promote it, and how it converts. Written by the /lead-magnet skill, read by the dashboard funnel view.",
+    "funnel": "LinkedIn post -> capture form (LeadMagnetCapture) -> captureLead Cloud Function -> Firestore leadCaptures (upsert-keyed email__cluster, carries UTM) -> PDF served -> [welcome sequence: NOT YET WIRED] -> trial -> activated",
+    "northStar": "activatedUsers. Captures are a leading indicator, not the goal.",
+    "knownGap": "CLOSED IN CODE 2026-08-05, NOT YET DEPLOYED. sendLeadMagnetWelcome (cipher/functions/src/leadMagnetWelcome.ts) fires on leadCaptures create and schedules a 3-touch sequence (Day 0 deliver / Day 2 prove / Day 5 invite) via Resend. Deliberately NOT the 7-day onboarding drip — that one fires on users/{uid} create and is for trial starts; a PDF download is not a trial start. Clean handoff: if the lead converts, scheduleOnboardingDrip takes over. TWO THINGS STILL GATE IT: (1) functions must be deployed, (2) RESEND_API_KEY must be provisioned or the function is a deploy-safe no-op and captures still get nothing.",
+    "openIssue": "If a lead converts to a trial on Day 1 they receive the remaining lead touches AND the onboarding drip. Resend message ids are logged in welcomeSequenceResult so a future conversion hook can cancel pending sends; that hook does not exist yet. Day 2/5 copy is written to still read sensibly to someone already on trial.",
+    "metricsSource": "captures = Firestore leadCaptures count for the cluster. trialStarts / activatedUsers require joining leadCaptures email against the users collection — not yet automated, fill in manually at grading time."
+  },
+  "magnets": [
+    {
+      "id": "pmp-exam-lens-cheat-sheet",
+      "cluster": "pmp",
+      "examFocus": "PMP",
+      "title": "PMP Exam Lens Cheat Sheet",
+      "pdf": "pmp-exam-lens-cheat-sheet.pdf",
+      "url": "https://cipherexam.com/lead-magnets/pmp-exam-lens-cheat-sheet.pdf",
+      "lp": "/lp/pmp",
+      "status": "live",
+      "httpVerifiedAt": "2026-08-05",
+      "sourceTopic": null,
+      "createdAt": "2026-05-28",
+      "producedBy": "hand-made",
+      "postIds": [],
+      "captures": null,
+      "trialStarts": null,
+      "activatedUsers": null,
+      "notes": "Pre-dates the /lead-magnet skill. Existing PMP cluster magnet, served by captureLead."
+    },
+    {
+      "id": "security-plus-pbq-walkthroughs",
+      "cluster": "security-plus",
+      "examFocus": "Security+",
+      "title": "Security+ PBQ Walkthroughs",
+      "pdf": "security-plus-pbq-walkthroughs.pdf",
+      "url": "https://cipherexam.com/lead-magnets/security-plus-pbq-walkthroughs.pdf",
+      "lp": "/lp/security-plus",
+      "status": "live",
+      "httpVerifiedAt": "2026-08-05",
+      "sourceTopic": null,
+      "createdAt": "2026-05-28",
+      "producedBy": "hand-made",
+      "postIds": [],
+      "captures": null,
+      "trialStarts": null,
+      "activatedUsers": null,
+      "notes": "Was 404 as of 2026-05-28, gap closed 2026-08-01, re-verified 200 on 2026-08-05. PBQs are a genuine wedge — question-bank competitors can't simulate them."
+    },
+    {
+      "id": "shrm-cp-competency-map",
+      "cluster": "shrm-cp",
+      "examFocus": "SHRM-CP",
+      "title": "SHRM-CP Competency Map",
+      "pdf": "shrm-cp-competency-map.pdf",
+      "url": "https://cipherexam.com/lead-magnets/shrm-cp-competency-map.pdf",
+      "lp": "/lp/shrm-cp",
+      "status": "live",
+      "httpVerifiedAt": "2026-08-05",
+      "sourceTopic": null,
+      "createdAt": "2026-05-28",
+      "producedBy": "hand-made",
+      "postIds": [],
+      "captures": null,
+      "trialStarts": null,
+      "activatedUsers": null,
+      "notes": "Pre-dates the /lead-magnet skill."
+    }
+  ],
+  "backlog": [
+    {
+      "title": "The 20 PMP traps that catch 80% of candidates",
+      "cluster": "pmp",
+      "source": "thinking-traps data (users/{uid}/examStats/{examId}/traps)",
+      "why": "Highest-authority magnet available — it's aggregate data nobody else has. Pairs with the trap-teardown post format."
+    },
+    {
+      "title": "PMP EMV worked-math sheet",
+      "cluster": "pmp",
+      "source": "EMV question type already supported in the PMP simulator",
+      "why": "Earned-value math is the most mechanically failable part of the PMP. Concrete, gettable, high perceived value."
+    },
+    {
+      "title": "Bloom's-level study map",
+      "cluster": "per-exam",
+      "source": "Bloom's classification pipeline + /blog/study-by-blooms-level",
+      "why": "Turns the cornerstone article's framework into something actionable. One per exam."
+    },
+    {
+      "title": "Exam Lens one-pagers",
+      "cluster": "per-exam",
+      "source": "EXAM_LENS in web/src/config/exams.ts",
+      "why": "Eight live exams have no magnet. Lowest-effort path to cluster coverage."
+    },
+    {
+      "title": "Domain-weight cheat sheets",
+      "cluster": "per-exam",
+      "source": "published exam objectives",
+      "why": "The domain-weights post is the best-performing content on record (222 impressions, 44% impressions-to-reach). Make the magnet version."
+    }
+  ]
+}
