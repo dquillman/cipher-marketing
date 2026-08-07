@@ -36,6 +36,29 @@ function run(cmd, cmdArgs, useShell) {
   execFileSync(cmd, cmdArgs, { cwd: ROOT, stdio: "inherit", shell: !!useShell });
 }
 
+// ---- 0. drift guard ----
+// The sync in step 2 rewrites the exact `from` string and nothing else, so if
+// the badge was ever hand-edited it silently diverges from package.json and no
+// release can heal it. That is exactly what happened: package.json sat at
+// 1.14.4 while the badge — the thing Dave actually reads — showed v1.16.0
+// (caught 2026-08-06). Refuse to release from an inconsistent baseline.
+{
+  const p = JSON.parse(readFileSync(PKG, "utf8")).version;
+  const a = readFileSync(APP, "utf8");
+  const b = (a.match(/class="version-bar"[^>]*>v([\d.]+)</) || [])[1];
+  const assets = [...new Set([...a.matchAll(/\?v=([\d.]+)/g)].map((m) => m[1]))];
+  const bad = [];
+  if (b && b !== p) bad.push(`badge is v${b} but package.json is ${p}`);
+  for (const v of assets) if (v !== p) bad.push(`asset cache-buster ?v=${v} but package.json is ${p}`);
+  if (bad.length) {
+    console.error(`\n  RELEASE BLOCKED — version strings disagree before bumping:\n`);
+    for (const x of bad) console.error(`   - ${x}`);
+    console.error(`\n  Pick the true current version, set it in ALL of package.json,`);
+    console.error(`  the version-bar badge, and every ?v= in site/app.html, then re-run.\n`);
+    process.exit(1);
+  }
+}
+
 // ---- 1. bump ----
 const pkg = JSON.parse(readFileSync(PKG, "utf8"));
 const from = pkg.version;
@@ -69,7 +92,16 @@ writeFileSync(APP, app, "utf8");
 const badge = (app.match(/class="version-bar"[^>]*>v([\d.]+)</) || [])[1];
 const stale = [...app.matchAll(/\?v=([\d.]+)/g)].map((m) => m[1]).filter((v) => v !== to);
 console.log(`  badge    v${badge}`);
-if (stale.length) console.log(`  note     ${stale.length} asset ref(s) on other versions: ${[...new Set(stale)].join(", ")}`);
+
+// Hard-fail, not a note. A stale badge makes "did my fix ship?" unanswerable,
+// which is the whole reason this script exists — so it must never ship one.
+if (badge !== to || stale.length) {
+  console.error(`\n  RELEASE BLOCKED — post-sync versions still disagree:\n`);
+  if (badge !== to) console.error(`   - badge is v${badge}, expected v${to}`);
+  if (stale.length) console.error(`   - asset ref(s) on other versions: ${[...new Set(stale)].join(", ")}`);
+  console.error(`\n  Nothing was deployed. package.json is now ${to} — align site/app.html to match.\n`);
+  process.exit(1);
+}
 
 // ---- 3. verify before shipping ----
 console.log("\n  checking inline JS…");
