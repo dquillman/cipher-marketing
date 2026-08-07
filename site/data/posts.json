@@ -620,7 +620,7 @@
         "linkClickRatePct": 0,
         "trialSignupsAttributed": null,
         "gradedAt": "2026-08-06T00:00:00.000Z",
-        "notes": "Rates are meaningless at 9 impressions — recorded for completeness only. AMBIGUOUS PARSE: the pasted export was label-then-value, read as Impressions 9 / Engagements 7 / Detail expands 7 / Profile visits 0 / Link clicks 0. Confirm Engagements and Detail expands with Dave before drawing any conclusion. All 7 engagements appear to be detail expands — no likes, reposts, replies, profile visits, or clicks.",
+        "notes": "Rates are meaningless at 9 impressions — recorded for completeness only. Parse confirmed by Dave 2026-08-06: Impressions 9, Engagements 7, Detail expands 7, Profile visits 0, Link clicks 0. All 7 engagements were detail expands — no likes, reposts, replies, profile visits, or clicks.",
         "channelExtras": {
           "detailExpands": 7,
           "videoUniqueViews": 1,
