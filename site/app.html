@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.18.1</span>
+      <span class="version-bar" title="Dashboard version">v1.18.2</span>
     </div>
   </div>
 </nav>
@@ -2146,7 +2146,7 @@ function cipherHelp() {
 
 <!-- Topic cooldown widget — surfaces per-exam-per-channel post density for the last 7 days -->
 <h2 style="margin-top:0;">Topic cooldown — last 7 days</h2>
-<p style="color:var(--dim);font-size:0.92rem;">Guard: max 2 posts per (exam, channel) per rolling 7 days. Drafter blocks a 3rd unless campaign plan overrides. Green = headroom, yellow = at limit, red = over.</p>
+<p style="color:var(--dim);font-size:0.92rem;">Guard: max 3 LinkedIn / 2 X / 2 Reddit posts per exam per rolling 7 days, product and sme tracks combined. Drafter blocks the next one unless the campaign plan overrides. Green = headroom, yellow = at limit, red = over.</p>
 <div id="cooldown-widget" class="cooldown-widget"><div class="trend-scout-empty">Computing…</div></div>
 
 <div id="sched-feed-section"></div>
@@ -5607,15 +5607,21 @@ if (document.readyState === 'loading') {
     });
     var exams = ['PMP', 'Security+', 'SHRM-CP'];
     var channels = ['linkedin', 'x', 'reddit-organic'];
+    // LinkedIn cap raised 2 -> 3 on 2026-08-07: two tracks (product + sme) now
+    // share one feed, the original campaign design was Mon/Wed/Fri = 3, and the
+    // Aug cadence data showed expansion improving with 2-day spacing, not
+    // fatigue. X / Reddit stay at 2 — no evidence either way yet.
+    var CAPS = { linkedin: 3, x: 2, 'reddit-organic': 2 };
     var cells = [];
     exams.forEach(function (ex) {
       channels.forEach(function (ch) {
         var n = counts[ex + '|' + ch] || 0;
-        var cls = n >= 3 ? 'over' : (n === 2 ? 'near' : 'ok');
-        var sub = n >= 3 ? 'over cap' : (n === 2 ? 'at cap' : (2 - n) + ' left');
+        var cap = CAPS[ch] || 2;
+        var cls = n > cap ? 'over' : (n === cap ? 'near' : 'ok');
+        var sub = n > cap ? 'over cap' : (n === cap ? 'at cap' : (cap - n) + ' left');
         cells.push('<div class="cooldown-cell ' + cls + '">'
           + '<span class="label">' + esc(ex) + ' · ' + esc(ch) + '</span>'
-          + '<span class="value">' + n + ' / 2</span>'
+          + '<span class="value">' + n + ' / ' + cap + '</span>'
           + '<span class="sub">' + esc(sub) + '</span>'
           + '</div>');
       });
@@ -7938,8 +7944,8 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.18.1"></script>
-<script src="assets/hal-rail.js?v=1.18.1"></script>
+<script src="assets/page-knowledge.js?v=1.18.2"></script>
+<script src="assets/hal-rail.js?v=1.18.2"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
