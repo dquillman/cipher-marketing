@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.17.0</span>
+      <span class="version-bar" title="Dashboard version">v1.18.0</span>
     </div>
   </div>
 </nav>
@@ -6483,7 +6483,9 @@ if (document.readyState === 'loading') {
     +       '<div class="grade-form-section imp-field">'
     +         '<div class="grade-form-section-label">Discovery</div>'
     +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
-    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" placeholder="blank if not shown"></label>'
+    +         '<label class="li-field">In-network % <input type="number" min="0" max="100" step="0.01" name="inNetworkPct" placeholder="e.g. 59"></label>'
+    +         '<label class="li-field">Out-of-network % <input type="number" min="0" max="100" step="0.01" name="outOfNetworkPct" placeholder="e.g. 41 — expansion signal"></label>'
     +       '</div>'
     +       '<div class="grade-form-section ro-field">'
     +         '<div class="grade-form-section-label">Reddit post</div>'
@@ -6507,7 +6509,8 @@ if (document.readyState === 'loading') {
     +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
     +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
     +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
-    +         '<label class="not-ro">Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +         '<label class="x-field">Detail expands <input type="number" min="0" name="detailExpands" placeholder="X only"></label>'
+    +         '<label class="not-ro">Link clicks <input type="number" min="0" name="linkClicks" placeholder="LinkedIn: from GA4, else blank"></label>'
     +       '</div>'
     +       '<div class="grade-form-section ra-field">'
     +         '<div class="grade-form-section-label">Ad spend</div>'
@@ -6591,6 +6594,15 @@ if (document.readyState === 'loading') {
     var channel = (post && post.channel) || 'linkedin';
     var hasVideo = !!(post && post.video);
     var metrics = {};
+    // Blank means NOT MEASURED (null); 0 means measured-as-zero. Conflating the
+    // two is how a fabricated `membersReached: 0` ended up on an X post, for a
+    // metric X has never reported (found 2026-08-06).
+    function num(form, key) {
+      var raw = form.get(key);
+      if (raw === null || String(raw).trim() === '') return null;
+      var n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    }
     if (channel === 'reddit-organic') {
       // No impressions on organic Reddit — the API grades on absolute numbers.
       metrics.upvotes              = Number(fd.get('upvotes') || 0);
@@ -6599,25 +6611,25 @@ if (document.readyState === 'loading') {
       if (ratioRaw !== null && String(ratioRaw).trim() !== '') metrics.upvoteRatio = Number(ratioRaw);
       metrics.autoRemoved          = fd.get('autoRemoved') === 'on';
     } else if (channel === 'linkedin') {
-      metrics.impressions          = Number(fd.get('impressions') || 0);
-      metrics.membersReached       = Number(fd.get('membersReached') || 0);
-      metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
-      metrics.reactions            = Number(fd.get('reactions') || 0);
-      metrics.comments             = Number(fd.get('comments') || 0);
-      metrics.reposts              = Number(fd.get('reposts') || 0);
-      metrics.saves                = Number(fd.get('saves') || 0);
-      metrics.sends                = Number(fd.get('sends') || 0);
-      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
-      metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
-      metrics.followersGained      = Number(fd.get('followersGained') || 0);
-      // The grading API reads engagementActions for the engagement-rate component.
-      metrics.engagementActions    = metrics.socialEngagements > 0
-        ? metrics.socialEngagements
-        : metrics.reactions + metrics.comments + metrics.reposts;
+      metrics.impressions          = num(fd, 'impressions');
+      metrics.membersReached       = num(fd, 'membersReached');
+      metrics.inNetworkPct         = num(fd, 'inNetworkPct');
+      metrics.outOfNetworkPct      = num(fd, 'outOfNetworkPct');
+      metrics.socialEngagements    = num(fd, 'socialEngagements');
+      metrics.reactions            = num(fd, 'reactions');
+      metrics.comments             = num(fd, 'comments');
+      metrics.reposts              = num(fd, 'reposts');
+      metrics.saves                = num(fd, 'saves');
+      metrics.sends                = num(fd, 'sends');
+      // LinkedIn does not export link clicks — this comes from GA4 by UTM, or
+      // stays null. See site/data/metrics-schema.md.
+      metrics.linkClicks           = num(fd, 'linkClicks');
+      metrics.profileViewers       = num(fd, 'profileViewers');
+      metrics.followersGained      = num(fd, 'followersGained');
       if (hasVideo) {
-        metrics.videoViews         = Number(fd.get('videoViews') || 0);
-        metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
-        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+        metrics.videoViews         = num(fd, 'videoViews');
+        metrics.watchTimeSeconds   = num(fd, 'watchTimeSeconds');
+        metrics.avgWatchTimeSeconds= num(fd, 'avgWatchTimeSeconds');
       }
     } else if (channel === 'reddit-ads') {
       metrics.impressions          = Number(fd.get('impressions') || 0);
@@ -6625,24 +6637,37 @@ if (document.readyState === 'loading') {
       metrics.reposts              = Number(fd.get('reposts') || 0);
       metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
       metrics.totalSpendUsd        = Number(fd.get('totalSpendUsd') || 0);
-      metrics.engagementActions    = metrics.comments + metrics.reposts;
+      metrics.socialEngagements    = (metrics.comments || 0) + (metrics.reposts || 0);
       if (hasVideo) {
         metrics.videoViews         = Number(fd.get('videoViews') || 0);
         metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
       }
     } else {
-      metrics.impressions          = Number(fd.get('impressions') || 0);
-      metrics.likes                = Number(fd.get('likes') || 0);
-      metrics.replies              = Number(fd.get('comments') || 0);
-      metrics.reposts              = Number(fd.get('reposts') || 0);
-      metrics.bookmarks            = Number(fd.get('bookmarks') || 0);
-      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
-      metrics.profileVisits        = Number(fd.get('profileVisits') || 0);
-      metrics.followsGained        = Number(fd.get('followsGained') || 0);
-      metrics.engagementActions    = metrics.likes + metrics.replies + metrics.reposts;
+      // X. Platform labels differ from the canonical schema: Likes -> reactions,
+      // Replies -> comments, Bookmarks -> saves, Profile visits -> profileViewers,
+      // Follows -> followersGained. See site/data/metrics-schema.md.
+      metrics.impressions          = num(fd, 'impressions');
+      metrics.reactions            = num(fd, 'likes');
+      metrics.comments             = num(fd, 'comments');
+      metrics.reposts              = num(fd, 'reposts');
+      metrics.saves                = num(fd, 'bookmarks');
+      metrics.linkClicks           = num(fd, 'linkClicks');
+      metrics.profileViewers       = num(fd, 'profileVisits');
+      metrics.followersGained      = num(fd, 'followsGained');
+      // X reports an Engagements rollup; fall back to summing only if absent.
+      var xSum = (metrics.reactions || 0) + (metrics.comments || 0) + (metrics.reposts || 0);
+      metrics.socialEngagements    = num(fd, 'socialEngagements');
+      if (metrics.socialEngagements === null) metrics.socialEngagements = xSum;
+      var expands = num(fd, 'detailExpands');
+      if (expands !== null) metrics.channelExtras = { detailExpands: expands };
+      // X does not report these at all — null, never 0.
+      metrics.membersReached = null;
+      metrics.inNetworkPct   = null;
+      metrics.outOfNetworkPct= null;
+      metrics.sends          = null;
       if (hasVideo) {
-        metrics.videoViews         = Number(fd.get('videoViews') || 0);
-        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+        metrics.videoViews         = num(fd, 'videoViews');
+        metrics.avgWatchTimeSeconds= num(fd, 'avgWatchTimeSeconds');
       }
     }
     metrics.trialSignupsAttributed = Number(fd.get('trialSignups') || 0);
@@ -7909,8 +7934,8 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.17.0"></script>
-<script src="assets/hal-rail.js?v=1.17.0"></script>
+<script src="assets/page-knowledge.js?v=1.18.0"></script>
+<script src="assets/hal-rail.js?v=1.18.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
