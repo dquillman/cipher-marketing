@@ -93,11 +93,20 @@ test('all fourteen pages have reviewed expert knowledge', () => {
   }
 });
 
+// Version read from the badge, not hardcoded. These two tests pinned the
+// literal 1.10.5 and so went red the moment the dashboard shipped 1.11.0 —
+// seven minor versions of a failing suite, which is precisely why nobody
+// noticed package.json, the badge, and the cache-busters had drifted apart
+// (found 2026-08-06). A test that must be edited on every release is a test
+// that gets ignored.
+const badgeVersion = app.match(/class="version-bar"[^>]*>v([\d.]+)</)?.[1];
+
 test('page knowledge loads before the assistant rail', () => {
-  const knowledgeIndex = app.indexOf('assets/page-knowledge.js?v=1.10.5');
-  const halIndex = app.indexOf('assets/hal-rail.js?v=1.10.5');
-  assert.ok(knowledgeIndex >= 0);
-  assert.ok(halIndex > knowledgeIndex);
+  assert.ok(badgeVersion, 'no version-bar badge found in app.html');
+  const knowledgeIndex = app.indexOf(`assets/page-knowledge.js?v=${badgeVersion}`);
+  const halIndex = app.indexOf(`assets/hal-rail.js?v=${badgeVersion}`);
+  assert.ok(knowledgeIndex >= 0, 'page-knowledge.js is not versioned to the badge');
+  assert.ok(halIndex > knowledgeIndex, 'hal-rail.js must load after page-knowledge.js');
 });
 
 test('Brad, HAL, and JARVIS share the page tools', () => {
@@ -116,9 +125,28 @@ test('Cipher Marketing sends the branded Brad persona to the app expert', () => 
 });
 
 test('the assistant rail URL is release-versioned to prevent stale page help', () => {
-  assert.match(app, /Dashboard version">v1\.10\.5</);
-  assert.match(app, /assets\/page-knowledge\.js\?v=1\.10\.5/);
-  assert.match(app, /assets\/hal-rail\.js\?v=1\.10\.5/);
+  assert.ok(badgeVersion, 'no version-bar badge found in app.html');
+
+  // Every asset cache-buster must equal the badge. This is the invariant the
+  // original test was reaching for; pinning a literal version broke it. It now
+  // also acts as a second line of defence for the release-time drift guard in
+  // scripts/release.mjs.
+  const assetVersions = [...new Set([...app.matchAll(/\?v=([\d.]+)/g)].map((m) => m[1]))];
+  assert.deepEqual(
+    assetVersions,
+    [badgeVersion],
+    `asset cache-busters ${assetVersions.join(', ')} disagree with badge v${badgeVersion}`,
+  );
+
+  // And package.json is the source of truth for the badge itself.
+  const pkgVersion = JSON.parse(
+    fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+  ).version;
+  assert.equal(
+    badgeVersion,
+    pkgVersion,
+    `badge v${badgeVersion} disagrees with package.json ${pkgVersion}`,
+  );
 });
 
 test('hidden legacy model preferences migrate to the subscription expert', () => {
