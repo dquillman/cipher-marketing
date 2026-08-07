@@ -633,6 +633,34 @@
       "predictionNote": null,
       "gradeNotes": "D, and it confirms the existing cold-start lesson rather than teaching anything new: the X account has no audience to surface to, and 9 impressions sits inside the 2-39 band every prior X post landed in. Do not read the 77.78% engagement rate as a signal — it is 7 detail expands on 9 impressions, almost certainly including Dave, and no rate computed at n=9 means anything. One thing this post did RIGHT that its LinkedIn twin did wrong: it used the full UTM-tagged cipherexam.com/lp/pmp URL instead of an lnkd.in shortener, so it is attributable in GA4. The LinkedIn versions from the same week used lnkd.in and their click data is unrecoverable. Link clicks were 0 here, which at 9 impressions tells us nothing about the copy.",
       "recommendations": "Do not spend more drafting effort on standalone X posts yet. The documented path out of cold start is reply-into-conversations — 10+ relevant replies a day in PMP/Sec+/SHRM threads on accounts that already have reach — before standalone posts can land. Until then treat X as throwaway distribution and put the effort into LinkedIn cadence, which is currently producing real expansion. Keep using full UTM URLs on every channel; that habit is the only reason this post is measurable at all."
+    },
+    {
+      "id": "li-fri-2026-08-07-bizenv-reprice",
+      "scheduled": "2026-08-07",
+      "scheduledTime": "2026-08-07T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-08-07 10:30 MT",
+      "channel": "linkedin",
+      "channelAccount": "personal",
+      "track": "authority",
+      "status": "scheduled",
+      "examFocus": "PMP",
+      "hook": "worked-question",
+      "video": null,
+      "videoFormat": "1:1",
+      "videoTheme": null,
+      "imageUrl": null,
+      "canvaDesignId": null,
+      "copy": "Business Environment moved from 8% of the PMP to 26% on July 9, 2026.\n\nCompliance sits inside that domain. Those scenarios now carry roughly three times the weight.\n\nTry one. A stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nYou can raise a change request. You can escalate to the sponsor. You can rework the schedule with your team. You can confirm the requirement with the compliance owner.\n\nFour options, and a working PM has done all four on a real Tuesday.\n\nMost experienced PMs reach for the change request. It is documented, it is defensible, and on the job it is the right call.\n\nOn the exam, second.\n\nA change request assumes you already know what is changing. Read the stem again. Someone *told* you a requirement was missed. Nothing in it establishes that the requirement applies, what it costs, or who owns the decision.\n\nConfirming with the compliance owner tests whether the gap is real and puts the call with the person accountable for it.\n\nRun the same rule on a different question. Two team members disagree on an approach. Decide for them. Escalate to the sponsor. Bring them together to work the problem.\n\nDeciding and escalating both end the conversation. Nothing in the stem says it has to end. Collaborate keeps both people in it, and it is the only option that produces a solution both of them own.\n\nRead the stem for what has actually been established. Then pick the option that works at that line.\n\n#PMP #ProjectManagement #ExamPrep",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=pmp_judgment_2026&utm_content=bizenv-8-to-26",
+      "postedAt": null,
+      "postUrl": null,
+      "metrics": null,
+      "grade": null,
+      "gradeNotes": null,
+      "recommendations": null,
+      "humanizerTellsStripped": 0,
+      "predictedGrade": "B",
+      "predictionNote": "B — first authority-track post and the third leg of the cadence test. Gauntlet-produced: beat Andrew Ramdayal blind 3/3 with zero lifted language. Betting on reach recovery from cadence (Aug 3 -> 5 -> 7, two-day gaps) rather than on the opener, which the final judge called commodity. Not predicting A because absolute reach is still tiny and one reaction has been the ceiling all week."
     }
   ],
   "benchmarks": {
@@ -655,7 +683,7 @@
   },
   "_meta": {
     "lastUpdatedBy": "brad-stale-skip",
-    "lastUpdatedAt": "2026-08-06T00:00:00.000Z",
+    "lastUpdatedAt": "2026-08-07T00:00:00.000Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1
   }
