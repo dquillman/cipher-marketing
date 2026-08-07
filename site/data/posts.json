@@ -739,8 +739,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "brad-stale-skip",
-    "lastUpdatedAt": "2026-08-07T00:00:00.000Z",
+    "lastUpdatedBy": "seed-firestore --pull",
+    "lastUpdatedAt": "2026-08-07T16:10:06.759Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
