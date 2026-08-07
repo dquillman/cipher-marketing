@@ -64,7 +64,16 @@ So:
 
 GA4 is the truer number either way: the platform counts clicks, GA4 counts arrivals. Every CTA already carries `utm_source` / `utm_campaign` / `utm_content`.
 
-⚠️ **LinkedIn CTAs using `lnkd.in` shorteners break this.** Both August LinkedIn posts used `lnkd.in/...` rather than a UTM'd `cipherexam.com/lp/...` URL, so there is no UTM to match in GA4 and clicks are unrecoverable for them. The X post the same week used a full UTM'd URL and is attributable. **Use the UTM'd destination URL directly on LinkedIn** — the shortener costs you the only click data you can get on that channel.
+✅ **`lnkd.in` shorteners are fine — verified 2026-08-06.** LinkedIn auto-shortens any URL in post text, but the redirect preserves the full query string. Both August posts resolve to properly tagged destinations with distinct `utm_content` values:
+
+```
+lnkd.in/grQNRxYH → /lp/pmp?utm_source=linkedin&utm_campaign=pmp_judgment_2026&utm_content=the-exam-changed
+lnkd.in/ggUpDnTt → /lp/pmp?utm_source=linkedin&utm_campaign=pmp_judgment_2026&utm_content=experience-trap
+```
+
+So GA4 has per-post LinkedIn click data and it is fully recoverable. Paste the UTM'd URL as normal and let LinkedIn shorten it — nothing is lost. (An earlier version of this file claimed the opposite; that was an inference, and checking the redirects disproved it.)
+
+The thing that genuinely breaks attribution is **reusing the same `utm_content` across posts** — which is exactly what happened in Week 1 and collapsed that week's data permanently. Give every post a unique `utm_content`. The August posts do.
 
 ⚠️ Week 1 UTMs were mis-tagged: `utm_content=mon_launch` went out on all three LinkedIn posts, so per-post attribution for that week is collapsed and unrecoverable. Don't try to reconstruct it.
 
