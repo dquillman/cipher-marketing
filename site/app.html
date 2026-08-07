@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.18.0</span>
+      <span class="version-bar" title="Dashboard version">v1.18.1</span>
     </div>
   </div>
 </nav>
@@ -7307,7 +7307,7 @@ function cipherFormatLine(p) {
   function renderFormatPerformance() {
     var host = document.getElementById('format-performance');
     if (!host) return;
-    var posts = ((window.__POSTS__ && window.__POSTS__.posts) || []).filter(function (p) { return p.videoThemeUsed; });
+    var posts = ((window.__POSTS__ && window.__POSTS__.posts) || []).filter(function (p) { return p.videoThemeUsed || p.videoTheme; });
     if (!posts.length) {
       host.innerHTML = '<div class="trend-scout-empty">No videos rendered yet.</div>';
       return;
@@ -7315,7 +7315,7 @@ function cipherFormatLine(p) {
     var graded = posts.filter(function (p) { return p.grade; });
     var groups = {};
     posts.forEach(function (p) {
-      var k = p.videoThemeUsed;
+      var k = p.videoThemeUsed || p.videoTheme;
       groups[k] = groups[k] || { rendered: 0, graded: 0, gradeSum: 0 };
       groups[k].rendered++;
       if (p.grade) { groups[k].graded++; groups[k].gradeSum += gradeNum(p.grade); }
@@ -7475,7 +7475,7 @@ function cipherNextToPublish() {
       ? '<video controls preload="metadata" src="' + cipherEsc(p.videoUrl) + '#t=0.5" ' +
         'style="width:100%;max-width:300px;border-radius:10px;background:#000;display:block;"></video>' +
         '<div class="pn-meta">' + cipherEsc(p.videoAspect || '1:1') + ' · ' +
-        cipherEsc(p.videoThemeUsed || '—') + ' · attach <code>' + cipherEsc(p.id) + '.mp4</code></div>'
+        cipherEsc(p.videoThemeUsed || p.videoTheme || '—') + ' · attach <code>' + cipherEsc(p.id) + '.mp4</code></div>'
       : '<div class="trend-scout-empty" style="margin:0;">No video — Generate one below, or post copy only.</div>';
 
     host.innerHTML =
@@ -7938,8 +7938,8 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.18.0"></script>
-<script src="assets/hal-rail.js?v=1.18.0"></script>
+<script src="assets/page-knowledge.js?v=1.18.1"></script>
+<script src="assets/hal-rail.js?v=1.18.1"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
