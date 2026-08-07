@@ -46,7 +46,9 @@
       "scheduledTime": "2026-05-18T16:30:00.000Z",
       "videoFormat": "1:1",
       "status": "posted",
-      "hook": "tool-builder"
+      "hook": "tool-builder",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "scheduledTime": "2026-05-18T17:30:00.000Z",
@@ -93,7 +95,9 @@
       "id": "x-mon-2026-05-11-launch",
       "grade": "D",
       "examFocus": "PMP",
-      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch"
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=mon_launch",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "scheduledTimeLocal": "2026-05-20 10:30 MT",
@@ -141,7 +145,9 @@
         "notes": "Week 1 UTMs mis-tagged — utm_content=mon_launch used across all 3 LI Week 1 posts; per-post GA4 attribution collapsed and unrecoverable.",
         "channelExtras": null
       },
-      "recommendations": "Open the video on a single concrete trap frame — show a 4-option question with one wrong answer highlighted in red and the word 'PLAUSIBLE' across it — within the first 1.5s. The 16s avg watch proves the content holds once viewers commit; the 16.3% view rate proves the thumbnail isn't earning the commit. Fix the cold-open, not the copy."
+      "recommendations": "Open the video on a single concrete trap frame — show a 4-option question with one wrong answer highlighted in red and the word 'PLAUSIBLE' across it — within the first 1.5s. The 16s avg watch proves the content holds once viewers commit; the 16.3% view rate proves the thumbnail isn't earning the commit. Fix the cold-open, not the copy.",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "postedAt": "2026-05-22T00:13:59.370Z",
@@ -191,7 +197,9 @@
       "channel": "x",
       "postUrl": "https://x.com/QuillmanDavid/status/2057128902842307041",
       "video": "ai-tutor-demo-pmp.mp4",
-      "scheduledTimeLocal": "2026-05-20 11:30 MT"
+      "scheduledTimeLocal": "2026-05-20 11:30 MT",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "examFocus": "PMP",
@@ -239,7 +247,9 @@
       "scheduledTime": "2026-05-22T16:30:00.000Z",
       "hook": "domain-weights",
       "status": "posted",
-      "videoFormat": "1:1"
+      "videoFormat": "1:1",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "cta": "https://cipherexam.com/lp/pmp?utm_source=x&utm_campaign=launch_week1&utm_content=fri_domains",
@@ -285,7 +295,9 @@
       "videoFormat": "1:1",
       "hook": "domain-weights",
       "status": "posted",
-      "scheduledTime": "2026-05-22T17:30:00.000Z"
+      "scheduledTime": "2026-05-22T17:30:00.000Z",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "li-wed-2026-05-27-bridge",
@@ -312,7 +324,9 @@
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
-      "recommendations": null
+      "recommendations": null,
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "x-wed-2026-05-27-bridge",
@@ -341,7 +355,9 @@
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
-      "recommendations": null
+      "recommendations": null,
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "li-fri-2026-05-29-scenario",
@@ -373,7 +389,9 @@
       "grade": null,
       "gradeNotes": null,
       "recommendations": null,
-      "holdLiftedAt": "2026-07-16"
+      "holdLiftedAt": "2026-07-16",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "x-fri-2026-05-29-scenario",
@@ -405,7 +423,9 @@
       "grade": null,
       "gradeNotes": null,
       "recommendations": null,
-      "holdLiftedAt": "2026-07-16"
+      "holdLiftedAt": "2026-07-16",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "li-mon-2026-06-01-domains",
@@ -437,7 +457,9 @@
       "grade": null,
       "gradeNotes": null,
       "recommendations": null,
-      "holdLiftedAt": "2026-07-16"
+      "holdLiftedAt": "2026-07-16",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "x-mon-2026-06-01-domains",
@@ -469,7 +491,9 @@
       "grade": null,
       "gradeNotes": null,
       "recommendations": null,
-      "holdLiftedAt": "2026-07-16"
+      "holdLiftedAt": "2026-07-16",
+      "track": "product",
+      "producedBy": "hand"
     },
     {
       "id": "li-mon-2026-08-03-exam-change",
@@ -522,7 +546,8 @@
       "predictedGrade": null,
       "predictionNote": null,
       "gradeNotes": "DISTRIBUTION D, NOT A COPY D — and the gap between those two has never been wider. 32 impressions is the lowest of any LinkedIn post in the campaign (prior floor was 98, prior high 222), a 5-7x collapse. 97% in-network / 3% out-of-network means the algorithm did essentially no expansion: this reached Dave's existing network and stopped. Two likely causes, both structural rather than editorial. (1) LINK IN BODY — the lnkd.in URL sits in the post body, which grading-lessons already documents as suppressing the early window; the rule exists and this post did not follow it. (2) A 10-WEEK POSTING GAP — nothing shipped between 2026-05-27 and 2026-08-03, and dormant accounts get throttled. Cause (2) is n=1 and NOT yet a durable lesson. Genuinely positive, and worth separating from the reach failure: this is the first non-zero engagement action in campaign history (1 reaction across 493 prior impressions was 0), and average watch time of 26s is roughly double the 12-17s Week 1 band. The copy is also the strongest produced so far and follows the playbook exactly — it opens on a specific date and a specific number pair (8% -> 26%), which is the substance-forward pattern that outperformed every clever framing in Week 1. Do not rewrite this hook. NOTE: exact post time was not captured in the export; scheduledTime/postedAt use the campaign default 10:30 MT and should be treated as approximate.",
-      "recommendations": "Next PMP post: keep this exact copy structure and move the URL out of the body into the first reply comment. That is the single highest-leverage change available and it is already a documented rule. Then post again within 72 hours — if reach recovers toward the 150-220 band on the same hook shape, the dormancy penalty is confirmed and becomes a durable lesson; if it stays near 32, the cause is the link and not the gap. Do not touch the opener."
+      "recommendations": "Next PMP post: keep this exact copy structure and move the URL out of the body into the first reply comment. That is the single highest-leverage change available and it is already a documented rule. Then post again within 72 hours — if reach recovers toward the 150-220 band on the same hook shape, the dormancy penalty is confirmed and becomes a durable lesson; if it stays near 32, the cause is the link and not the gap. Do not touch the opener.",
+      "producedBy": "hand"
     },
     {
       "id": "li-wed-2026-08-05-experience-trap",
@@ -575,7 +600,8 @@
       "predictedGrade": null,
       "predictionNote": null,
       "gradeNotes": "C, and the letter understates it — absolute reach is still small (45) but every efficiency metric is the best on record. This post accidentally ran a clean natural experiment against li-mon-2026-08-03-exam-change two days earlier. LINK PLACEMENT WAS HELD CONSTANT (both put the lnkd.in URL in the body), so the variable that changed was recency: Monday broke a 10-week silence, Wednesday followed Monday by 48 hours. Result: out-of-network went 3% -> 41%, impressions-to-reach 18.75% -> 40% (campaign best is 44%), video view rate 15.63% -> 22.22%. A 3%-to-41% swing in out-of-network is the algorithm deciding to expand beyond the existing network, and it is by far the strongest expansion signal the account has produced. This substantially revises the read on Monday: cadence, not link placement, looks like the dominant lever. That does not clear link-in-body — it is still a documented rule and still untested here — but it is no longer the prime suspect. Caveats: n=2, and hook and copy both changed alongside recency, so this is suggestive rather than isolated. Engagement is flat at 1 reaction, same as Monday. Average watch fell 26s -> 18s, worth watching but the view RATE rose, so more people started and fewer finished. NOTE: post time and link clicks were not in the export; 10:30 MT is the campaign default and is approximate.",
-      "recommendations": "Post a third time within 72 hours to lock this in. Keep the URL in the body one more round so recency stays the only moving variable — resist fixing two things at once, because that is how you learn nothing. If reach clears 60 with out-of-network above 35%, cadence is confirmed as the primary lever and consistency beats every copy tweak on the list. THEN, and only then, move the link to the first comment on post four and measure that separately. On content: this hook (experience works against you) is the best-performing shape so far on expansion — it is a reframe of the reader rather than of the category, which sidesteps the category-adversarial penalty entirely. Build more on that pattern."
+      "recommendations": "Post a third time within 72 hours to lock this in. Keep the URL in the body one more round so recency stays the only moving variable — resist fixing two things at once, because that is how you learn nothing. If reach clears 60 with out-of-network above 35%, cadence is confirmed as the primary lever and consistency beats every copy tweak on the list. THEN, and only then, move the link to the first comment on post four and measure that separately. On content: this hook (experience works against you) is the best-performing shape so far on expansion — it is a reframe of the reader rather than of the category, which sidesteps the category-adversarial penalty entirely. Build more on that pattern.",
+      "producedBy": "hand"
     },
     {
       "id": "x-mon-2026-08-03-exam-change",
@@ -632,7 +658,8 @@
       "predictedGrade": null,
       "predictionNote": null,
       "gradeNotes": "D, and it confirms the existing cold-start lesson rather than teaching anything new: the X account has no audience to surface to, and 9 impressions sits inside the 2-39 band every prior X post landed in. Do not read the 77.78% engagement rate as a signal — it is 7 detail expands on 9 impressions, almost certainly including Dave, and no rate computed at n=9 means anything. One thing this post did RIGHT that its LinkedIn twin did wrong: it used the full UTM-tagged cipherexam.com/lp/pmp URL instead of an lnkd.in shortener, so it is attributable in GA4. The LinkedIn versions from the same week used lnkd.in and their click data is unrecoverable. Link clicks were 0 here, which at 9 impressions tells us nothing about the copy.",
-      "recommendations": "Do not spend more drafting effort on standalone X posts yet. The documented path out of cold start is reply-into-conversations — 10+ relevant replies a day in PMP/Sec+/SHRM threads on accounts that already have reach — before standalone posts can land. Until then treat X as throwaway distribution and put the effort into LinkedIn cadence, which is currently producing real expansion. Keep using full UTM URLs on every channel; that habit is the only reason this post is measurable at all."
+      "recommendations": "Do not spend more drafting effort on standalone X posts yet. The documented path out of cold start is reply-into-conversations — 10+ relevant replies a day in PMP/Sec+/SHRM threads on accounts that already have reach — before standalone posts can land. Until then treat X as throwaway distribution and put the effort into LinkedIn cadence, which is currently producing real expansion. Keep using full UTM URLs on every channel; that habit is the only reason this post is measurable at all.",
+      "producedBy": "hand"
     },
     {
       "id": "li-fri-2026-08-07-bizenv-reprice",
@@ -641,7 +668,7 @@
       "scheduledTimeLocal": "2026-08-07 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
-      "track": "authority",
+      "track": "sme",
       "status": "scheduled",
       "examFocus": "PMP",
       "hook": "worked-question",
@@ -660,7 +687,8 @@
       "recommendations": null,
       "humanizerTellsStripped": 0,
       "predictedGrade": "B",
-      "predictionNote": "B — first authority-track post and the third leg of the cadence test. Gauntlet-produced: beat Andrew Ramdayal blind 3/3 with zero lifted language. Betting on reach recovery from cadence (Aug 3 -> 5 -> 7, two-day gaps) rather than on the opener, which the final judge called commodity. Not predicting A because absolute reach is still tiny and one reaction has been the ceiling all week."
+      "predictionNote": "B — first authority-track post and the third leg of the cadence test. Gauntlet-produced: beat Andrew Ramdayal blind 3/3 with zero lifted language. Betting on reach recovery from cadence (Aug 3 -> 5 -> 7, two-day gaps) rather than on the opener, which the final judge called commodity. Not predicting A because absolute reach is still tiny and one reaction has been the ceiling all week.",
+      "producedBy": "gauntlet"
     }
   ],
   "benchmarks": {
@@ -685,6 +713,8 @@
     "lastUpdatedBy": "brad-stale-skip",
     "lastUpdatedAt": "2026-08-07T00:00:00.000Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
-    "schemaVersion": 1
+    "schemaVersion": 1,
+    "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
+    "producedByValues": "hand | draft-week-posts | sme-post | gauntlet — how the copy was made, independent of track."
   }
 }

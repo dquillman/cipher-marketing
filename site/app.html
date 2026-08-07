@@ -2538,11 +2538,13 @@ details.post-card > summary .post-head { margin-bottom: 0; }
 .post-pill.channel-linkedin { background: rgba(10, 102, 194, 0.18); color: #7eb8ff; border-color: rgba(10, 102, 194, 0.45); }
 .post-pill.channel-x        { background: rgba(255, 255, 255, 0.08); color: var(--fg); }
 .post-pill.exam             { background: rgba(167, 139, 250, 0.16); color: #c4b5fd; border-color: rgba(167, 139, 250, 0.45); }
-/* Track: which engine produced the post. "product" = Brad's campaign posts,
-   "authority" = the LinkedIn SME founder track. One feed, two tracks — the pill
-   is how you tell them apart when grading (Dave, 2026-08-05). */
+/* Track: whose voice the post is in. "product" = Brad's campaign posts,
+   "sme" = Dave's founder/authority posts. One feed, two tracks — the pill is how
+   you tell them apart when grading. Renamed from "authority" 2026-08-07.
+   Separate from producedBy, which records HOW the copy was made. */
 .post-pill.track-product    { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border-color: rgba(148, 163, 184, 0.32); }
-.post-pill.track-authority  { background: rgba(67,  229, 255, 0.16); color: #43E5FF; border-color: rgba(67,  229, 255, 0.45); }
+.post-pill.track-sme        { background: rgba(67,  229, 255, 0.16); color: #43E5FF; border-color: rgba(67,  229, 255, 0.45); }
+.post-pill.made-gauntlet    { background: rgba(167, 139, 250, 0.16); color: #c4b5fd; border-color: rgba(167, 139, 250, 0.45); }
 /* Grade color scale: A = gold, B = green, C = yellow, D = red */
 .post-pill.grade-A { background: rgba(255, 215, 0,   0.16); color: #ffd700; border-color: rgba(255, 215, 0,   0.55); }
 .post-pill.grade-B { background: rgba(74,  222, 128, 0.16); color: #4ade80; border-color: rgba(74,  222, 128, 0.45); }
@@ -3030,6 +3032,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
         '<span class="post-pill channel-' + esc(p.channel || 'other') + '">' + esc(channelLabel) + '</span>' +
         (p.examFocus ? '<span class="post-pill exam">' + esc(p.examFocus) + '</span>' : '') +
         '<span class="post-pill track-' + esc(p.track || 'product') + '">' + esc(p.track || 'product') + '</span>' +
+        (p.producedBy === 'gauntlet' ? '<span class="post-pill made-gauntlet">gauntlet</span>' : '') +
         '<span class="post-pill">' + esc(p.status || 'draft') + '</span>' + staleBadge +
         gradePill +
         outlierBadge +
@@ -7480,6 +7483,7 @@ function cipherNextToPublish() {
         '<span class="post-pill channel-' + cipherEsc(p.channel || 'other') + '">' + cipherEsc(p.channel || '') + '</span>' +
         (p.examFocus ? '<span class="post-pill exam">' + cipherEsc(p.examFocus) + '</span>' : '') +
         '<span class="post-pill track-' + cipherEsc(p.track || 'product') + '">' + cipherEsc(p.track || 'product') + '</span>' +
+        (p.producedBy === 'gauntlet' ? '<span class="post-pill made-gauntlet">gauntlet</span>' : '') +
         '<span class="post-meta">' + cipherEsc(p.scheduled || '') + '</span>' +
       '</div>' +
       '<div class="pn-grid">' +

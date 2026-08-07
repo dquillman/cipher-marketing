@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Cipher Marketing — runs locally</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    background: radial-gradient(120% 90% at 50% 0%, #12314a 0%, #060B16 55%, #04070f 100%);
+    color: #e2e8f0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px; line-height: 1.6;
+  }
+  .card { max-width: 560px; background: #0B1526; border: 1px solid #1B2A44; border-radius: 14px; padding: 32px; }
+  h1 { margin: 0 0 4px; font-size: 1.35rem; color: #43E5FF; }
+  .sub { margin: 0 0 20px; color: #94a3b8; font-size: 0.92rem; }
+  p { margin: 0 0 14px; }
+  code, pre { background: #04070f; border: 1px solid #1B2A44; border-radius: 8px; color: #43E5FF; }
+  code { padding: 2px 6px; font-size: 0.88rem; }
+  pre { padding: 12px 14px; overflow-x: auto; font-size: 0.85rem; margin: 0 0 14px; }
+  .why { border-left: 3px solid #FFB224; padding-left: 14px; color: #cbd5e1; font-size: 0.9rem; }
+  .foot { margin-top: 22px; padding-top: 16px; border-top: 1px solid #1B2A44; color: #64748b; font-size: 0.82rem; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Cipher Marketing runs locally</h1>
+    <p class="sub">There is one dashboard. It is not this URL.</p>
+
+    <p>Start it, then open <code>http://localhost:8766/app.html</code>:</p>
+    <pre>cd "G:\Users\daveq\cipher-marketing"
+node serve.mjs</pre>
+
+    <p class="why">
+      This address used to serve a copy of the dashboard that could never load any
+      posts. Firebase Hosting deliberately does not deploy <code>data/</code>, because
+      <code>posts.json</code> holds unpublished drafts, live metrics and campaign
+      strategy — none of which belongs on a public URL. So the hosted copy showed the
+      navigation, the version badge and an empty pipeline, which looked like a broken
+      dashboard rather than an absent one. It has been retired so there is exactly one
+      real app.
+    </p>
+
+    <div class="foot">
+      A hosted dashboard would need an authenticated API reading Firestore rather than a
+      local JSON file. Worth building if you want it on your phone; not worth faking.
+    </div>
+  </div>
+</body>
+</html>
