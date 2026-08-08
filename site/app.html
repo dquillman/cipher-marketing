@@ -1514,7 +1514,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.18.2</span>
+      <span class="version-bar" title="Dashboard version">v1.18.3</span>
     </div>
   </div>
 </nav>
@@ -5493,7 +5493,17 @@ if (document.readyState === 'loading') {
       window.__CAMPAIGN_STATE__ = snap.data();
       applyState(window.__CAMPAIGN_STATE__);
       var updated = window.__CAMPAIGN_STATE__._meta && window.__CAMPAIGN_STATE__._meta.lastUpdatedAt;
-      var label = updated ? new Date(updated).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'now';
+      // Same-day syncs show the TIME, not the date — "Synced · Aug 7" at 8pm on
+      // Aug 7 is indistinguishable from twelve hours stale, and that ambiguity
+      // sent Dave chasing a bug that wasn't there (2026-08-07). Older syncs keep
+      // the date, which is the number that matters once it isn't today.
+      var label = 'now';
+      if (updated) {
+        var d = new Date(updated);
+        label = d.toDateString() === new Date().toDateString()
+          ? d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+          : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      }
       markSync(true, 'Synced · ' + label, updated ? 'Campaign data last changed ' + new Date(updated).toLocaleString() : 'Campaign data connected.');
       document.dispatchEvent(new CustomEvent('cipher:state-updated'));
     }, function (err) {
@@ -7944,8 +7954,8 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.18.2"></script>
-<script src="assets/hal-rail.js?v=1.18.2"></script>
+<script src="assets/page-knowledge.js?v=1.18.3"></script>
+<script src="assets/hal-rail.js?v=1.18.3"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
