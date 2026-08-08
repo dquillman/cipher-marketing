@@ -401,9 +401,9 @@
       "id": "resend-sequence",
       "label": "Resend 7-day onboarding with exam merge tags",
       "owner": "Engineering + Marketing",
-      "status": "deferred",
+      "status": "done",
       "due": "2026-05-25",
-      "note": "DEFERRED to Week 2 (2026-05-25). For Week 1, all signups get personal founder emails from Dave instead — templates at cipher-marketing/07-founder-1to1-emails.md (Day 0 / Day 3 / Day 6). Decision rationale: at <25 activated users, founder-touch outperforms any drip on signal-quality + testimonial-yield + brand loyalty. Building Cloud Function infra (functions/package.json + resend SDK + first-time deploy from this repo) was estimated 2-3h with non-trivial risk to existing 50+ deployed functions. Tradeoff was clearly not worth it pre-launch. Brad will surface founder-email recommendations during morning briefings (matched to day-since-signup + activation status)."
+      "note": "Closed 2026-08-07. Shipped in two parts, both live in prod on exam-coach-ai-platform: (1) scheduleOnboardingDrip — Day 4-7 trial-onboarding emails on users/{uid} create, firstName-personalized, Resend scheduled_at API. (2) sendLeadMagnetWelcome — Day 0/2/5 sequence on leadCaptures/{id} create, fully exam-cluster-specific copy (PMP / Sec+ / SHRM-CP each get their own insight + fee + magnet link). RESEND_API_KEY provisioned 2026-08-06, domain cipherexam.com verified (DKIM/SPF/MX via GoDaddy Domain Connect). End-to-end DELIVERY VERIFIED 2026-08-07: test capture produced Day 0 email Delivered + Day 2/5 Scheduled in the Resend log. A predeploy guard (check-email-config.mjs) now blocks any deploy that would ship the senders without a key — the original silent no-op cannot recur. Honest scope note: the trial drip personalizes by firstName, not per-exam merge tags; per-exam personalization exists in the lead-magnet welcome. If per-exam trial-drip copy is wanted, that is a new small ticket, not a blocker — email infrastructure itself is fully operational."
     }
   ],
   "decisions": [
