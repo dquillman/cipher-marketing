@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Seeds Firestore with the current local posts.json + campaign-state.json.
-// Uses the Firestore REST API.
+// Talks to Firestore through firebase-admin (see scripts/lib/firestore-access.mjs),
+// not the REST API. Check access any time with:
+//   node scripts/check-firestore-access.mjs
 //
 // ⚠ STALE ASSUMPTION FIXED 2026-08-01: this said "no service account required
 // (rules are open)". firestore.rules now requires an authenticated
@@ -259,8 +261,17 @@ async function runSeed() {
 
   if (!POSTS_ONLY) {
     const state = JSON.parse(readFileSync(join(DATA, "campaign-state.json"), "utf8"));
+    // Stamp the sync time. The dashboard header badge ("Synced · <date>") reads
+    // _meta.lastUpdatedAt from this doc; relying on every editor to bump it by
+    // hand left the badge stuck on Aug 1 while the data changed daily (found
+    // 2026-08-08). The stamp is written back to the local file too, so file and
+    // Firestore never disagree about when they were last aligned.
+    state._meta = state._meta || {};
+    state._meta.lastUpdatedAt = new Date().toISOString();
+    state._meta.lastUpdatedBy = "seed-firestore";
+    writeFileSync(join(DATA, "campaign-state.json"), JSON.stringify(state, null, 2) + "\n");
     await upsert("campaign", "state", state);
-    console.log("  ✓  campaign/state");
+    console.log("  ✓  campaign/state (synced " + state._meta.lastUpdatedAt + ")");
   } else {
     console.log("  ⤳ skipping campaign/state (--posts)");
   }

@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "cipher-competitor-intel-refresh",
-    "lastUpdatedAt": "2026-08-01T14:17:26.178Z",
+    "lastUpdatedBy": "seed-firestore",
+    "lastUpdatedAt": "2026-08-08T01:51:42.610Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
