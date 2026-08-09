@@ -93,6 +93,44 @@ test('accepts channelExtras as a bounded numeric object', () => {
   }
 });
 
+test('accepts notes so an already-graded post can be re-graded', () => {
+  // The endpoint writes `notes` itself. Rejecting it on the way back in meant
+  // the only way to re-grade a post was to drop the field, destroying the
+  // provenance record it holds.
+  const note = 'Rates are meaningless at 9 impressions — recorded for completeness.';
+  const result = validateGradePayload({
+    postId: 'post-1',
+    metrics: { impressions: 9, notes: note },
+  });
+  assert.equal(result.metrics.notes, note);
+  assert.equal(
+    validateGradePayload({ postId: 'post-1', metrics: { notes: null } }).metrics.notes,
+    null,
+  );
+  for (const notes of [42, { text: 'x' }, 'x'.repeat(2001)]) {
+    assert.throws(
+      () => validateGradePayload({ postId: 'post-1', metrics: { notes } }),
+      (error) => error instanceof RequestError && error.statusCode === 400,
+    );
+  }
+});
+
+test('a full canonical metrics object round-trips through the validator', () => {
+  // Whatever the endpoint writes, it must accept back — otherwise re-grading
+  // is impossible for exactly the posts that carry the most metadata.
+  const written = {
+    impressions: 169, membersReached: null, impressionsToReachPct: null,
+    inNetworkPct: null, outOfNetworkPct: null,
+    reactions: 0, comments: 0, reposts: 0, saves: 0, sends: 0,
+    socialEngagements: 0, engagementRatePct: 0,
+    videoViews: 27, videoViewRatePct: 15.98, watchTimeSeconds: 591, avgWatchTimeSeconds: 21,
+    profileViewers: 0, followersGained: 0,
+    linkClicks: 1, linkClickRatePct: 0.59, trialSignupsAttributed: 0,
+    notes: 'provenance', channelExtras: { detailExpands: 7 },
+  };
+  assert.doesNotThrow(() => validateGradePayload({ postId: 'post-1', metrics: written }));
+});
+
 test('rejects out-of-range network percentages', () => {
   for (const metrics of [{ inNetworkPct: 101 }, { outOfNetworkPct: 100.5 }]) {
     assert.throws(

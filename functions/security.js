@@ -4,6 +4,8 @@ const BOOTSTRAP_OPERATOR_EMAILS = new Set([
   'dquillman2112@gmail.com',
 ]);
 
+const MAX_NOTES_LENGTH = 2000;
+
 const NUMERIC_LIMITS = {
   impressions: 10_000_000,
   membersReached: 10_000_000,
@@ -31,6 +33,18 @@ const NUMERIC_LIMITS = {
   followsGained: 10_000_000,
   engagementActions: 10_000_000,
   trialSignupsAttributed: 10_000_000,
+  // Derived rates. The endpoint recomputes all four and its own values win, so
+  // these are accepted only so that a previously-graded post can be submitted
+  // back unmodified. Rejecting them made re-grading impossible.
+  //
+  // Not capped at 100: engagement and link-click rates exceed it on tiny
+  // denominators (an X post hit 77.8% on 9 impressions), and videoViewRatePct
+  // legitimately exceeds 100% because X counts views differently from
+  // impressions — metrics-schema.md says explicitly not to clamp it.
+  impressionsToReachPct: 100,
+  engagementRatePct: 100_000,
+  linkClickRatePct: 100_000,
+  videoViewRatePct: 100_000,
 };
 
 export class RequestError extends Error {
@@ -73,8 +87,8 @@ export function validateGradePayload(body) {
   }
 
   const entries = Object.entries(metrics);
-  // +2: autoRemoved and channelExtras live outside NUMERIC_LIMITS.
-  if (entries.length > Object.keys(NUMERIC_LIMITS).length + 2) {
+  // +3: autoRemoved, channelExtras and notes live outside NUMERIC_LIMITS.
+  if (entries.length > Object.keys(NUMERIC_LIMITS).length + 3) {
     throw new RequestError(400, 'Too many metric fields.');
   }
 
@@ -87,6 +101,20 @@ export function validateGradePayload(body) {
     }
     if (key === 'channelExtras') {
       clean[key] = validateChannelExtras(value);
+      continue;
+    }
+    // `notes` is a core key the endpoint itself writes (caveats, provenance,
+    // missing-data flags). Refusing it on the way back in made re-grading a
+    // post impossible: the only way to pass validation was to drop the field,
+    // which silently destroyed the note. Found 2026-08-08 backfilling GA4
+    // clicks onto already-graded posts.
+    if (key === 'notes') {
+      if (value === null) { clean[key] = null; continue; }
+      if (typeof value !== 'string') throw new RequestError(400, 'notes must be a string or null.');
+      if (value.length > MAX_NOTES_LENGTH) {
+        throw new RequestError(400, `notes must be at most ${MAX_NOTES_LENGTH} characters.`);
+      }
+      clean[key] = value;
       continue;
     }
     if (!(key in NUMERIC_LIMITS)) throw new RequestError(400, `Unsupported metric: ${key}`);
