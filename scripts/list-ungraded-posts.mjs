@@ -16,9 +16,11 @@ import { getDb, credentialHelp } from './lib/firestore-access.mjs';
 
 const args = process.argv.slice(2);
 const asJson = args.includes('--json');
-const minAgeHours = Number(
-  args[args.indexOf('--min-age-hours') + 1] ?? (args.includes('--min-age-hours') ? NaN : 48),
-);
+// indexOf returns -1 when the flag is absent, and args[-1 + 1] is args[0] — so
+// reading the value before checking for the flag made `--json` alone parse as
+// the min-age value and fail. Check for the flag first.
+const ageFlagIdx = args.indexOf('--min-age-hours');
+const minAgeHours = ageFlagIdx === -1 ? 48 : Number(args[ageFlagIdx + 1]);
 if (!Number.isFinite(minAgeHours) || minAgeHours < 0) {
   console.error('--min-age-hours needs a non-negative number');
   process.exit(2);
