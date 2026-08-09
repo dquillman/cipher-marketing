@@ -92,6 +92,29 @@ test('null means not-measured and is never silently turned into zero', () => {
   }
 });
 
+test('the grading endpoint writes the same core keys hand-grading does', () => {
+  // The tests above only ever see posts.json. Grades submitted through
+  // /api/grade land in Firestore, so when that endpoint wrote a narrower key
+  // set than hand-grading did — 20 keys against 24, missing channelExtras,
+  // impressionsToReachPct, notes and trialSignupsAttributed — nothing caught
+  // it (found 2026-08-08, while wiring up unattended grading). Assert the
+  // endpoint's own list instead of waiting for a divergent post to be synced.
+  const fn = fs.readFileSync(new URL('../functions/index.js', import.meta.url), 'utf8');
+  const block = fn.match(/const CORE_METRIC_KEYS = \[([\s\S]*?)\];/);
+  assert.ok(block, 'functions/index.js no longer defines CORE_METRIC_KEYS');
+
+  const endpointKeys = [...block[1].matchAll(/"([a-zA-Z]+)"/g)].map((m) => m[1]).sort();
+  assert.deepEqual(
+    endpointKeys,
+    CORE_KEYS,
+    'the /api/grade key set has drifted from the canonical schema in metrics-schema.md',
+  );
+
+  // Null in, null out. A rate computed from a numerator that was never
+  // measured would read as a real 0% and contradict the derived-rate test.
+  assert.match(fn, /if \(raw\[numerator\] == null\) out\[rate\] = null;/);
+});
+
 test('the metrics schema doc exists and covers every core key', () => {
   const doc = fs.readFileSync(new URL('../site/data/metrics-schema.md', import.meta.url), 'utf8');
   for (const k of CORE_KEYS) {

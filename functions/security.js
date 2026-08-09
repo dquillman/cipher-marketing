@@ -7,6 +7,8 @@ const BOOTSTRAP_OPERATOR_EMAILS = new Set([
 const NUMERIC_LIMITS = {
   impressions: 10_000_000,
   membersReached: 10_000_000,
+  inNetworkPct: 100,
+  outOfNetworkPct: 100,
   upvotes: 10_000_000,
   upvoteRatio: 1,
   videoViews: 10_000_000,
@@ -71,7 +73,8 @@ export function validateGradePayload(body) {
   }
 
   const entries = Object.entries(metrics);
-  if (entries.length > Object.keys(NUMERIC_LIMITS).length + 1) {
+  // +2: autoRemoved and channelExtras live outside NUMERIC_LIMITS.
+  if (entries.length > Object.keys(NUMERIC_LIMITS).length + 2) {
     throw new RequestError(400, 'Too many metric fields.');
   }
 
@@ -82,7 +85,17 @@ export function validateGradePayload(body) {
       clean[key] = value;
       continue;
     }
+    if (key === 'channelExtras') {
+      clean[key] = validateChannelExtras(value);
+      continue;
+    }
     if (!(key in NUMERIC_LIMITS)) throw new RequestError(400, `Unsupported metric: ${key}`);
+    // null means not-measured (site/data/metrics-schema.md) — persist it as
+    // null; Number(null) is 0, which would fabricate a measurement.
+    if (value === null) {
+      clean[key] = null;
+      continue;
+    }
     const number = Number(value);
     if (!Number.isFinite(number) || number < 0 || number > NUMERIC_LIMITS[key]) {
       throw new RequestError(400, `Invalid value for metric: ${key}`);
@@ -91,4 +104,29 @@ export function validateGradePayload(body) {
   }
 
   return { postId, metrics: clean };
+}
+
+function validateChannelExtras(value) {
+  if (value === null) return null;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new RequestError(400, 'channelExtras must be an object or null.');
+  }
+  const entries = Object.entries(value);
+  if (entries.length > 12) throw new RequestError(400, 'Too many channelExtras fields.');
+  const clean = {};
+  for (const [key, raw] of entries) {
+    if (key.length < 1 || key.length > 48) {
+      throw new RequestError(400, 'channelExtras keys must be 1-48 characters.');
+    }
+    if (raw === null) {
+      clean[key] = null;
+      continue;
+    }
+    const number = Number(raw);
+    if (!Number.isFinite(number) || number < 0 || number > 100_000_000) {
+      throw new RequestError(400, `Invalid value for channelExtras.${key}`);
+    }
+    clean[key] = number;
+  }
+  return clean;
 }

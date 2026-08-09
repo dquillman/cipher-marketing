@@ -46,6 +46,62 @@ test('accepts and normalizes supported grade metrics', () => {
   });
 });
 
+test('accepts the canonical LinkedIn network-split and null-means-not-measured', () => {
+  // Mirrors what the dashboard grade modal actually sends (see app.html
+  // submitGrade and site/data/metrics-schema.md).
+  const result = validateGradePayload({
+    postId: 'li-thu-2026-08-07-sponsor-scenario',
+    metrics: {
+      impressions: 310,
+      membersReached: 200,
+      inNetworkPct: 13,
+      outOfNetworkPct: 87,
+      linkClicks: null,
+      sends: null,
+    },
+  });
+  assert.deepEqual(result.metrics, {
+    impressions: 310,
+    membersReached: 200,
+    inNetworkPct: 13,
+    outOfNetworkPct: 87,
+    linkClicks: null,
+    sends: null,
+  });
+});
+
+test('accepts channelExtras as a bounded numeric object', () => {
+  const result = validateGradePayload({
+    postId: 'post-1',
+    metrics: { impressions: 100, channelExtras: { detailExpands: '7' } },
+  });
+  assert.deepEqual(result.metrics.channelExtras, { detailExpands: 7 });
+  assert.equal(
+    validateGradePayload({ postId: 'post-1', metrics: { channelExtras: null } }).metrics.channelExtras,
+    null,
+  );
+  for (const channelExtras of [
+    [1, 2],
+    { detailExpands: 'not-a-number' },
+    { detailExpands: -1 },
+    { ['x'.repeat(49)]: 1 },
+  ]) {
+    assert.throws(
+      () => validateGradePayload({ postId: 'post-1', metrics: { channelExtras } }),
+      (error) => error instanceof RequestError && error.statusCode === 400,
+    );
+  }
+});
+
+test('rejects out-of-range network percentages', () => {
+  for (const metrics of [{ inNetworkPct: 101 }, { outOfNetworkPct: 100.5 }]) {
+    assert.throws(
+      () => validateGradePayload({ postId: 'post-1', metrics }),
+      (error) => error instanceof RequestError && error.statusCode === 400,
+    );
+  }
+});
+
 test('rejects unknown, negative, non-finite, and oversized metrics', () => {
   for (const metrics of [
     { madeUp: 1 },

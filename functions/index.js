@@ -204,6 +204,69 @@ async function enforceGradeRateLimit(db, uid) {
 
 function pct(n, d) { return d > 0 ? (n / d) * 100 : 0; }
 
+// The canonical metrics schema — site/data/metrics-schema.md. Every graded
+// post carries every one of these keys; a metric the platform does not report
+// is null, never omitted and never 0.
+const CORE_METRIC_KEYS = [
+  "impressions", "membersReached", "impressionsToReachPct",
+  "inNetworkPct", "outOfNetworkPct",
+  "reactions", "comments", "reposts", "saves", "sends",
+  "socialEngagements", "engagementRatePct",
+  "videoViews", "videoViewRatePct", "watchTimeSeconds", "avgWatchTimeSeconds",
+  "profileViewers", "followersGained",
+  "linkClicks", "linkClickRatePct", "trialSignupsAttributed",
+  "gradedAt", "notes", "channelExtras",
+];
+
+// Anything a platform reports that has no cross-channel meaning belongs in
+// channelExtras rather than at the top level.
+const EXTRA_METRIC_KEYS = [
+  "upvotes", "upvoteRatio", "autoRemoved", "totalSpendUsd", "cpcUsd",
+  "detailExpands", "audienceRetentionPct", "videoUniqueViews",
+];
+
+// Force a graded post onto the canonical shape.
+//
+// Hand-graded posts have always carried all 24 core keys; this endpoint wrote
+// only the ~20 it happened to receive, so an auto-graded post and a
+// hand-graded one had different shapes — exactly the drift
+// test/metrics-schema.test.mjs was written to prevent. The test reads the
+// local posts.json and API grades land in Firestore, so it never saw this.
+// Found 2026-08-08 while wiring up unattended grading.
+function canonicalMetrics(raw, gradedAt) {
+  const out = {};
+  const extras = { ...(raw.channelExtras && typeof raw.channelExtras === "object" ? raw.channelExtras : {}) };
+
+  for (const key of EXTRA_METRIC_KEYS) {
+    if (raw[key] !== undefined && raw[key] !== null) extras[key] = raw[key];
+  }
+
+  for (const key of CORE_METRIC_KEYS) {
+    out[key] = raw[key] === undefined ? null : raw[key];
+  }
+
+  // Derived from membersReached, which the client cannot send pre-computed.
+  // Null in means null out — never a 0% that looks measured.
+  out.impressionsToReachPct =
+    raw.membersReached != null && Number(raw.impressions) > 0
+      ? Number(pct(Number(raw.membersReached), Number(raw.impressions)).toFixed(2))
+      : null;
+
+  // A rate whose numerator was never measured is itself not measured. Writing
+  // 0 here would claim a real zero and quietly fail the derived-rate test.
+  for (const [rate, numerator] of [
+    ["engagementRatePct", "socialEngagements"],
+    ["videoViewRatePct", "videoViews"],
+    ["linkClickRatePct", "linkClicks"],
+  ]) {
+    if (raw[numerator] == null) out[rate] = null;
+  }
+
+  out.channelExtras = Object.keys(extras).length ? extras : null;
+  out.gradedAt = gradedAt;
+  return out;
+}
+
 // Rate-based grade (LinkedIn / X / Reddit Ads — all have impressions)
 function letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, benchmarks }) {
   const erGood   = benchmarks.engagementRatePctGoodAtLeast;
@@ -452,25 +515,39 @@ export const gradePost = onRequest(
         if (hasVideo) computed.videoViewRatePct = Number(videoViewRatePct.toFixed(2));
       }
 
-      const ai = await aiNotes({
-        apiKey: ANTHROPIC_API_KEY.value(),
-        post,
-        metrics,
-        computed,
-        hasVideo,
-        grade,
-        benchmarks,
-        isRedditOrganic,
-      });
+      // The letter grade is already computed mechanically above; the AI only
+      // writes the interpretive notes. Letting a notes failure throw discarded
+      // a perfectly good grade — on 2026-08-08 an expired Anthropic credit
+      // balance turned every grade submission into a 500, which read as "the
+      // grader is broken" rather than "the billing lapsed".
+      let ai;
+      try {
+        ai = await aiNotes({
+          apiKey: ANTHROPIC_API_KEY.value(),
+          post,
+          metrics,
+          computed,
+          hasVideo,
+          grade,
+          benchmarks,
+          isRedditOrganic,
+        });
+      } catch (err) {
+        console.error("aiNotes failed; persisting the mechanical grade without notes:", err);
+        ai = {
+          gradeNotes:
+            `Graded ${grade} from the metrics. Written analysis unavailable — ` +
+            `the notes service failed (${err?.error?.error?.message || err.message}). ` +
+            `Re-submit this post to fill them in once that is resolved.`,
+          recommendation: null,
+          notesUnavailable: true,
+        };
+      }
 
       const now = new Date().toISOString();
       data.posts[idx] = {
         ...post,
-        metrics: {
-          ...metrics,
-          ...computed,
-          gradedAt: now,
-        },
+        metrics: canonicalMetrics({ ...metrics, ...computed }, now),
         grade,
         gradeNotes: ai.gradeNotes,
         recommendations: ai.recommendation,
@@ -486,6 +563,9 @@ export const gradePost = onRequest(
         ...computed,
         gradeNotes: ai.gradeNotes,
         recommendation: ai.recommendation,
+        // Lets the caller say "graded, notes pending" instead of reporting a
+        // clean success when half the output is missing.
+        notesUnavailable: ai.notesUnavailable === true,
       });
     } catch (e) {
       console.error("gradePost failed:", e);
