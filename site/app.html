@@ -7457,6 +7457,28 @@ function cipherFormatLine(p) {
       }
     }
 
+    // The select-and-Ctrl+C flow above only runs when #pn-copy-box happens to
+    // hold THIS post's text — i.e. only for whichever post the Publish-next
+    // panel is currently showing. For every other post the block is skipped,
+    // nothing gets selected, and execCommand below would copy whatever the user
+    // had selected on the page instead: click Copy on any other card and you
+    // paste a blob of dashboard text. Fall back to safeCopy, which builds its
+    // own hidden textarea from the post string and reports honestly.
+    if (!(box && box.value === text)) {
+      window.safeCopy(text,
+        function () {
+          btn.textContent = 'Copied ✓';
+          setTimeout(function () { btn.textContent = original; }, 2500);
+          if (typeof cipherToast === 'function') cipherToast('Copied — paste with Ctrl+V in the composer.');
+        },
+        function () {
+          btn.textContent = '✗ Copy blocked';
+          setTimeout(function () { btn.textContent = original; }, 4000);
+          if (typeof cipherToast === 'function') cipherToast('Copy blocked by the browser — open the post and copy the text by hand.', true);
+        });
+      return;
+    }
+
     // execCommand returns an honest boolean on this machine (probe returned
     // false when the copy did not happen), unlike writeText which lies.
     try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
