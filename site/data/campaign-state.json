@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "seed-firestore",
-    "lastUpdatedAt": "2026-08-08T01:51:42.610Z",
+    "lastUpdatedBy": "pull-funnel",
+    "lastUpdatedAt": "2026-08-10T14:58:34.774Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -34,7 +34,7 @@
   },
   "metrics": {
     "activatedUsersTotal": 0,
-    "trialSignupsTotal": 0,
+    "trialSignupsTotal": 1,
     "paidSpendThisWeek": 0,
     "perCluster": {
       "PMP": {
@@ -54,22 +54,23 @@
       }
     },
     "funnel": {
-      "asOf": "2026-05-28T17:30:00.000Z",
-      "windowDays": 7,
-      "instructions": "Hand-entered daily. Five arrows: impressions -> lpVisits -> signups -> examPicked -> activated. Sources: GA4 + Meta Pixel for top-of-funnel, posts.json impressions, internal Firestore for signups/exam-picked/activated. 'aggregate' is the rolling N-day sum across all clusters; 'perCluster' is the same window scoped to that exam's LP traffic. Update windowDays + asOf together; bump _meta.lastUpdatedAt on save.",
+      "asOf": "2026-08-10T14:58:34.774Z",
+      "windowDays": 30,
+      "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
+      "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
-        "impressions": 0,
-        "lpVisits": 0,
-        "signups": 0,
-        "examPicked": 0,
+        "impressions": 818,
+        "lpVisits": 5,
+        "signups": 1,
+        "examPicked": 1,
         "activated": 0
       },
       "perCluster": {
         "PMP": {
-          "impressions": 0,
-          "lpVisits": 0,
+          "impressions": 818,
+          "lpVisits": 5,
           "signups": 0,
-          "examPicked": 0,
+          "examPicked": 1,
           "activated": 0
         },
         "Security+": {
@@ -461,6 +462,41 @@
       "date": "2026-05-12",
       "what": "Dropped Publer setup entirely. Deferred Buffer setup (08-buffer-setup-sunday.md). Week 1 will be manually posted Mon/Wed/Fri.",
       "why": "Six posts across one week is low enough volume that a scheduler is overhead, not leverage. Manual posting also keeps Dave inside the post UI on launch morning — he sees engagement, comments, edge cases in real time, which matters more in Week 1 than convenience. Replaced with three phone alarms at 08:00 ET on Mon/Wed/Fri. Buffer reference doc left in place with a deferred-header note; revisit when posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "First-dollar asset = CipherExam $59 PMP Exam Pass; it leads all three LPs, Pro $19/mo second.",
+      "why": "Only checkout on the machine that can settle a charge today (Stripe live 08-04). Pass charges at click; Pro trial delays the first dollar to day 8. Revenue-neutral ($59 ~ 3.1 months of Pro) and drops the cancellation objection."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "LinkedIn is the ONLY CipherExam distribution channel 08-07 -> 09-05, with three explicit exemptions.",
+      "why": "Board P0. Exempt and on record: (1) Sat 08-08 one-time directory listings; (2) Reddit comment-only warmup from 08-24 + the week-3 r/SideProject post; (3) Tue 08-25 deadline-shield Show HN — a different product launch, zero CipherExam links."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "Magnet-drop posts begin Wed 08-12 — the first post ever to promote a lead magnet.",
+      "why": "Three magnets have been built and never promoted; leadCaptures has 0 documents all-time. This is the single largest unexploited asset in the funnel."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "deadline-shield enters the plan as the recurring-revenue second product: go-live checklist week 2, Show HN Tue 08-25.",
+      "why": "Its full Stripe path (SDK, create-checkout, webhook) is already built and deployed at $29/$59/$149. Charge settlement must be proven with a trial_period_days:0 test — the 14-day card-required trial settles nothing to refund."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "Migraine Tracker Payment Link deactivated immediately; rebuild-or-sunset gate Fri 08-21, default SUNSET.",
+      "why": "A link that can take $4.99 and fulfill nothing is a refund/chargeback and deceptive-practice risk, not revenue. Rebuild only at >=25 weekly-active users."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "Scoreboard = Stripe Dashboard live mode + the board N/10 paying-users number. Admin-Core RevenueDashboard is banned as a revenue source.",
+      "why": "RevenueDashboard.tsx:11 hardcodes PRICE_PER_USER = 9.99, which matches no product — every MRR figure it has ever shown is wrong by construction."
+    },
+    {
+      "date": "2026-08-08",
+      "what": "Week-8 target (Fri 10-02): $115 MRR + ~$480 total charged, from a verified $0 start.",
+      "why": "Derived arithmetic, not aspiration: ~11 promotional posts + 2 launch surfaces on a sub-500-follower base -> ~50-70 captures -> ~20-30 trials -> 3 Pro + 2 Solo subs + 6 Exam Passes. Each link is checked on a named Friday."
     }
   ],
   "dailyLog": [
@@ -563,6 +599,10 @@
     {
       "date": "2026-08-07",
       "entry": "DECISION (Dave): X standalone posts PAUSED. Evidence: every X post ever published landed 2-39 impressions (Aug 3 post: 9 impressions, all 7 engagements were detail-expands); account is cold-start, so standalone reach is ~zero regardless of copy. New X strategy is replies-only — ~10 min/day of useful answers in large PMP/cert threads, no links, no pitch. Resume standalone X drafting when the account clears ~100 followers or a reply thread demonstrably drives profile visits. Encoded in draft-week-posts (do-not-draft-X rule). LinkedIn cadence unaffected: Mon/Wed/Fri, cap 3/exam/week combined across tracks."
+    },
+    {
+      "date": "2026-08-08",
+      "entry": "REVENUE PLAN LOADED into campaign data. Source: 19-revenue-plan-2026-08.md (canonical copy at G:\\Users\\daveq\\GL-Cash\\REVENUE-PLAN-2026-08.md), built by a gauntlet run in which all six sections beat published Kahl/Levels/Walling references in blind judging, then survived a completeness critic (12 holes found and repaired). Loaded: 19 new LinkedIn post slots (drafts) covering Fri 08-14 -> Fri 09-25, each carrying its own drafting brief, pipeline, and draft-by date; the existing li-fri-2026-08-14-pmp-lens-magnet draft moved Fri 08-14 -> Wed 08-12 to become magnet #1 (the first magnet-drop post ever). Also loaded: 7 plan decisions, and a new revenuePlan block holding the dated gate calendar, revenue targets, and the single-channel scope ruling. Machine truth at load time: $0 recorded revenue portfolio-wide, 0 activated users, 0 lead captures, ~638 lifetime LinkedIn impressions. NOT done by this load and still owed by Dave: the live $59 buy-and-refund pipe proof, the Tue 08-11 CAN-SPAM/emailOptOut deploy (blocks the 08-12 magnet post), the $189-copy and TRIAL_DAYS 14->7 fixes, Stripe dunning toggles, and the MT Payment Link deactivation. See the Tomorrow-morning checklist in the plan."
     }
   ],
   "boardPriorities": {
@@ -594,6 +634,97 @@
         "priority": "P1",
         "text": "Goal: CipherExam's first 10 paying users — make it the visible scoreboard."
       }
+    ]
+  },
+  "revenuePlan": {
+    "loadedAt": "2026-08-08",
+    "planFile": "G:\\Users\\daveq\\GL-Cash\\REVENUE-PLAN-2026-08.md",
+    "repoCopy": "19-revenue-plan-2026-08.md",
+    "factsFile": "G:\\Users\\daveq\\GL-Cash\\MACHINE-FACTS-2026-08-07.md",
+    "scoreboardFile": "scoreboard.md",
+    "window": {
+      "start": "2026-08-07",
+      "end": "2026-10-02"
+    },
+    "firstDollarAsset": {
+      "product": "CipherExam",
+      "sku": "$59 PMP Exam Pass (90-day)",
+      "targetDate": "2026-08-28"
+    },
+    "primaryChannel": "LinkedIn (sole channel 2026-08-07 -> 2026-09-05, three logged exemptions)",
+    "week8Targets": {
+      "mrr": 115,
+      "totalCharged": 480,
+      "proSubs": 3,
+      "shieldSoloSubs": 2,
+      "examPasses": 6,
+      "asOf": "2026-10-02"
+    },
+    "ritual": "Monday 09:00 MT, 20 min, 8 steps -> one scoreboard.md row -> drafts that morning's scoreboard post (plan §4.4)",
+    "bannedRevenueSource": "Admin-Core RevenueDashboard (hardcoded PRICE_PER_USER = 9.99)",
+    "gates": [
+      {
+        "date": "2026-08-10",
+        "gate": "Stripe dunning toggles + rotate factory/phoenix-engine prod service-account keys",
+        "rule": "Smart Retries 8 attempts/2 weeks, cancel on exhaust, failed-payment + expiring-card emails, hosted portal for card updates"
+      },
+      {
+        "date": "2026-08-11",
+        "gate": "CAN-SPAM / emailOptOut compliance deploy",
+        "rule": "BLOCKING for the 08-12 magnet post — unsubscribe + postal address in every template, emailOptOut check in scheduleOnboardingDrip and sendLeadMagnetWelcome"
+      },
+      {
+        "date": "2026-08-14",
+        "gate": "Week-1 number",
+        "rule": "leadCaptures count >= 3 (all-time before this week: 0). Revenue target $0."
+      },
+      {
+        "date": "2026-08-21",
+        "gate": "MT rebuild-or-sunset",
+        "rule": "mt-metrics.mjs; default SUNSET unless >= 25 weekly-active users; revisit at CipherExam MRR >= $500"
+      },
+      {
+        "date": "2026-08-24",
+        "gate": "deadline-shield charge settlement proven",
+        "rule": "trial_period_days:0 test invoice settles + webhook fires, BEFORE Show HN sends strangers on 08-25"
+      },
+      {
+        "date": "2026-08-28",
+        "gate": "FIRST CHARGED DOLLAR",
+        "rule": "1 x $59 Exam Pass. If $0, continue unchanged — evaluate the mechanism 09-04, not the mission."
+      },
+      {
+        "date": "2026-09-04",
+        "gate": "CipherExam probation, re-armed",
+        "rule": ">= 5 activated PMP users, else content-only maintenance and build hours move to deadline-shield"
+      },
+      {
+        "date": "2026-09-07",
+        "gate": "30-day channel review",
+        "rule": "Four thresholds: one 500+ impression post, 5+ captures, 3+ outside comments, 1+ attributed trial. Score >= 2 keeps LinkedIn primary."
+      },
+      {
+        "date": "2026-09-11",
+        "gate": "deadline-shield first subscriber",
+        "rule": "1 x Solo $29/mo charged"
+      },
+      {
+        "date": "2026-09-28",
+        "gate": "12-authority-post kill + CipherExam 0-subscription rule",
+        "rule": "Track: one 500+ impression post OR 25+ clicks OR 3+ attributed signups, else fold. Subs: 0 active paid -> subscription build-hour freeze, Pass-only focus."
+      },
+      {
+        "date": "2026-10-02",
+        "gate": "Week-8 board read",
+        "rule": "$115 MRR / ~$480 charged / N-of-10 scoreboard / pricing fallbacks due -> weeks 9-12 branch"
+      }
+    ],
+    "standingRules": [
+      "No sales calls, cold calls, pitches, or cold DMs. Ever.",
+      "No X standalone posts (paused 2026-08-07) — reply-only until ~100 followers.",
+      "No paid spend before 25 activated users, then $2/day retargeting maximum.",
+      "No traffic to any product whose payment path cannot fulfill.",
+      "No \"guaranteed pass\" language; no invented statistics; no revenue figures in public posts."
     ]
   }
 }
