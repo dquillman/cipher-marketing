@@ -16,6 +16,7 @@ import {
   requireMarketingAdmin,
   validateGradePayload,
 } from "./security.js";
+import { letterGrade, pct, weightedEngagementRatePct } from "./rubric.js";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   RESET_CONFIRMATION,
@@ -202,8 +203,6 @@ async function enforceGradeRateLimit(db, uid) {
 }
 
 
-function pct(n, d) { return d > 0 ? (n / d) * 100 : 0; }
-
 // The canonical metrics schema — site/data/metrics-schema.md. Every graded
 // post carries every one of these keys; a metric the platform does not report
 // is null, never omitted and never 0.
@@ -267,33 +266,9 @@ function canonicalMetrics(raw, gradedAt) {
   return out;
 }
 
-// Rate-based grade (LinkedIn / X / Reddit Ads — all have impressions)
-function letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, benchmarks }) {
-  const erGood   = benchmarks.engagementRatePctGoodAtLeast;
-  const erGreat  = benchmarks.engagementRatePctGreatAtLeast;
-  const lcrGood  = benchmarks.linkClickRatePctGoodAtLeast;
-  const lcrGreat = benchmarks.linkClickRatePctGreatAtLeast;
-
-  const erBand  = engagementRatePct  >= erGreat  ? 2 : engagementRatePct  >= erGood  ? 1 : engagementRatePct  > 0 ? 0 : -1;
-  const lcrBand = linkClickRatePct   >= lcrGreat ? 2 : linkClickRatePct   >= lcrGood ? 1 : linkClickRatePct   > 0 ? 0 : -1;
-
-  let score = erBand + lcrBand;
-  let max   = 4;
-
-  if (hasVideo && benchmarks.videoViewRatePctGoodAtLeast != null) {
-    const vvrGood  = benchmarks.videoViewRatePctGoodAtLeast;
-    const vvrGreat = benchmarks.videoViewRatePctGreatAtLeast;
-    const vvrBand  = videoViewRatePct >= vvrGreat ? 2 : videoViewRatePct >= vvrGood ? 1 : videoViewRatePct > 0 ? 0 : -1;
-    score += vvrBand;
-    max   += 2;
-  }
-
-  const pctOfMax = score / max;
-  if (pctOfMax >= 0.80) return "A";
-  if (pctOfMax >= 0.40) return "B";
-  if (pctOfMax >= 0.00) return "C";
-  return "D";
-}
+// letterGrade + weightedEngagementRatePct live in ./rubric.js so they can be
+// unit-tested — importing this file from a test is not viable because
+// initializeApp() runs at module load.
 
 // Absolute-numbers grade (Reddit organic — no impressions exposed to non-authors)
 function letterGradeRedditOrganic({ upvotes, comments, upvoteRatio, autoRemoved, benchmarks }) {
@@ -482,7 +457,17 @@ export const gradePost = onRequest(
         const linkClickRatePct  = pct(linkClicks, impressions);
         const videoViewRatePct  = pct(videoViews, impressions);
 
-        grade = letterGrade({ engagementRatePct, linkClickRatePct, videoViewRatePct, hasVideo, benchmarks });
+        const gradedEngagementRatePct = weightedEngagementRatePct(metrics, impressions, engagementRatePct);
+        const outOfNetworkPct = metrics.outOfNetworkPct != null ? Number(metrics.outOfNetworkPct) : null;
+
+        grade = letterGrade({
+          engagementRatePct: gradedEngagementRatePct,
+          linkClickRatePct,
+          videoViewRatePct,
+          hasVideo,
+          benchmarks,
+          outOfNetworkPct,
+        });
 
         // Reddit Ads: penalize over-budget CPC by one tier
         if (post.channel === "reddit-ads") {

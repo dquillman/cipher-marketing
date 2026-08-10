@@ -1471,7 +1471,9 @@
       "linkClickRatePctGoodAtLeast": 1,
       "linkClickRatePctGreatAtLeast": 2.5,
       "videoViewRatePctGreatAtLeast": 50,
-      "engagementRatePctGoodAtLeast": 2
+      "engagementRatePctGoodAtLeast": 2,
+      "outOfNetworkPctGoodAtLeast": 40,
+      "outOfNetworkPctGreatAtLeast": 70
     }
   },
   "_meta": {
