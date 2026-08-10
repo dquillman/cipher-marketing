@@ -1420,6 +1420,16 @@ body.fx-on .command-center::before{opacity:.9;animation:halo-spin 7s linear infi
   .resource-panel { position:fixed; left:12px; right:12px; top:68px; width:auto; }
 }
 </style>
+<script>
+(function () {
+  if (new URLSearchParams(window.location.search).get('theme') !== 'persona') return;
+  document.documentElement.classList.add('persona-theme');
+  var personaTheme = document.createElement('link');
+  personaTheme.rel = 'stylesheet';
+  personaTheme.href = 'assets/persona-theme.css';
+  document.head.appendChild(personaTheme);
+}());
+</script>
 </head>
 <body>
 
@@ -2247,6 +2257,10 @@ function cipherHelp() {
       }
     }
   }
+  // Exposed because the daily-playbook buttons live in a different scope and
+  // were each hand-rolling their own copy — see the comment on the playbook
+  // "Copy post body" handler for what that cost.
+  window.safeCopy = safeCopy;
 
   function render() {
     // Clear every section first so stale buttons from a prior render can't
@@ -5881,21 +5895,43 @@ if (document.readyState === 'loading') {
         buttons: [
           {
             label: 'Copy post body',
-            onclick: function () {
-              var el = document.getElementById('cc-copy-text');
-              if (el) navigator.clipboard.writeText(el.innerText);
+            onclick: (function (copy) { return function () {
+              // Copies p.copy directly, NOT the rendered <pre>'s innerText.
+              // innerText returns the text as LAID OUT, so anything that
+              // reflows it — a wrap, a CSS change to that block — collapses the
+              // paragraph breaks and the composer receives one unbroken blob.
+              // The post's own string always has the real newlines.
+              //
+              // Also routed through safeCopy for the fallback: on this machine
+              // navigator.clipboard.writeText resolves WITHOUT writing
+              // (probe-verified 2026-08-01), and this handler used to announce
+              // "Copied ✓" regardless — so a silent failure looked identical to
+              // success, and the paste was whatever happened to be on the
+              // clipboard already.
               var btn = this;
-              btn.innerText = 'Copied ✓';
-              setTimeout(function () { btn.innerText = 'Copy post body'; }, 1500);
-            }
+              var restore = function (label) {
+                setTimeout(function () { btn.innerText = label; }, 2000);
+              };
+              window.safeCopy(copy || '',
+                function () { btn.innerText = 'Copied ✓'; restore('Copy post body'); },
+                function () {
+                  btn.innerText = '✗ Blocked — select the text above and Ctrl+C';
+                  restore('Copy post body');
+                });
+            }; })(p.copy)
           },
           (p.cta ? {
             label: isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body',
             onclick: (function (cta, label) { return function () {
-              navigator.clipboard.writeText(cta);
+              // Same fix as the body button: honest success/failure rather than
+              // an unconditional "Copied ✓" over a clipboard that may not have
+              // been written. Pasting the wrong post's UTM is unrecoverable —
+              // it collapses that post's attribution permanently.
               var btn = this;
-              btn.innerText = 'Copied ✓';
-              setTimeout(function () { btn.innerText = label; }, 1500);
+              var restore = function () { setTimeout(function () { btn.innerText = label; }, 2000); };
+              window.safeCopy(cta,
+                function () { btn.innerText = 'Copied ✓'; restore(); },
+                function () { btn.innerText = '✗ Blocked — copy the URL above by hand'; restore(); });
             }; })(p.cta, isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body')
           } : null),
           {
