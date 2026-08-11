@@ -759,9 +759,9 @@
     },
     {
       "id": "li-fri-2026-08-14-pmp-lens-magnet",
-      "scheduled": "2026-08-12",
-      "scheduledTime": "2026-08-12T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-08-12 10:30 MT",
+      "scheduled": "2026-08-14",
+      "scheduledTime": "2026-08-14T16:30:00.000Z",
+      "scheduledTimeLocal": "2026-08-14 10:30 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1477,8 +1477,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "mark-posted",
-    "lastUpdatedAt": "2026-08-11T01:20:12.175Z",
+    "lastUpdatedBy": "sync-magnet",
+    "lastUpdatedAt": "2026-08-11T01:47:35.400Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
