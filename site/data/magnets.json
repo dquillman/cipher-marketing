@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdatedAt": "2026-08-05T00:00:00.000Z",
+    "lastUpdatedAt": "2026-08-07T18:30:00.000Z",
     "purpose": "Lead-magnet registry. One entry per magnet: what it is, where it lives, which posts promote it, and how it converts. Written by the /lead-magnet skill, read by the dashboard funnel view.",
     "funnel": "LinkedIn post -> capture form (LeadMagnetCapture) -> captureLead Cloud Function -> Firestore leadCaptures (upsert-keyed email__cluster, carries UTM) -> PDF served -> [welcome sequence: NOT YET WIRED] -> trial -> activated",
     "northStar": "activatedUsers. Captures are a leading indicator, not the goal.",
@@ -18,15 +18,16 @@
       "url": "https://cipherexam.com/lead-magnets/pmp-exam-lens-cheat-sheet.pdf",
       "lp": "/lp/pmp",
       "status": "live",
-      "httpVerifiedAt": "2026-08-05",
+      "httpVerifiedAt": "2026-08-10",
       "sourceTopic": null,
       "createdAt": "2026-05-28",
+      "updatedAt": "2026-08-07",
       "producedBy": "hand-made",
       "postIds": [],
       "captures": null,
       "trialStarts": null,
       "activatedUsers": null,
-      "notes": "Pre-dates the /lead-magnet skill. Existing PMP cluster magnet, served by captureLead."
+      "notes": "Pre-dates the /lead-magnet skill. Existing PMP cluster magnet, served by captureLead. UPDATED 2026-08-07 for the July 9 2026 PMP format change (PMI grouped situational questions into 3-5 question case sets): added a 'One thing changed since this was written' section after the intro, a fifth trap ('the case-set trap' — carrying a wrong frame forward across a set), and a cover kicker noting the update. The 5 standalone scenarios and the Lens framework were left intact — the reasoning is unchanged, only the stakes. md + html + pdf all regenerated; new PDF copied to cipher/web/public/lead-magnets/. DEPLOYED 2026-08-10: live URL now serves the updated PDF (byte-identical sha256 to the local file, verified). CAN-SPAM compliance shipped the same day, so captures can legally be emailed."
     },
     {
       "id": "security-plus-pbq-walkthroughs",
