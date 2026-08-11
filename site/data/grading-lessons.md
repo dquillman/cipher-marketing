@@ -34,6 +34,14 @@ Durable lessons learned from grading CipherExam marketing posts. Appended by the
 
   Unexpected return worth planning for: **the commenters produced better teaching material than the post did.** One reader's observation that distractor D "bundles a valid action (record the risk) with one that commits you (update the schedule)" is sharper than anything in the original copy, and is free content for a later post. Budget time to reply properly — matching a long, reasoned comment with a one-liner wastes the best thing this format generates.
 
+- **Competitor format worth borrowing: the native LinkedIn poll + in-post reveal** (observed 2026-08-11, not yet tested on this account). A daily "PMP Question of the Day" series (Torge Oeverdiek, posting under a "PMI Prep" group name — NOT official PMI, do not describe it as such) ran a four-option question as a **native poll**: 317 votes, 2-week duration. For comparison, our comment-gate drew 14 comments. A vote is one tap; a comment is composing a defensible public answer under your real name — so polls buy volume and reach, comment-gates buy depth and the out-of-network expansion we measured. They are not substitutes.
+
+  Two mechanics to take: **(1) the native poll** for low-friction volume, and **(2) the answer revealed behind the "…more" fold in the SAME post** rather than in a follow-up. Mechanic 2 directly removes the failure mode we hit on 2026-08-07 — a promised follow-up that came three days late and needed a whole separate post to pay off.
+
+  **Do NOT take their question type.** "What does Earned Value represent?" is recall with one obviously-correct option, which is precisely what CipherExam positions against. The play is their format carrying our reasoning-level questions, not their format carrying their questions. Borrow structure, never wording — see the standing rule on competitor copy.
+
+  Untested caveat: a poll cannot carry a link usefully, so the CTA still goes in the first comment. And a poll answer is visible to the author only, so it generates no public reasoning to reply to — which was the single best return from the comment-gate. Consider poll + "tell me your reason in the comments" to get both, and grade the comment count separately from the vote count.
+
 - **Scope clarification 2026-05-27:** the lurker-audience lesson (high watch time / zero reactions) is LinkedIn-only confirmed. X analytics did not show long-tail impression growth for any of the 3 Week 1 X posts — X reach decays fast and the data doesn't support a same-channel lurker conclusion. Apply the lurker lesson when drafting LI; do NOT cross-apply to X drafts. (Evidence: 3 LI posts long-tail regraded 2026-05-27, 3 X posts unchanged.)
 
 ## LinkedIn — links & CTA
