@@ -5,41 +5,13 @@
 // compass is visible where the daily campaign work happens.
 import { readFileSync, writeFileSync } from 'node:fs';
 
+import { getDb, credentialHelp } from './lib/firestore-access.mjs';
+
 const BOARD_PATH = 'G:/Users/daveq/qcode/src/lib/ops-board.json';
 const STATE_PATH = new URL('../site/data/campaign-state.json', import.meta.url);
-const KEY = 'AIzaSyDDSPC14tdDzMfkDrYLFykg2CFOZK9B4Ts';
-const DOC_URL =
-  'https://firestore.googleapis.com/v1/projects/cipher-marketing-daveq' +
-  '/databases/(default)/documents/campaign/state?key=' + KEY;
 
-// ---- Firestore REST value codec ----
-function enc(v) {
-  if (v === null || v === undefined) return { nullValue: null };
-  if (typeof v === 'string') return { stringValue: v };
-  if (typeof v === 'boolean') return { booleanValue: v };
-  if (typeof v === 'number') {
-    return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
-  }
-  if (Array.isArray(v)) return { arrayValue: { values: v.map(enc) } };
-  return { mapValue: { fields: Object.fromEntries(Object.entries(v).map(([k, x]) => [k, enc(x)])) } };
-}
-function dec(v) {
-  if (v == null || typeof v !== 'object') return null;
-  if ('stringValue' in v) return v.stringValue;
-  if ('integerValue' in v) return parseInt(v.integerValue, 10);
-  if ('doubleValue' in v) return v.doubleValue;
-  if ('booleanValue' in v) return v.booleanValue;
-  if ('nullValue' in v) return null;
-  if ('timestampValue' in v) return v.timestampValue;
-  if ('mapValue' in v) return decFields(v.mapValue.fields);
-  if ('arrayValue' in v) return (v.arrayValue.values ?? []).map(dec);
-  return null;
-}
-function decFields(fields) {
-  const out = {};
-  for (const [k, v] of Object.entries(fields ?? {})) out[k] = dec(v);
-  return out;
-}
+// The hand-rolled Firestore REST value codec that used to live here is gone —
+// the Admin SDK reads and writes plain JS objects.
 
 // ---- Build the boardPriorities block from the qcode board file ----
 const board = JSON.parse(readFileSync(BOARD_PATH, 'utf8'));
@@ -71,24 +43,27 @@ writeFileSync(STATE_PATH, JSON.stringify(state, null, 2) + '\n', 'utf8');
 console.log(`campaign-state.json: boardPriorities set (${items.length} items, cycle ${boardPriorities.cycleDate})`);
 
 // ---- 2. Live Firestore doc (read-merge-write so nothing else is lost) ----
-const getRes = await fetch(DOC_URL);
-if (!getRes.ok) {
-  console.error('Firestore GET failed:', getRes.status, await getRes.text());
+// Was an anonymous REST GET + PATCH. firestore.rules has required a
+// marketingAdmin claim on every read and write since commit e7f3f4b
+// (2026-07-29), so that path returned 403 and this mirror silently stopped
+// working. Goes through the shared credential helper now, same as the other
+// campaign scripts. Verify access with: node scripts/check-firestore-access.mjs
+let db;
+try {
+  db = await getDb();
+} catch (err) {
+  console.error(`\nFirestore auth failed: ${err.message}`);
+  console.error(credentialHelp());
   process.exit(1);
 }
-const live = decFields((await getRes.json()).fields);
+
+const docRef = db.collection('campaign').doc('state');
+const snap = await docRef.get();
+const live = snap.exists ? snap.data() : {};
 live.boardPriorities = boardPriorities;
 live._meta = live._meta || {};
 live._meta.lastUpdatedAt = now;
 live._meta.lastUpdatedBy = 'push-board-priorities';
 
-const patchRes = await fetch(DOC_URL, {
-  method: 'PATCH',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ fields: Object.fromEntries(Object.entries(live).map(([k, v]) => [k, enc(v)])) }),
-});
-if (!patchRes.ok) {
-  console.error('Firestore PATCH failed:', patchRes.status, await patchRes.text());
-  process.exit(1);
-}
+await docRef.set(live);
 console.log('Firestore campaign/state: boardPriorities mirrored.');

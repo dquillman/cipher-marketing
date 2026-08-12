@@ -8,37 +8,36 @@
 //
 // AUTH: as of commit e7f3f4b (2026-07-29) firestore.rules requires a
 // `marketingAdmin` custom claim on ALL reads and writes, so the old
-// API-key REST call now returns 403 PERMISSION_DENIED. This script uses
-// firebase-admin instead, which talks to Firestore as a service account and
-// bypasses security rules. Provide credentials one of these ways:
+// API-key REST call now returns 403 PERMISSION_DENIED. Credentials are
+// resolved by scripts/lib/firestore-access.mjs — the same helper every other
+// campaign script uses. See credentialHelp() there for setup.
 //
-//   GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json  (preferred)
-//   — or —  application default credentials from `gcloud auth application-default login`
-//
-// Same credential path as scripts/grant-marketing-admin.mjs.
+// This script used to resolve credentials itself, reading only
+// GOOGLE_APPLICATION_CREDENTIALS with no check that the key belonged to this
+// project. On a machine where that variable points at a DIFFERENT project's
+// service account, it authenticated as the wrong project and every write came
+// back PERMISSION_DENIED — which is exactly how the 2026-08-01 intel refresh
+// was silently lost. The shared helper prefers FIREBASE_SERVICE_ACCOUNT and
+// hard-fails on a project mismatch instead of guessing.
 
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { applicationDefault, cert, getApps, initializeApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getDb, credentialHelp } from './lib/firestore-access.mjs';
 
 const HERE       = dirname(fileURLToPath(import.meta.url));
 const REPORT_DIR = join(HERE, '../site/data/competitor-intel');
-const PROJECT_ID = 'cipher-marketing-daveq';
 const REPORTS    = ['battlecard', 'deepdive', 'landscape'];
 
-function credential() {
-  const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  if (keyPath) return cert(JSON.parse(readFileSync(keyPath, 'utf8')));
-  return applicationDefault();
+let db;
+try {
+  db = await getDb();
+} catch (err) {
+  console.error(`\nFirestore auth failed: ${err.message}`);
+  console.error(credentialHelp());
+  process.exit(1);
 }
 
-if (!getApps().length) {
-  initializeApp({ credential: credential(), projectId: PROJECT_ID });
-}
-
-const db           = getFirestore();
 const generatedAt  = new Date().toISOString();
 
 for (const id of REPORTS) {
