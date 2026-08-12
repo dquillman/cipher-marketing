@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-08-12T16:18:14.746Z",
+    "lastUpdatedBy": "seed-firestore",
+    "lastUpdatedAt": "2026-08-12T21:01:49.930Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -497,6 +497,11 @@
       "date": "2026-08-08",
       "what": "Week-8 target (Fri 10-02): $115 MRR + ~$480 total charged, from a verified $0 start.",
       "why": "Derived arithmetic, not aspiration: ~11 promotional posts + 2 launch surfaces on a sub-500-follower base -> ~50-70 captures -> ~20-30 trials -> 3 Pro + 2 Solo subs + 6 Exam Passes. Each link is checked on a named Friday."
+    },
+    {
+      "date": "2026-08-12",
+      "what": "LinkedIn CTA goes in the first comment, never the post body. Gated posts send ~19:20 MT.",
+      "why": "Measured across the full graded corpus: 5 posts with a body CTA drew 0 comments between them (May and August, four hooks, both slots); the 3 without drew 7. Separately, every comment this account has ever received came from an evening send — morning is 0-for-5 across 5 posts. The best post on record (li-thu-2026-08-07-sponsor-scenario, 2,134 impressions / 466 reached / 6 comments) went out Friday 19:25 MT. Honest limit: 6 of the 7 lifetime comments came from that one gated post, so evening and format are still tangled; li-mon-2026-08-10-bizenv-reprice on Fri 08-14 19:20 MT matches its day and hour precisely so format is the only variable left."
     }
   ],
   "dailyLog": [
