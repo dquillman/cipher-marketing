@@ -753,13 +753,13 @@
       "track": "sme",
       "status": "scheduled",
       "examFocus": "PMP",
-      "hook": "worked-question",
+      "hook": "comment-gated-question",
       "video": null,
       "videoFormat": "1:1",
       "videoTheme": null,
       "imageUrl": null,
       "canvaDesignId": null,
-      "copy": "Business Environment moved from 8% of the PMP to 26% on July 9, 2026.\n\nCompliance sits inside that domain. Those scenarios now carry roughly three times the weight.\n\nTry one. A stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nYou can raise a change request. You can escalate to the sponsor. You can rework the schedule with your team. You can confirm the requirement with the compliance owner.\n\nFour options, and a working PM has done all four on a real Tuesday.\n\nMost experienced PMs reach for the change request. It is documented, it is defensible, and on the job it is the right call.\n\nOn the exam, second.\n\nA change request assumes you already know what is changing. Read the stem again. Someone told you a requirement was missed. Nothing in it establishes that the requirement applies, what it costs, or who owns the decision.\n\nConfirming with the compliance owner tests whether the gap is real and puts the call with the person accountable for it.\n\nRun the same rule on a different question. Two team members disagree on an approach. Decide for them. Escalate to the sponsor. Bring them together to work the problem.\n\nDeciding and escalating both end the conversation. Nothing in the stem says it has to end. Collaborate keeps both people in it, and it is the only option that produces a solution both of them own.\n\nRead the stem for what has actually been established. Then pick the option that works at that line.\n\n#PMP #ProjectManagement #ExamPrep",
+      "copy": "Business Environment went from 8% of the PMP to 26% on July 9. Compliance scenarios now carry roughly three times the weight they did.\n\nHere is one.\n\nA stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nWhat do you do first?\n\nA. Raise a change request\nB. Escalate to the sponsor\nC. Rework the schedule with your team\nD. Confirm the requirement with the compliance owner\n\nA working PM has done all four on a real Tuesday. Three of them are defensible. One is what the exam is actually testing.\n\nPost your answer — and more importantly, your reason.\n\nI will put the decision pattern in the comments once the discussion has run. It turns on a single word in the stem, and most experienced PMs read straight past it.\n\n#PMP #ProjectManagement",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=pmp_judgment_2026&utm_content=bizenv-8-to-26",
       "postedAt": null,
       "postUrl": null,
@@ -769,11 +769,14 @@
       "recommendations": null,
       "humanizerTellsStripped": 0,
       "predictedGrade": "B",
-      "predictionNote": "CADENCE TEST VOID (noted 2026-08-12). This was the third leg of the Aug 3->5->7 two-day-interval test; it slipped to 08-14, so the interval is broken and the result cannot confirm or kill the cadence hypothesis. Read it as a normal SME post. Original note: B — first authority-track post and the third leg of the cadence test. Gauntlet-produced: beat Andrew Ramdayal blind 3/3 with zero lifted language. Betting on reach recovery from cadence (Aug 3 -> 5 -> 7, two-day gaps) rather than on the opener, which the final judge called commodity. Not predicting A because absolute reach is still tiny and one reaction has been the ceiling all week.",
+      "predictionNote": "REWRITTEN 2026-08-12 from a teaching post into the comment-gated scenario format, after li-mon-2026-08-10-decision-pattern graded D (171 impressions) against li-thu-2026-08-07-sponsor-scenario's 2,134 on the same hour of day — a 12.5x separation that isolated format from timing. Carries all three load-bearing mechanics: labeled A-D options answerable in one character, an explicit ask for the REASON, and a withheld answer. Reveal goes in-thread (plannedReveal field), NOT as a standalone post — the 08-10 standalone reveal is exactly what flopped. Opener keeps the dated-stat pattern that ranks highest across every graded post. First gated post since Dave locked CTA-in-first-comment, so link placement is finally held constant and this isolates format cleanly. Predicting B, not A, because 2,134 took five days of long tail and this grades on a 7-day floor at best.",
       "producedBy": "gauntlet",
       "planSlot": "SME #3 (absorbed — was SME #2)",
       "planPostType": "authority",
-      "planSource": "19-revenue-plan-2026-08.md §2 (canonical calendar)"
+      "planSource": "19-revenue-plan-2026-08.md §2 (canonical calendar)",
+      "priorCopy": "Business Environment moved from 8% of the PMP to 26% on July 9, 2026.\n\nCompliance sits inside that domain. Those scenarios now carry roughly three times the weight.\n\nTry one. A stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nYou can raise a change request. You can escalate to the sponsor. You can rework the schedule with your team. You can confirm the requirement with the compliance owner.\n\nFour options, and a working PM has done all four on a real Tuesday.\n\nMost experienced PMs reach for the change request. It is documented, it is defensible, and on the job it is the right call.\n\nOn the exam, second.\n\nA change request assumes you already know what is changing. Read the stem again. Someone told you a requirement was missed. Nothing in it establishes that the requirement applies, what it costs, or who owns the decision.\n\nConfirming with the compliance owner tests whether the gap is real and puts the call with the person accountable for it.\n\nRun the same rule on a different question. Two team members disagree on an approach. Decide for them. Escalate to the sponsor. Bring them together to work the problem.\n\nDeciding and escalating both end the conversation. Nothing in the stem says it has to end. Collaborate keeps both people in it, and it is the only option that produces a solution both of them own.\n\nRead the stem for what has actually been established. Then pick the option that works at that line.\n\n#PMP #ProjectManagement #ExamPrep",
+      "plannedReveal": "D — confirm the requirement with the compliance owner.\n\nMost experienced PMs reach for the change request. On the job that is the right call: it is documented and it is defensible. On the exam it is second.\n\nA change request assumes you already know what is changing. Read the stem again. Someone told you a requirement was missed. Nothing in it establishes that the requirement applies, what it costs, or who owns the decision.\n\nConfirming with the compliance owner tests whether the gap is real, and puts the call with the person accountable for it.\n\nThat is the pattern: read the stem for what has actually been established, then pick the option that works at that line.",
+      "planNote": "The prior teaching-post copy is preserved in priorCopy. It gave the answer away in paragraph 6 and closed with no ask, which is the exact shape that graded D on 08-10."
     },
     {
       "id": "li-thu-2026-08-07-sponsor-scenario",
@@ -1555,8 +1558,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "seed-firestore --pull",
-    "lastUpdatedAt": "2026-08-12T17:15:14.472Z",
+    "lastUpdatedBy": "rewrite-bizenv-gated",
+    "lastUpdatedAt": "2026-08-12T20:05:16.509Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
