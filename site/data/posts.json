@@ -816,7 +816,7 @@
       "channelAccount": "personal",
       "track": "sme",
       "producedBy": "sme-post",
-      "status": "scheduled",
+      "status": "posted",
       "examFocus": "PMP",
       "hook": "magnet-drop",
       "video": null,
@@ -826,8 +826,8 @@
       "canvaDesignId": null,
       "copy": "PMI grouped PMP situational questions into case sets on July 9. Three to five questions per project scenario.\n\nThat changes the math on a wrong read.\n\nMiss the frame on a standalone question and it costs you one question. Miss it on question 1 of a case set and questions 2 through 5 inherit it. Read the project as predictive when it's actually hybrid, and you answer all five from inside that mistake.\n\nOne bad read. Five wrong answers.\n\nThe trap underneath is subtler. By question 3 you've already committed to a reading, and staying consistent with it feels like discipline. It isn't. If a later question in a set doesn't sit right, that's information about your *frame*, not just about that question.\n\nThree of the four options are usually defensible anyway. Only one matches how PMI wants you to think.\n\nI wrote up the lens I use to pick it, five worked scenarios, and the five traps — including the case-set one. Free — link in the first comment.\n\n#PMP #ProjectManagement",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=li-magnet-pmp-0812&utm_content=magnet-01",
-      "postedAt": null,
-      "postUrl": null,
+      "postedAt": "2026-08-12T17:08:25.328Z",
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7493349480189267968/",
       "metrics": null,
       "grade": null,
       "gradeNotes": null,
@@ -839,7 +839,8 @@
       "planSource": "19-revenue-plan-2026-08.md §2 (canonical calendar)",
       "planNote": "APPLIED 2026-08-12: date fields actually moved 08-14 -> 08-12 (the 08-08 plan load logged the move but never wrote it). LINK PLACEMENT = FIRST COMMENT, Dave's call 2026-08-12, overriding the plan's 'magnet #1 body / magnet #2 comment' A/B. Evidence on record: li-thu-2026-08-07-sponsor-scenario (no body link) graded B — the only B on the LinkedIn feed — while li-mon-2026-08-03-exam-change and li-wed-2026-08-05-experience-trap (both body links) graded C. The body-vs-comment test is retired; comment placement is the standing default for magnet posts. Exact comment text is in the firstComment field. Post the comment yourself within ~60s of publishing.",
       "planPostType": "magnet",
-      "firstComment": "Here it is — the lens, five worked scenarios, and the five traps including the case-set one. No credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=li-magnet-pmp-0812&utm_content=magnet-01"
+      "firstComment": "Here it is — the lens, five worked scenarios, and the five traps including the case-set one. No credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=li-magnet-pmp-0812&utm_content=magnet-01",
+      "postedAsteriskNote": "Posted copy retained the literal asterisks around *frame* — LinkedIn does not render markdown, so they appear as literal characters in the live post. Strip asterisks from future drafts."
     },
     {
       "id": "li-fri-2026-08-14-sme-03",
@@ -1530,8 +1531,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "cta-to-comment-0812",
-    "lastUpdatedAt": "2026-08-12T18:05:00.000Z",
+    "lastUpdatedBy": "mark-posted-0812",
+    "lastUpdatedAt": "2026-08-12T17:08:38.830Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
