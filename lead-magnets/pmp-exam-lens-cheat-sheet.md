@@ -27,6 +27,18 @@ If you internalize the lens, the exam stops feeling like a trick.
 
 ---
 
+## One thing changed since this was written
+
+PMI grouped PMP situational questions into case sets starting July 9, 2026 — three to five questions per project scenario, instead of standalone questions.
+
+The scenarios below are still written standalone. The reasoning doesn't change. **The stakes do.**
+
+In a case set, every question about that project shares one frame. Misread the project on question 1 — decide it's predictive when it's actually hybrid, or read a stakeholder's request as scope creep when it's actually a real risk — and every question after it inherits the wrong frame. One bad read now costs you three to five questions, not one.
+
+That makes the lens *more* load-bearing, not less. Ask the same question before question 1 of a set that you'd ask on any standalone question: what would PMI want you to do? Get the frame right there, and the rest of the set gets easier, not harder.
+
+---
+
 ## The Lens, in one sentence
 
 > **What would PMI want you to do?**
@@ -209,6 +221,16 @@ The answer is too big or too small for the situation — "replace the team membe
 
 When you read a PMP option, ask: *does this fall into one of these traps?* If yes, it's almost certainly wrong.
 
+### The case-set trap
+
+Since July 2026 there's a fifth one, and it only exists inside grouped case sets: **carrying a wrong frame forward.**
+
+You answer question 1, you're not sure, you move on. Question 2 asks something that only makes sense if you understood the project the same way you did a minute ago. So you stay consistent with your first read — even though your first read was the thing that was wrong.
+
+Consistency feels like discipline here. It isn't.
+
+If a later question in a set doesn't sit right, that's information about your *frame*, not just about that question. Re-read the project stem before you answer it. Being inconsistent across a case set costs you one question. Being consistently wrong costs you all five.
+
 ---
 
 ## Your next move
@@ -216,7 +238,7 @@ When you read a PMP option, ask: *does this fall into one of these traps?* If ye
 You now have:
 
 1. **The Lens.** A single question — *what would PMI want you to do?* — that reframes any PMP situational question.
-2. **The 4 traps.** Pattern-recognition for the wrong answers PMI plants.
+2. **The 4 traps**, plus the case-set trap that came with the July 2026 format change.
 3. **Worked examples.** Five scenarios across stakeholders, vendors, EMV, team management, and risk re-analysis.
 
 Reading this sheet is step one. **Building the reflex is step two**, and that takes reps. You need to apply the lens to 50–100 PMP questions before it stops being a conscious step and starts being how you read questions.
