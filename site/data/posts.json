@@ -596,7 +596,7 @@
       "copy": "The PMP exam changed on July 9, 2026.\n\nThe important shift is not a new list of terms to memorize. PMI increased Business Environment from 8% to 26% and added AI, sustainability, stakeholder engagement, value, and business impact to its scenarios.\n\nThat means more questions where several actions are reasonable and one is best for the outcome.\n\nBefore you buy another question bank, ask one question: does it teach you why the best answer wins under the updated exam outline?\n\nCipherExam's Exam Lens breaks down that judgment after every question.\n\nStart Free Trial — 7 days, no credit card.\nhttps://lnkd.in/grQNRxYH\n\n#PMP #ProjectManagement",
       "cta": "https://lnkd.in/grQNRxYH",
       "postedAt": "2026-08-03T16:30:00.000Z",
-      "postUrl": null,
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7490163109198766080/",
       "metrics": {
         "reposts": 0,
         "impressions": 32,
@@ -650,7 +650,7 @@
       "copy": "The people who struggle with the PMP are often experienced project managers.\n\nAt work, speed and context matter. You know when to escalate, when to improvise, and when the written process is not enough.\n\nOn the exam, that same instinct can make you choose the second-best answer.\n\nThe PMP usually rewards a sequence: assess before acting, engage the right person directly, protect value, then escalate when the situation warrants it.\n\nYour experience is not wrong. It is answering a more detailed question than the exam asked.\n\nCipherExam shows the reasoning frame behind each option so you can separate real-world instinct from exam-day judgment.\n\nStart Free Trial — no credit card.\nhttps://lnkd.in/ggUpDnTt\n\n#PMP #ProjectManagement",
       "cta": "https://lnkd.in/ggUpDnTt",
       "postedAt": "2026-08-05T16:30:00.000Z",
-      "postUrl": null,
+      "postUrl": "https://www.linkedin.com/feed/update/urn:li:activity:7490978404259950592/",
       "metrics": {
         "channelExtras": null,
         "outOfNetworkPct": 41,
@@ -1558,8 +1558,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "rewrite-bizenv-gated",
-    "lastUpdatedAt": "2026-08-12T20:05:16.509Z",
+    "lastUpdatedBy": "backfill-posturl",
+    "lastUpdatedAt": "2026-08-12T20:10:16.099Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
