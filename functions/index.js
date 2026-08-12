@@ -32,7 +32,7 @@ initializeApp();
 
 const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "claude-sonnet-5";
 const ALLOWED_ORIGINS = [
   "https://cipher-marketing-daveq.web.app",
   "https://cipher-marketing-daveq.firebaseapp.com",
