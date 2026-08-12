@@ -1,11 +1,21 @@
 {
-  "_hostingNote": "RETIRED 2026-08-07. Hosting used to serve site/app.html, but data/ is deliberately never deployed (posts.json holds unpublished drafts, live metrics and strategy — not public), so the hosted copy could never load a single post. It rendered nav, a version badge and an empty pipeline, which reads as a broken dashboard rather than an absent one, and cost real debugging time twice. Hosting now serves a one-page notice. THE DASHBOARD IS LOCAL: node serve.mjs -> http://localhost:8766/app.html. To bring the hosted one back for real it needs an authenticated /api/posts Cloud Function reading Firestore, not a static file.",
   "hosting": {
-    "public": "hosted-stub",
+    "public": "site",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "**/*.mjs",
+      "data/**",
+      "index.html",
+      "today.html",
+      "schedule.html",
+      "strategy.html",
+      "content.html",
+      "landing.html",
+      "engineering.html",
+      "voice.html",
+      "competitors.html"
     ],
     "rewrites": [
       {
@@ -25,7 +35,7 @@
       },
       {
         "source": "**",
-        "destination": "/index.html"
+        "destination": "/app.html"
       }
     ],
     "headers": [
@@ -70,11 +80,22 @@
     "rules": "storage.rules"
   },
   "emulators": {
-    "auth": { "port": 9099 },
-    "functions": { "port": 5001 },
-    "firestore": { "port": 8080 },
-    "storage": { "port": 9199 },
-    "ui": { "enabled": true, "port": 4000 }
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    }
   },
   "auth": {
     "providers": {

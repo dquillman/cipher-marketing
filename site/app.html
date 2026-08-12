@@ -1482,7 +1482,9 @@ window.addEventListener('hashchange', function () {
 });
 document.addEventListener('DOMContentLoaded', function () {
   var r = location.hash.slice(1);
-  if (r && r !== 'today') cipherShow(r);
+  // Default to 'today' so its nav button gets the .current highlight even when
+  // the URL is #today (or has no hash at all).
+  cipherShow(r || 'today');
 });
 // Jump to the Today tab and open the daily playbook — the "how do I use this?" entry point.
 function cipherHelp() {
