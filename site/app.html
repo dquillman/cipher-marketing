@@ -2450,7 +2450,8 @@ function cipherHelp() {
       ? '<span class="sched-pill status-posted">✓ Posted · Grade ' + esc(p.grade) + '</span>' + unpostBtn
       : statusAwaitingGrade
         ? '<span class="sched-pill status-posted">✓ Posted</span>' +
-          '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '">Grade this post</button>' +
+          '<button class="btn-primary" type="button" data-grade-auto="' + esc(p.id) + '">Auto-grade (Claude)</button>' +
+          '<button class="btn-secondary" type="button" data-grade-open="' + esc(p.id) + '" style="margin-left:8px;">Enter manually</button>' +
           unpostBtn
         : '<button class="btn-primary" type="button" data-sched-copy="' + esc(p.id) + '">Copy post text</button>' +
           '<span class="copy-confirm" id="copy-conf-' + esc(p.id) + '">✓ Copied!</span>' +
@@ -2989,7 +2990,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
 
     var awaitingGrade = p.status === 'posted' && !p.grade;
     var gradeBtn = awaitingGrade
-      ? '<button class="btn-primary" type="button" data-grade-open="' + esc(p.id) + '" style="margin-left:8px;">Grade this post</button>'
+      ? '<button class="btn-primary" type="button" data-grade-auto="' + esc(p.id) + '" style="margin-left:8px;">Auto-grade (Claude)</button>' + '<button class="btn-secondary" type="button" data-grade-open="' + esc(p.id) + '" style="margin-left:8px;">Enter manually</button>'
       : '';
 
     var reviseBtn = p.status === 'draft'
@@ -6834,6 +6835,40 @@ if (document.readyState === 'loading') {
         approveBtn.disabled = false;
         approveBtn.textContent = 'Approve reviewed drafts';
       });
+      return;
+    }
+
+    // "Auto-grade (Claude)" — hands the job to Claude Code instead of opening
+    // the manual entry form.
+    //
+    // This button cannot grade on its own, and that is a data-access limit, not
+    // a missing feature: LinkedIn publishes NO analytics API for personal posts,
+    // so the numbers exist only inside Dave's logged-in browser session. A Cloud
+    // Function cannot see them. The scrape has to be driven by something running
+    // on his machine with his Chrome — which means Claude. So the button does the
+    // one useful thing it can: it puts the exact instruction on the clipboard.
+    // Same pattern brad-inbox.json already uses for its resumePhrase answers.
+    var autoBtn = e.target.closest && e.target.closest('[data-grade-auto]');
+    if (autoBtn) {
+      e.preventDefault();
+      var autoId = autoBtn.getAttribute('data-grade-auto');
+      var phrase = 'Auto-grade the post ' + autoId +
+        ' — read its LinkedIn analytics in my Chrome and submit the metrics. Then run' +
+        ' node scripts/list-ungraded-posts.mjs --regrade and node scripts/analyze-corpus.mjs.';
+      varorigLabel = autoBtn.textContent;
+      safeCopy(
+        phrase,
+        function () {
+          autoBtn.textContent = 'Copied ✓ paste into Claude Code';
+          setTimeout(function () { autoBtn.textContent = origLabel; }, 4000);
+        },
+        function () {
+          // Never claim a copy that did not happen — the operator would paste
+          // whatever was on the clipboard before and grade the wrong post.
+          autoBtn.textContent = 'Copy failed — select manually';
+          setTimeout(function () { autoBtn.textContent = origLabel; }, 4000);
+        }
+      );
       return;
     }
 
