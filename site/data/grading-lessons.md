@@ -62,6 +62,21 @@ Durable lessons learned from grading CipherExam marketing posts. Appended by the
 ## LinkedIn — links & CTA
 
 <!-- e.g. "Link in first comment outperforms link in body — LI reach-caps link-in-body posts." -->
+- **MEASURED 2026-08-12 — no post with a CTA in the body has ever received a comment. 0 for 5.** The 2026-08-06 note below says link placement "has simply never actually been measured on this account." It has now, across the whole graded corpus, and the split is clean:
+
+  | | posts | median impressions | total comments |
+  |---|---|---|---|
+  | CTA in the body | 5 | 98 | **0** |
+  | no CTA in the body | 3 | 171 | **7** |
+
+  The five are `li-mon-2026-05-11-launch`, `li-wed-2026-05-13-trap`, `li-fri-2026-05-15-domains`, `li-mon-2026-08-03-exam-change`, `li-wed-2026-08-05-experience-trap` — spanning May and August, four different hooks, both morning and evening sends. Not a one-post fluke.
+
+  **Read the two columns differently, because they are not equally strong.** The impressions gap (98 vs 171) is suggestive and no more — small n, wide spread. The comments column is the real finding, and only in one direction: **zero comments across all five body-link posts** is a claim about those five and is not confounded by anything. The reverse direction IS confounded — 6 of the 7 comments on the no-link side came from the single gated post, so "removing the link earns comments" is NOT established. What is established: a body link has never coexisted with a comment on this account.
+
+  Dave moved the CTA to the first comment on 2026-08-12 on his own read of the feed, before this was measured. The measurement agrees with him.
+
+  **Detector caveat, because it already caused one wrong answer:** the first version of `analyze-corpus.mjs` tested only `https?://` and therefore scored the two May posts that closed on a bare `cipherexam.com/lp/pmp?...` as having NO body link. That put 2 of the 5 in the wrong group and computed the split on the wrong sets — it reported n=3 and a weaker result. Dave caught it. **A bare domain is a link.** Any future feature detector gets checked against the actual copy of every post before its output is believed.
+
 - Link in post body suppresses early-window LinkedIn reach but doesn't permanently cap it — long-tail distribution can recover (li-fri-domains hit 222 impressions on the same link-in-body pattern that initially capped mon-launch at 119 and wed-trap at 64; updated 2026-05). Still drop the URL from `copy` and post it as the FIRST reply comment to win the early window. Keep the `cta` field populated for the dashboard.
 
 ## X — timing & format

@@ -47,7 +47,14 @@ const FEATURES = {
   // Any question mark at all — the naive reading of the grader's advice, kept
   // here specifically so the report can show it does NOT separate the groups.
   anyQuestionMark: (c) => c.includes('?'),
-  urlInBody: (c) => /https?:\/\//.test(c),
+  // A CTA in the body is a CTA in the body whether or not it carries a scheme.
+  // The first version of this checked only /https?:\/\// and therefore scored
+  // li-mon-2026-05-11-launch and li-wed-2026-05-13-trap as having NO body link —
+  // both closed on a bare "cipherexam.com/lp/pmp?utm_source=..." with no
+  // https://. That mislabelled 2 of the 5 body-link posts and computed the whole
+  // split on the wrong groups. Match a scheme OR any bare domain followed by a
+  // path, which is what a reader and the algorithm both see as a link.
+  urlInBody: (c) => /https?:\/\//.test(c) || /(?:^|[\s(])(?:www\.)?[a-z0-9][a-z0-9-]*\.(?:com|io|app|co|net|org)\//im.test(c),
   datedStatOpener: (c) => /^[^\n]*\b(?:\d{1,3}%|\d{1,2}%\s*to\s*\d{1,3}%|on \w+ \d{1,2})/m.test(c.split('\n')[0] || ''),
 };
 
