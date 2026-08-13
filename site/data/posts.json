@@ -787,7 +787,7 @@
       "priorCopyV2": "Business Environment went from 8% of the PMP to 26% on July 9. Compliance scenarios now carry roughly three times the weight they did.\n\nHere is one.\n\nA stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nWhat do you do first?\n\nA. Raise a change request\nB. Escalate to the sponsor\nC. Rework the schedule with your team\nD. Confirm the requirement with the compliance owner\n\nA working PM has done all four on a real Tuesday. Three of them are defensible. One is what the exam is actually testing.\n\nPost your answer — and more importantly, your reason.\n\nI will put the decision pattern in the comments once the discussion has run. It turns on a single word in the stem, and most experienced PMs read straight past it.\n\n#PMP #ProjectManagement",
       "nativelyScheduled": true,
       "nativelyScheduledAt": "2026-08-12",
-      "nativeScheduleNote": "Dave scheduled this in LinkedIn natively for Fri 2026-08-14 19:20 MT. Verified via the composer badge reading \"Scheduled (1)\"; the panel text itself could not be read. UNVERIFIED: whether the queued copy is the current scenario-first version or the pre-rewrite July 9 opener — the rewrite landed after the first copy was printed. Dave to eyeball line 1: correct is \"PMP scenario.\""
+      "nativeScheduleNote": "Scheduled natively in LinkedIn for Fri 2026-08-14 19:20 MT. CONFIRMED 2026-08-12 that the first native schedule carried the STALE pre-rewrite copy (July 9 opener) — Dave pasted it back and caught it; replaced with the scenario-first version. Root cause: copy was printed and scheduled before the opener rewrite landed. RULE: after any copy change to an already-scheduled post, the native scheduler must be updated too — posts.json and LinkedIn are separate stores and nothing syncs them."
     },
     {
       "id": "li-thu-2026-08-07-sponsor-scenario",
@@ -1569,8 +1569,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "native-scheduled",
-    "lastUpdatedAt": "2026-08-13T01:53:11.928Z",
+    "lastUpdatedBy": "native-copy-corrected",
+    "lastUpdatedAt": "2026-08-13T02:05:57.251Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
