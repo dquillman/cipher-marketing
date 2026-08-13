@@ -784,7 +784,10 @@
         "Do NOT post plannedReveal until the discussion has run — the post promises it comes later. Deliver it IN-THREAD, not as a new post."
       ],
       "firstComment": "Here it is — the reasoning pattern behind this one, plus five more worked PMP scenarios. Free, no credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_campaign=pmp_judgment_2026&utm_content=bizenv-8-to-26",
-      "priorCopyV2": "Business Environment went from 8% of the PMP to 26% on July 9. Compliance scenarios now carry roughly three times the weight they did.\n\nHere is one.\n\nA stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nWhat do you do first?\n\nA. Raise a change request\nB. Escalate to the sponsor\nC. Rework the schedule with your team\nD. Confirm the requirement with the compliance owner\n\nA working PM has done all four on a real Tuesday. Three of them are defensible. One is what the exam is actually testing.\n\nPost your answer — and more importantly, your reason.\n\nI will put the decision pattern in the comments once the discussion has run. It turns on a single word in the stem, and most experienced PMs read straight past it.\n\n#PMP #ProjectManagement"
+      "priorCopyV2": "Business Environment went from 8% of the PMP to 26% on July 9. Compliance scenarios now carry roughly three times the weight they did.\n\nHere is one.\n\nA stakeholder tells you a regulatory requirement was missed. Release is two weeks out.\n\nWhat do you do first?\n\nA. Raise a change request\nB. Escalate to the sponsor\nC. Rework the schedule with your team\nD. Confirm the requirement with the compliance owner\n\nA working PM has done all four on a real Tuesday. Three of them are defensible. One is what the exam is actually testing.\n\nPost your answer — and more importantly, your reason.\n\nI will put the decision pattern in the comments once the discussion has run. It turns on a single word in the stem, and most experienced PMs read straight past it.\n\n#PMP #ProjectManagement",
+      "nativelyScheduled": true,
+      "nativelyScheduledAt": "2026-08-12",
+      "nativeScheduleNote": "Dave scheduled this in LinkedIn natively for Fri 2026-08-14 19:20 MT. Verified via the composer badge reading \"Scheduled (1)\"; the panel text itself could not be read. UNVERIFIED: whether the queued copy is the current scenario-first version or the pre-rewrite July 9 opener — the rewrite landed after the first copy was printed. Dave to eyeball line 1: correct is \"PMP scenario.\""
     },
     {
       "id": "li-thu-2026-08-07-sponsor-scenario",
@@ -1566,8 +1569,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "reopen-scenario-first",
-    "lastUpdatedAt": "2026-08-13T01:36:21.779Z",
+    "lastUpdatedBy": "native-scheduled",
+    "lastUpdatedAt": "2026-08-13T01:53:11.928Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
