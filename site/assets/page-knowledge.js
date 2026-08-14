@@ -129,6 +129,18 @@
       "watchFor": "Competitor features and pricing change. Treat older reports as historical context and refresh them before a major decision.",
       "related": ["Strategy", "Content", "Brand Voice"]
     },
+    "outreach": {
+      "label": "Outreach",
+      "route": "outreach",
+      "aliases": ["backlinks", "link outreach", "reviewer outreach", "prospects", "competitor channels"],
+      "purpose": "Turn verified competitor acquisition research into a controlled reviewer, media, and partnership pipeline without confusing paid placement with earned editorial links.",
+      "sections": ["Next controlled action", "Readiness gate", "Recommended options", "Verified advertising evidence", "Competitor distribution channels", "Do not contact list", "Automation boundary"],
+      "steps": ["Complete the readiness gate from top to bottom", "Start with Kiyoo Networks, the only immediate earned-editorial target", "Copy and personalize the draft, then obtain Dave's approval before sending it manually", "Record replies, visits, trials and activated users"],
+      "start": "Correct public comparison claims before preparing outreach, then review the Kiyoo Networks draft as the first prospect action.",
+      "terms": ["Earned editorial = independent coverage without payment", "Commercial test = a source whose affiliate or sponsorship terms must be verified", "Activated user = a user who selected an exam and answered at least 10 questions"],
+      "watchFor": "This page never sends messages. Paid reviews require disclosure and sponsored or nofollow links; direct competitors, closed certification bodies and UGC forums are not ordinary backlink prospects.",
+      "related": ["Competitors", "Results", "Brand Voice"]
+    },
     "testimonials": {
       "label": "Testimonials",
       "route": "testimonials",

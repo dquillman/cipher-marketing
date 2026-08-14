@@ -70,7 +70,12 @@ test('scheduled post date fields agree with the canonical timestamp', () => {
   const data = JSON.parse(read('site/data/posts.json'));
   for (const post of data.posts) {
     if (!post.scheduledTime) continue;
-    const canonicalDate = post.scheduledTime.slice(0, 10);
+    // The operator schedules in Mountain time. Evening posts legitimately
+    // cross into the next UTC date, so the displayed local date is canonical
+    // whenever it is present.
+    const canonicalDate = post.scheduledTimeLocal
+      ? post.scheduledTimeLocal.slice(0, 10)
+      : post.scheduledTime.slice(0, 10);
     assert.equal(post.scheduled, canonicalDate, post.id + ' scheduled date mismatch');
     if (post.scheduledTimeLocal) {
       assert.equal(post.scheduledTimeLocal.slice(0, 10), canonicalDate, post.id + ' local date mismatch');

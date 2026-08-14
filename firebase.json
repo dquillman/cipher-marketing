@@ -15,7 +15,8 @@
       "landing.html",
       "engineering.html",
       "voice.html",
-      "competitors.html"
+      "competitors.html",
+      "outreach.html"
     ],
     "rewrites": [
       {

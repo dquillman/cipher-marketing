@@ -1,9 +1,10 @@
 {
   "_meta": {
     "purpose": "Canonical competitor list for CipherExam. The competitors.html page currently hardcodes a reference table; this file is the single source of truth going forward. When Brad adds a competitor here, also mirror it into competitors.html until that page is wired to fetch this file.",
-    "lastUpdatedAt": "2026-08-01T00:00:00Z",
+    "lastUpdatedAt": "2026-08-13T00:00:00Z",
     "owner": "Brad (CipherExam marketing orchestrator)",
-    "refreshNote_2026_08_01": "Monthly automated refresh. Two material changes: (1) the Pocket Prep entry was STALE — they ship detailed explanations with textbook references, contradicting our 'no explanations' premise; any copy built on it must be rewritten. (2) 'No AI layer' is no longer true of the category — Mindirus and the AI-tutor app cohort are added, both selling AI coaching on our priority certs. 'AI-powered' is now the category description, not a differentiator."
+    "refreshNote_2026_08_01": "Monthly automated refresh. Two material changes: (1) the Pocket Prep entry was STALE — they ship detailed explanations with textbook references, contradicting our 'no explanations' premise; any copy built on it must be rewritten. (2) 'No AI layer' is no longer true of the category — Mindirus and the AI-tutor app cohort are added, both selling AI coaching on our priority certs. 'AI-powered' is now the category description, not a differentiator.",
+    "acquisitionResearch_2026_08_13": "Gauntlet-reviewed acquisition and backlink research is encoded in site/assets/outreach-data.js and operated from app.html#outreach. It separates paid, owned, affiliate, partnership and earned channels; only Kiyoo Networks is an immediate earned-editorial prospect."
   },
   "competitors": [
     {

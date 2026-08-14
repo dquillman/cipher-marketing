@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Today — CipherExam Campaign</title>
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Outreach — CipherExam Marketing</title>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="assets/shared.css">
 <!--INLINE-ASSETS-->
 <style>
@@ -789,144 +789,85 @@ details[open] summary::before { transform: rotate(90deg); }
 </script>
 <script src="assets/operator-auth.js"></script>
 <!--/INLINE-ASSETS-->
-
-
-
-
-
-
-
-
-
-
-
-
-<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+<link rel="stylesheet" href="assets/outreach.css?v=1.20.0">
 </head>
 <body>
-
 <nav class="nav">
   <div class="nav-inner">
-    <a class="nav-brand" href="index.html" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32" style="display:block;"></a>
+    <a class="nav-brand" href="app.html#today" aria-label="CipherExam"><img src="assets/logo.svg" alt="CipherExam" height="32"></a>
     <div class="nav-links">
-      <a class="nav-link current" href="today.html">Today</a>
-      <a class="nav-link" href="index.html">Dashboard</a>
-      <a class="nav-link" href="schedule.html">Schedule</a>
-      <a class="nav-link" href="posts.html">Posts</a>
-      <a class="nav-link" href="strategy.html">Strategy</a>
-      <a class="nav-link" href="content.html">Content</a>
-      <a class="nav-link" href="landing.html">Landing</a>
-      <a class="nav-link" href="engineering.html">Engineering</a>
-      <a class="nav-link" href="voice.html">Voice</a>
-      <a class="nav-link" href="competitors.html">Competitors</a>
-      <a class="nav-link" href="testimonials.html">Testimonials</a>
+      <a class="nav-link" href="app.html#today">Today</a>
+      <a class="nav-link" href="app.html#competitors">Competitors</a>
+      <a class="nav-link current" href="outreach.html" aria-current="page">Outreach</a>
+      <a class="nav-link" href="app.html#dashboard">Results</a>
     </div>
-    <a class="nav-rollup" href="../launch-campaign.html">Full rollup ↗</a>
-    <span class="version-bar" title="Dashboard version">v1.15.0</span>
+    <a class="nav-rollup" href="app.html#outreach">Open in dashboard ↗</a>
   </div>
 </nav>
-
 <main class="wrap">
-
-  <details class="card" style="margin-bottom:18px;border-color:rgba(251,191,36,.45);">
-    <summary style="cursor:pointer;font-weight:700;">Archive current campaign &amp; start over</summary>
-    <p style="color:var(--dim);font-size:0.88rem;line-height:1.55;">This creates a recovery archive, then replaces campaign posts, grades, metrics, funnel, sprint, logs, schedules, campaign decisions, and competitor reports with the new PMP Judgment Sprint. Operator access, app code, product data, and UI preferences are preserved.</p>
-    <form id="campaign-reset-form" style="display:grid;gap:12px;margin-top:14px;max-width:720px;">
-      <label style="display:grid;gap:6px;color:var(--dim);font-size:0.88rem;max-width:260px;">
-        New Week 1 start date
-        <input id="campaign-reset-start" type="date" required style="color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;">
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:9px;color:var(--dim);font-size:0.88rem;">
-        <input id="campaign-reset-ack" type="checkbox" required style="margin-top:3px;">
-        I understand the live campaign data will be replaced after a recovery archive is created.
-      </label>
-      <label style="display:grid;gap:6px;color:var(--dim);font-size:0.88rem;max-width:360px;">
-        Type <strong style="color:var(--text);">RESET CAMPAIGN</strong> to confirm
-        <input id="campaign-reset-confirmation" type="text" autocomplete="off" required style="color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;">
-      </label>
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
-        <button class="btn-warn" type="submit">Archive current campaign &amp; start new campaign</button>
-        <span id="campaign-reset-status" role="status" aria-live="polite" style="font-size:0.88rem;"></span>
+  <div id="outreach-page" class="outreach-shell">
+    <div class="outreach-hero">
+      <div class="outreach-hero-copy">
+        <div class="outreach-kicker">Competitor acquisition research · outreach operations</div>
+        <h1>Earn attention without buying links</h1>
+        <p id="outreach-summary">Loading the reviewed research…</p>
+        <div class="outreach-pass">Gauntlet <span id="outreach-gauntlet-status">—</span> · verified <span id="outreach-research-date">—</span></div>
       </div>
-    </form>
-  </details>
+      <aside class="outreach-next">
+        <div class="label">Next controlled action</div>
+        <strong id="outreach-next-title">Loading…</strong>
+        <span id="outreach-next-detail"></span>
+      </aside>
+    </div>
 
+    <div class="outreach-metrics" aria-label="Outreach outcomes">
+      <div class="outreach-metric"><span>Contacted</span><strong id="outreach-contacted">0</strong></div>
+      <div class="outreach-metric"><span>Replies</span><strong id="outreach-replies">0</strong></div>
+      <div class="outreach-metric"><span>Published</span><strong id="outreach-published">0</strong></div>
+      <div class="outreach-metric"><span>Activated users</span><strong id="outreach-activations">0</strong></div>
+    </div>
 
-  <!-- 1. Stage banner -->
-  <div class="stage-banner" id="stage-banner">Loading…</div>
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Readiness gate</h2><p>Complete these in order. The system prepares and tracks work; Dave sends every final message manually.</p></div></div>
+      <div id="outreach-workflow" class="outreach-checklist"></div>
+    </section>
 
-  <!-- 5. Week strip -->
-  <div class="week-strip" id="week-strip"></div>
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Recommended options</h2><p>Targets are separated by earned, commercial, paid, future and partnership lanes so a sponsored placement is never mistaken for editorial SEO.</p></div></div>
+      <div class="outreach-filter" aria-label="Filter outreach lanes">
+        <button type="button" class="active" data-outreach-filter="all">All</button>
+        <button type="button" data-outreach-filter="earned">Earned</button>
+        <button type="button" data-outreach-filter="commercial-test">Commercial tests</button>
+        <button type="button" data-outreach-filter="paid">Paid media</button>
+        <button type="button" data-outreach-filter="future">Future</button>
+        <button type="button" data-outreach-filter="partnership">Partnership</button>
+      </div>
+      <div id="outreach-targets" class="outreach-targets" style="margin-top:14px;"></div>
+    </section>
 
-  <!-- 2. Today's tasks -->
-  <h2 style="margin-top:0;">Today's tasks</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Checkbox state persists per day in <code>localStorage</code>. Active-week tasks come from <a href="../00-campaign-brief.md">00-campaign-brief.md §3</a>. Pre-launch checklist comes from <code>data/campaign-state.json → preLaunchChecklist</code> (status set by Brad; source list mirrors <a href="../06-engineering-handoff.md">06-engineering-handoff.md §7</a>). Items marked <em>done</em> or <em>N/A</em> are server-driven — local checkboxes can't override them.</p>
-  <div id="today-tasks"></div>
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Verified advertising evidence</h2><p>Counts are approximate historical creative records under the stated United States / any-time filter—not campaigns, spend, reach or current activity.</p></div></div>
+      <div id="outreach-ad-evidence" class="outreach-evidence"></div>
+    </section>
 
-  <!-- 6. KPI snapshot from state -->
-  <h2>KPI snapshot — by cluster</h2>
-  <div class="card-grid" id="kpi-snapshot">Loading…</div>
-  <p id="state-source" style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:8px;">Loading state…</p>
-  <p style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:4px;">Numbers come from <code>data/campaign-state.json</code>. Tell Claude what to update via the scratchpad below, or have engineering wire GA4 → state once <code>signup_complete</code> / <code>activated_user</code> events are live (see <a href="engineering.html">engineering §2</a>).</p>
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>How competitors distribute</h2><p>Paid, owned, affiliate, partnership and organic channels remain explicitly separate.</p></div></div>
+      <div style="overflow-x:auto;"><table class="outreach-channels"><thead><tr><th>Competitor</th><th>Confirmed channels</th><th>Implication</th></tr></thead><tbody id="outreach-channel-body"></tbody></table></div>
+    </section>
 
-  <!-- Today's recommended creative -->
-  <h2>Today's creative</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Which video to attach to today's scheduled post. Mapped from the 4-week calendar to the rendered Remotion videos in <code>videos/out/</code>.</p>
-  <div id="today-creative" class="card">Loading…</div>
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Do not contact for backlinks</h2><p>These sources fail the fit, independence or ethics threshold.</p></div></div>
+      <div id="outreach-reject" class="outreach-reject"></div>
+    </section>
 
-  <!-- Scratchpad + copy-for-Claude -->
-  <h2>Today's scratchpad</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Jot anything that happened today — completed posts, signups, useful Reddit comments, friction with the product. Persists locally. When ready, click the button — it formats your notes + checked tasks as a structured update you paste into Claude Code. Claude updates <code>campaign-state.json</code>, the page refreshes with the new state.</p>
-  <textarea id="scratchpad" rows="6" placeholder="e.g.&#10;- Posted on r/pmp at 9am, 4 upvotes, one DM asking about EMV support&#10;- Sent 12 LinkedIn warm DMs to PMP candidates&#10;- 2 signups today, 1 activated (chose PMP, finished 12 questions)&#10;- Bug: someone reported the diagnostic stuck on Q3 — flagged to Dave"></textarea>
-  <div style="margin-top:10px;display:flex;align-items:center;gap:14px;">
-    <button id="copy-update-btn" type="button">Copy update for Claude</button>
-    <span id="copy-status" style="font-size:0.9rem;"></span>
+    <aside class="outreach-policy">
+      <h3>Automation boundary</h3>
+      <ul id="outreach-guardrails"></ul>
+    </aside>
   </div>
-  <textarea id="copy-fallback" rows="10" style="display:none;width:100%;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85rem;"></textarea>
-
-  <!-- Daily log -->
-  <h2>Daily log (last 7 entries)</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Rolling history of what's actually happened. Claude appends here when you copy an update.</p>
-  <div id="daily-log">Loading…</div>
-
-  <!-- 3. Yesterday recap -->
-  <h2>Recap & preview</h2>
-  <details>
-    <summary id="yesterday-summary">Yesterday recap</summary>
-    <p style="color:var(--dim);font-size:0.88rem;">Same checkbox state — toggle here too if anything slipped.</p>
-    <div id="yesterday-tasks"></div>
-  </details>
-
-  <!-- 4. Tomorrow preview -->
-  <details>
-    <summary id="tomorrow-summary">Tomorrow preview</summary>
-    <p style="color:var(--dim);font-size:0.88rem;">Read-only. Set up anything that needs prep tonight.</p>
-    <div id="tomorrow-tasks"></div>
-  </details>
-
-  <!-- 7. Paid-spend gate -->
-  <h2>Paid-spend gate</h2>
-  <div class="card warn">
-    <p style="margin-top:0;"><strong>$2/day retargeting unlocks at 25 cumulative activated users.</strong> Until then, $0 paid. Source: <a href="strategy.html">strategy §3</a>.</p>
-    <div id="gate-progress"></div>
-    <p id="gate-note" style="margin:10px 0 0;font-size:0.92rem;"></p>
-  </div>
-
 </main>
-
-
-
-
-
-
-
-
-
-
-<script src="assets/campaign-reset.js"></script>
-
-
-
+<script src="assets/outreach-data.js?v=1.20.0"></script>
+<script src="assets/outreach.js?v=1.20.0"></script>
 <!--INLINE-ASSETS-->
 <script>
 /* CipherExam campaign site — shared JS (vanilla, no deps) */

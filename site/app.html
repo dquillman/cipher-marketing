@@ -25,6 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
+<link rel="stylesheet" href="assets/outreach.css?v=1.21.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1466,6 +1467,7 @@ function cipherShow(route) {
     engineering: 'Engineering — CipherExam Campaign',
     voice:       'Voice — CipherExam Campaign',
     competitors: 'Competitors — CipherExam Campaign',
+    outreach:    'Outreach — CipherExam Marketing',
     testimonials:'Testimonials — CipherExam Campaign',
     settings:    'Settings — CipherExam Marketing'
   })[route] || 'CipherExam Marketing';
@@ -1513,6 +1515,7 @@ function cipherHelp() {
         <summary>Resources</summary>
         <div class="resource-panel">
           <button type="button" onclick="cipherShow('competitors');this.closest('details').open=false">Competitor research</button>
+          <button type="button" onclick="cipherShow('outreach');this.closest('details').open=false">Outreach operations</button>
           <button type="button" onclick="cipherShow('testimonials');this.closest('details').open=false">Testimonials</button>
           <button type="button" onclick="cipherShow('strategy');this.closest('details').open=false">Campaign strategy</button>
           <button type="button" onclick="cipherShow('content');this.closest('details').open=false">Content library</button>
@@ -1526,7 +1529,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.20.0</span>
+      <span class="version-bar" title="Dashboard version">v1.21.0</span>
     </div>
   </div>
 </nav>
@@ -4411,7 +4414,12 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
 
   <div class="hero">
     <h1>Competitor Intel</h1>
-    <p class="sub">Current review completed July 28, 2026. All three live reports load below. <span id="ci-last-generated" style="color:var(--dim)"></span><button type="button" class="ci-refresh-btn" onclick="loadAllReports(true)">↻ Reload</button></p>
+    <p class="sub">Positioning reports plus the August 13 acquisition-channel and backlink research. <span id="ci-last-generated" style="color:var(--dim)"></span><button type="button" class="ci-refresh-btn" onclick="loadAllReports(true)">↻ Reload</button></p>
+  </div>
+
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-color:rgba(125,211,252,.35);">
+    <div><strong>Ready to act on this research?</strong><div style="color:var(--dim);font-size:.86rem;margin-top:3px;">Open the scored prospect lanes, approval workflow, message drafts and activation tracking.</div></div>
+    <button type="button" onclick="cipherShow('outreach')">Open outreach operations →</button>
   </div>
 
   <div class="ci-report-grid">
@@ -4553,6 +4561,69 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   </script>
 
 
+</section>
+
+<section class="route-section" data-route="outreach">
+  <div id="outreach-page" class="outreach-shell">
+    <div class="outreach-hero">
+      <div class="outreach-hero-copy">
+        <div class="outreach-kicker">Competitor acquisition research · outreach operations</div>
+        <h1>Earn attention without buying links</h1>
+        <p id="outreach-summary">Loading the reviewed research…</p>
+        <div class="outreach-pass">Gauntlet <span id="outreach-gauntlet-status">—</span> · verified <span id="outreach-research-date">—</span></div>
+      </div>
+      <aside class="outreach-next">
+        <div class="label">Next controlled action</div>
+        <strong id="outreach-next-title">Loading…</strong>
+        <span id="outreach-next-detail"></span>
+      </aside>
+    </div>
+
+    <div class="outreach-metrics" aria-label="Outreach outcomes">
+      <div class="outreach-metric"><span>Contacted</span><strong id="outreach-contacted">0</strong></div>
+      <div class="outreach-metric"><span>Replies</span><strong id="outreach-replies">0</strong></div>
+      <div class="outreach-metric"><span>Published</span><strong id="outreach-published">0</strong></div>
+      <div class="outreach-metric"><span>Activated users</span><strong id="outreach-activations">0</strong></div>
+    </div>
+
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Readiness gate</h2><p>Complete these in order. The system prepares and tracks work; Dave sends every final message manually.</p></div></div>
+      <div id="outreach-workflow" class="outreach-checklist"></div>
+    </section>
+
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Recommended options</h2><p>Targets are separated by earned, commercial, paid, future and partnership lanes so a sponsored placement is never mistaken for editorial SEO.</p></div></div>
+      <div class="outreach-filter" aria-label="Filter outreach lanes">
+        <button type="button" class="active" data-outreach-filter="all">All</button>
+        <button type="button" data-outreach-filter="earned">Earned</button>
+        <button type="button" data-outreach-filter="commercial-test">Commercial tests</button>
+        <button type="button" data-outreach-filter="paid">Paid media</button>
+        <button type="button" data-outreach-filter="future">Future</button>
+        <button type="button" data-outreach-filter="partnership">Partnership</button>
+      </div>
+      <div id="outreach-targets" class="outreach-targets" style="margin-top:14px;"></div>
+    </section>
+
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Verified advertising evidence</h2><p>Counts are approximate historical creative records under the stated United States / any-time filter—not campaigns, spend, reach or current activity.</p></div></div>
+      <div id="outreach-ad-evidence" class="outreach-evidence"></div>
+    </section>
+
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>How competitors distribute</h2><p>Paid, owned, affiliate, partnership and organic channels remain explicitly separate.</p></div></div>
+      <div style="overflow-x:auto;"><table class="outreach-channels"><thead><tr><th>Competitor</th><th>Confirmed channels</th><th>Implication</th></tr></thead><tbody id="outreach-channel-body"></tbody></table></div>
+    </section>
+
+    <section class="outreach-section">
+      <div class="outreach-section-head"><div><h2>Do not contact for backlinks</h2><p>These sources fail the fit, independence or ethics threshold.</p></div></div>
+      <div id="outreach-reject" class="outreach-reject"></div>
+    </section>
+
+    <aside class="outreach-policy">
+      <h3>Automation boundary</h3>
+      <ul id="outreach-guardrails"></ul>
+    </aside>
+  </div>
 </section>
 
 <section class="route-section" data-route="testimonials">
@@ -8049,8 +8120,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.20.0"></script>
-<script src="assets/hal-rail.js?v=1.20.0"></script>
+<script src="assets/outreach-data.js?v=1.21.0"></script>
+<script src="assets/outreach.js?v=1.21.0"></script>
+<script src="assets/page-knowledge.js?v=1.21.0"></script>
+<script src="assets/hal-rail.js?v=1.21.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

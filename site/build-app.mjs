@@ -25,6 +25,7 @@ const ROUTES = [
   { file: "engineering.html", route: "engineering", label: "Engineering" },
   { file: "voice.html",       route: "voice",       label: "Voice" },
   { file: "competitors.html", route: "competitors", label: "Competitors" },
+  { file: "outreach.html",    route: "outreach",    label: "Outreach" },
   { file: "testimonials.html", route: "testimonials", label: "Testimonials" },
 ];
 
@@ -134,7 +135,8 @@ let rollupOut = tpl
   .replace(/<nav class="nav">[\s\S]*?<\/nav>/, rollupNav)
   .replace(/<main class="wrap">[\s\S]*?<\/main>/, rollupMain)
   .replace(/<title>[^<]*<\/title>/, "<title>CipherExam Campaign — Full Rollup</title>")
-  .replace(/<\/head>/, rollupExtraCss + "\n</head>");
+  .replace(/<\/head>/, '<link rel="stylesheet" href="assets/outreach.css?v=' + APP_VERSION + '">\n' + rollupExtraCss + "\n</head>")
+  .replace(/<\/body>/, '<script src="assets/outreach-data.js?v=' + APP_VERSION + '"><\/script>\n<script src="assets/outreach.js?v=' + APP_VERSION + '"><\/script>\n</body>');
 
 writeFileSync(join(HERE, "launch-campaign.html"), rollupOut);
 console.log("built launch-campaign.html (" + rollupOut.length + " bytes, " + ROUTES.length + " sections, linear scroll)");

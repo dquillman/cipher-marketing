@@ -797,6 +797,8 @@ details[open] summary::before { transform: rotate(90deg); }
 
 
 
+
+
 <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
 </head>
 <body>
@@ -936,6 +938,8 @@ details[open] summary::before { transform: rotate(90deg); }
   </div>
 
 </main>
+
+
 
 
 
@@ -1620,46 +1624,6 @@ function initIndexState() {
   }
 }
 
-// ---------- POST PIPELINE (live Firestore) ----------
-// Reads campaign/posts.posts[] and shows draft/scheduled/posted/skipped counts.
-// Uses the same auth pattern as loadState().
-async function loadPostPipeline() {
-  const el = document.getElementById('index-post-pipeline');
-  if (!el) return;
-  try {
-    if (!window._cipherAuthReady || !window._cipherDb) {
-      throw new Error('Authenticated Firestore is unavailable.');
-    }
-    await window._cipherAuthReady;
-    const snap = await window._cipherDb.collection('campaign').doc('posts').get();
-    if (!snap.exists) throw new Error('campaign/posts is missing.');
-    const posts = Array.isArray(snap.data().posts) ? snap.data().posts : [];
-    const counts = { draft: 0, scheduled: 0, posted: 0, skipped: 0 };
-    posts.forEach(p => {
-      const s = (p && p.status) ? String(p.status).toLowerCase() : '';
-      if (counts.hasOwnProperty(s)) counts[s] += 1;
-    });
-    const chip = (label, n, color) =>
-      '<span style="display:inline-block;padding:8px 14px;margin:4px 8px 4px 0;border:1px solid var(--border);'
-      + 'border-radius:8px;background:var(--surface-2);">'
-      + '<span style="font-size:1.3rem;font-weight:700;color:' + color + ';">' + n + '</span>'
-      + '<span style="margin-left:8px;color:var(--dim);font-size:0.85rem;">' + label + '</span></span>';
-    el.style.color = 'var(--text)';
-    el.innerHTML =
-      '<div style="margin-bottom:8px;color:var(--dim);font-size:0.85rem;">' + posts.length + ' total posts</div>'
-      + '<div>'
-      + chip('Drafts', counts.draft, 'var(--warn)')
-      + chip('Scheduled', counts.scheduled, 'var(--cyan)')
-      + chip('Posted', counts.posted, 'var(--good)')
-      + chip('Skipped', counts.skipped, 'var(--dim)')
-      + '</div>';
-  } catch (e) {
-    console.warn('[post-pipeline] load failed:', e.message);
-    el.style.color = 'var(--dim)';
-    el.textContent = 'Post pipeline could not be loaded.';
-  }
-}
-
 // ---------- BOOT ----------
 // Run inits via readyState check rather than DOMContentLoaded so this still
 // works if the script tag is encountered after DOMContentLoaded has fired
@@ -1668,7 +1632,6 @@ async function loadPostPipeline() {
 async function boot() {
   try { highlightNav(); } catch (e) { console.warn('highlightNav:', e); }
   try { await loadState(); } catch (e) { console.warn('loadState:', e); }
-  try { if (document.getElementById('index-post-pipeline')) loadPostPipeline(); } catch (e) { console.warn('loadPostPipeline:', e); }
   try { if (document.getElementById('today-tasks')) initTodayPage(); } catch (e) { console.warn('initTodayPage:', e); }
   try { if (document.getElementById('index-today-widget')) initIndexWidget(); } catch (e) { console.warn('initIndexWidget:', e); }
   try { if (document.getElementById('index-blockers') || document.getElementById('index-daily-log')) initIndexState(); } catch (e) { console.warn('initIndexState:', e); }
@@ -2094,8 +2057,8 @@ function escHtml(s) {
 </script>
 <!--/INLINE-ASSETS-->
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.10.5"></script>
-<script src="assets/hal-rail.js?v=1.10.5"></script>
+<script src="assets/page-knowledge.js?v=1.21.0"></script>
+<script src="assets/hal-rail.js?v=1.21.0"></script>
 <!--/HAL-RAIL-->
 </body>
 </html>

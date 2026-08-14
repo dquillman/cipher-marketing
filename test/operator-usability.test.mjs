@@ -79,8 +79,8 @@ test('every app page has shared navigation and expert help', () => {
   assert.match(hal, /what does \(\?:this\|the current\) page/);
 });
 
-test('all fourteen pages have reviewed expert knowledge', () => {
-  assert.equal(Object.keys(pageKnowledge).length, 14);
+test('all fifteen pages have reviewed expert knowledge', () => {
+  assert.equal(Object.keys(pageKnowledge).length, 15);
   for (const [key, guide] of Object.entries(pageKnowledge)) {
     assert.ok(guide.label, `${key} needs a label`);
     assert.ok(guide.purpose?.length > 40, `${key} needs a useful purpose`);

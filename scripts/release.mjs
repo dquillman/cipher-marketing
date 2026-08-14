@@ -13,7 +13,7 @@
 //   npm run release -- minor --dry
 //
 // Steps: bump package.json -> sync every version string in site/app.html ->
-// parse all inline JS -> deploy hosting. A failure at any step stops the
+// rebuild generated pages -> parse all inline JS -> deploy hosting. A failure at any step stops the
 // release, so a broken build cannot reach production.
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -103,7 +103,14 @@ if (badge !== to || stale.length) {
   process.exit(1);
 }
 
-// ---- 3. verify before shipping ----
+// ---- 3. rebuild and verify before shipping ----
+// launch-campaign.html and standalone pages are generated artifacts. Rebuild
+// after the version bump so newly introduced assets carry the release version.
+console.log("\n  rebuilding generated pages…");
+run(process.execPath, [join(ROOT, "site", "inline-assets.mjs")]);
+run(process.execPath, [join(ROOT, "site", "strip-private-state.mjs")]);
+run(process.execPath, [join(ROOT, "site", "build-app.mjs")]);
+
 console.log("\n  checking inline JS…");
 run(process.execPath, [join(HERE, "check-html-js.mjs")]);
 
