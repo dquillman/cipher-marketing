@@ -149,12 +149,11 @@ test('the assistant rail URL is release-versioned to prevent stale page help', (
   );
 });
 
-test('hidden legacy model preferences migrate to the subscription expert', () => {
-  assert.match(hal, /if \(m0 === "sonnet"\) halModel = "sonnet"/);
-  assert.doesNotMatch(
-    hal,
-    /if \(MODELS\.indexOf\(m0\) >= 0\) halModel = m0/
-  );
+test('all four visible model preferences persist and reach the app expert', () => {
+  assert.doesNotMatch(hal, /\.hal-model-row,#halw-dream/);
+  assert.match(hal, /var MODELS = \["offline", "haiku", "sonnet", "ollama"\]/);
+  assert.match(hal, /if \(MODELS\.indexOf\(m0\) !== -1\) halModel = m0/);
+  assert.match(hal, /model: halModel/);
 });
 
 test('voice input waits through natural pauses before sending', () => {

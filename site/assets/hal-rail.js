@@ -243,9 +243,9 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
 .hal-model-btn { display:flex; flex-direction:column; align-items:center; gap:2px; line-height:1; }
 .hal-model-cost { font-size:9px; color:#5a6578; letter-spacing:.04em; font-weight:400; }
 .hal-btn.model-on .hal-model-cost { color:#5DCAA5; opacity:.75; }
-/* Keep advanced model/dream controls in the Second Brain console. The three
-   personas remain visible here because all three share app-wide page expertise. */
-.hal-model-row,#halw-dream,#halw-lastdream { display:none !important; }
+/* Dream controls remain exclusive to the Second Brain console. Model choice is
+   a core HAL control and must stay visible on every HAL/JARVIS surface. */
+#halw-dream,#halw-lastdream { display:none !important; }
 `;
     var styleEl = document.createElement("style");
     styleEl.id = "hal-rail-style";
@@ -340,17 +340,13 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       var savedFace = localStorage.getItem("hal-console-face");
       if (savedFace && FACES[savedFace]) face = savedFace;
     } catch (e) {}
-    // Cipher Marketing's embedded assistant always uses the subscription-backed
-    // app expert. The model controls are intentionally hidden on this surface,
-    // so migrate stale OFFLINE/OLLAMA preferences instead of trapping Dave in a
-    // mode he cannot change here. SONNET remains an intentional advanced-console
-    // preference; everything else resolves to the fast HAIKU subscription path.
+    // One shared model choice follows Dave across every HAL/JARVIS surface.
+    // All four values are real server modes; never rewrite a saved choice.
     var MODELS = ["offline", "haiku", "sonnet", "ollama"];
     var halModel = "haiku";
     try {
       var m0 = localStorage.getItem("hal-model");
-      if (m0 === "sonnet") halModel = "sonnet";
-      if (m0 !== halModel) localStorage.setItem("hal-model", halModel);
+      if (MODELS.indexOf(m0) !== -1) halModel = m0;
     } catch (e) {}
     var busy = false, speaking = false, listening = false, voiceOn = true, paused = false, live = false, pendingGreeting = null, chat = [];
     var eye = document.getElementById("halw-eye"), statusEl = document.getElementById("halw-status"),
