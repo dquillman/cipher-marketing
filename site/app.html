@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.21.1">
+<link rel="stylesheet" href="assets/outreach.css?v=1.22.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1096,6 +1096,103 @@ details[open] summary::before { transform: rotate(90deg); }
 @media (max-width: 620px) {
   .command-center .cc-week-row { align-items: flex-start; flex-direction: column; gap: 3px; }
 }
+
+/* ---- Funnel signal (a real human moved through the funnel) ----
+   The command center normally reads cyan/purple. When the funnel rises it
+   turns green so a human event never looks like another pipeline chore. */
+.command-center.cc-funnel {
+  background: linear-gradient(135deg, rgba(74,222,128,0.10) 0%, rgba(34,211,238,0.05) 100%);
+  border-color: rgba(74,222,128,0.45);
+}
+.command-center.cc-funnel .cc-eyebrow { color: var(--good); }
+.fn-delta-row {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  padding: 8px 0; border-top: 1px solid var(--border);
+}
+.fn-delta-row:first-of-type { border-top: 0; }
+.fn-delta-name { color: var(--muted); font-size: 0.82rem; min-width: 128px; }
+.fn-delta-move {
+  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 800;
+  font-size: 1.05rem; color: var(--text);
+}
+.fn-delta-move .fn-up { color: var(--good); }
+.fn-delta-move .fn-down { color: var(--warn); }
+.fn-delta-note { color: var(--dim); font-size: 0.82rem; }
+/* Freshness stamp. Rendered next to every funnel-derived number — a count
+   with no as-of date is how the 2026-08-17 miss went unnoticed for days. */
+.fn-asof {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.76rem; color: var(--muted); font-style: normal;
+}
+.fn-asof.stale { color: var(--warn); }
+.fn-asof.absent { color: var(--bad); }
+.fn-stale-warn {
+  margin-top: 10px; padding: 8px 10px; border-radius: 6px;
+  background: rgba(251,191,36,0.10); border-left: 3px solid var(--warn);
+  color: var(--warn); font-size: 0.82rem;
+}
+.fn-revised {
+  margin-top: 10px; padding: 8px 10px; border-radius: 6px;
+  background: rgba(251,191,36,0.08); border-left: 3px solid var(--warn);
+  color: var(--dim); font-size: 0.82rem;
+}
+/* ---- Angle performance (Results tab) ---- */
+.ap-block { margin-bottom: 22px; }
+.ap-head {
+  font-family: 'Satoshi', system-ui, sans-serif; font-weight: 800;
+  font-size: 0.95rem; color: var(--text); margin: 0 0 4px;
+}
+.ap-note { color: var(--dim); font-size: 0.85rem; margin: 0 0 10px; }
+.ap-row {
+  display: grid; grid-template-columns: minmax(150px, 1.6fr) 92px 68px 1fr;
+  gap: 12px; align-items: center;
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface-2); margin-bottom: 6px;
+}
+.ap-row.ap-header {
+  background: transparent; border: 0; padding: 0 12px 4px;
+  color: var(--muted); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700; margin-bottom: 2px;
+}
+.ap-name { color: var(--text); font-weight: 600; word-break: break-word; }
+/* The numeric mean and its letter band are BOTH text — colour is decoration
+   only, so the ramp stays readable without colour vision. */
+.ap-mean { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 800; white-space: nowrap; color: var(--text); }
+/* Same ramp the rest of the app uses. Gold-A against yellow-C is a weak pair
+   for red-green colour blindness, which is why .ap-letter always prints the
+   letter next to the number — the colour is never the only carrier. */
+.ap-mean.grade-A { color: #ffd700; }
+.ap-mean.grade-B { color: var(--good); }
+.ap-mean.grade-C { color: #facc15; }
+.ap-mean.grade-D { color: var(--bad); }
+.ap-mean .ap-letter { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-left: 4px; }
+.ap-n { color: var(--dim); font-size: 0.85rem; white-space: nowrap; }
+.ap-meta { color: var(--dim); font-size: 0.82rem; }
+.ap-tag {
+  display: inline-block; font-size: 0.66rem; font-weight: 800;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 4px; margin-right: 6px; white-space: nowrap;
+}
+.ap-tag.untested   { background: rgba(248,113,113,0.14); color: var(--bad);  border: 1px solid rgba(248,113,113,0.35); }
+.ap-tag.proven     { background: rgba(74,222,128,0.14);  color: var(--good); border: 1px solid rgba(74,222,128,0.35); }
+.ap-tag.lowconf    { background: rgba(251,191,36,0.12);  color: var(--warn); border: 1px solid rgba(251,191,36,0.32); }
+.ap-tag.xnoise     { background: rgba(251,191,36,0.12);  color: var(--warn); border: 1px solid rgba(251,191,36,0.32); }
+.ap-banner {
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 14px;
+  background: rgba(251,191,36,0.09); border-left: 3px solid var(--warn);
+  color: var(--dim); font-size: 0.86rem; line-height: 1.5;
+}
+.ap-banner strong { color: var(--warn); }
+@media (max-width: 700px) {
+  .ap-row { grid-template-columns: 1fr auto; row-gap: 4px; }
+  .ap-row.ap-header { display: none; }
+  .ap-meta { grid-column: 1 / -1; }
+}
+.command-center .cc-btn.cc-ack {
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border);
+}
+.command-center .cc-btn.cc-ack:hover { border-color: var(--muted); }
 .command-center .cc-buttons {
   display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;
 }
@@ -1529,7 +1626,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.21.1</span>
+      <span class="version-bar" title="Dashboard version">v1.22.0</span>
     </div>
   </div>
 </nav>
@@ -1652,7 +1749,7 @@ function cipherHelp() {
         <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Post Performance</span>
         <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">Per-post grades and metrics in Create</span>
       </a>
-      <a href="https://qcode-9a2dc.web.app/ops" target="_blank" rel="noopener" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
+      <a href="https://qcode-9a2dc.web.app/ops" target="qcodeops" rel="noopener" style="display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-decoration:none;">
         <span style="display:block;font-weight:700;color:var(--cyan);font-size:0.9rem;">Ops Console ↗</span>
         <span style="display:block;color:var(--dim);font-size:0.8rem;margin-top:2px;">All-projects view on qcode — repo status, commits, board</span>
       </a>
@@ -1667,6 +1764,7 @@ function cipherHelp() {
 
   <!-- 6. KPI snapshot from state -->
   <h2>KPI snapshot — by cluster</h2>
+  <p style="color:var(--dim);font-size:0.9rem;margin-top:-6px;">Activated and signup counts are measured from GA4. Targets come from the hand-kept table — the only place they are recorded.</p>
   <div class="card-grid" id="kpi-snapshot">Loading…</div>
   <p id="state-source" style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:8px;">Loading state…</p>
   <p style="color:var(--muted);font-size:0.82rem;font-style:italic;margin-top:4px;">The sync indicator in the header tells you when these campaign numbers were last refreshed.</p>
@@ -1754,9 +1852,10 @@ function cipherHelp() {
   <!-- 7. Paid-spend gate -->
   <h2>Paid-spend gate</h2>
   <div class="card warn">
-    <p style="margin-top:0;"><strong>$2/day retargeting unlocks at 25 cumulative activated users.</strong> Until then, $0 paid. Source: <a href="#" onclick="cipherShow('strategy');return false;">strategy §3</a>.</p>
+    <p style="margin-top:0;"><strong>$2/day retargeting unlocks at <span id="gate-threshold">—</span> cumulative activated users.</strong> Until then, $0 paid. Source: <a href="#" onclick="cipherShow('strategy');return false;">strategy §3</a>.</p>
     <div id="gate-progress"></div>
     <p id="gate-note" style="margin:10px 0 0;font-size:0.92rem;"></p>
+    <p style="margin:8px 0 0;"><span id="gate-asof" class="fn-asof">—</span></p>
   </div>
     </div>
   </details>
@@ -1782,6 +1881,11 @@ function cipherHelp() {
     <h3 style="margin-bottom:8px;">Post pipeline</h3>
     <div id="index-post-pipeline" style="color:var(--dim);">Loading…</div>
   </div>
+
+  <!-- Angle performance — which hooks earned their grades, and what is queued -->
+  <h2 style="margin-top:0;">Angle performance</h2>
+  <p style="color:var(--dim);font-size:0.92rem;margin-top:-4px;">Grades grouped by <code>hook</code> — the field that records the angle. A single lifetime average hides two very different posting eras, so the cohorts are split out first.</p>
+  <div id="angle-performance">Loading…</div>
 
   <!-- KPI summary -->
   <h2 style="margin-top:0;">KPI summary</h2>
@@ -1846,8 +1950,9 @@ function cipherHelp() {
   <!-- Live state from data/campaign-state.json -->
   <h2>Activated users — vs. 4-week target</h2>
   <div class="card">
-    <p style="margin-top:0;font-size:1.1rem;"><strong id="index-activated-total">0 / 55</strong> · gate at <strong>25</strong> users unlocks $2/day retargeting.</p>
+    <p style="margin-top:0;font-size:1.1rem;"><strong id="index-activated-total">—</strong> · gate at <strong id="index-gate-value">—</strong> users unlocks $2/day retargeting.</p>
     <div id="index-gate-progress"></div>
+    <p style="margin:8px 0 0;"><span id="index-activated-asof" class="fn-asof">—</span></p>
   </div>
 
   <!-- Pre-launch blockers (state-driven) -->
@@ -2818,7 +2923,21 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       : '—';
     var totalImpressions = graded.reduce(function(s,p){ return s + ((p.metrics&&p.metrics.impressions)||0); }, 0);
     var totalClicks = graded.reduce(function(s,p){ return s + ((p.metrics&&p.metrics.linkClicks)||0); }, 0);
-    var totalSignups = graded.reduce(function(s,p){ return s + ((p.metrics&&p.metrics.trialSignupsAttributed)||0); }, 0);
+    // Signups tile reads the MEASURED funnel (metrics.funnel.aggregate, filled
+    // by scripts/pull-funnel.mjs from GA4), not metrics.perCluster — the
+    // hand-maintained counter, which was reading 1 when GA4 already showed 2.
+    // Every funnel-derived number on this dashboard carries its as-of stamp.
+    var fDoc = (window.__CAMPAIGN_STATE__ && window.__CAMPAIGN_STATE__.metrics &&
+                window.__CAMPAIGN_STATE__.metrics.funnel) || null;
+    var fAgg = (fDoc && fDoc.aggregate && typeof fDoc.aggregate === 'object') ? fDoc.aggregate : null;
+    // cipherFunnelAsOfHtml is defined by the command-center block further down
+    // this file; this render can run before that, so it is always guarded.
+    var asOfHtml = (fDoc && typeof window.cipherFunnelAsOfHtml === 'function')
+      ? window.cipherFunnelAsOfHtml(fDoc.asOf) : '';
+    var signupsValue = fAgg && isFinite(Number(fAgg.signups)) ? Number(fAgg.signups) : '—';
+    var signupsSub = fAgg
+      ? asOfHtml + (fDoc.windowDays ? ' · ' + Number(fDoc.windowDays) + 'd window' : '')
+      : '<span class="fn-asof absent">no funnel data — run scripts/pull-funnel.mjs</span>';
 
     document.getElementById('posts-summary').innerHTML =
       summaryCard('Drafts',   drafts.length)   +
@@ -2827,7 +2946,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       summaryCard('Avg grade (4=A)', avgGrade, avgGradeClass(avgGrade)) +
       summaryCard('Total impressions', totalImpressions.toLocaleString()) +
       summaryCard('Total link clicks', totalClicks.toLocaleString()) +
-      summaryCard('Signups from posts', totalSignups);
+      summaryCard('Signups (GA4)', signupsValue, '', signupsSub);
 
     document.getElementById('posts-pipeline').innerHTML = drafts.length
       ? renderDraftWeeks(drafts)
@@ -2843,9 +2962,14 @@ details.post-card > summary .post-head { margin-bottom: 0; }
 
   }
 
-  function summaryCard(label, value, valueClass) {
+  // subHtml is raw HTML by design — it carries the funnel as-of stamp. Only
+  // ever pass literals or output of cipherFunnelAsOfHtml (escaped internally).
+  function summaryCard(label, value, valueClass, subHtml) {
     var cls = valueClass ? ' ' + valueClass : '';
-    return '<div class="summary-card"><div class="label">' + esc(label) + '</div><div class="value' + cls + '">' + esc(String(value)) + '</div></div>';
+    return '<div class="summary-card"><div class="label">' + esc(label) + '</div>' +
+      '<div class="value' + cls + '">' + esc(String(value)) + '</div>' +
+      (subHtml ? '<div class="sub">' + subHtml + '</div>' : '') +
+    '</div>';
   }
 
   function parsePostDate(value) {
@@ -3100,6 +3224,9 @@ details.post-card > summary .post-head { margin-bottom: 0; }
   }
 
   document.addEventListener('cipher:posts-updated', render);
+  // The signups tile is funnel-derived, so it has to repaint when campaign/state
+  // syncs — not only when posts change.
+  document.addEventListener('cipher:state-updated', render);
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', render);
@@ -3310,12 +3437,12 @@ details.post-card > summary .post-head { margin-bottom: 0; }
 
       <h4>Why flashcards can't bridge it</h4>
       <p>I'll be blunt: I think most question banks are stuck at the bottom rung of Bloom's Taxonomy. They drill <em>remember</em> and <em>understand.</em> They almost never drill <em>evaluate.</em> But the certifying bodies write nearly every high-stakes question at the <em>apply / analyze / evaluate</em> level. If your prep is at level 2 and the exam is at level 5, no amount of more flashcards closes the gap. You'll just have a deeper bench of facts you can't apply.</p>
-      <p>I wrote about this in detail in <a href="https://cipherexam.com/blog/study-by-blooms-level" target="_blank" rel="noopener">Study by Bloom's Level</a> — if you only read one post on this site, read that one. And <a href="https://cipherexam.com/blog/recall-only-prep-fails" target="_blank" rel="noopener">Why Recall-Only Prep Fails</a> has the cognitive-science backing.</p>
+      <p>I wrote about this in detail in <a href="https://cipherexam.com/blog/study-by-blooms-level" target="cipherblog" rel="noopener">Study by Bloom's Level</a> — if you only read one post on this site, read that one. And <a href="https://cipherexam.com/blog/recall-only-prep-fails" target="cipherblog" rel="noopener">Why Recall-Only Prep Fails</a> has the cognitive-science backing.</p>
 
       <h4>What we built instead</h4>
       <p>Three things, basically.</p>
       <ol>
-        <li><strong>Every question is classified by Bloom's level.</strong> When you practice, you can see whether you're answering an "evaluate"-level scenario question correctly, or just nailing the easy "remember" stuff. The <a href="https://cipherexam.com/blog/cognitive-heatmap" target="_blank" rel="noopener">Cognitive Heatmap</a> makes this visible.</li>
+        <li><strong>Every question is classified by Bloom's level.</strong> When you practice, you can see whether you're answering an "evaluate"-level scenario question correctly, or just nailing the easy "remember" stuff. The <a href="https://cipherexam.com/blog/cognitive-heatmap" target="cipherblog" rel="noopener">Cognitive Heatmap</a> makes this visible.</li>
         <li><strong>Every explanation walks you through the exam's reasoning frame.</strong> For PMP, that's the Exam Lens — <em>what would PMI want you to do?</em> For Security+, it's the Security Triad — <em>which leg of the CIA triad is this question protecting?</em> For SHRM-CP, it's the Competency Lens — <em>which SHRM behavioral competency is being tested?</em> The framework is built into how the AI explains every answer. You don't just learn the answer; you learn the lens you're supposed to read the question through.</li>
         <li><strong>The system tracks your thinking traps.</strong> Not which topics you're weak on — most prep tools do that — but which <em>kinds of reasoning errors</em> you keep making. The patterns are surprisingly consistent per person.</li>
       </ol>
@@ -3323,7 +3450,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       <h4>The shift</h4>
       <p>The first time someone tells me "the exam stopped feeling like a trick" — usually around their second or third week — it's always the same realization. They stop hunting for the right <em>fact</em> in the answer choices and start asking <em>which choice fits the lens</em>. The exam writers were never trying to fool them. They were testing whether the candidate had internalized the frame.</p>
       <p>That's what certification exams actually test. And once you can see the frame, you can read the question the way the people who wrote it did.</p>
-      <p>If any of this sounds like the prep loop you're stuck in, <strong><a href="https://cipherexam.com/pricing" target="_blank" rel="noopener">start a free 7-day trial</a>.</strong> No credit card. Pick your exam, answer ten questions, and you'll see what I mean.</p>
+      <p>If any of this sounds like the prep loop you're stuck in, <strong><a href="https://cipherexam.com/pricing" target="cipherexam" rel="noopener">start a free 7-day trial</a>.</strong> No credit card. Pick your exam, answer ten questions, and you'll see what I mean.</p>
       <p>— Dave</p>
 
       <blockquote>
@@ -4843,7 +4970,17 @@ function applyState(j) {
   if (j.campaign?.start) CAMPAIGN_START = j.campaign.start;
   if (j.campaign?.activationGate != null) ACTIVATION_GATE = j.campaign.activationGate;
   if (j.campaign?.activationTarget4wk != null) ACTIVATION_TARGET_4WK = j.campaign.activationTarget4wk;
-  if (j.metrics?.activatedUsersTotal != null) CURRENT_ACTIVATED = j.metrics.activatedUsersTotal;
+  // Single source of truth for "activated users": the measured funnel
+  // (metrics.funnel.aggregate, written by scripts/pull-funnel.mjs from GA4).
+  // metrics.activatedUsersTotal is the older hand-kept number and is only a
+  // fallback — when the two disagreed, every gate and progress bar in the app
+  // was silently rendering the lower one.
+  var funnelActivated = j.metrics?.funnel?.aggregate?.activated;
+  if (funnelActivated != null && isFinite(Number(funnelActivated))) {
+    CURRENT_ACTIVATED = Number(funnelActivated);
+  } else if (j.metrics?.activatedUsersTotal != null) {
+    CURRENT_ACTIVATED = j.metrics.activatedUsersTotal;
+  }
   return j;
 }
 
@@ -5253,6 +5390,45 @@ function renderDailyLog(container, max = 7) {
   ).join('');
 }
 
+// Paid-spend gate. CURRENT_ACTIVATED is funnel-derived, so the threshold comes
+// from state (never from the markup) and the count carries its as-of stamp like
+// every other funnel number on the dashboard. Split out of initDashboard so it
+// can repaint when campaign/state syncs instead of only at page load.
+function renderPaidSpendGate() {
+  const gate = document.getElementById('gate-progress');
+  if (gate) renderProgressBar(gate, CURRENT_ACTIVATED, ACTIVATION_GATE);
+
+  const gateThreshold = document.getElementById('gate-threshold');
+  if (gateThreshold) gateThreshold.textContent = isFinite(Number(ACTIVATION_GATE)) ? String(ACTIVATION_GATE) : '—';
+
+  const gateAsOf = document.getElementById('gate-asof');
+  if (gateAsOf) {
+    const gf = STATE?.metrics?.funnel || null;
+    if (!gf) {
+      gateAsOf.className = 'fn-asof absent';
+      gateAsOf.textContent = 'no funnel data — showing the hand-kept counter';
+    } else if (typeof window.cipherFunnelAsOfLabel === 'function') {
+      const age = window.cipherFunnelAsOfLabel(gf.asOf);
+      gateAsOf.className = 'fn-asof' + (!age.known ? ' absent' : (age.stale ? ' stale' : ''));
+      gateAsOf.textContent = age.label + ' · measured from GA4';
+    } else {
+      gateAsOf.className = 'fn-asof';
+      gateAsOf.textContent = 'measured from GA4';
+    }
+  }
+
+  const gateNote = document.getElementById('gate-note');
+  if (gateNote) {
+    if (!isFinite(Number(ACTIVATION_GATE)) || !isFinite(Number(CURRENT_ACTIVATED))) {
+      gateNote.innerHTML = '<span class="pill dim">NO DATA</span> Activation figures are unavailable.';
+    } else if (CURRENT_ACTIVATED >= ACTIVATION_GATE) {
+      gateNote.innerHTML = '<span class="pill good">UNLOCKED</span> $2/day retargeting is eligible — pick Reddit Promoted or Google Search RT.';
+    } else {
+      gateNote.innerHTML = `<span class="pill warn">LOCKED</span> $0 paid until ${ACTIVATION_GATE - CURRENT_ACTIVATED} more activated users land organically.`;
+    }
+  }
+}
+
 function renderBlockers(container) {
   if (!container || !STATE?.blockers) return;
   const items = STATE.blockers;
@@ -5271,18 +5447,65 @@ function renderBlockers(container) {
   }).join('');
 }
 
+// Per-cluster KPIs.
+//
+// Two per-cluster objects exist and they disagree:
+//   metrics.funnel.perCluster — MEASURED, written by scripts/pull-funnel.mjs
+//                               from GA4, keyed on the session landing page.
+//   metrics.perCluster        — HAND-MAINTAINED, holds the only copy of the
+//                               4-week targets, and goes stale silently.
+// On 2026-08-17 the measured funnel showed PMP at 1 signup while the hand
+// table also said 1 — but the aggregate showed 2 signups / 1 activated against
+// the hand table's 1 / 0. Counts come from the funnel; targets are the only
+// thing still read out of the hand table; any disagreement is shown, not hidden.
 function renderClusterKpis(container) {
-  if (!container || !STATE?.metrics?.perCluster) return;
-  const c = STATE.metrics.perCluster;
-  container.innerHTML = Object.entries(c).map(([name, v]) => {
-    const pct = v.target > 0 ? Math.min(100, Math.round((v.activated / v.target) * 100)) : 0;
-    const s = statusFor(v.activated, v.target);
+  if (!container) return;
+  const fDoc = STATE?.metrics?.funnel || null;
+  const measured = (fDoc && typeof fDoc.perCluster === 'object' && fDoc.perCluster) ? fDoc.perCluster : null;
+  const manual = (STATE?.metrics?.perCluster && typeof STATE.metrics.perCluster === 'object')
+    ? STATE.metrics.perCluster : null;
+
+  if (!measured && !manual) {
+    container.innerHTML = '<p class="empty-state">No per-cluster data yet.</p>';
+    return;
+  }
+
+  const asOfHtml = (fDoc && typeof window.cipherFunnelAsOfHtml === 'function')
+    ? window.cipherFunnelAsOfHtml(fDoc.asOf) : '';
+  const names = Object.keys(measured || manual);
+
+  const cards = names.map(name => {
+    const m = (measured && measured[name]) || null;
+    const h = (manual && manual[name]) || null;
+    const target = h && isFinite(Number(h.target)) ? Number(h.target) : null;
+    const activated = m && isFinite(Number(m.activated)) ? Number(m.activated)
+      : (h && isFinite(Number(h.activated)) ? Number(h.activated) : null);
+    const signups = m && isFinite(Number(m.signups)) ? Number(m.signups)
+      : (h && isFinite(Number(h.signups)) ? Number(h.signups) : null);
+
+    if (activated == null) {
+      return `<div class="kpi-card">
+        <div class="label">${escapeHtml(name)}</div>
+        <div class="value">—</div>
+        <div class="sub">no data</div>
+      </div>`;
+    }
+    const s = target != null ? statusFor(activated, target) : 'warn';
+    const pct = target ? Math.min(100, Math.round((activated / target) * 100)) : null;
+    // The disagreement between measured and hand-kept is stated outright.
+    const drift = (m && h && isFinite(Number(h.activated)) && Number(h.activated) !== activated)
+      ? ` · <span style="color:var(--warn);">manual counter says ${Number(h.activated)}</span>` : '';
     return `<div class="kpi-card status-${s}">
       <div class="label">${escapeHtml(name)}</div>
-      <div class="value status-${s}">${v.activated} <span style="font-size:0.55em;color:var(--dim);">/ ${v.target}</span></div>
-      <div class="sub">${v.signups} signups · ${pct}% to target</div>
+      <div class="value status-${s}">${activated}${target != null ? ` <span style="font-size:0.55em;color:var(--dim);">/ ${target}</span>` : ''}</div>
+      <div class="sub">${signups == null ? '—' : signups} signups${pct != null ? ` · ${pct}% to target` : ''}${drift}</div>
     </div>`;
   }).join('');
+
+  container.innerHTML = cards +
+    (asOfHtml
+      ? `<p style="grid-column:1/-1;margin:6px 0 0;">${asOfHtml} · counts measured from GA4; the 4-week targets come from the hand-kept table</p>`
+      : `<p style="grid-column:1/-1;margin:6px 0 0;"><span class="fn-asof absent">no measured funnel — these are hand-kept counts and may be stale</span></p>`);
 }
 
 function escapeHtml(s) {
@@ -5343,7 +5566,10 @@ function initScratchpad() {
     parts.push('---');
     parts.push('Please update site/data/campaign-state.json:');
     parts.push('1. Append this to dailyLog (use today\'s date)');
-    parts.push('2. Update any KPI numbers I mentioned (activatedUsersTotal, trialSignupsTotal, perCluster)');
+    // Deliberately does NOT ask for the hand-kept counters to be edited. Those
+    // are exactly the numbers that drifted below the measured funnel; the fix
+    // is to re-pull GA4, not to type a new number in by hand.
+    parts.push('2. If any KPI number I mentioned looks stale, re-run `node scripts/pull-funnel.mjs` rather than hand-editing metrics.perCluster / activatedUsersTotal — those are legacy manual counters');
     parts.push('3. Mark any blockers as done/in-progress if I named them');
     parts.push('4. Bump _meta.lastUpdatedAt');
 
@@ -5400,17 +5626,7 @@ function initTodayPage() {
   const strip = document.getElementById('week-strip');
   if (strip) renderWeekStrip(strip, today);
 
-  // Paid-spend gate progress
-  const gate = document.getElementById('gate-progress');
-  if (gate) renderProgressBar(gate, CURRENT_ACTIVATED, ACTIVATION_GATE);
-  const gateNote = document.getElementById('gate-note');
-  if (gateNote) {
-    if (CURRENT_ACTIVATED >= ACTIVATION_GATE) {
-      gateNote.innerHTML = '<span class="pill good">UNLOCKED</span> $2/day retargeting is eligible — pick Reddit Promoted or Google Search RT.';
-    } else {
-      gateNote.innerHTML = `<span class="pill warn">LOCKED</span> $0 paid until ${ACTIVATION_GATE - CURRENT_ACTIVATED} more activated users land organically.`;
-    }
-  }
+  renderPaidSpendGate();
 
   // Live KPI cards from state
   const kpiSnap = document.getElementById('kpi-snapshot');
@@ -5482,13 +5698,46 @@ function initIndexState() {
   const log = document.getElementById('index-daily-log');
   if (log) renderDailyLog(log, 3);
 
+  // Activated users reads the MEASURED funnel (metrics.funnel.aggregate) with
+  // metrics.activatedUsersTotal only as a fallback. Those two disagreed on
+  // 2026-08-17 (funnel 1 activated, hand counters 0) and the dashboard was
+  // showing the lower one.
+  const fDoc = STATE?.metrics?.funnel || null;
+  const fAgg = (fDoc && typeof fDoc.aggregate === 'object') ? fDoc.aggregate : null;
   const activatedHeader = document.getElementById('index-activated-total');
-  if (activatedHeader && STATE?.metrics) {
-    const v = STATE.metrics.activatedUsersTotal;
-    const t = STATE.campaign.activationTarget4wk;
-    const s = statusFor(v, t);
-    activatedHeader.className = 'status-' + s;
-    activatedHeader.textContent = `${v} / ${t}`;
+  if (activatedHeader) {
+    const raw = fAgg && isFinite(Number(fAgg.activated))
+      ? Number(fAgg.activated)
+      : (isFinite(Number(STATE?.metrics?.activatedUsersTotal)) ? Number(STATE.metrics.activatedUsersTotal) : null);
+    const t = Number(STATE?.campaign?.activationTarget4wk);
+    if (raw == null || !isFinite(t)) {
+      activatedHeader.className = '';
+      activatedHeader.textContent = '—';
+    } else {
+      activatedHeader.className = 'status-' + statusFor(raw, t);
+      activatedHeader.textContent = `${raw} / ${t}`;
+    }
+  }
+
+  // The gate is a state value, never a literal in the markup.
+  const gateValue = document.getElementById('index-gate-value');
+  if (gateValue) gateValue.textContent = isFinite(Number(ACTIVATION_GATE)) ? String(ACTIVATION_GATE) : '—';
+
+  // Freshness stamp. Set in place (never outerHTML) so the element survives
+  // repeated re-renders when campaign/state syncs.
+  const activatedAsOf = document.getElementById('index-activated-asof');
+  if (activatedAsOf) {
+    if (!fDoc) {
+      activatedAsOf.className = 'fn-asof absent';
+      activatedAsOf.textContent = 'no funnel data — showing the hand-kept counter';
+    } else if (typeof window.cipherFunnelAsOfLabel === 'function') {
+      const age = window.cipherFunnelAsOfLabel(fDoc.asOf);
+      activatedAsOf.className = 'fn-asof' + (!age.known ? ' absent' : (age.stale ? ' stale' : ''));
+      activatedAsOf.textContent = age.label + ' · measured from GA4';
+    } else {
+      activatedAsOf.className = 'fn-asof';
+      activatedAsOf.textContent = 'measured from GA4';
+    }
   }
 
   const gateProgress = document.getElementById('index-gate-progress');
@@ -5557,6 +5806,20 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+
+// campaign/state arrives over onSnapshot, so it keeps changing after boot.
+// The state-driven renderers used to paint once and never again, which meant a
+// fresh pull-funnel run (or an Acknowledge) left the Results bar and the
+// per-cluster KPIs showing whatever was true at page load.
+document.addEventListener('cipher:state-updated', function () {
+  try { if (document.getElementById('index-blockers') || document.getElementById('index-daily-log')) initIndexState(); }
+  catch (e) { console.warn('initIndexState (resync):', e); }
+  try {
+    var kpiSnap = document.getElementById('kpi-snapshot');
+    if (kpiSnap) renderClusterKpis(kpiSnap);
+  } catch (e) { console.warn('renderClusterKpis (resync):', e); }
+  try { renderPaidSpendGate(); } catch (e) { console.warn('renderPaidSpendGate (resync):', e); }
+});
 
 // ---- Firebase live sync (wires up after boot so applyState is defined) ----
 (function () {
@@ -5869,12 +6132,19 @@ if (document.readyState === 'loading') {
       reasons.push('<strong>Prior 14 days</strong>: ' + notes.join('; ') + '.');
     }
 
-    // 5. Activated cluster gaps
-    var perCluster = (cs.metrics && cs.metrics.perCluster) || {};
-    var gaps = Object.keys(perCluster).map(function (k) {
-      var c = perCluster[k];
-      var pct = c.target ? Math.round(100 * (c.activated || 0) / c.target) : 0;
-      return { exam: k, pct: pct, gap: (c.target || 0) - (c.activated || 0) };
+    // 5. Activated cluster gaps. Counts come from the measured funnel; the
+    //    hand-kept metrics.perCluster is read only for its targets (it holds
+    //    the only copy) and as a fallback when no funnel pull exists yet.
+    var manualClusters = (cs.metrics && cs.metrics.perCluster) || {};
+    var measuredClusters = (cs.metrics && cs.metrics.funnel && cs.metrics.funnel.perCluster) || {};
+    var clusterNames = Object.keys(Object.keys(measuredClusters).length ? measuredClusters : manualClusters);
+    var gaps = clusterNames.map(function (k) {
+      var mm = measuredClusters[k] || {};
+      var hh = manualClusters[k] || {};
+      var activated = isFinite(Number(mm.activated)) ? Number(mm.activated) : Number(hh.activated || 0);
+      var target = Number(hh.target || 0);
+      var pct = target ? Math.round(100 * activated / target) : 0;
+      return { exam: k, pct: pct, gap: target - activated };
     }).sort(function (a, b) { return b.gap - a.gap; });
     if (gaps.length > 0 && gaps[0].gap > 0) {
       reasons.push('<strong>Cluster gaps</strong>: ' + gaps.map(function (g) { return esc(g.exam) + ' ' + g.pct + '% of target'; }).join(' · ') + '.');
@@ -5900,6 +6170,228 @@ if (document.readyState === 'loading') {
     };
   }
 
+  // ---- Funnel signal detection --------------------------------------------
+  // Why this exists: on 2026-08-17 metrics.funnel.aggregate read 2 signups and
+  // 1 activated user — two real people who had signed up on 08-11 and 08-13 and
+  // used the product — and the RIGHT NOW card said "Campaign complete — 18
+  // unfinished posts need a decision". The card had no rule that watched the
+  // funnel at all; it was driven entirely by post-pipeline state. These helpers
+  // give a funnel rise precedence over every pipeline action.
+  //
+  // The acknowledged baseline is stored at metrics.lastSeenFunnel, deliberately
+  // NOT inside metrics.funnel — that object is owned by scripts/pull-funnel.mjs
+  // and carries a do-not-hand-edit instruction.
+
+  // Display thresholds. Neither stands in for a measured value: the first is
+  // how old a GA4 pull may get before it is called out, the second is the
+  // sample size below which a mean is labelled low-confidence.
+  var FUNNEL_STALE_DAYS = 3;
+  var ADMIN_CORE_USERS_URL = 'https://admin-core-20292.web.app/users';
+  // The five arrows pull-funnel.mjs writes, in funnel order.
+  var FUNNEL_STEPS = [
+    { key: 'impressions', label: 'Impressions' },
+    { key: 'lpVisits',    label: 'Landing-page visits' },
+    { key: 'signups',     label: 'Signups' },
+    { key: 'examPicked',  label: 'Exam picked' },
+    { key: 'activated',   label: 'Activated' }
+  ];
+
+  function fnum(v) { var x = Number(v); return isFinite(x) ? x : 0; }
+
+  // Local toast. cipherToast lives inside a later IIFE and is not global, so
+  // this reuses the same #cipher-toast element and CSS rather than depending
+  // on script order.
+  function ccToast(message, isError) {
+    var el = document.getElementById('cipher-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'cipher-toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.className = isError ? 'err show' : 'show';
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.className = isError ? 'err' : ''; }, 3200);
+  }
+
+  // metrics.funnel may be absent entirely (Gate F). Returns null rather than
+  // an object of zeros, so "no funnel data" never renders as "zero signups".
+  function readFunnel() {
+    var m = (window.__CAMPAIGN_STATE__ || {}).metrics || {};
+    var f = m.funnel;
+    if (!f || typeof f !== 'object') return null;
+    var agg = f.aggregate;
+    if (!agg || typeof agg !== 'object') return null;
+    return {
+      agg: agg,
+      asOf: f.asOf || null,
+      windowDays: isFinite(Number(f.windowDays)) ? Number(f.windowDays) : null
+    };
+  }
+
+  function readLastSeenFunnel() {
+    var m = (window.__CAMPAIGN_STATE__ || {}).metrics || {};
+    var ls = m.lastSeenFunnel;
+    return (ls && typeof ls === 'object') ? ls : null;
+  }
+
+  // Age of the GA4 pull itself. Surfaced next to every funnel number so a
+  // three-week-old read can never pass as current.
+  function funnelAge(asOf) {
+    if (!asOf) return { known: false, stale: true, label: 'as of — (no timestamp)' };
+    var t = new Date(asOf).getTime();
+    if (isNaN(t)) return { known: false, stale: true, label: 'as of — (unreadable timestamp)' };
+    var days = Math.floor((Date.now() - t) / 86400000);
+    var when = new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    var rel = days <= 0 ? 'today' : days === 1 ? '1 day ago' : days + ' days ago';
+    return { known: true, days: days, stale: days > FUNNEL_STALE_DAYS, label: 'as of ' + when + ' · ' + rel };
+  }
+
+  // Diff live funnel against the acknowledged baseline.
+  //   kind: 'absent' | 'activated' | 'signups' | 'quiet'
+  // With no baseline (first run) the baseline is zeros — which is the honest
+  // reading: nobody has ever been told about these people.
+  function computeFunnelSignal() {
+    var cur = readFunnel();
+    if (!cur) return { kind: 'absent', cur: null, age: funnelAge(null) };
+    var last = readLastSeenFunnel();
+    var deltas = {};
+    var revisedDown = false;
+    FUNNEL_STEPS.forEach(function (s) {
+      var d = fnum(cur.agg[s.key]) - fnum(last && last[s.key]);
+      deltas[s.key] = d;
+      if (s.key !== 'impressions' && d < 0) revisedDown = true;
+    });
+    var kind = deltas.activated > 0 ? 'activated' : (deltas.signups > 0 ? 'signups' : 'quiet');
+    return {
+      kind: kind,
+      cur: cur,
+      last: last,
+      firstRun: !last,
+      deltas: deltas,
+      revisedDown: revisedDown,
+      age: funnelAge(cur.asOf)
+    };
+  }
+
+  // "since when" — the moment the operator last acknowledged, falling back to
+  // the funnel stamp that was current at the time.
+  function funnelSinceLabel(sig) {
+    if (sig.firstRun) return 'since this dashboard started tracking (never acknowledged)';
+    var when = (sig.last && (sig.last.acknowledgedAt || sig.last.asOf)) || null;
+    if (!when) return 'since the last acknowledgement';
+    var t = new Date(when).getTime();
+    if (isNaN(t)) return 'since the last acknowledgement';
+    return 'since you last checked, ' +
+      new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  // Small reusable freshness stamp. Exported so the Create and Results tabs
+  // render the identical marker beside their funnel-derived numbers.
+  function funnelAsOfHtml(asOf) {
+    var age = funnelAge(asOf);
+    var cls = !age.known ? 'absent' : (age.stale ? 'stale' : '');
+    return '<span class="fn-asof ' + cls + '">' + esc(age.label) + '</span>';
+  }
+  window.cipherFunnelAsOfHtml = funnelAsOfHtml;
+  window.cipherFunnelAsOfLabel = funnelAge;
+  window.cipherReadFunnel = readFunnel;
+
+  function funnelDeltaRows(sig) {
+    return FUNNEL_STEPS.map(function (s) {
+      var d = sig.deltas[s.key];
+      var now = fnum(sig.cur.agg[s.key]);
+      var was = now - d;
+      var moveCls = d > 0 ? 'fn-up' : (d < 0 ? 'fn-down' : '');
+      var arrow = d > 0 ? '+' + d : (d < 0 ? String(d) : 'no change');
+      return '<div class="fn-delta-row">' +
+        '<span class="fn-delta-name">' + esc(s.label) + '</span>' +
+        '<span class="fn-delta-move">' + was + ' → ' + now +
+          (d !== 0 ? ' <span class="' + moveCls + '">(' + esc(arrow) + ')</span>' : '') +
+        '</span>' +
+        (d === 0 ? '<span class="fn-delta-note">no change</span>' : '') +
+      '</div>';
+    }).join('');
+  }
+
+  // The card that outranks everything else in the pipeline.
+  function funnelAction(sig) {
+    var isActivation = sig.kind === 'activated';
+    var nSign = sig.deltas.signups;
+    var nAct = sig.deltas.activated;
+    var title = isActivation ? 'Someone activated. Talk to them.' : 'New signups. Find out who.';
+    var headline = isActivation
+      ? (nAct === 1 ? '1 person' : nAct + ' people') + ' actually used CipherExam' +
+        (nSign > 0 ? ', and ' + (nSign === 1 ? '1 new account signed up' : nSign + ' new accounts signed up') : '')
+      : (nSign === 1 ? '1 new account signed up' : nSign + ' new accounts signed up');
+
+    return {
+      type: 'funnel-signal',
+      funnel: true,
+      title: title,
+      sub: headline + ' ' + funnelSinceLabel(sig) +
+        '. This outranks every draft and schedule item on the board — the board priority is CipherExam\'s first 10 paying users.',
+      detail:
+        '<div class="cc-detail-label">What moved</div>' +
+        funnelDeltaRows(sig) +
+        '<div style="margin-top:10px;">' + funnelAsOfHtml(sig.cur.asOf) +
+          (sig.cur.windowDays ? '<span class="fn-delta-note"> · ' + sig.cur.windowDays + '-day window</span>' : '') +
+        '</div>' +
+        (sig.age.stale
+          ? '<div class="fn-stale-warn">This GA4 pull is ' +
+            (sig.age.known ? sig.age.days + ' days old' : 'undated') +
+            '. Run <code>node scripts/pull-funnel.mjs</code> before acting on it — the move may be older than it looks.</div>'
+          : '') +
+        (sig.revisedDown
+          ? '<div class="fn-revised">Heads up: at least one arrow came back <strong>lower</strong> than the acknowledged baseline. GA4 revises attribution after the fact, so the baseline may now overstate what you have actually seen. Check the user list directly rather than trusting the delta.</div>'
+          : '') +
+        '<div class="cc-detail-label" style="margin-top:14px;">Next step</div>' +
+        '<p style="margin:6px 0 0;color:var(--dim);">Open the Admin-Core user list and sort by join date — the new accounts are the most recent rows. Admin-Core is a separate Firebase project, so this dashboard cannot name them for you.</p>' +
+        '<p style="margin:8px 0 0;"><a href="' + ADMIN_CORE_USERS_URL + '" target="admincore" rel="noopener">' +
+          esc(ADMIN_CORE_USERS_URL) + ' &rarr;</a></p>',
+      buttons: [
+        {
+          label: 'Open Admin-Core users',
+          onclick: function () { window.open(ADMIN_CORE_USERS_URL, 'admincore', 'noopener'); }
+        },
+        {
+          label: 'Acknowledge — I have seen these',
+          cls: 'cc-ack',
+          onclick: function (e) { acknowledgeFunnel(this); }
+        }
+      ]
+    };
+  }
+
+  // The only write this feature makes. Explicit — never fired on render.
+  function acknowledgeFunnel(btn) {
+    var db = window._cipherDb;
+    var cur = readFunnel();
+    if (!db) { ccToast('Live campaign data is unavailable.', true); return; }
+    if (!cur) { ccToast('No funnel data to acknowledge.', true); return; }
+    var original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+    var payload = { asOf: cur.asOf || null, acknowledgedAt: new Date().toISOString() };
+    FUNNEL_STEPS.forEach(function (s) { payload[s.key] = fnum(cur.agg[s.key]); });
+
+    // Field-path update, not a read-modify-write of the whole document: this
+    // must not be able to clobber metrics.funnel or anything else in
+    // campaign/state that another writer touched in the meantime.
+    db.collection('campaign').doc('state').update({
+      'metrics.lastSeenFunnel': payload,
+      '_meta.lastUpdatedAt': new Date().toISOString(),
+      '_meta.lastUpdatedBy': 'dashboard acknowledge-funnel'
+    }).then(function () {
+      ccToast('Acknowledged — the card drops back to normal priority.');
+      // No manual re-render: the campaign/state onSnapshot listener fires
+      // cipher:state-updated, which is already wired to reRender.
+    }).catch(function (err) {
+      if (btn) { btn.disabled = false; btn.textContent = original; }
+      ccToast('Could not save: ' + (err.message || 'unknown error'), true);
+    });
+  }
+
   function computeNextAction(posts, trendData) {
     var todayStr = mtTodayStr();
     var hour = mtHour();
@@ -5910,45 +6402,42 @@ if (document.readyState === 'loading') {
     var durationWeeks = Number(campaign.durationWeeks || 4);
     var campaignEnd = new Date(campaignStart.getTime() + durationWeeks * 7 * 86400000);
 
-    // Stop recommendations at the campaign boundary. A new cycle requires an
-    // explicit operator decision instead of silently falling back to PMP.
-    if (!isNaN(campaignEnd.getTime()) && Date.now() >= campaignEnd.getTime()) {
-      var unresolvedDrafts = posts.filter(function (p) {
-        return p.status === 'draft' || p.status === 'scheduled';
-      });
-      return {
-        type: 'campaign-ended',
-        title: 'Campaign complete — choose the next cycle',
-        sub: unresolvedDrafts.length
-          ? unresolvedDrafts.length + ' unfinished post' + (unresolvedDrafts.length === 1 ? '' : 's') + ' need a decision before new posts are created.'
-          : 'The planned ' + durationWeeks + '-week campaign has ended. Review the results, then start the next campaign deliberately.',
-        detail:
-          '<div class="cc-detail-label">Recommended order</div>' +
-          '<p style="margin:6px 0 0;color:var(--dim);">1. Review unfinished posts. 2. Check Results. 3. Start a new campaign from Settings when you are ready.</p>',
-        buttons: [
-          { label: unresolvedDrafts.length ? 'Review unfinished posts' : 'Review results', onclick: function () { cipherShow(unresolvedDrafts.length ? 'posts' : 'dashboard'); } },
-          { label: 'Open Settings', cls: 'secondary', onclick: function () { cipherShow('settings'); } }
-        ]
-      };
+    // ---- PRECEDENCE ------------------------------------------------------
+    //   1. funnel.activated increased   -> "Someone activated. Talk to them."
+    //   2. funnel.signups increased     -> "New signups. Find out who."
+    //   3. a post is due today/tomorrow and not approved
+    //   4. campaign window elapsed / choose next cycle
+    //   5. drafts pending review
+    // Rules 1 and 2 are new. Before them the card was driven entirely by
+    // post-pipeline state, which is how two real signups sat unmentioned
+    // underneath "Campaign complete — 18 unfinished posts need a decision".
+
+    // Rules 1 + 2: a human moved through the funnel. Outranks everything.
+    var funnelSignal = computeFunnelSignal();
+    if (funnelSignal.kind === 'activated' || funnelSignal.kind === 'signups') {
+      return funnelAction(funnelSignal);
     }
 
-    // Rule 0: Too early (before 7 AM local time) → standby
-    if (hour < 7) {
+    // Rule 3: Scheduled-for-today, not yet posted
+    var todayUnposted = posts.filter(function (p) {
+      return p.scheduled === todayStr && p.status !== 'posted' && p.status !== 'skipped';
+    });
+    // Dave does not post before 7 AM local. Rather than a blanket standby that
+    // hides what is due, name the post and hold it.
+    if (todayUnposted.length > 0 && hour < 7) {
+      var early = todayUnposted[0];
       return {
         type: 'standby',
         title: 'Too early to post',
-        sub: "Don't post before 7 AM local time. Have coffee and use the quick guide if you want a head start.",
+        sub: "Don't post before 7 AM local time. " + (early.channel || '?').toUpperCase() +
+          ' — ' + (early.examFocus || '?') + ' is queued for today' +
+          (early.scheduledTimeLocal ? ' at ' + early.scheduledTimeLocal : '') + '.',
         detail: null,
         buttons: [
           { label: 'Open Daily Playbook', onclick: "document.querySelector('.daily-playbook').open = true; window.scrollTo({top:document.querySelector('.daily-playbook').offsetTop - 20, behavior:'smooth'});" }
         ]
       };
     }
-
-    // Rule 1: Scheduled-for-today, not yet posted
-    var todayUnposted = posts.filter(function (p) {
-      return p.scheduled === todayStr && p.status !== 'posted';
-    });
     if (todayUnposted.length > 0) {
       var p = todayUnposted[0];
       var isLI = (p.channel || '').toLowerCase() === 'linkedin';
@@ -6017,7 +6506,75 @@ if (document.readyState === 'loading') {
       };
     }
 
-    // Rule 1.3: Drafts pending review (Brad created drafts — Dave needs to approve)
+    // Rule 3b: due TOMORROW and still unapproved. A draft dated tomorrow is a
+    // deadline, not a backlog item, so it sits above the campaign-window rule
+    // with the rest of rule 3 — otherwise an elapsed window hides it.
+    var tomorrowDate = new Date();
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    var tomorrowStr = tomorrowDate.getFullYear() + '-' +
+      String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' +
+      String(tomorrowDate.getDate()).padStart(2, '0');
+    var dueTomorrow = posts.filter(function (p) {
+      return p.scheduled === tomorrowStr && p.status === 'draft';
+    });
+    if (dueTomorrow.length > 0) {
+      var dt = dueTomorrow[0];
+      return {
+        type: 'approve-tomorrow',
+        title: 'APPROVE FOR TOMORROW — ' + dueTomorrow.length + ' post' + (dueTomorrow.length === 1 ? '' : 's'),
+        sub: (dt.channel || '?').toUpperCase() + ' — ' + (dt.examFocus || '?') +
+          ' is dated tomorrow and still sits in drafts. Approve it today or it misses its slot.',
+        detail:
+          '<div class="cc-detail-label">Due tomorrow, unapproved</div>' +
+          dueTomorrow.slice(0, 5).map(function (q) {
+            return '<div style="margin:4px 0;font-size:0.9rem;"><strong>' +
+              esc((q.channel || '?').toUpperCase()) + ' · ' + esc(q.examFocus || '?') +
+              '</strong> — ' + esc(q.scheduledTimeLocal || tomorrowStr) +
+              ' · hook: <code>' + esc(q.hook || '?') + '</code></div>';
+          }).join(''),
+        buttons: [
+          { label: 'Review in Create', onclick: function () { if (typeof cipherShow === 'function') cipherShow('posts'); } }
+        ]
+      };
+    }
+
+    // Rule 4: campaign window elapsed. A new cycle requires an explicit
+    // operator decision instead of silently falling back to PMP.
+    if (!isNaN(campaignEnd.getTime()) && Date.now() >= campaignEnd.getTime()) {
+      var unresolvedDrafts = posts.filter(function (p) {
+        return p.status === 'draft' || p.status === 'scheduled';
+      });
+      return {
+        type: 'campaign-ended',
+        title: 'Campaign complete — choose the next cycle',
+        sub: unresolvedDrafts.length
+          ? unresolvedDrafts.length + ' unfinished post' + (unresolvedDrafts.length === 1 ? '' : 's') + ' need a decision before new posts are created.'
+          : 'The planned ' + durationWeeks + '-week campaign has ended. Review the results, then start the next campaign deliberately.',
+        detail:
+          '<div class="cc-detail-label">Recommended order</div>' +
+          '<p style="margin:6px 0 0;color:var(--dim);">1. Review unfinished posts. 2. Check Results. 3. Start a new campaign from Settings when you are ready.</p>',
+        buttons: [
+          { label: unresolvedDrafts.length ? 'Review unfinished posts' : 'Review results', onclick: function () { cipherShow(unresolvedDrafts.length ? 'posts' : 'dashboard'); } },
+          { label: 'Open Settings', cls: 'secondary', onclick: function () { cipherShow('settings'); } }
+        ]
+      };
+    }
+
+    // Before 7 AM with nothing due today → standby (unchanged behaviour; the
+    // named variant above handles the case where something IS due).
+    if (hour < 7) {
+      return {
+        type: 'standby',
+        title: 'Too early to post',
+        sub: "Don't post before 7 AM local time. Have coffee and use the quick guide if you want a head start.",
+        detail: null,
+        buttons: [
+          { label: 'Open Daily Playbook', onclick: "document.querySelector('.daily-playbook').open = true; window.scrollTo({top:document.querySelector('.daily-playbook').offsetTop - 20, behavior:'smooth'});" }
+        ]
+      };
+    }
+
+    // Rule 5: Drafts pending review (Brad created drafts — Dave needs to approve)
     var pendingDrafts = posts.filter(function (p) { return p.status === 'draft'; });
     if (pendingDrafts.length > 0) {
       var draftWeeksByStart = {};
@@ -6122,7 +6679,7 @@ if (document.readyState === 'loading') {
           (pg.postUrl ? {
             label: 'Open live post',
             cls: 'secondary',
-            onclick: (function (url) { return function () { window.open(url, '_blank'); }; })(pg.postUrl)
+            onclick: (function (url) { return function () { window.open(url, 'livepost', 'noopener'); }; })(pg.postUrl)
           } : null)
         ].filter(Boolean)
       };
@@ -6260,6 +6817,16 @@ if (document.readyState === 'loading') {
     var dow = dayOfWeek();
     var steps = [];
 
+    // Step 1 whenever the funnel has moved: a real person outranks the calendar.
+    var fsig = computeFunnelSignal();
+    if (fsig.kind === 'activated' || fsig.kind === 'signups') {
+      steps.push({
+        title: fsig.kind === 'activated' ? 'Contact the activated user' : 'Identify the new signups',
+        desc: 'Admin-Core → users, sort by join date. ' + (fsig.age.known ? fsig.age.label : 'funnel timestamp missing'),
+        done: false
+      });
+    }
+
     // Step: today's scheduled posts (one step per post)
     var todayPosts = posts.filter(function (p) { return p.scheduled === todayStr; });
     todayPosts.forEach(function (p) {
@@ -6334,10 +6901,27 @@ if (document.readyState === 'loading') {
     var buttonsEl = document.getElementById('cc-buttons');
     if (!titleEl) return;
 
+    // A funnel event repaints the card green so it cannot be skimmed past as
+    // another pipeline chore.
+    var cardEl = titleEl.closest('.command-center');
+    if (cardEl) cardEl.classList.toggle('cc-funnel', action.type === 'funnel-signal');
+
     titleEl.textContent = action.title;
     subEl.textContent = action.sub;
-    detailEl.innerHTML = action.detail
-      ? '<div class="cc-action-detail">' + action.detail + '</div>'
+    // A downward GA4 revision never raises the card (that would flap), but it
+    // must not be invisible either: the acknowledged baseline may now overstate
+    // what the operator has actually seen, which can mask a genuinely new
+    // signup. Appended to whatever card is showing.
+    var quietSig = computeFunnelSignal();
+    var revisionNote = (quietSig.kind === 'quiet' && quietSig.revisedDown)
+      ? '<div class="fn-revised">Funnel note: GA4 has revised at least one arrow <strong>down</strong> since you last acknowledged. ' +
+        'The baseline may now overstate what you have seen, so a new signup could land without raising a card. ' +
+        'Check <a href="' + ADMIN_CORE_USERS_URL + '" target="admincore" rel="noopener">the user list</a> directly. ' +
+        funnelAsOfHtml(quietSig.cur && quietSig.cur.asOf) + '</div>'
+      : '';
+
+    detailEl.innerHTML = (action.detail || revisionNote)
+      ? '<div class="cc-action-detail">' + (action.detail || '') + revisionNote + '</div>'
       : '';
     // Build buttons without inline onclick (avoids nested-quote rendering bugs)
     buttonsEl.innerHTML = (action.buttons || []).map(function (b, i) {
@@ -6524,13 +7108,39 @@ if (document.readyState === 'loading') {
     var lessonsSub = lessons === 0 ? 'analyze graded posts to build' : 'in grading-lessons.md';
 
     // Chip 6: Activation gate
-    var activatedTotal = (cs.metrics && cs.metrics.activatedUsersTotal) || 0;
+    // Reads the measured funnel first — same source as every other activated
+    // count on the dashboard — and only falls back to the hand-kept total.
+    var fSig = computeFunnelSignal();
+    var measuredActivated = fSig.cur ? fnum(fSig.cur.agg.activated) : null;
+    var activatedTotal = measuredActivated != null
+      ? measuredActivated
+      : ((cs.metrics && cs.metrics.activatedUsersTotal) || 0);
     var gate = (cs.campaign && cs.campaign.activationGate) || 25;
     var gatePct = Math.round(100 * activatedTotal / gate);
     var gateCls = activatedTotal >= gate ? 'ok' : (gatePct >= 50 ? 'warn' : 'bad');
     var gateSub = activatedTotal >= gate ? '✓ paid spend unlocked' : (gate - activatedTotal) + ' to unlock paid';
 
+    // The funnel chip leads the strip. The board priority is "CipherExam's
+    // first 10 paying users — make it the visible scoreboard", and until this
+    // chip existed the strip counted posts, drafts and trend scans but never
+    // once showed how many humans had arrived.
+    var funnelChip = '';
+    if (!fSig.cur) {
+      funnelChip = chip('Funnel', 'no data', 'run scripts/pull-funnel.mjs', 'bad');
+    } else {
+      var fSign = fnum(fSig.cur.agg.signups);
+      var fAct = fnum(fSig.cur.agg.activated);
+      var unseen = (fSig.kind === 'activated' || fSig.kind === 'signups');
+      funnelChip = chip(
+        'Funnel',
+        fSign + ' signup' + (fSign === 1 ? '' : 's') + ' · ' + fAct + ' activated',
+        unseen ? 'NEW since you last checked' : (fSig.age.known ? fSig.age.label : 'no timestamp'),
+        unseen ? 'ok' : (fSig.age.stale ? 'warn' : '')
+      );
+    }
+
     strip.innerHTML =
+      funnelChip +
       chip('When',           weekLabel,                  whenSub,                        whenCls) +
       chip('Pipeline (next 7d)', pipelineN + ' post' + (pipelineN === 1 ? '' : 's'), pipelineSub, pipelineCls) +
       chip('Drafts pending', String(draftN),             draftSub,                       draftCls) +
@@ -6595,6 +7205,374 @@ if (document.readyState === 'loading') {
   }
   document.addEventListener('cipher:posts-updated', reRender);
   document.addEventListener('cipher:state-updated', reRender);
+})();
+
+// ---- Angle performance (Results tab) -------------------------------------
+// Read-only aggregation over campaign/posts. Does not touch the A–D scale, how
+// grades are assigned, or the drafter.
+//
+// Field traps this code is written against, all three verified against live
+// data on 2026-08-17:
+//   1. The angle is `hook`. planPostType and planSlot are null on every
+//      pre-August post, so aggregating on those silently drops the May cohort.
+//   2. The date inside `id` is wrong — li-mon-2026-05-11-launch actually went
+//      out 2026-05-18. Dates come from scheduledTimeLocal, never from the id.
+//   3. `grade` is ABSENT on ungraded posts, not null. Ungraded posts are
+//      excluded from every mean and counted separately, never coerced to 0.
+(function () {
+  var GRADE_VALUE = { A: 4, B: 3, C: 2, D: 1 };
+  // A gap this long between posts marks a new posting era. It is a clustering
+  // boundary, not a measured quantity.
+  var COHORT_GAP_DAYS = 21;
+  // Below this sample size a mean is labelled low-confidence rather than hidden.
+  var LOW_CONFIDENCE_N = 2;
+
+  // Reuse the app's own helpers. The local fallbacks exist only because this
+  // block can be evaluated before the globals are declared (and by the test
+  // harness, which loads this IIFE in isolation).
+  function esc(s) {
+    if (typeof window.cipherEsc === 'function') return window.cipherEsc(s);
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function toNum(g) {
+    if (typeof window.gradeToNum === 'function') return window.gradeToNum(g) || 0;
+    return GRADE_VALUE[g] || 0;
+  }
+
+  function gradeVal(p) { return toNum(p && p.grade); }
+  // Trap 3: `grade` is absent on ungraded posts, and an unrecognised letter is
+  // not a zero either — both are missing data, not a D.
+  function isGraded(p) { return gradeVal(p) > 0; }
+
+  // Trap 2: scheduledTimeLocal is the date the UI shows and the only date that
+  // is right. postedAt is the fallback; the id is never parsed.
+  function postDate(p) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec((p && p.scheduledTimeLocal) || '');
+    if (m) return m[1] + '-' + m[2] + '-' + m[3];
+    if (p && p.scheduled && /^\d{4}-\d{2}-\d{2}$/.test(p.scheduled)) return p.scheduled;
+    if (p && p.postedAt) {
+      var t = new Date(p.postedAt);
+      if (!isNaN(t.getTime())) return t.toISOString().slice(0, 10);
+    }
+    return null;
+  }
+
+  function dayNum(iso) {
+    var t = new Date(iso + 'T00:00:00').getTime();
+    return isNaN(t) ? null : Math.floor(t / 86400000);
+  }
+
+  function mean(arr) {
+    if (!arr.length) return null;
+    return arr.reduce(function (s, p) { return s + gradeVal(p); }, 0) / arr.length;
+  }
+
+  // Letter band for a numeric mean. Rendered as TEXT next to the number so the
+  // ramp never depends on colour alone.
+  function meanLetter(n) {
+    if (n == null || !isFinite(n)) return '—';
+    if (n >= 3.5) return 'A';
+    if (n >= 2.5) return 'B';
+    if (n >= 1.5) return 'C';
+    if (n > 0) return 'D';
+    return '—';
+  }
+  function meanClass(n) {
+    if (n == null || !isFinite(n)) return '';
+    if (n >= 3.5) return 'grade-A';
+    if (n >= 2.5) return 'grade-B';
+    if (n >= 1.5) return 'grade-C';
+    if (n > 0) return 'grade-D';
+    return '';
+  }
+  function fmtMean(n) {
+    if (n == null || !isFinite(n)) return '<span class="ap-mean">—</span>';
+    return '<span class="ap-mean ' + meanClass(n) + '">' + n.toFixed(2) +
+      '<span class="ap-letter">' + esc(meanLetter(n)) + '</span></span>';
+  }
+
+  function prettyDate(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  // Pure aggregation — exported for the gate harness so the numbers under test
+  // are the numbers the page renders.
+  function computeAnglePerformance(posts) {
+    var all = Array.isArray(posts) ? posts : [];
+    var graded = all.filter(isGraded);
+    var drafts = all.filter(function (p) { return p && p.status === 'draft'; });
+    var postedUngraded = all.filter(function (p) {
+      return p && p.status === 'posted' && !isGraded(p);
+    });
+
+    var lifetimeSum = graded.reduce(function (s, p) { return s + gradeVal(p); }, 0);
+    var lifetimeMean = graded.length ? lifetimeSum / graded.length : null;
+
+    // ---- Cohorts: contiguous posting eras -------------------------------
+    var dated = graded.filter(function (p) { return postDate(p); })
+      .slice().sort(function (a, b) { return postDate(a).localeCompare(postDate(b)); });
+    var undatedGraded = graded.filter(function (p) { return !postDate(p); });
+    var cohorts = [];
+    dated.forEach(function (p) {
+      var d = postDate(p);
+      var last = cohorts[cohorts.length - 1];
+      var gap = last ? (dayNum(d) - dayNum(last.end)) : null;
+      if (!last || gap == null || gap > COHORT_GAP_DAYS) {
+        cohorts.push({ start: d, end: d, posts: [p] });
+      } else {
+        last.end = d;
+        last.posts.push(p);
+      }
+    });
+    cohorts = cohorts.map(function (c) {
+      return {
+        start: c.start, end: c.end, n: c.posts.length, mean: mean(c.posts),
+        label: c.start === c.end ? prettyDate(c.start) : prettyDate(c.start) + ' – ' + prettyDate(c.end),
+        xCount: c.posts.filter(function (p) { return p.channel === 'x'; }).length
+      };
+    });
+
+    // ---- Per-hook history (trap 1: the angle is `hook`) ------------------
+    var byHook = {};
+    graded.forEach(function (p) {
+      var h = p.hook || '(no hook recorded)';
+      (byHook[h] = byHook[h] || []).push(p);
+    });
+    var draftsByHook = {};
+    drafts.forEach(function (p) {
+      var h = p.hook || '(no hook recorded)';
+      draftsByHook[h] = (draftsByHook[h] || 0) + 1;
+    });
+
+    var hookRows = Object.keys(byHook).map(function (h) {
+      var arr = byHook[h];
+      var xn = arr.filter(function (p) { return p.channel === 'x'; }).length;
+      var best = arr.reduce(function (m, p) { return Math.max(m, gradeVal(p)); }, 0);
+      // Which channel actually earned the best grade. An A or B won on X is
+      // won against a handful of impressions, so "proven" has to say so.
+      var bestPost = arr.filter(function (p) { return gradeVal(p) === best; })[0] || null;
+      return {
+        hook: h, n: arr.length, mean: mean(arr),
+        bestChannel: bestPost ? bestPost.channel : null,
+        grades: arr.map(function (p) { return p.grade; }).sort().join('/'),
+        xCount: xn, allX: xn === arr.length && arr.length > 0,
+        bestGrade: best,
+        queued: draftsByHook[h] || 0,
+        lowConfidence: arr.length < LOW_CONFIDENCE_N
+      };
+    }).sort(function (a, b) {
+      if (b.mean !== a.mean) return b.mean - a.mean;
+      return b.n - a.n;
+    });
+
+    // ---- Backlog vs evidence --------------------------------------------
+    var backlogRows = Object.keys(draftsByHook).map(function (h) {
+      var hist = byHook[h] || [];
+      return {
+        hook: h, queued: draftsByHook[h], gradedEver: hist.length,
+        mean: hist.length ? mean(hist) : null,
+        grades: hist.map(function (p) { return p.grade; }).sort().join('/'),
+        untested: hist.length === 0
+      };
+    }).sort(function (a, b) {
+      if (a.untested !== b.untested) return a.untested ? -1 : 1;
+      return b.queued - a.queued;
+    });
+
+    // A hook is PROVEN, UNQUEUED when it has ever earned an A or a B and has
+    // nothing waiting in drafts.
+    var provenUnqueued = hookRows.filter(function (r) {
+      return r.bestGrade >= GRADE_VALUE.B && r.queued === 0;
+    });
+    var draftsOnUntestedHooks = backlogRows.reduce(function (s, r) {
+      return s + (r.untested ? r.queued : 0);
+    }, 0);
+
+    // ---- Channel confidence ---------------------------------------------
+    var xGraded = graded.filter(function (p) { return p.channel === 'x'; });
+    var xImpressions = xGraded
+      .map(function (p) { return p.metrics && Number(p.metrics.impressions); })
+      .filter(function (v) { return isFinite(v); });
+    var linkedinGraded = graded.filter(function (p) { return p.channel === 'linkedin'; });
+
+    return {
+      totals: {
+        graded: graded.length,
+        gradeSum: lifetimeSum,
+        lifetimeMean: lifetimeMean,
+        drafts: drafts.length,
+        postedUngraded: postedUngraded.length,
+        postedUngradedList: postedUngraded.map(function (p) {
+          return { id: p.id, date: postDate(p), channel: p.channel, hook: p.hook };
+        }),
+        draftsOnUntestedHooks: draftsOnUntestedHooks,
+        undatedGraded: undatedGraded.length
+      },
+      cohorts: cohorts,
+      hookRows: hookRows,
+      backlogRows: backlogRows,
+      provenUnqueued: provenUnqueued,
+      channel: {
+        x: { n: xGraded.length, mean: mean(xGraded), impressions: xImpressions },
+        linkedin: { n: linkedinGraded.length, mean: mean(linkedinGraded) }
+      }
+    };
+  }
+  window.cipherComputeAnglePerformance = computeAnglePerformance;
+
+  function row(name, meanHtml, nLabel, metaHtml) {
+    return '<div class="ap-row">' +
+      '<span class="ap-name">' + name + '</span>' +
+      '<span>' + meanHtml + '</span>' +
+      '<span class="ap-n">' + esc(nLabel) + '</span>' +
+      '<span class="ap-meta">' + (metaHtml || '') + '</span>' +
+    '</div>';
+  }
+  function headerRow(c4) {
+    return '<div class="ap-row ap-header">' +
+      '<span>Angle</span><span>Mean grade</span><span>Posts</span><span>' + esc(c4) + '</span></div>';
+  }
+
+  function render() {
+    var el = document.getElementById('angle-performance');
+    if (!el) return;
+    var posts = (window.__POSTS__ && Array.isArray(window.__POSTS__.posts)) ? window.__POSTS__.posts : null;
+    if (!posts) { el.innerHTML = '<p class="empty-state">Waiting for live post data.</p>'; return; }
+
+    var a = computeAnglePerformance(posts);
+    var t = a.totals;
+
+    if (t.graded === 0 && t.drafts === 0) {
+      el.innerHTML = '<p class="empty-state">No graded posts and no drafts yet — nothing to compare.</p>';
+      return;
+    }
+
+    var html = '';
+
+    // Channel confidence banner. X grades are noise: standalone X posting was
+    // paused on the 2026-08-08 decision (LinkedIn-only 08-07 → 09-05), and the
+    // impression range is read from the posts themselves, never hardcoded.
+    if (a.channel.x.n > 0) {
+      var imps = a.channel.x.impressions;
+      var range = imps.length
+        ? (Math.min.apply(null, imps) === Math.max.apply(null, imps)
+            ? Math.min.apply(null, imps) + ' impressions'
+            : Math.min.apply(null, imps) + '–' + Math.max.apply(null, imps) + ' impressions')
+        : 'impressions not recorded';
+      html += '<div class="ap-banner"><strong>Channel confidence:</strong> ' + a.channel.x.n +
+        ' of the ' + t.graded + ' graded posts ran on <code>X</code> (' + esc(range) +
+        '). Standalone X posting is paused — see the 2026-08-08 decision making LinkedIn the only distribution channel 08-07 → 09-05. ' +
+        'Those grades are scored against a handful of impressions, so they are marked ' +
+        '<span class="ap-tag xnoise">X · low signal</span> and should not be read as equal to LinkedIn evidence.' +
+        (a.channel.linkedin.n
+          ? ' LinkedIn alone: ' + a.channel.linkedin.mean.toFixed(2) + ' mean across ' + a.channel.linkedin.n + ' posts.'
+          : '') +
+      '</div>';
+    }
+
+    // ---- Cohorts ----
+    html += '<div class="ap-block">';
+    html += '<p class="ap-head">Cohorts — contiguous posting eras</p>';
+    html += '<p class="ap-note">Lifetime mean is ' +
+      (t.lifetimeMean == null ? '—' : t.lifetimeMean.toFixed(2)) +
+      ' across ' + t.graded + ' graded post' + (t.graded === 1 ? '' : 's') +
+      ' (sum ' + t.gradeSum + '). That single number averages the eras below, which is why it is misleading on its own.</p>';
+    if (a.cohorts.length === 0) {
+      html += '<p class="ap-note">No dated graded posts yet.</p>';
+    } else {
+      html += headerRow('Channel mix');
+      html += a.cohorts.map(function (c) {
+        return row(esc(c.label), fmtMean(c.mean), c.n + ' post' + (c.n === 1 ? '' : 's'),
+          c.xCount ? '<span class="ap-tag xnoise">' + c.xCount + ' on X</span> low-signal channel' : 'all LinkedIn');
+      }).join('');
+    }
+    if (t.undatedGraded) {
+      html += '<p class="ap-note">' + t.undatedGraded + ' graded post' + (t.undatedGraded === 1 ? '' : 's') +
+        ' had no usable date and sit outside these cohorts (still counted in the lifetime mean).</p>';
+    }
+    html += '</div>';
+
+    // ---- Mean grade by hook ----
+    html += '<div class="ap-block">';
+    html += '<p class="ap-head">Mean grade by angle</p>';
+    html += '<p class="ap-note">Sorted best first. Every row shows its sample size; a single post is not evidence, and is labelled as such.</p>';
+    if (a.hookRows.length === 0) {
+      html += '<p class="ap-note">No graded posts yet.</p>';
+    } else {
+      html += headerRow('Confidence');
+      html += a.hookRows.map(function (r) {
+        var meta = '';
+        if (r.lowConfidence) meta += '<span class="ap-tag lowconf">n=' + r.n + ' · low confidence</span>';
+        if (r.allX) meta += '<span class="ap-tag xnoise">X only · low signal</span>';
+        else if (r.xCount) meta += '<span class="ap-tag xnoise">' + r.xCount + ' on X</span>';
+        meta += 'grades ' + esc(r.grades);
+        if (r.queued) meta += ' · ' + r.queued + ' queued';
+        return row(esc(r.hook), fmtMean(r.mean), 'n = ' + r.n, meta);
+      }).join('');
+    }
+    html += '</div>';
+
+    // ---- Backlog vs evidence ----
+    html += '<div class="ap-block">';
+    html += '<p class="ap-head">Backlog vs. evidence</p>';
+    html += '<p class="ap-note">What is queued in drafts, set against what that angle has actually scored. ' +
+      t.draftsOnUntestedHooks + ' of ' + t.drafts + ' queued draft' + (t.drafts === 1 ? '' : 's') +
+      ' sit on angles that have never been graded even once.</p>';
+    if (a.backlogRows.length === 0) {
+      html += '<p class="ap-note">No drafts queued.</p>';
+    } else {
+      html += headerRow('Evidence');
+      html += a.backlogRows.map(function (r) {
+        var meta = r.untested
+          ? '<span class="ap-tag untested">Untested</span>never graded — queued on faith'
+          : 'graded ' + esc(r.grades) + ' across ' + r.gradedEver + ' post' + (r.gradedEver === 1 ? '' : 's');
+        return row(esc(r.hook), r.untested ? '<span class="ap-mean">—</span>' : fmtMean(r.mean),
+          r.queued + ' queued', meta);
+      }).join('');
+    }
+
+    if (a.provenUnqueued.length) {
+      html += '<p class="ap-note" style="margin-top:12px;">Angles that earned an A or B and have <strong>nothing queued</strong>:</p>';
+      html += a.provenUnqueued.map(function (r) {
+        var bestLetter = Object.keys(GRADE_VALUE).filter(function (k) {
+          return GRADE_VALUE[k] === r.bestGrade;
+        })[0] || '—';
+        var meta = '<span class="ap-tag proven">Proven, unqueued</span>best grade ' +
+          esc(bestLetter) + ' · nothing in drafts';
+        // The caveat that matters: if that best grade was earned on X, it was
+        // earned against single-digit impressions and is not evidence.
+        if (r.bestChannel === 'x') {
+          meta += ' · <span class="ap-tag xnoise">best grade came from X</span>treat as untested';
+        }
+        return row(esc(r.hook), fmtMean(r.mean), 'n = ' + r.n, meta);
+      }).join('');
+    }
+    html += '</div>';
+
+    // ---- Posted but ungraded (trap 3) ----
+    if (t.postedUngraded) {
+      html += '<div class="ap-block"><p class="ap-head">Posted but not yet graded</p>' +
+        '<p class="ap-note">Excluded from every mean above — an ungraded post is missing data, not a zero.</p>' +
+        t.postedUngradedList.map(function (p) {
+          return row(esc(p.hook || '(no hook recorded)'), '<span class="ap-mean">—</span>',
+            esc(p.date || 'undated'),
+            esc(String(p.channel || '?').toUpperCase()) + ' · awaiting grade');
+        }).join('') +
+      '</div>';
+    }
+
+    el.innerHTML = html;
+  }
+
+  document.addEventListener('cipher:posts-updated', render);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
 })();
 
 // ---- Grade modal (shared across schedule + posts pages) ----
@@ -7315,7 +8293,7 @@ function cipherStaleVideoPosts() {
     var composer = isX
       ? 'https://x.com/compose/post?text=' + encodeURIComponent(p.copy || '')
       : 'https://www.linkedin.com/feed/';
-    window.open(composer, '_blank', 'noopener');
+    window.open(composer, 'composer', 'noopener');
 
     var steps = [];
     try {
@@ -7934,7 +8912,7 @@ function cipherNextToPublish() {
       } catch (err) {
         // Bucket CORS not set yet (or offline): open the file directly and
         // let the user save it from the player's download control.
-        window.open(dlPost.videoUrl, '_blank');
+        window.open(dlPost.videoUrl, 'videofile', 'noopener');
       }
       return;
     }
@@ -8120,10 +9098,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.21.1"></script>
-<script src="assets/outreach.js?v=1.21.1"></script>
-<script src="assets/page-knowledge.js?v=1.21.1"></script>
-<script src="assets/hal-rail.js?v=1.21.1"></script>
+<script src="assets/outreach-data.js?v=1.22.0"></script>
+<script src="assets/outreach.js?v=1.22.0"></script>
+<script src="assets/page-knowledge.js?v=1.22.0"></script>
+<script src="assets/hal-rail.js?v=1.22.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
