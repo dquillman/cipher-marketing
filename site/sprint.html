@@ -858,15 +858,34 @@ details[open] summary::before { transform: rotate(90deg); }
   }
 
   const cands = Array.isArray(s.candidates) ? s.candidates : [];
-  // Derive totals from candidates so the page is always self-consistent.
+  // The tracker is SUPERSEDED (2026-08-17): candidates[] was never filled in,
+  // so deriving signup/activation counts from it rendered zeros while the GA4
+  // funnel showed real humans. signedUp/activated now come from
+  // metrics.funnel.aggregate — the source of truth. contacted and day2Return
+  // stay candidate-derived: GA4 doesn't track them (instrument before trusting).
+  const agg = (state.metrics && state.metrics.funnel && state.metrics.funnel.aggregate) || null;
+  const funnelAsOf = state.metrics && state.metrics.funnel && state.metrics.funnel.asOf;
+  const num = v => { const x = Number(v); return isFinite(x) ? x : null; };
   const t = {
     contacted: cands.filter(c => c.contacted).length,
-    signedUp: cands.filter(c => c.signedUp).length,
-    activated: cands.filter(c => c.activated).length,
+    signedUp: agg && num(agg.signups) != null ? num(agg.signups) : cands.filter(c => c.signedUp).length,
+    activated: agg && num(agg.activated) != null ? num(agg.activated) : cands.filter(c => c.activated).length,
     day2: cands.filter(c => c.day2Return).length,
   };
   const target = s.targetActivated || 5;
   const gate = s.gate || 25;
+
+  const superseded = s.status === 'superseded';
+  const asOfLabel = funnelAsOf && !isNaN(new Date(funnelAsOf).getTime())
+    ? new Date(funnelAsOf).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    : null;
+  const banner = superseded
+    ? `<div style="margin:0 0 18px;padding:12px 14px;border-radius:8px;background:rgba(251,191,36,0.09);border-left:3px solid var(--warn);color:var(--dim);font-size:0.9rem;line-height:1.5;">
+        <strong style="color:var(--warn);">SUPERSEDED.</strong> This hand-recruited tracker is no longer the source of truth —
+        signup and activation counts below are read live from <code>${(s.supersededBy || 'metrics.funnel.aggregate').replace(/</g,'&lt;')}</code>${asOfLabel ? ` (as of ${asOfLabel})` : ''}.
+        Definitions kept: activated = signup + exam picked + &gt;10 questions; day2Return = came back next day (the real proof) — not yet tracked by GA4, instrument before trusting.
+      </div>`
+    : '';
 
   const pct = (n, d) => d ? Math.min(100, Math.round((n / d) * 100)) : 0;
   const bar = (n, d) => `<div class="progress-bar"><div class="fill" style="width:${pct(n,d)}%"></div></div>`;
@@ -877,7 +896,7 @@ details[open] summary::before { transform: rotate(90deg); }
   // Daily community targets for the sprint exam (PMP), pulled from communityEngagement.
   const ce = (state.communityEngagement && state.communityEngagement.byExam && state.communityEngagement.byExam[s.exam]) || {};
   const targetLinks = ['reddit','linkedin','facebook','x'].flatMap(p =>
-    (ce[p] || []).map(x => `<a href="${x.url}" target="_blank" rel="noopener">${p}: ${x.label}</a>`)
+    (ce[p] || []).map(x => `<a href="${x.url}" target="recruiting" rel="noopener">${p}: ${x.label}</a>`)
   ).join('');
 
   const rows = cands.length ? cands.map((c, i) => `
@@ -894,12 +913,14 @@ details[open] summary::before { transform: rotate(90deg); }
       <td>${c.note || ''}</td>
     </tr>`).join('') : `<tr><td colspan="10"><div class="empty-state">No candidates logged yet. Add entries to <code>activationSprint.candidates[]</code> in campaign-state.json as you recruit (see <code>15-activation-sprint.md</code>).</div></td></tr>`;
 
+  const measuredSub = agg ? (asOfLabel ? `GA4 funnel · as of ${asOfLabel}` : 'GA4 funnel') : null;
   root.innerHTML = `
+    ${banner}
     <div class="sprint-grid">
-      ${kpi('Activated (sprint goal)', `${t.activated} / ${target}`, 'signup + exam + 10 Q')}
-      ${kpi('Came back day 2', `${t.day2}`, 'the real proof of value')}
-      ${kpi('Contacted', `${t.contacted}`, 'candidates reached')}
-      ${kpi('Signed up', `${t.signedUp}`, 'finished registration')}
+      ${kpi('Activated (sprint goal)', `${t.activated} / ${target}`, measuredSub || 'signup + exam + 10 Q')}
+      ${kpi('Came back day 2', `${t.day2}`, 'manual — GA4 does not track this yet')}
+      ${kpi('Contacted', `${t.contacted}`, 'candidates reached (manual)')}
+      ${kpi('Signed up', `${t.signedUp}`, measuredSub || 'finished registration')}
     </div>
 
     <h3>Progress to sprint goal — ${t.activated} / ${target} activated</h3>
@@ -924,7 +945,9 @@ details[open] summary::before { transform: rotate(90deg); }
   `;
 
   const when = state._meta && state._meta.lastUpdatedAt ? new Date(state._meta.lastUpdatedAt).toLocaleString() : 'unknown';
-  document.getElementById('updated').textContent = `State last updated: ${when}. Edit activationSprint.candidates[] in campaign-state.json, then hard-refresh.`;
+  document.getElementById('updated').textContent = superseded
+    ? `State last updated: ${when}. Totals are superseded — refresh them with node scripts/pull-funnel.mjs, not by hand-editing.`
+    : `State last updated: ${when}. Edit activationSprint.candidates[] in campaign-state.json, then hard-refresh.`;
 })();
 </script>
 <!--INLINE-ASSETS-->

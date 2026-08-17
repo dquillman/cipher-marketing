@@ -1,14 +1,14 @@
 {
   "_meta": {
-    "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-08-17T13:05:38.019Z",
+    "lastUpdatedBy": "supersede-activation-sprint",
+    "lastUpdatedAt": "2026-08-17T16:46:27.161Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
   "postingHold": {
     "active": false,
     "liftedAt": "2026-07-16",
-    "liftedBy": "Dave — 'now fix these' directive naming the hold as gap #2 (Claude Code session, 2026-07-16)",
+    "liftedBy": "Dave \u2014 'now fix these' directive naming the hold as gap #2 (Claude Code session, 2026-07-16)",
     "since": "2026-07-09",
     "orderedBy": "Dave",
     "scope": "ALL posts AND the daily community-reply/engagement cadence, ALL channels (LinkedIn + X + Reddit). No publishing, no new scheduled sends, and no proactive replies/engagement while active.",
@@ -57,7 +57,7 @@
       "asOf": "2026-08-17T13:05:38.019Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
-      "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
+      "instructions": "Filled automatically by scripts/pull-funnel.mjs \u2014 do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
         "impressions": 3300,
         "lpVisits": 17,
@@ -91,7 +91,7 @@
     }
   },
   "activationSprint": {
-    "instructions": "Manual activation sprint tracker (playbook: 15-activation-sprint.md). Hand-edit candidates[] as you recruit. sprint.html renders this. 'activated' = signup + exam picked + >=10 questions. 'day2Return' = came back the next day (the real proof). Update totals to match candidates[] and bump _meta.lastUpdatedAt.",
+    "instructions": "SUPERSEDED: do not hand-edit totals. Source of truth is metrics.funnel.aggregate. Definitions kept: activated = signup + exam picked + >10 questions; day2Return = came back next day (the real proof) \u2014 not yet tracked by GA4, instrument before trusting. Playbook ref: 15-activation-sprint.md.",
     "startedAt": "2026-05-28",
     "exam": "PMP",
     "targetActivated": 5,
@@ -100,17 +100,19 @@
     "candidates": [],
     "totals": {
       "contacted": 0,
-      "signedUp": 0,
-      "activated": 0,
+      "signedUp": 2,
+      "activated": 1,
       "day2Returned": 0
-    }
+    },
+    "status": "superseded",
+    "supersededBy": "metrics.funnel.aggregate (GA4, scripts/pull-funnel.mjs)"
   },
   "communityEngagement": {
-    "instructions": "Daily community-reply targets. Active exam(s) are auto-detected from the current campaign week's scheduled posts (posts.json → examFocus) — the dashboard picks the matching byExam[<exam>] block. If multiple exams are scheduled the same week, targets are merged. Falls back to byExam.default when nothing matches. dailyTarget = replies per platform per day.",
+    "instructions": "Daily community-reply targets. Active exam(s) are auto-detected from the current campaign week's scheduled posts (posts.json \u2192 examFocus) \u2014 the dashboard picks the matching byExam[<exam>] block. If multiple exams are scheduled the same week, targets are merged. Falls back to byExam.default when nothing matches. dailyTarget = replies per platform per day.",
     "paused": false,
     "resumedAt": "2026-07-16",
     "pausedSince": "2026-07-09",
-    "pausedReason": "Full engagement freeze — Dave extended 'hold all posts' to include the daily community reply/engagement cadence. LIFTED 2026-07-16 with the posting hold.",
+    "pausedReason": "Full engagement freeze \u2014 Dave extended 'hold all posts' to include the daily community reply/engagement cadence. LIFTED 2026-07-16 with the posting hold.",
     "preHoldDailyTarget": 3,
     "dailyTarget": 3,
     "byExam": {
@@ -129,12 +131,12 @@
           {
             "label": "PMP Exam Prep group",
             "url": "https://www.facebook.com/groups/pmpexamprep",
-            "note": "Verify exact URL — placeholder"
+            "note": "Verify exact URL \u2014 placeholder"
           },
           {
             "label": "PMP Question Bank group",
             "url": "https://www.facebook.com/groups/pmpquestionbank",
-            "note": "Verify exact URL — placeholder"
+            "note": "Verify exact URL \u2014 placeholder"
           }
         ],
         "linkedin": [
@@ -187,7 +189,7 @@
           {
             "label": "CompTIA Security+ Study Group",
             "url": "https://www.facebook.com/groups/comptiasecurityplus",
-            "note": "Verify exact URL — placeholder"
+            "note": "Verify exact URL \u2014 placeholder"
           }
         ],
         "linkedin": [
@@ -240,7 +242,7 @@
           {
             "label": "SHRM-CP / SCP Exam Prep",
             "url": "https://www.facebook.com/groups/shrmcpexamprep",
-            "note": "Verify exact URL — placeholder"
+            "note": "Verify exact URL \u2014 placeholder"
           }
         ],
         "linkedin": [
@@ -307,7 +309,7 @@
       "label": "Three Tier 1 LPs (PMP, Sec+, SHRM-CP) deployed and reachable",
       "status": "done",
       "completedAt": "2026-05-12",
-      "note": "Shipped 2026-05-12. All 3 LPs live on cipherexam.com — see blocker lps-deployed."
+      "note": "Shipped 2026-05-12. All 3 LPs live on cipherexam.com \u2014 see blocker lps-deployed."
     },
     {
       "id": "widget-render",
@@ -328,7 +330,7 @@
       "label": "Meta Conversions API server-side test event received",
       "status": "na",
       "deferredUntil": "First paid Meta ad set after 25-activation gate",
-      "note": "N/A for Week 1 — not running paid Meta until 25 activations (paid-spend gate). Server-side CAPI verification only matters when paid Meta campaigns start. Move back to pending-runtime when first Meta ad set goes live."
+      "note": "N/A for Week 1 \u2014 not running paid Meta until 25 activations (paid-spend gate). Server-side CAPI verification only matters when paid Meta campaigns start. Move back to pending-runtime when first Meta ad set goes live."
     },
     {
       "id": "linkedin-insight",
@@ -342,14 +344,14 @@
       "label": "Resend Day 0 email sends to test address with merge tags populated",
       "status": "na",
       "deferredUntil": "2026-05-25 (Week 2)",
-      "note": "N/A for Week 1 — Resend drip deferred to Week 2 (resend-sequence blocker). Week 1 uses manual founder 1:1 emails (07-founder-1to1-emails.md)."
+      "note": "N/A for Week 1 \u2014 Resend drip deferred to Week 2 (resend-sequence blocker). Week 1 uses manual founder 1:1 emails (07-founder-1to1-emails.md)."
     },
     {
       "id": "resend-suppression",
       "label": "Resend suppresses correctly when test user upgrades mid-trial",
       "status": "na",
       "deferredUntil": "2026-05-25 (Week 2)",
-      "note": "N/A for Week 1 — same deferral as Resend Day 0. Re-activates when resend-sequence blocker is built in Week 2."
+      "note": "N/A for Week 1 \u2014 same deferral as Resend Day 0. Re-activates when resend-sequence blocker is built in Week 2."
     },
     {
       "id": "testimonial-prompt",
@@ -363,11 +365,11 @@
       "label": "UTM source/medium/campaign/exam tags resolve cleanly in GA4",
       "status": "done",
       "completedAt": "2026-05-12",
-      "note": "Verified 2026-05-12 end-to-end: hit /lp/pmp?utm_source=preflight&utm_campaign=monday_launch_check&utm_content=brad_dryrun → values landed in sessionStorage.ec_utm → reappeared in signup_complete event payload → also persisted to testimonials/{uid} Firestore doc as utmSource/utmCampaign/utmContent. GA4 custom dimensions verification still requires real traffic to compare reports (Day 2-3 of launch)."
+      "note": "Verified 2026-05-12 end-to-end: hit /lp/pmp?utm_source=preflight&utm_campaign=monday_launch_check&utm_content=brad_dryrun \u2192 values landed in sessionStorage.ec_utm \u2192 reappeared in signup_complete event payload \u2192 also persisted to testimonials/{uid} Firestore doc as utmSource/utmCampaign/utmContent. GA4 custom dimensions verification still requires real traffic to compare reports (Day 2-3 of launch)."
     },
     {
       "id": "phone-alarms-set",
-      "label": "Set 3 phone alarms — Mon/Wed/Fri 8:00 AM ET — for manual posting",
+      "label": "Set 3 phone alarms \u2014 Mon/Wed/Fri 8:00 AM ET \u2014 for manual posting",
       "status": "done",
       "completedAt": "2026-05-18",
       "note": "Alarms set + fired on launch Monday 2026-05-18 and Wed 2026-05-20. Posted LinkedIn + X on both days. Friday 2026-05-22 alarm is still set and pending its scheduled fire. Revisit scheduler tooling only if posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
@@ -388,7 +390,7 @@
       "owner": "Engineering",
       "status": "done",
       "due": "2026-05-17",
-      "note": "Audit 2026-05-12: GA4 funnel (landing_page_view, cta_click, signup_complete, activated_user, exam_selected, explanation_viewed) shipped 2026-03-17 — see web/docs/event-definitions.md. Google Ads + Meta Pixel CompleteRegistration fire inside trackSignupComplete. LinkedIn Insight Tag installed for pageview attribution. UTMs captured on LandingShell mount, persist via sessionStorage through signup → quiz. Optional follow-up: lintrk track call for LinkedIn Campaign Manager conversion (only matters if/when LinkedIn paid ads run)."
+      "note": "Audit 2026-05-12: GA4 funnel (landing_page_view, cta_click, signup_complete, activated_user, exam_selected, explanation_viewed) shipped 2026-03-17 \u2014 see web/docs/event-definitions.md. Google Ads + Meta Pixel CompleteRegistration fire inside trackSignupComplete. LinkedIn Insight Tag installed for pageview attribution. UTMs captured on LandingShell mount, persist via sessionStorage through signup \u2192 quiz. Optional follow-up: lintrk track call for LinkedIn Campaign Manager conversion (only matters if/when LinkedIn paid ads run)."
     },
     {
       "id": "testimonial-prompt",
@@ -404,14 +406,14 @@
       "owner": "Engineering + Marketing",
       "status": "done",
       "due": "2026-05-25",
-      "note": "Closed 2026-08-07. Shipped in two parts, both live in prod on exam-coach-ai-platform: (1) scheduleOnboardingDrip — Day 4-7 trial-onboarding emails on users/{uid} create, firstName-personalized, Resend scheduled_at API. (2) sendLeadMagnetWelcome — Day 0/2/5 sequence on leadCaptures/{id} create, fully exam-cluster-specific copy (PMP / Sec+ / SHRM-CP each get their own insight + fee + magnet link). RESEND_API_KEY provisioned 2026-08-06, domain cipherexam.com verified (DKIM/SPF/MX via GoDaddy Domain Connect). End-to-end DELIVERY VERIFIED 2026-08-07: test capture produced Day 0 email Delivered + Day 2/5 Scheduled in the Resend log. A predeploy guard (check-email-config.mjs) now blocks any deploy that would ship the senders without a key — the original silent no-op cannot recur. Honest scope note: the trial drip personalizes by firstName, not per-exam merge tags; per-exam personalization exists in the lead-magnet welcome. If per-exam trial-drip copy is wanted, that is a new small ticket, not a blocker — email infrastructure itself is fully operational."
+      "note": "Closed 2026-08-07. Shipped in two parts, both live in prod on exam-coach-ai-platform: (1) scheduleOnboardingDrip \u2014 Day 4-7 trial-onboarding emails on users/{uid} create, firstName-personalized, Resend scheduled_at API. (2) sendLeadMagnetWelcome \u2014 Day 0/2/5 sequence on leadCaptures/{id} create, fully exam-cluster-specific copy (PMP / Sec+ / SHRM-CP each get their own insight + fee + magnet link). RESEND_API_KEY provisioned 2026-08-06, domain cipherexam.com verified (DKIM/SPF/MX via GoDaddy Domain Connect). End-to-end DELIVERY VERIFIED 2026-08-07: test capture produced Day 0 email Delivered + Day 2/5 Scheduled in the Resend log. A predeploy guard (check-email-config.mjs) now blocks any deploy that would ship the senders without a key \u2014 the original silent no-op cannot recur. Honest scope note: the trial drip personalizes by firstName, not per-exam merge tags; per-exam personalization exists in the lead-magnet welcome. If per-exam trial-drip copy is wanted, that is a new small ticket, not a blocker \u2014 email infrastructure itself is fully operational."
     }
   ],
   "decisions": [
     {
       "date": "2026-05-11",
       "what": "Tier 1 = PMP / Security+ / SHRM-CP",
-      "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN §4.4 on Sec+ priority"
+      "why": "Multi-criteria scoring; disagreed with MARKETING-PLAN \u00a74.4 on Sec+ priority"
     },
     {
       "date": "2026-05-11",
@@ -426,11 +428,11 @@
     {
       "date": "2026-05-11",
       "what": "Day 2 email reframed around \"Exam Lens\" (single umbrella term across all certs, replaces cert-specific names in marketing copy)",
-      "why": "Confirmed by Dave; departure from MARKETING-PLAN §9.2 literal text"
+      "why": "Confirmed by Dave; departure from MARKETING-PLAN \u00a79.2 literal text"
     },
     {
       "date": "2026-05-11",
-      "what": "Cornerstone blog holds for Monday 2026-05-18 — NOT publishing early",
+      "what": "Cornerstone blog holds for Monday 2026-05-18 \u2014 NOT publishing early",
       "why": "Publishing today breaks the week-1 social drumbeat that anchors on the cornerstone-launch beat"
     },
     {
@@ -441,11 +443,11 @@
     {
       "date": "2026-05-12",
       "what": "Deferred Resend onboarding drip automation to Week 2. Week 1 uses manual founder 1:1 emails (templates in cipher-marketing/07-founder-1to1-emails.md).",
-      "why": "At <25 activated users, founder emails > automation. Functions infrastructure was partially gitignored in this repo (package.json missing, deploy script excludes functions) — 2-3h work with risk of breaking 50 deployed functions. Not worth it pre-launch."
+      "why": "At <25 activated users, founder emails > automation. Functions infrastructure was partially gitignored in this repo (package.json missing, deploy script excludes functions) \u2014 2-3h work with risk of breaking 50 deployed functions. Not worth it pre-launch."
     },
     {
       "date": "2026-05-12",
-      "what": "Week 1 (2026-05-18 → 05-22) is PMP-only. Security+ and SHRM-CP drafts deferred to Weeks 2 and 3.",
+      "what": "Week 1 (2026-05-18 \u2192 05-22) is PMP-only. Security+ and SHRM-CP drafts deferred to Weeks 2 and 3.",
       "why": "Concentration over spread. 6 posts across one exam cluster gives a cleaner signal on which hook converts (tool-builder vs why-B-is-a-trap vs domain-weights) than 6 posts fragmented across 3 audiences. Once we see what works for PMP, we replicate the winning hook structure for Sec+ in Week 2 and SHRM-CP in Week 3. Also lower cognitive load on a solo founder running first-week ops."
     },
     {
@@ -455,13 +457,13 @@
     },
     {
       "date": "2026-05-12",
-      "what": "All 6 Week 1 PMP drafts flipped draft → scheduled in posts.json.",
-      "why": "Copy reviewed for voice (no first-person exam-taking, no 'cadence', max one 'cipher' pun per asset — none of the 6 used the pun). Hooks differentiated across the three days. Ready for Dave's final voice sign-off before publish."
+      "what": "All 6 Week 1 PMP drafts flipped draft \u2192 scheduled in posts.json.",
+      "why": "Copy reviewed for voice (no first-person exam-taking, no 'cadence', max one 'cipher' pun per asset \u2014 none of the 6 used the pun). Hooks differentiated across the three days. Ready for Dave's final voice sign-off before publish."
     },
     {
       "date": "2026-05-12",
       "what": "Dropped Publer setup entirely. Deferred Buffer setup (08-buffer-setup-sunday.md). Week 1 will be manually posted Mon/Wed/Fri.",
-      "why": "Six posts across one week is low enough volume that a scheduler is overhead, not leverage. Manual posting also keeps Dave inside the post UI on launch morning — he sees engagement, comments, edge cases in real time, which matters more in Week 1 than convenience. Replaced with three phone alarms at 08:00 ET on Mon/Wed/Fri. Buffer reference doc left in place with a deferred-header note; revisit when posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
+      "why": "Six posts across one week is low enough volume that a scheduler is overhead, not leverage. Manual posting also keeps Dave inside the post UI on launch morning \u2014 he sees engagement, comments, edge cases in real time, which matters more in Week 1 than convenience. Replaced with three phone alarms at 08:00 ET on Mon/Wed/Fri. Buffer reference doc left in place with a deferred-header note; revisit when posting volume exceeds ~15 posts/week or Dave is unavailable on a posting morning."
     },
     {
       "date": "2026-08-08",
@@ -471,17 +473,17 @@
     {
       "date": "2026-08-08",
       "what": "LinkedIn is the ONLY CipherExam distribution channel 08-07 -> 09-05, with three explicit exemptions.",
-      "why": "Board P0. Exempt and on record: (1) Sat 08-08 one-time directory listings; (2) Reddit comment-only warmup from 08-24 + the week-3 r/SideProject post; (3) Tue 08-25 deadline-shield Show HN — a different product launch, zero CipherExam links."
+      "why": "Board P0. Exempt and on record: (1) Sat 08-08 one-time directory listings; (2) Reddit comment-only warmup from 08-24 + the week-3 r/SideProject post; (3) Tue 08-25 deadline-shield Show HN \u2014 a different product launch, zero CipherExam links."
     },
     {
       "date": "2026-08-08",
-      "what": "Magnet-drop posts begin Wed 08-12 — the first post ever to promote a lead magnet.",
+      "what": "Magnet-drop posts begin Wed 08-12 \u2014 the first post ever to promote a lead magnet.",
       "why": "Three magnets have been built and never promoted; leadCaptures has 0 documents all-time. This is the single largest unexploited asset in the funnel."
     },
     {
       "date": "2026-08-08",
       "what": "deadline-shield enters the plan as the recurring-revenue second product: go-live checklist week 2, Show HN Tue 08-25.",
-      "why": "Its full Stripe path (SDK, create-checkout, webhook) is already built and deployed at $29/$59/$149. Charge settlement must be proven with a trial_period_days:0 test — the 14-day card-required trial settles nothing to refund."
+      "why": "Its full Stripe path (SDK, create-checkout, webhook) is already built and deployed at $29/$59/$149. Charge settlement must be proven with a trial_period_days:0 test \u2014 the 14-day card-required trial settles nothing to refund."
     },
     {
       "date": "2026-08-08",
@@ -491,7 +493,7 @@
     {
       "date": "2026-08-08",
       "what": "Scoreboard = Stripe Dashboard live mode + the board N/10 paying-users number. Admin-Core RevenueDashboard is banned as a revenue source.",
-      "why": "RevenueDashboard.tsx:11 hardcodes PRICE_PER_USER = 9.99, which matches no product — every MRR figure it has ever shown is wrong by construction."
+      "why": "RevenueDashboard.tsx:11 hardcodes PRICE_PER_USER = 9.99, which matches no product \u2014 every MRR figure it has ever shown is wrong by construction."
     },
     {
       "date": "2026-08-08",
@@ -501,29 +503,29 @@
     {
       "date": "2026-08-12",
       "what": "LinkedIn CTA goes in the first comment, never the post body. Gated posts send ~19:20 MT.",
-      "why": "Measured across the full graded corpus: 5 posts with a body CTA drew 0 comments between them (May and August, four hooks, both slots); the 3 without drew 7. Separately, every comment this account has ever received came from an evening send — morning is 0-for-5 across 5 posts. The best post on record (li-thu-2026-08-07-sponsor-scenario, 2,134 impressions / 466 reached / 6 comments) went out Friday 19:25 MT. Honest limit: 6 of the 7 lifetime comments came from that one gated post, so evening and format are still tangled; li-mon-2026-08-10-bizenv-reprice on Fri 08-14 19:20 MT matches its day and hour precisely so format is the only variable left."
+      "why": "Measured across the full graded corpus: 5 posts with a body CTA drew 0 comments between them (May and August, four hooks, both slots); the 3 without drew 7. Separately, every comment this account has ever received came from an evening send \u2014 morning is 0-for-5 across 5 posts. The best post on record (li-thu-2026-08-07-sponsor-scenario, 2,134 impressions / 466 reached / 6 comments) went out Friday 19:25 MT. Honest limit: 6 of the 7 lifetime comments came from that one gated post, so evening and format are still tangled; li-mon-2026-08-10-bizenv-reprice on Fri 08-14 19:20 MT matches its day and hour precisely so format is the only variable left."
     }
   ],
   "dailyLog": [
     {
       "date": "2026-06-01",
-      "entry": "Competitor intel refreshed (monthly automated run). Rewrote all three competitor_intel docs in Firestore — battlecard (loop-vs-lens 3-point + 'exam reasoning trainer' category angle + 3 ad hooks), Pocket Prep deepdive (explanation-ceiling wedge + 'dissect the trap' organic play), landscape (top-5 ranked; Brain Sensei elevated to a PMP-specific HIGH threat alongside Pocket Prep; SHRM-CP flagged as least-contested reasoning cluster). Recurring action across all three: standardize a reusable 'reasoning trainer vs. [their format]' comparison block on the 3 Tier-1 LPs. Live gap surfaced: SHRM-CP lead-magnet PDF still 404s and is blocking that funnel."
+      "entry": "Competitor intel refreshed (monthly automated run). Rewrote all three competitor_intel docs in Firestore \u2014 battlecard (loop-vs-lens 3-point + 'exam reasoning trainer' category angle + 3 ad hooks), Pocket Prep deepdive (explanation-ceiling wedge + 'dissect the trap' organic play), landscape (top-5 ranked; Brain Sensei elevated to a PMP-specific HIGH threat alongside Pocket Prep; SHRM-CP flagged as least-contested reasoning cluster). Recurring action across all three: standardize a reusable 'reasoning trainer vs. [their format]' comparison block on the 3 Tier-1 LPs. Live gap surfaced: SHRM-CP lead-magnet PDF still 404s and is blocking that funnel."
     },
     {
       "date": "2026-05-28",
-      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name — Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison — measure activation gate movement from 0/25 over next 48 hrs."
+      "entry": "Board todo #1, #6, #7 SHIPPED. PMI-safe testimonial strip live on /lp/pmp (institutional credential only, no contributor name \u2014 Playwright-enforced). Full-attribution strip live on /lp/security-plus and /lp/shrm-cp. Free-tier daily cap loosened to 20/day during the 7-day taste window post-signup OR post-trial-end (frontend SubscriptionContext + backend validateQuizStart, mirrored helpers in web/src/utils/freeTier.ts and functions/src/freeTier.ts). Daily funnel diagnostic at /funnel.html with auto-bottleneck detection. 3 deploys: hosting:production (Cipher), functions:validateQuizStart (Cipher), hosting (cipher-marketing). MARKER for pre/post activation-rate comparison \u2014 measure activation gate movement from 0/25 over next 48 hrs."
     },
     {
       "date": "2026-05-11",
-      "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified — clearance work this week before Week 1 starts 2026-05-18."
+      "entry": "Multi-page site shipped. Daily-log JSON layer added. Engineering blockers identified \u2014 clearance work this week before Week 1 starts 2026-05-18."
     },
     {
       "date": "2026-05-11",
-      "entry": "Tier 1 LP work shipped to cipher product repo as cipher#6 (3 LP components + routes + 3 shared sub-components) and cipher#7 (login ?exam= pre-select reader, 25-line surgical change). Both PRs open with test plans, awaiting Dave's review + merge + deploy. Blocker lps-deployed moved pending → in-progress."
+      "entry": "Tier 1 LP work shipped to cipher product repo as cipher#6 (3 LP components + routes + 3 shared sub-components) and cipher#7 (login ?exam= pre-select reader, 25-line surgical change). Both PRs open with test plans, awaiting Dave's review + merge + deploy. Blocker lps-deployed moved pending \u2192 in-progress."
     },
     {
       "date": "2026-05-11",
-      "entry": "Daily walkthrough mode added to cipher-exam-marketing agent — triggered by phrases like 'walk me through today' / 'what's on today' / 'morning briefing'. Agent now consolidates calendar + state + recommended creative into a guided per-task flow instead of pointing at multiple files."
+      "entry": "Daily walkthrough mode added to cipher-exam-marketing agent \u2014 triggered by phrases like 'walk me through today' / 'what's on today' / 'morning briefing'. Agent now consolidates calendar + state + recommended creative into a guided per-task flow instead of pointing at multiple files."
     },
     {
       "date": "2026-05-12",
@@ -531,7 +533,7 @@
     },
     {
       "date": "2026-05-12",
-      "entry": "conversion-events blocker audited and marked done. All GA4/Meta/Google Ads/LinkedIn Insight wiring shipped back on 2026-03-17 — verified via grep + web/docs/event-definitions.md. No code changes needed for Week 1 attribution. LinkedIn lintrk conversion id stub queued as optional add-on."
+      "entry": "conversion-events blocker audited and marked done. All GA4/Meta/Google Ads/LinkedIn Insight wiring shipped back on 2026-03-17 \u2014 verified via grep + web/docs/event-definitions.md. No code changes needed for Week 1 attribution. LinkedIn lintrk conversion id stub queued as optional add-on."
     },
     {
       "date": "2026-05-12",
@@ -543,55 +545,55 @@
     },
     {
       "date": "2026-05-12",
-      "entry": "resend-sequence blocker deferred to Week 2 (due 2026-05-25). Week 1 strategy switched to manual founder 1:1 emails — 3 templates (Day 0 / Day 3 / Day 6) written to cipher-marketing/07-founder-1to1-emails.md. Brad updated to surface signup-by-signup recommendations during morning briefings."
+      "entry": "resend-sequence blocker deferred to Week 2 (due 2026-05-25). Week 1 strategy switched to manual founder 1:1 emails \u2014 3 templates (Day 0 / Day 3 / Day 6) written to cipher-marketing/07-founder-1to1-emails.md. Brad updated to surface signup-by-signup recommendations during morning briefings."
     },
     {
       "date": "2026-05-12",
-      "entry": "Morning briefing continuation: no new signups since yesterday. Moved to Week 1 post-draft review (6 drafts in posts.json — 3 LinkedIn / 3 X, all PMP-focused, scheduled Mon/Wed/Fri 2026-05-18 → 2026-05-22)."
+      "entry": "Morning briefing continuation: no new signups since yesterday. Moved to Week 1 post-draft review (6 drafts in posts.json \u2014 3 LinkedIn / 3 X, all PMP-focused, scheduled Mon/Wed/Fri 2026-05-18 \u2192 2026-05-22)."
     },
     {
       "date": "2026-05-12",
-      "entry": "Week 1 locked as PMP-only — Sec+/SHRM-CP deferred to Weeks 2/3. Decision logged for hook-isolation rationale: 6 posts on one cluster gives cleaner signal on which framing converts. Once Week 1 names a winning hook, replicate it for Sec+ in Week 2."
+      "entry": "Week 1 locked as PMP-only \u2014 Sec+/SHRM-CP deferred to Weeks 2/3. Decision logged for hook-isolation rationale: 6 posts on one cluster gives cleaner signal on which framing converts. Once Week 1 names a winning hook, replicate it for Sec+ in Week 2."
     },
     {
       "date": "2026-05-12",
-      "entry": "Locked posting times for all 6 Week 1 PMP posts: LinkedIn 08:00 ET, X 09:00 ET, Mon (5/18) / Wed (5/20) / Fri (5/22). Flipped all 6 posts.json entries from status:draft → status:scheduled. Added scheduledTime (ISO UTC) and scheduledTimeLocal fields to each. Awaiting Dave's final voice sign-off on copy before publish."
+      "entry": "Locked posting times for all 6 Week 1 PMP posts: LinkedIn 08:00 ET, X 09:00 ET, Mon (5/18) / Wed (5/20) / Fri (5/22). Flipped all 6 posts.json entries from status:draft \u2192 status:scheduled. Added scheduledTime (ISO UTC) and scheduledTimeLocal fields to each. Awaiting Dave's final voice sign-off on copy before publish."
     },
     {
       "date": "2026-05-12",
-      "entry": "Pre-launch status review (T-6 days). Code-shipped blockers confirmed done: 3 Tier 1 LPs deployed, LinkedIn Insight Tag installed (cipher#9 stub for conversion id), testimonial prompt live at Q10 (cipher#10). Resend Day 0 + suppression list confirmed N/A for Week 1 — folded into deferred resend-sequence blocker; Week 1 uses founder 1:1 emails instead. Runtime verification still pending on 4 items: widget render under load, GA4 signup_complete fires end-to-end, Meta CAPI server-side mirror, UTM custom dimensions visible in GA4 reports. All 4 are 'code shipped, awaiting first live signups to verify' — cannot fully validate until traffic hits post-launch."
+      "entry": "Pre-launch status review (T-6 days). Code-shipped blockers confirmed done: 3 Tier 1 LPs deployed, LinkedIn Insight Tag installed (cipher#9 stub for conversion id), testimonial prompt live at Q10 (cipher#10). Resend Day 0 + suppression list confirmed N/A for Week 1 \u2014 folded into deferred resend-sequence blocker; Week 1 uses founder 1:1 emails instead. Runtime verification still pending on 4 items: widget render under load, GA4 signup_complete fires end-to-end, Meta CAPI server-side mirror, UTM custom dimensions visible in GA4 reports. All 4 are 'code shipped, awaiting first live signups to verify' \u2014 cannot fully validate until traffic hits post-launch."
     },
     {
       "date": "2026-05-12",
-      "entry": "Dashboard pre-launch task list rewired to read from campaign-state.json → preLaunchChecklist instead of the flat hardcoded array in site.js. Each of the 9 §7 items now carries status (done / na / pending-runtime) + a note explaining why. Renderer groups by status, shows a summary line ('5 of 9 done · 4 awaiting Day-1 verification'), and disables checkboxes for done/N/A items (those are server-driven, not user-driven). Source-doc footnote on today.html updated to point at campaign-state.json. Rebuild via site/inline-assets.mjs + build-app.mjs."
+      "entry": "Dashboard pre-launch task list rewired to read from campaign-state.json \u2192 preLaunchChecklist instead of the flat hardcoded array in site.js. Each of the 9 \u00a77 items now carries status (done / na / pending-runtime) + a note explaining why. Renderer groups by status, shows a summary line ('5 of 9 done \u00b7 4 awaiting Day-1 verification'), and disables checkboxes for done/N/A items (those are server-driven, not user-driven). Source-doc footnote on today.html updated to point at campaign-state.json. Rebuild via site/inline-assets.mjs + build-app.mjs."
     },
     {
       "date": "2026-05-12",
-      "entry": "Day-1 pre-flight verification complete. All 3 LPs: Try-a-Question widget renders + reveals correctly. Test signup confirmed signup_complete fires with full UTM payload (preflight/monday_launch_check/brad_dryrun) — visible in /verify-events tab. Meta Pixel CompleteRegistration + Google Ads conversion both fired. Bug caught and fixed: testimonial prompt was dying at end-of-10-question session (Quiz unmount). Shipped fix as cipher#11 — hoisted prompt to App level via localStorage signal. Retested: rating 4 + text + consent → testimonials/{uid} doc created with all 14 fields populated correctly. Test account + user doc cleaned up after."
+      "entry": "Day-1 pre-flight verification complete. All 3 LPs: Try-a-Question widget renders + reveals correctly. Test signup confirmed signup_complete fires with full UTM payload (preflight/monday_launch_check/brad_dryrun) \u2014 visible in /verify-events tab. Meta Pixel CompleteRegistration + Google Ads conversion both fired. Bug caught and fixed: testimonial prompt was dying at end-of-10-question session (Quiz unmount). Shipped fix as cipher#11 \u2014 hoisted prompt to App level via localStorage signal. Retested: rating 4 + text + consent \u2192 testimonials/{uid} doc created with all 14 fields populated correctly. Test account + user doc cleaned up after."
     },
     {
       "date": "2026-05-12",
-      "entry": "preLaunchChecklist updated: widget-render, ga4-signup-event, utm-attribution moved to done after live verification. meta-capi moved to na (not running paid Meta yet). Dashboard now shows 6 done / 0 awaiting / 3 N/A — all actionable items cleared pre-launch."
+      "entry": "preLaunchChecklist updated: widget-render, ga4-signup-event, utm-attribution moved to done after live verification. meta-capi moved to na (not running paid Meta yet). Dashboard now shows 6 done / 0 awaiting / 3 N/A \u2014 all actionable items cleared pre-launch."
     },
     {
       "date": "2026-05-12",
-      "entry": "Scheduler tooling dropped for Week 1. Publer setup removed entirely (no task ever existed in checklist — confirmed). Buffer setup deferred — 08-buffer-setup-sunday.md kept as future reference with a deferred-header note added. New checklist item added: phone-alarms-set (pending) — three recurring alarms at 08:00 ET on Mon/Wed/Fri. Dashboard now shows 6 done / 1 pending / 3 N/A."
+      "entry": "Scheduler tooling dropped for Week 1. Publer setup removed entirely (no task ever existed in checklist \u2014 confirmed). Buffer setup deferred \u2014 08-buffer-setup-sunday.md kept as future reference with a deferred-header note added. New checklist item added: phone-alarms-set (pending) \u2014 three recurring alarms at 08:00 ET on Mon/Wed/Fri. Dashboard now shows 6 done / 1 pending / 3 N/A."
     },
     {
       "date": "2026-05-18",
-      "entry": "LAUNCH DAY: Monday LinkedIn launch post went live. Post 'li-mon-2026-05-11-launch' (tool-builder hook, PMP focus) — scheduled 10:30 MT via LinkedIn native scheduler. Video: launch-teaser-pmp.mp4 (1:1). URL: https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/ — posts.json status flipped scheduled → posted. Pre-launch hiccups resolved: (1) Remotion videos not yet rendered (ran npm install + npm run render:pmp — all 3 PMP videos now in videos/out/), (2) original post draft had file path pasted into body text instead of attached as media (caught + corrected pre-publish), (3) X posts updated with UTM URLs in visible body (was attribution gap), (4) hashtags added to all 6 Week 1 posts (#PMP #ProjectManagement #PMPExam on LinkedIn, #PMP on X). New dashboard tab built: Schedule (MT times, Copy text / Copy video path / Tell Brad I posted buttons). Awaiting: X Monday post still needs scheduling (suggested 11:30 MT). First grading window for Monday posts opens Wed 2026-05-20."
+      "entry": "LAUNCH DAY: Monday LinkedIn launch post went live. Post 'li-mon-2026-05-11-launch' (tool-builder hook, PMP focus) \u2014 scheduled 10:30 MT via LinkedIn native scheduler. Video: launch-teaser-pmp.mp4 (1:1). URL: https://www.linkedin.com/feed/update/urn:li:activity:7462177696664420354/ \u2014 posts.json status flipped scheduled \u2192 posted. Pre-launch hiccups resolved: (1) Remotion videos not yet rendered (ran npm install + npm run render:pmp \u2014 all 3 PMP videos now in videos/out/), (2) original post draft had file path pasted into body text instead of attached as media (caught + corrected pre-publish), (3) X posts updated with UTM URLs in visible body (was attribution gap), (4) hashtags added to all 6 Week 1 posts (#PMP #ProjectManagement #PMPExam on LinkedIn, #PMP on X). New dashboard tab built: Schedule (MT times, Copy text / Copy video path / Tell Brad I posted buttons). Awaiting: X Monday post still needs scheduling (suggested 11:30 MT). First grading window for Monday posts opens Wed 2026-05-20."
     },
     {
       "date": "2026-05-18",
-      "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid — created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled → posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post — channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
+      "entry": "LAUNCH DAY (Channel 2): X Monday launch post went live at 11:30 MT. Post 'x-mon-2026-05-11-launch' on new account @QuillmanDavid \u2014 created today after discovering @DavidQuillman/@DaveQuillman were taken. Same video (launch-teaser-pmp.mp4 1:1), same tool-builder hook, X-shortened copy with #PMP hashtag and UTM-tagged URL inline. URL: https://x.com/QuillmanDavid/status/2056430150435361265. Posts.json: scheduledTime updated to 17:30 UTC (11:30 MT), status flipped scheduled \u2192 posted, channelHandle field added. Expectation-setting: 0-follower account means very low initial reach on this first X post \u2014 channel is being established for compounding growth over the campaign. Header image still pending (Nano Banana Pro generated 2 variants, Dave choosing). Both channels now have Monday content live + cross-attribution working via per-channel UTMs."
     },
     {
       "date": "2026-05-26",
-      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each — Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
+      "entry": "Week 2 Security+ posts (6) approved and flipped to scheduled. Canva visuals generated for Fri + Mon LinkedIn candidates (4 design variants each \u2014 Dave to pick preferred before final export). Trend-scout angle (701->801 bridge) applied to Wed posts. Lessons file populated from Week 1 grading synthesis."
     },
     {
       "date": "2026-08-01",
-      "entry": "Competitor intel refreshed (monthly automated run). Two material findings. (1) STALE PREMISE CORRECTED: Pocket Prep ships detailed expert-written explanations with textbook references — our file claimed they had none. Any copy asserting competitors don't explain answers is factually false; the surviving wedge is DIAGNOSIS (per-user thinking-traps + Bloom's classification), not the existence of explanations. (2) 'No AI layer' is dead as a category assumption — added Mindirus (AI coaching + spaced repetition, 16 exams incl. CISSP and AWS, 51k+ questions) and an AI-tutor app cohort (FlashGenius, 'PMP Exam Prep 2026: AI Tutor'). 'AI-powered' is now the category description, not our differentiator. All three reports regenerated to site/data/competitor-intel/*.md. BLOCKED: Firestore push failed — firestore.rules now requires a marketingAdmin claim (commit e7f3f4b, 2026-07-29), so both the API-key REST path and firebase-admin ADC return PERMISSION_DENIED. competitor_intel/* docs and campaign/competitors are NOT updated in Firestore; the dashboard still shows last month's reports. Needs a service-account key (GOOGLE_APPLICATION_CREDENTIALS) with Cloud Datastore User, then: node scripts/write-competitor-intel.mjs && node scripts/push-competitors-doc.mjs"
+      "entry": "Competitor intel refreshed (monthly automated run). Two material findings. (1) STALE PREMISE CORRECTED: Pocket Prep ships detailed expert-written explanations with textbook references \u2014 our file claimed they had none. Any copy asserting competitors don't explain answers is factually false; the surviving wedge is DIAGNOSIS (per-user thinking-traps + Bloom's classification), not the existence of explanations. (2) 'No AI layer' is dead as a category assumption \u2014 added Mindirus (AI coaching + spaced repetition, 16 exams incl. CISSP and AWS, 51k+ questions) and an AI-tutor app cohort (FlashGenius, 'PMP Exam Prep 2026: AI Tutor'). 'AI-powered' is now the category description, not our differentiator. All three reports regenerated to site/data/competitor-intel/*.md. BLOCKED: Firestore push failed \u2014 firestore.rules now requires a marketingAdmin claim (commit e7f3f4b, 2026-07-29), so both the API-key REST path and firebase-admin ADC return PERMISSION_DENIED. competitor_intel/* docs and campaign/competitors are NOT updated in Firestore; the dashboard still shows last month's reports. Needs a service-account key (GOOGLE_APPLICATION_CREDENTIALS) with Cloud Datastore User, then: node scripts/write-competitor-intel.mjs && node scripts/push-competitors-doc.mjs"
     },
     {
       "date": "2026-08-07",
@@ -599,11 +601,11 @@
     },
     {
       "date": "2026-08-07",
-      "entry": "FIRESTORE SYNC UNBLOCKED — the 2026-08-01 'BLOCKED' entry above is now resolved, and two of its claims were wrong. (1) Script writes were never blocked by a missing credential: a valid cipher-marketing service-account key exists at scripts/cipher-marketing-key.json (gitignored, untracked) and FIREBASE_SERVICE_ACCOUNT points at it. The real bug was that write-competitor-intel.mjs and push-competitors-doc.mjs did their own credential resolution — the first read ONLY GOOGLE_APPLICATION_CREDENTIALS (which on this machine points at a DIFFERENT project, C:\\secrets\\MSS), the second still PATCHed the REST API with a bare web API key. Both authenticated as the wrong principal and got PERMISSION_DENIED, which is how the Aug 1 intel refresh was silently lost. Both now use scripts/lib/firestore-access.mjs, which prefers FIREBASE_SERVICE_ACCOUNT and hard-fails on a project mismatch instead of guessing. The Aug 1 intel is now actually live: competitor_intel/* refreshed (landscape carries the Mindirus/FlashGenius findings) and campaign/competitors went from 4 competitors dated 07-29 to 13 dated 08-01. (2) The stale-post backlog was ALREADY cleared in Firestore before this session — campaign/posts _meta.lastUpdatedBy is 'brad-stale-skip' with updateTime 2026-08-07T16:09:46Z and all 6 posts carry the intended statuses. Brad's write succeeded; Brad was blocked while trying to VERIFY it and reported failure, then reported drift figures (12 remote vs 20 local, 6 stale) that do not match reality (17 remote, 18 local, 0 stale). Do not trust that report. New: scripts/check-firestore-access.mjs answers all of this in one read-only command — run it before diagnosing any sync problem. STILL ON THE DEAD API-KEY REST PATH against cipher-marketing-daveq, not yet migrated: push-board-priorities.mjs, rebuild-on-data-change.mjs, and two one-off regrade-*.mjs scripts. They will 403 when run. NOT affected: pull-testimonials.mjs — it reads published_testimonials from a DIFFERENT project (exam-coach-ai-platform) whose collection is public-read, verified HTTP 200 on 2026-08-07; it currently returns zero docs because nothing is published, which is a content state, not a permissions failure."
+      "entry": "FIRESTORE SYNC UNBLOCKED \u2014 the 2026-08-01 'BLOCKED' entry above is now resolved, and two of its claims were wrong. (1) Script writes were never blocked by a missing credential: a valid cipher-marketing service-account key exists at scripts/cipher-marketing-key.json (gitignored, untracked) and FIREBASE_SERVICE_ACCOUNT points at it. The real bug was that write-competitor-intel.mjs and push-competitors-doc.mjs did their own credential resolution \u2014 the first read ONLY GOOGLE_APPLICATION_CREDENTIALS (which on this machine points at a DIFFERENT project, C:\\secrets\\MSS), the second still PATCHed the REST API with a bare web API key. Both authenticated as the wrong principal and got PERMISSION_DENIED, which is how the Aug 1 intel refresh was silently lost. Both now use scripts/lib/firestore-access.mjs, which prefers FIREBASE_SERVICE_ACCOUNT and hard-fails on a project mismatch instead of guessing. The Aug 1 intel is now actually live: competitor_intel/* refreshed (landscape carries the Mindirus/FlashGenius findings) and campaign/competitors went from 4 competitors dated 07-29 to 13 dated 08-01. (2) The stale-post backlog was ALREADY cleared in Firestore before this session \u2014 campaign/posts _meta.lastUpdatedBy is 'brad-stale-skip' with updateTime 2026-08-07T16:09:46Z and all 6 posts carry the intended statuses. Brad's write succeeded; Brad was blocked while trying to VERIFY it and reported failure, then reported drift figures (12 remote vs 20 local, 6 stale) that do not match reality (17 remote, 18 local, 0 stale). Do not trust that report. New: scripts/check-firestore-access.mjs answers all of this in one read-only command \u2014 run it before diagnosing any sync problem. STILL ON THE DEAD API-KEY REST PATH against cipher-marketing-daveq, not yet migrated: push-board-priorities.mjs, rebuild-on-data-change.mjs, and two one-off regrade-*.mjs scripts. They will 403 when run. NOT affected: pull-testimonials.mjs \u2014 it reads published_testimonials from a DIFFERENT project (exam-coach-ai-platform) whose collection is public-read, verified HTTP 200 on 2026-08-07; it currently returns zero docs because nothing is published, which is a content state, not a permissions failure."
     },
     {
       "date": "2026-08-07",
-      "entry": "DECISION (Dave): X standalone posts PAUSED. Evidence: every X post ever published landed 2-39 impressions (Aug 3 post: 9 impressions, all 7 engagements were detail-expands); account is cold-start, so standalone reach is ~zero regardless of copy. New X strategy is replies-only — ~10 min/day of useful answers in large PMP/cert threads, no links, no pitch. Resume standalone X drafting when the account clears ~100 followers or a reply thread demonstrably drives profile visits. Encoded in draft-week-posts (do-not-draft-X rule). LinkedIn cadence unaffected: Mon/Wed/Fri, cap 3/exam/week combined across tracks."
+      "entry": "DECISION (Dave): X standalone posts PAUSED. Evidence: every X post ever published landed 2-39 impressions (Aug 3 post: 9 impressions, all 7 engagements were detail-expands); account is cold-start, so standalone reach is ~zero regardless of copy. New X strategy is replies-only \u2014 ~10 min/day of useful answers in large PMP/cert threads, no links, no pitch. Resume standalone X drafting when the account clears ~100 followers or a reply thread demonstrably drives profile visits. Encoded in draft-week-posts (do-not-draft-X rule). LinkedIn cadence unaffected: Mon/Wed/Fri, cap 3/exam/week combined across tracks."
     },
     {
       "date": "2026-08-08",
@@ -621,23 +623,23 @@
       },
       {
         "priority": "P0",
-        "text": "Concentrate on LinkedIn — right audience (PM/IT/HR/cert); grow from <500, route readers to the email list."
+        "text": "Concentrate on LinkedIn \u2014 right audience (PM/IT/HR/cert); grow from <500, route readers to the email list."
       },
       {
         "priority": "P0",
-        "text": "CipherExam: validate the Grand Slam Offer on 5 real PMP candidates (offer + frames already written → positioning/01-one-pager.md)."
+        "text": "CipherExam: validate the Grand Slam Offer on 5 real PMP candidates (offer + frames already written \u2192 positioning/01-one-pager.md)."
       },
       {
         "priority": "P0",
-        "text": "CipherExam: surface the real PMP-activation count now — the 06-30 binding gate needs it by ~07-29."
+        "text": "CipherExam: surface the real PMP-activation count now \u2014 the 06-30 binding gate needs it by ~07-29."
       },
       {
         "priority": "P1",
-        "text": "CipherExam: pick ONE distribution channel (r/PMP, r/CompTIA…) and run it 30 days."
+        "text": "CipherExam: pick ONE distribution channel (r/PMP, r/CompTIA\u2026) and run it 30 days."
       },
       {
         "priority": "P1",
-        "text": "Goal: CipherExam's first 10 paying users — make it the visible scoreboard."
+        "text": "Goal: CipherExam's first 10 paying users \u2014 make it the visible scoreboard."
       }
     ]
   },
@@ -665,7 +667,7 @@
       "examPasses": 6,
       "asOf": "2026-10-02"
     },
-    "ritual": "Monday 09:00 MT, 20 min, 8 steps -> one scoreboard.md row -> drafts that morning's scoreboard post (plan §4.4)",
+    "ritual": "Monday 09:00 MT, 20 min, 8 steps -> one scoreboard.md row -> drafts that morning's scoreboard post (plan \u00a74.4)",
     "bannedRevenueSource": "Admin-Core RevenueDashboard (hardcoded PRICE_PER_USER = 9.99)",
     "gates": [
       {
@@ -676,7 +678,7 @@
       {
         "date": "2026-08-11",
         "gate": "CAN-SPAM / emailOptOut compliance deploy",
-        "rule": "BLOCKING for the 08-12 magnet post — unsubscribe + postal address in every template, emailOptOut check in scheduleOnboardingDrip and sendLeadMagnetWelcome"
+        "rule": "BLOCKING for the 08-12 magnet post \u2014 unsubscribe + postal address in every template, emailOptOut check in scheduleOnboardingDrip and sendLeadMagnetWelcome"
       },
       {
         "date": "2026-08-14",
@@ -696,7 +698,7 @@
       {
         "date": "2026-08-28",
         "gate": "FIRST CHARGED DOLLAR",
-        "rule": "1 x $59 Exam Pass. If $0, continue unchanged — evaluate the mechanism 09-04, not the mission."
+        "rule": "1 x $59 Exam Pass. If $0, continue unchanged \u2014 evaluate the mechanism 09-04, not the mission."
       },
       {
         "date": "2026-09-04",
@@ -726,7 +728,7 @@
     ],
     "standingRules": [
       "No sales calls, cold calls, pitches, or cold DMs. Ever.",
-      "No X standalone posts (paused 2026-08-07) — reply-only until ~100 followers.",
+      "No X standalone posts (paused 2026-08-07) \u2014 reply-only until ~100 followers.",
       "No paid spend before 25 activated users, then $2/day retargeting maximum.",
       "No traffic to any product whose payment path cannot fulfill.",
       "No \"guaranteed pass\" language; no invented statistics; no revenue figures in public posts."

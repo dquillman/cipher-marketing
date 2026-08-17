@@ -136,7 +136,7 @@
     if (!container || !DATA) return;
     container.innerHTML = DATA.adRecords.map(function (item) {
       return '<article><strong>' + esc(item.count) + '</strong><b>' + esc(item.competitor) + '</b><p>' + esc(item.scope) + '</p>' +
-        '<p>' + esc(item.interpretation) + '</p><a href="' + esc(item.url) + '" target="_blank" rel="noopener">Open evidence ↗</a></article>';
+        '<p>' + esc(item.interpretation) + '</p><a href="' + esc(item.url) + '" target="outreachevidence" rel="noopener">Open evidence ↗</a></article>';
     }).join("");
   }
 
@@ -182,7 +182,7 @@
         '<div class="outreach-controls"><select aria-label="Outreach stage for ' + esc(target.name) + '" data-outreach-stage="' + esc(target.id) + '">' + options(current.stage) + '</select>' +
         '<button type="button" class="secondary" data-copy-draft="' + esc(target.id) + '">Copy draft</button>' +
         '<button type="button" class="secondary" data-copy-utm="' + esc(target.id) + '">Copy UTM</button>' +
-        '<a href="' + esc(target.contactUrl) + '" target="_blank" rel="noopener">Open contact ↗</a></div>' +
+        '<a href="' + esc(target.contactUrl) + '" target="outreachcontact" rel="noopener">Open contact ↗</a></div>' +
         '<div class="outreach-tracking">' + metricInput(target.id, "visits", "Visits", current.visits) + metricInput(target.id, "trials", "Trials", current.trials) +
         metricInput(target.id, "activations", "Activations", current.activations) + metricInput(target.id, "cost", "Cost $", current.cost) +
         '<label>First contact<input type="date" data-outreach-metric="firstContact" data-target="' + esc(target.id) + '" value="' + esc(current.firstContact || "") + '"></label></div>' +
