@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.22.1">
+<link rel="stylesheet" href="assets/outreach.css?v=1.23.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1188,6 +1188,55 @@ details[open] summary::before { transform: rotate(90deg); }
   .ap-row.ap-header { display: none; }
   .ap-meta { grid-column: 1 / -1; }
 }
+/* ---- Contact tracker (Today tab — per-person contacted/replied) ---- */
+.contact-tracker {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 0 0 28px;
+}
+.contact-tracker .ct-head {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.contact-tracker .ct-title {
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 1.02rem; font-weight: 800; margin: 0; color: var(--text);
+}
+.contact-tracker .ct-open {
+  font-size: 0.78rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  background: rgba(74,222,128,0.14); color: var(--good);
+  border: 1px solid rgba(74,222,128,0.35);
+}
+.contact-tracker .ct-sub { color: var(--muted); font-size: 0.85rem; margin: 0 0 12px; }
+.contact-tracker .ct-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 9px 0; border-top: 1px solid var(--border);
+}
+.contact-tracker .ct-label { color: var(--text); font-weight: 600; min-width: 140px; }
+.contact-tracker .ct-added { color: var(--muted); font-size: 0.78rem; }
+.contact-tracker .ct-toggle {
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--muted);
+  border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer;
+}
+.contact-tracker .ct-toggle.on {
+  border-color: rgba(74,222,128,0.45); background: rgba(74,222,128,0.10); color: var(--good);
+}
+.contact-tracker .ct-toggle:disabled { opacity: 0.6; cursor: default; }
+.contact-tracker .ct-add {
+  display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;
+}
+.contact-tracker .ct-add input {
+  flex: 1 1 220px; background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); border-radius: 6px; padding: 7px 10px; font-size: 0.88rem;
+}
+.contact-tracker .ct-add button {
+  background: var(--cyan, #22d3ee); color: #001423; border: 0; border-radius: 6px;
+  padding: 7px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+}
+.contact-tracker .ct-add button:disabled { opacity: 0.6; cursor: default; }
+.contact-tracker .ct-done-note { color: var(--muted); font-size: 0.8rem; font-style: italic; margin: 8px 0 0; }
 .command-center .cc-btn.cc-ack {
   background: var(--surface-2); color: var(--text);
   border: 1px solid var(--border);
@@ -1626,7 +1675,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.22.1</span>
+      <span class="version-bar" title="Dashboard version">v1.23.0</span>
     </div>
   </div>
 </nav>
@@ -1655,6 +1704,13 @@ function cipherHelp() {
     <div id="cc-action-detail"></div>
     <div class="cc-buttons" id="cc-buttons"></div>
   </div>
+
+  <!-- Contact tracker — per-person contacted/replied state for new signups.
+       Complements the funnel-signal card: the card says "someone arrived",
+       this panel tracks working each person until they have been contacted
+       and have replied. Data: campaign/state → contacts (map, field-path
+       writes only). Hidden when there are no contacts and no funnel signal. -->
+  <div class="contact-tracker" id="contact-tracker" style="display:none;"></div>
 
   <!-- Board priorities — read-only mirror of the CipherExam items from the
        monthly codeq-board cycle (campaign/state → boardPriorities, refreshed
@@ -6346,7 +6402,7 @@ document.addEventListener('cipher:state-updated', function () {
           ? '<div class="fn-revised">Heads up: at least one arrow came back <strong>lower</strong> than the acknowledged baseline. GA4 revises attribution after the fact, so the baseline may now overstate what you have actually seen. Check the user list directly rather than trusting the delta.</div>'
           : '') +
         '<div class="cc-detail-label" style="margin-top:14px;">Next step</div>' +
-        '<p style="margin:6px 0 0;color:var(--dim);">Open the Admin-Core user list and sort by join date — the new accounts are the most recent rows. Admin-Core is a separate Firebase project, so this dashboard cannot name them for you.</p>' +
+        '<p style="margin:6px 0 0;color:var(--dim);">Open the Admin-Core user list and sort by join date — the new accounts are the most recent rows. Admin-Core is a separate Firebase project, so this dashboard cannot name them for you. Log each person in the <strong>contact tracker</strong> below this card, then work them to a reply.</p>' +
         '<p style="margin:8px 0 0;color:var(--dim);font-size:0.85rem;">Reading the list: the Access column’s “Paid / Pro” is an <em>entitlement</em> label (what features an account gets), not a payment record — accounts marked TESTER, TRIAL, or COMPED have never been charged. The only counter that proves a paying user is Stripe itself (verified 2026-08-17: all 20 accounts unpaid, paying users = 0).</p>' +
         '<p style="margin:8px 0 0;"><a href="' + ADMIN_CORE_USERS_URL + '" target="admincore" rel="noopener">' +
           esc(ADMIN_CORE_USERS_URL) + ' &rarr;</a></p>',
@@ -6392,6 +6448,165 @@ document.addEventListener('cipher:state-updated', function () {
       ccToast('Could not save: ' + (err.message || 'unknown error'), true);
     });
   }
+
+  // ---- Contact tracker: per-person contacted/replied ----------------------
+  // The funnel card says "someone arrived"; this tracks working each person.
+  // Admin-Core is a separate Firebase project, so identities cannot be joined
+  // in code — Dave reads the user list there and logs each person here by
+  // whatever label identifies them (name, email, join date). Data lives in
+  // campaign/state → contacts, a map keyed by generated id; every write is a
+  // field-path update so it can never clobber the rest of the document.
+
+  function readContacts() {
+    var m = (window.__CAMPAIGN_STATE__ || {}).contacts;
+    if (!m || typeof m !== 'object' || Array.isArray(m)) return [];
+    return Object.keys(m).map(function (id) {
+      var c = m[id];
+      if (!c || typeof c !== 'object') return null;
+      return {
+        id: id,
+        label: String(c.label || '(unnamed)'),
+        addedAt: c.addedAt || null,
+        contacted: c.contacted || null,
+        replied: c.replied || null
+      };
+    }).filter(Boolean).sort(function (a, b) {
+      return String(b.addedAt || '').localeCompare(String(a.addedAt || ''));
+    });
+  }
+
+  function contactsOpenCount() {
+    return readContacts().filter(function (c) { return !c.replied; }).length;
+  }
+
+  function addContact(label, inputEl, btnEl) {
+    var db = window._cipherDb;
+    var trimmed = String(label || '').trim();
+    if (!trimmed) { ccToast('Type a name or email first.', true); return; }
+    if (!db) { ccToast('Live campaign data is unavailable.', true); return; }
+    if (btnEl) btnEl.disabled = true;
+    var id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36);
+    var patch = {
+      '_meta.lastUpdatedAt': new Date().toISOString(),
+      '_meta.lastUpdatedBy': 'dashboard add-contact'
+    };
+    patch['contacts.' + id] = { label: trimmed, addedAt: new Date().toISOString(), contacted: null, replied: null };
+    db.collection('campaign').doc('state').update(patch).then(function () {
+      if (inputEl) inputEl.value = '';
+      if (btnEl) btnEl.disabled = false;
+      ccToast('Added — mark contacted once you reach out.');
+    }).catch(function (err) {
+      if (btnEl) btnEl.disabled = false;
+      ccToast('Could not add: ' + (err.message || 'unknown error'), true);
+    });
+  }
+
+  function toggleContact(id, field, isOn, btnEl) {
+    var db = window._cipherDb;
+    if (!db) { ccToast('Live campaign data is unavailable.', true); return; }
+    if (!/^c[a-z0-9]+$/.test(id) || (field !== 'contacted' && field !== 'replied')) return;
+    if (btnEl) btnEl.disabled = true;
+    var patch = {
+      '_meta.lastUpdatedAt': new Date().toISOString(),
+      '_meta.lastUpdatedBy': 'dashboard contact-' + field
+    };
+    patch['contacts.' + id + '.' + field] = isOn ? null : new Date().toISOString();
+    db.collection('campaign').doc('state').update(patch).catch(function (err) {
+      if (btnEl) btnEl.disabled = false;
+      ccToast('Could not update: ' + (err.message || 'unknown error'), true);
+    });
+    // No optimistic render: the onSnapshot listener repaints on the ack.
+  }
+
+  function ctDate(iso) {
+    if (!iso) return '';
+    var t = new Date(iso);
+    if (isNaN(t.getTime())) return '';
+    return t.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  function renderContactTracker() {
+    var el = document.getElementById('contact-tracker');
+    if (!el) return;
+    var contacts = readContacts();
+    var sig = computeFunnelSignal();
+    var signalActive = sig.kind === 'activated' || sig.kind === 'signups';
+
+    // Hidden only when there is nothing to work AND nothing new arriving.
+    if (contacts.length === 0 && !signalActive) {
+      el.style.display = 'none';
+      el.innerHTML = '';
+      return;
+    }
+    el.style.display = 'block';
+
+    // reRender fires on every state sync and on a 5-minute timer, and this
+    // rebuild replaces innerHTML — carry a half-typed name (and focus) across
+    // the repaint or the form eats Dave's input mid-word.
+    var prevInput = document.getElementById('ct-add-input');
+    var pendingText = prevInput ? prevInput.value : '';
+    var hadFocus = !!prevInput && document.activeElement === prevInput;
+
+    var open = contacts.filter(function (c) { return !c.replied; }).length;
+    var html =
+      '<div class="ct-head">' +
+        '<h3 class="ct-title">New signups — contact tracker</h3>' +
+        (open ? '<span class="ct-open">' + open + ' open</span>' : '') +
+      '</div>' +
+      '<p class="ct-sub">One row per person. Identify them in ' +
+        '<a href="' + ADMIN_CORE_USERS_URL + '" target="admincore" rel="noopener">Admin-Core</a>' +
+        ' (sort by join date), add them here, then mark contacted when you reach out and replied when they answer. ' +
+        'Founder email templates: 07-founder-1to1-emails.md.</p>';
+
+    if (contacts.length) {
+      html += contacts.map(function (c) {
+        return '<div class="ct-row">' +
+          '<span class="ct-label">' + esc(c.label) + '</span>' +
+          '<span class="ct-added">' + (c.addedAt ? 'added ' + esc(ctDate(c.addedAt)) : '') + '</span>' +
+          '<button type="button" class="ct-toggle' + (c.contacted ? ' on' : '') + '" data-ct-toggle="contacted" data-ct-id="' + esc(c.id) + '">' +
+            (c.contacted ? '✓ Contacted ' + esc(ctDate(c.contacted)) : 'Contacted?') + '</button>' +
+          '<button type="button" class="ct-toggle' + (c.replied ? ' on' : '') + '" data-ct-toggle="replied" data-ct-id="' + esc(c.id) + '">' +
+            (c.replied ? '✓ Replied ' + esc(ctDate(c.replied)) : 'Replied?') + '</button>' +
+        '</div>';
+      }).join('');
+      if (open === 0) {
+        html += '<p class="ct-done-note">Everyone here has replied. Nothing waiting.</p>';
+      }
+    }
+
+    html += '<div class="ct-add">' +
+      '<input type="text" id="ct-add-input" maxlength="120" placeholder="Name or email from the Admin-Core list" aria-label="New contact name or email">' +
+      '<button type="button" id="ct-add-btn">Add person</button>' +
+    '</div>';
+
+    el.innerHTML = html;
+
+    var addBtn = document.getElementById('ct-add-btn');
+    var addInput = document.getElementById('ct-add-input');
+    if (addBtn && addInput) {
+      if (pendingText) addInput.value = pendingText;
+      if (hadFocus && typeof addInput.focus === 'function') {
+        addInput.focus();
+        if (typeof addInput.setSelectionRange === 'function') {
+          addInput.setSelectionRange(addInput.value.length, addInput.value.length);
+        }
+      }
+      addBtn.addEventListener('click', function () { addContact(addInput.value, addInput, addBtn); });
+      addInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addContact(addInput.value, addInput, addBtn); }
+      });
+    }
+    el.querySelectorAll('[data-ct-toggle]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-ct-id');
+        var field = btn.getAttribute('data-ct-toggle');
+        var c = readContacts().filter(function (x) { return x.id === id; })[0];
+        if (!c) return;
+        toggleContact(id, field, !!c[field], btn);
+      });
+    });
+  }
+  window.cipherRenderContactTracker = renderContactTracker;
 
   function computeNextAction(posts, trendData) {
     var todayStr = mtTodayStr();
@@ -6828,6 +7043,16 @@ document.addEventListener('cipher:state-updated', function () {
       });
     }
 
+    // Step: open contacts — people identified but not yet worked to a reply.
+    var openContacts = contactsOpenCount();
+    if (openContacts > 0) {
+      steps.push({
+        title: 'Work the contact list — ' + openContacts + ' awaiting contact or reply',
+        desc: 'Contact tracker above · templates in 07-founder-1to1-emails.md',
+        done: false
+      });
+    }
+
     // Step: today's scheduled posts (one step per post)
     var todayPosts = posts.filter(function (p) { return p.scheduled === todayStr; });
     todayPosts.forEach(function (p) {
@@ -7189,6 +7414,7 @@ document.addEventListener('cipher:state-updated', function () {
     renderTodaySequence(posts, _trendData);
     renderBoardPriorities();
     renderBradInbox();
+    renderContactTracker();
   }
 
   function init() {
@@ -9108,10 +9334,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.22.1"></script>
-<script src="assets/outreach.js?v=1.22.1"></script>
-<script src="assets/page-knowledge.js?v=1.22.1"></script>
-<script src="assets/hal-rail.js?v=1.22.1"></script>
+<script src="assets/outreach-data.js?v=1.23.0"></script>
+<script src="assets/outreach.js?v=1.23.0"></script>
+<script src="assets/page-knowledge.js?v=1.23.0"></script>
+<script src="assets/hal-rail.js?v=1.23.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
