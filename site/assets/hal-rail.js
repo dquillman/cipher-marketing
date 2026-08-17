@@ -423,7 +423,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       }
       if (href) {
         var a = document.createElement("a");
-        a.href = href.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.href = href.url; a.target = "halrail"; a.rel = "noopener noreferrer";
         a.textContent = href.label; a.style.display = "block"; a.style.marginTop = "4px";
         d.appendChild(a);
       }
@@ -546,7 +546,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         var mline = who2 === "J.A.R.V.I.S." ? ("With pleasure, sir - " + music.label + ", on YouTube.")
           : who2 === "HAL 9000" ? ("Certainly, Dave. " + music.label + ". I know how much you enjoy this era.")
           : ("Playing " + music.label + " on YouTube.");
-        var win = window.open(music.url, "_blank", "noopener");
+        var win = window.open(music.url, "halmusic", "noopener");
         window.focus(); // return focus to this tab - the new tab shouldn't steal it
         append("assistant", win ? mline : (mline + " Your browser blocked the new tab - use the link below."), null, { url: music.url, label: "▶ " + music.label + " on YouTube" });
         speak(mline);

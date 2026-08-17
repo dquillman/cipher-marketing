@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.22.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.22.1">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1626,7 +1626,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.22.0</span>
+      <span class="version-bar" title="Dashboard version">v1.22.1</span>
     </div>
   </div>
 </nav>
@@ -6347,6 +6347,7 @@ document.addEventListener('cipher:state-updated', function () {
           : '') +
         '<div class="cc-detail-label" style="margin-top:14px;">Next step</div>' +
         '<p style="margin:6px 0 0;color:var(--dim);">Open the Admin-Core user list and sort by join date — the new accounts are the most recent rows. Admin-Core is a separate Firebase project, so this dashboard cannot name them for you.</p>' +
+        '<p style="margin:8px 0 0;color:var(--dim);font-size:0.85rem;">Reading the list: the Access column’s “Paid / Pro” is an <em>entitlement</em> label (what features an account gets), not a payment record — accounts marked TESTER, TRIAL, or COMPED have never been charged. The only counter that proves a paying user is Stripe itself (verified 2026-08-17: all 20 accounts unpaid, paying users = 0).</p>' +
         '<p style="margin:8px 0 0;"><a href="' + ADMIN_CORE_USERS_URL + '" target="admincore" rel="noopener">' +
           esc(ADMIN_CORE_USERS_URL) + ' &rarr;</a></p>',
       buttons: [
@@ -7351,12 +7352,18 @@ document.addEventListener('cipher:state-updated', function () {
       var arr = byHook[h];
       var xn = arr.filter(function (p) { return p.channel === 'x'; }).length;
       var best = arr.reduce(function (m, p) { return Math.max(m, gradeVal(p)); }, 0);
-      // Which channel actually earned the best grade. An A or B won on X is
-      // won against a handful of impressions, so "proven" has to say so.
       var bestPost = arr.filter(function (p) { return gradeVal(p) === best; })[0] || null;
+      // "Proven" evidence must come from a trusted channel. Every X post ever
+      // published landed 2–39 impressions and X standalone posting is paused
+      // (2026-08-07/08 decisions), so an A or B earned there is noise — it can
+      // decorate a row, but it cannot qualify a hook as proven.
+      var bestTrusted = arr.reduce(function (m, p) {
+        return p.channel === 'x' ? m : Math.max(m, gradeVal(p));
+      }, 0);
       return {
         hook: h, n: arr.length, mean: mean(arr),
         bestChannel: bestPost ? bestPost.channel : null,
+        bestTrusted: bestTrusted,
         grades: arr.map(function (p) { return p.grade; }).sort().join('/'),
         xCount: xn, allX: xn === arr.length && arr.length > 0,
         bestGrade: best,
@@ -7384,8 +7391,11 @@ document.addEventListener('cipher:state-updated', function () {
 
     // A hook is PROVEN, UNQUEUED when it has ever earned an A or a B and has
     // nothing waiting in drafts.
+    // A hook is PROVEN, UNQUEUED only when a NON-X post earned the A or B.
+    // exam-change-news used to qualify here on an X-earned B — promoted by the
+    // same channel the Aug 7 decision says to distrust.
     var provenUnqueued = hookRows.filter(function (r) {
-      return r.bestGrade >= GRADE_VALUE.B && r.queued === 0;
+      return r.bestTrusted >= GRADE_VALUE.B && r.queued === 0;
     });
     var draftsOnUntestedHooks = backlogRows.reduce(function (s, r) {
       return s + (r.untested ? r.queued : 0);
@@ -7537,15 +7547,15 @@ document.addEventListener('cipher:state-updated', function () {
     if (a.provenUnqueued.length) {
       html += '<p class="ap-note" style="margin-top:12px;">Angles that earned an A or B and have <strong>nothing queued</strong>:</p>';
       html += a.provenUnqueued.map(function (r) {
+        // The qualifying grade is the best NON-X grade — an X post may have
+        // scored higher, but X grades cannot make a hook "proven".
         var bestLetter = Object.keys(GRADE_VALUE).filter(function (k) {
-          return GRADE_VALUE[k] === r.bestGrade;
+          return GRADE_VALUE[k] === r.bestTrusted;
         })[0] || '—';
-        var meta = '<span class="ap-tag proven">Proven, unqueued</span>best grade ' +
+        var meta = '<span class="ap-tag proven">Proven, unqueued</span>best LinkedIn grade ' +
           esc(bestLetter) + ' · nothing in drafts';
-        // The caveat that matters: if that best grade was earned on X, it was
-        // earned against single-digit impressions and is not evidence.
-        if (r.bestChannel === 'x') {
-          meta += ' · <span class="ap-tag xnoise">best grade came from X</span>treat as untested';
+        if (r.bestGrade > r.bestTrusted) {
+          meta += ' · <span class="ap-tag xnoise">an X post scored higher — not counted</span>';
         }
         return row(esc(r.hook), fmtMean(r.mean), 'n = ' + r.n, meta);
       }).join('');
@@ -9098,10 +9108,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.22.0"></script>
-<script src="assets/outreach.js?v=1.22.0"></script>
-<script src="assets/page-knowledge.js?v=1.22.0"></script>
-<script src="assets/hal-rail.js?v=1.22.0"></script>
+<script src="assets/outreach-data.js?v=1.22.1"></script>
+<script src="assets/outreach.js?v=1.22.1"></script>
+<script src="assets/page-knowledge.js?v=1.22.1"></script>
+<script src="assets/hal-rail.js?v=1.22.1"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
