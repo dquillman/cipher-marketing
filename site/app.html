@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.23.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.23.1">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1188,6 +1188,14 @@ details[open] summary::before { transform: rotate(90deg); }
   .ap-row.ap-header { display: none; }
   .ap-meta { grid-column: 1 / -1; }
 }
+/* ---- Id date-truth + grading-floor notes (Create tab cards) ---- */
+.id-real-date { color: var(--muted); font-size: 0.78rem; }
+.id-real-date.lies {
+  color: var(--warn); font-weight: 600;
+  background: rgba(251,191,36,0.10); padding: 1px 6px; border-radius: 4px;
+}
+.grade-floor-note { color: var(--muted); font-size: 0.76rem; font-style: italic; }
+
 /* ---- Contact tracker (Today tab — per-person contacted/replied) ---- */
 .contact-tracker {
   background: var(--surface);
@@ -1675,7 +1683,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.23.0</span>
+      <span class="version-bar" title="Dashboard version">v1.23.1</span>
     </div>
   </div>
 </nav>
@@ -1757,7 +1765,7 @@ function cipherHelp() {
       <h4>Hard rules — don't break these</h4>
       <ul>
         <li><strong>Don't post before 7 AM local time.</strong> The scheduler accepts earlier times; you should not.</li>
-        <li><strong>Don't grade a post less than 24h old.</strong> Metrics aren't stable yet — early signal is misleading.</li>
+        <li><strong>Don't grade a post less than 48h old.</strong> LinkedIn keeps serving it for ~2 days — earlier numbers read as a false D. The dashboard shows a countdown until each post is gradeable.</li>
         <li><strong>Don't post on weekends</strong> (LinkedIn engagement collapses Sat/Sun; X is OK but quiet).</li>
         <li><strong>Don't claim you took an exam.</strong> You haven't — use builder POV, tool-builder framings.</li>
         <li><strong>Keep campaign maintenance in Settings.</strong> Daily work belongs on Today, Create, Publish, and Results.</li>
@@ -1885,10 +1893,15 @@ function cipherHelp() {
   </div>
   <textarea id="copy-fallback" rows="10" style="display:none;width:100%;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85rem;"></textarea>
 
-  <!-- Daily log -->
-  <h2>Daily log (last 7 entries)</h2>
-  <p style="color:var(--dim);font-size:0.92rem;">Rolling history of what's actually happened. Claude appends here when you copy an update.</p>
-  <div id="daily-log">Loading…</div>
+  <!-- Daily log — collapsed by default (Dave, 2026-08-17): it's rolling
+       history, not a daily decision surface, and open it pushed the recap
+       and gate sections below the fold. -->
+  <h2>Daily log</h2>
+  <details>
+    <summary>Last 7 entries</summary>
+    <p style="color:var(--dim);font-size:0.92rem;">Rolling history of what's actually happened. Claude appends here when you copy an update.</p>
+    <div id="daily-log">Loading…</div>
+  </details>
 
   <!-- 3. Yesterday recap -->
   <h2>Recap & preview</h2>
@@ -3125,10 +3138,36 @@ details.post-card > summary .post-head { margin-bottom: 0; }
     }
 
     var fields = '<div class="post-fields">';
+    // The id always renders WITH the real date beside it. Ids embed the date
+    // they were minted, which goes stale on reschedule — li-mon-2026-05-11-launch
+    // ran 2026-05-18 — so an id is never allowed to stand alone as a date.
+    if (p.id) {
+      var realDate = (typeof cipherRealDate === 'function') ? cipherRealDate(p) : null;
+      var idLies = (typeof cipherIdDateLies === 'function') && cipherIdDateLies(p);
+      fields += '<span>Id</span><code>' + esc(p.id) + '</code>' +
+        (realDate
+          ? ' <span class="id-real-date' + (idLies ? ' lies' : '') + '">' +
+              (idLies ? '⚠ ran ' + esc(realDate) + ' — the date inside the id is wrong, trust this one'
+                      : 'ran ' + esc(realDate)) +
+            '</span>'
+          : '');
+    }
     if (p.video) fields += '<span>Video</span><code>' + esc(p.video) + ' (' + esc(p.videoFormat || '?') + ')</code>';
     if (p.hook)  fields += '<span>Hook</span><code>' + esc(p.hook) + '</code>';
     if (p.cta)   fields += '<span>CTA</span><code>' + esc(p.cta) + '</code>';
     if (p.postUrl) fields += '<span>Post URL</span><code>' + esc(p.postUrl) + '</code>';
+    // Reschedule trail — the drafting skills append here whenever a post's
+    // scheduled date moves, so date history is visible instead of vanishing.
+    if (p.planNote) fields += '<span>Plan</span><code>' + esc(p.planNote) + '</code>';
+    // Grading floor countdown: an awaiting post younger than 48h shows when it
+    // becomes gradeable instead of silence (the floor is load-bearing — see
+    // auto-grade-posts; early reads land as false Ds).
+    var hoursLeft = (typeof cipherHoursToGradeable === 'function') ? cipherHoursToGradeable(p) : null;
+    if (hoursLeft != null) {
+      fields += '<span>Grading</span>' + (hoursLeft === 0
+        ? '<code>gradeable now</code>'
+        : '<code>gradeable in ~' + hoursLeft + 'h</code> <span class="grade-floor-note">48h floor — earlier numbers read as a false D</span>');
+    }
     fields += '</div>';
 
     var metrics = '';
@@ -3199,7 +3238,11 @@ details.post-card > summary .post-head { margin-bottom: 0; }
     // cipherCurrentTemplateVersion() is the highest version seen across all
     // posts, so no constant needs syncing between here and the function.
     var staleBadge = '';
-    if (p.videoUrl && Number(p.videoTemplateVersion || 0) < cipherCurrentTemplateVersion()) {
+    // typeof guard, same as the date-truth helpers below: the helper lives in
+    // a later script block, and one unguarded call is enough to brick the
+    // whole tab if an intermediate block ever fails to parse.
+    if (p.videoUrl && typeof cipherCurrentTemplateVersion === 'function' &&
+        Number(p.videoTemplateVersion || 0) < cipherCurrentTemplateVersion()) {
       staleBadge = '<span class="video-stale-badge" title="Rendered with an older template - regenerate to pick up the current look">outdated</span>';
     }
 
@@ -3254,7 +3297,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
           gradeBtn +
         '</div>' +
         videoEmbed +
-        cipherFormatLine(p) +
+        (typeof cipherFormatLine === 'function' ? cipherFormatLine(p) : '') +
         fields +
         metrics +
         gradeBlock +
@@ -6754,6 +6797,46 @@ document.addEventListener('cipher:state-updated', function () {
       };
     }
 
+    // Rule 3c: posted, ungraded, and past the 48h grading floor. Sits ABOVE
+    // the campaign-ended rule: a measurable post decays whether or not the
+    // campaign window is open, and below that rule this card could never fire
+    // once the window elapsed — which it permanently has in the live state
+    // (found by the 2026-08-17 critic replay). The floor used to be 24h, which
+    // put this card in direct conflict with the auto-grader's 48h refusal.
+    // isFinite guard: hoursAgo returns Infinity for garbage timestamps, and
+    // Infinity >= 48 would let an unparseable postedAt bypass the floor.
+    var ungraded = posts.filter(function (p) {
+      var h = hoursAgo(p.postedAt);
+      return p.status === 'posted' && !p.grade && p.postedAt && isFinite(h) && h >= CIPHER_GRADE_FLOOR_HOURS;
+    });
+    if (ungraded.length > 0) {
+      var pg = ungraded[0];
+      return {
+        type: 'grade',
+        title: 'GRADE: ' + (pg.channel || '?').toUpperCase() + ' — ' + (pg.examFocus || '?') + ' from ' + (pg.scheduled || '?'),
+        sub: 'Open ' + (pg.channel || 'the platform') + ' analytics for this post. Copy the metrics, then tell Brad: "grade my ' + (pg.scheduled || '?') + ' post".',
+        detail:
+          (pg.postUrl ? '<div class="cc-detail-label">Live post</div><code>' + esc(pg.postUrl) + '</code><br><br>' : '') +
+          '<div class="cc-detail-label">What to grab from analytics</div>' +
+          '<pre>Impressions · Reactions/Likes · Comments · Reposts · Link clicks · Trial signups (UTM)</pre>',
+        buttons: [
+          {
+            label: 'Grade this post',
+            onclick: (function (postId) { return function () {
+              var trigger = document.querySelector('[data-grade-open="' + postId + '"]');
+              if (trigger) { trigger.click(); }
+              else if (typeof cipherShow === 'function') { cipherShow('posts'); }
+            }; })(pg.id)
+          },
+          (pg.postUrl ? {
+            label: 'Open live post',
+            cls: 'secondary',
+            onclick: (function (url) { return function () { window.open(url, 'livepost', 'noopener'); }; })(pg.postUrl)
+          } : null)
+        ].filter(Boolean)
+      };
+    }
+
     // Rule 4: campaign window elapsed. A new cycle requires an explicit
     // operator decision instead of silently falling back to PMP.
     if (!isNaN(campaignEnd.getTime()) && Date.now() >= campaignEnd.getTime()) {
@@ -6866,38 +6949,6 @@ document.addEventListener('cipher:state-updated', function () {
           { label: 'Open Publish', onclick: "cipherShow('schedule')" },
           { label: 'Open Create', cls: 'secondary', onclick: "cipherShow('posts')" }
         ]
-      };
-    }
-
-    // Rule 2: Posted >24h ago, ungraded
-    var ungraded = posts.filter(function (p) {
-      return p.status === 'posted' && !p.grade && p.postedAt && hoursAgo(p.postedAt) >= 24;
-    });
-    if (ungraded.length > 0) {
-      var pg = ungraded[0];
-      return {
-        type: 'grade',
-        title: 'GRADE: ' + (pg.channel || '?').toUpperCase() + ' — ' + (pg.examFocus || '?') + ' from ' + (pg.scheduled || '?'),
-        sub: 'Open ' + (pg.channel || 'the platform') + ' analytics for this post. Copy the metrics, then tell Brad: "grade my ' + (pg.scheduled || '?') + ' post".',
-        detail:
-          (pg.postUrl ? '<div class="cc-detail-label">Live post</div><code>' + esc(pg.postUrl) + '</code><br><br>' : '') +
-          '<div class="cc-detail-label">What to grab from analytics</div>' +
-          '<pre>Impressions · Reactions/Likes · Comments · Reposts · Link clicks · Trial signups (UTM)</pre>',
-        buttons: [
-          {
-            label: 'Grade this post',
-            onclick: (function (postId) { return function () {
-              var trigger = document.querySelector('[data-grade-open="' + postId + '"]');
-              if (trigger) { trigger.click(); }
-              else if (typeof cipherShow === 'function') { cipherShow('posts'); }
-            }; })(pg.id)
-          },
-          (pg.postUrl ? {
-            label: 'Open live post',
-            cls: 'secondary',
-            onclick: (function (url) { return function () { window.open(url, 'livepost', 'noopener'); }; })(pg.postUrl)
-          } : null)
-        ].filter(Boolean)
       };
     }
 
@@ -7039,7 +7090,8 @@ document.addEventListener('cipher:state-updated', function () {
       steps.push({
         title: fsig.kind === 'activated' ? 'Contact the activated user' : 'Identify the new signups',
         desc: 'Admin-Core → users, sort by join date. ' + (fsig.age.known ? fsig.age.label : 'funnel timestamp missing'),
-        done: false
+        done: false,
+        urgent: true
       });
     }
 
@@ -7049,7 +7101,8 @@ document.addEventListener('cipher:state-updated', function () {
       steps.push({
         title: 'Work the contact list — ' + openContacts + ' awaiting contact or reply',
         desc: 'Contact tracker above · templates in 07-founder-1to1-emails.md',
-        done: false
+        done: false,
+        urgent: true
       });
     }
 
@@ -7059,22 +7112,44 @@ document.addEventListener('cipher:state-updated', function () {
       steps.push({
         title: 'Post to ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
         desc: p.status === 'posted'
-          ? 'Posted at ' + (p.postedAt ? new Date(p.postedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'unknown time')
+          ? 'Posted at ' + (function () {
+              // Garbage timestamps used to render "Posted at Invalid Date".
+              var t = p.postedAt ? new Date(p.postedAt) : null;
+              return t && !isNaN(t.getTime())
+                ? t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : 'unknown time';
+            })()
           : (p.scheduledTimeLocal || 'scheduled today'),
         done: p.status === 'posted'
       });
     });
 
-    // Step: grade any post >24h old and ungraded
+    // Step: grade any post past the 48h floor; posts still inside the floor
+    // get a visible countdown instead of disappearing until they qualify.
+    // isFinite guard: hoursAgo returns Infinity for unparseable timestamps,
+    // which would otherwise sail past the floor comparison.
     var ungraded = posts.filter(function (p) {
-      return p.status === 'posted' && !p.grade && p.postedAt && hoursAgo(p.postedAt) >= 24;
+      var h = hoursAgo(p.postedAt);
+      return p.status === 'posted' && !p.grade && p.postedAt && isFinite(h) && h >= CIPHER_GRADE_FLOOR_HOURS;
     });
     ungraded.forEach(function (p) {
       steps.push({
         title: 'Grade ' + (p.channel || '?').toUpperCase() + ' post from ' + (p.scheduled || '?'),
         desc: 'Tell Brad: "grade my ' + (p.scheduled || '?') + ' post" with metrics',
-        done: false
+        done: false,
+        urgent: true
       });
+    });
+    posts.forEach(function (p) {
+      var left = (typeof cipherHoursToGradeable === 'function') ? cipherHoursToGradeable(p) : null;
+      if (left != null && left > 0) {
+        steps.push({
+          title: 'Grade ' + (p.channel || '?').toUpperCase() + ' post from ' + (p.scheduled || '?') + ' — gradeable in ~' + left + 'h',
+          desc: '48h floor: LinkedIn is still serving it; earlier numbers read as a false D. Auto-grade picks it up once it qualifies.',
+          done: false,
+          urgent: true
+        });
+      }
     });
 
     // Step: trend scout (Monday or if stale)
@@ -7175,9 +7250,19 @@ document.addEventListener('cipher:state-updated', function () {
     var el = document.getElementById('today-sequence-steps');
     if (!el) return;
     var sequenceCard = el.closest('.today-sequence');
+    // Past the campaign window the daily posting cadence is over, so the
+    // routine steps are suppressed — but time-sensitive ones (grade before the
+    // window decays, grade-floor countdowns, funnel contacts) must survive.
+    // Hiding the whole card here was how a countdown could be computed yet
+    // never rendered (2026-08-17 critic replay).
     if (action.type === 'campaign-ended') {
-      if (sequenceCard) sequenceCard.style.display = 'none';
-      return;
+      steps = steps.filter(function (s) { return s.urgent; });
+      if (steps.length === 0) {
+        if (sequenceCard) sequenceCard.style.display = 'none';
+        return;
+      }
+      var firstOpen = steps.findIndex(function (s) { return !s.done; });
+      steps.forEach(function (s, i) { s.current = i === firstOpen; });
     }
     if (sequenceCard) sequenceCard.style.display = '';
     if (steps.length === 0) {
@@ -8596,6 +8681,43 @@ function cipherEsc(s) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// ---- Post-id date truth + grading floor (shared across render sites) -------
+// The date embedded in a post id is the date the id was MINTED, not the date
+// the post ran: li-mon-2026-05-11-launch actually went out 2026-05-18 after a
+// reschedule, and that lie cost real debugging time (§0 trap 2 of the
+// 2026-08-17 gauntlet). scheduledTimeLocal is the only date the UI may trust.
+function cipherRealDate(p) {
+  var m = /^(\d{4}-\d{2}-\d{2})/.exec((p && p.scheduledTimeLocal) || '');
+  if (m) return m[1];
+  if (p && /^\d{4}-\d{2}-\d{2}$/.test(p.scheduled || '')) return p.scheduled;
+  if (p && p.postedAt) {
+    var t = new Date(p.postedAt);
+    if (!isNaN(t.getTime())) return t.toISOString().slice(0, 10);
+  }
+  return null;
+}
+// True when the id embeds a calendar date that disagrees with the real date.
+function cipherIdDateLies(p) {
+  var idDate = (/(\d{4}-\d{2}-\d{2})/.exec((p && p.id) || '') || [])[1];
+  var real = cipherRealDate(p);
+  return !!(idDate && real && idDate !== real);
+}
+
+// Grading floor. 48h is load-bearing (auto-grade-posts skill): LinkedIn keeps
+// serving a post for roughly two days, so an earlier read grades the algorithm
+// warming up, not the post, and lands as a false D. This constant is a display
+// threshold mirroring that rule, not a measured value.
+var CIPHER_GRADE_FLOOR_HOURS = 48;
+// Hours until a posted-ungraded post clears the floor: 0 = gradeable now,
+// null = not applicable (not posted, already graded, or no timestamp).
+function cipherHoursToGradeable(p) {
+  if (!p || p.status !== 'posted' || p.grade || !p.postedAt) return null;
+  var t = new Date(p.postedAt).getTime();
+  if (isNaN(t)) return null;
+  var h = (Date.now() - t) / 36e5;
+  return h >= CIPHER_GRADE_FLOOR_HOURS ? 0 : Math.ceil(CIPHER_GRADE_FLOOR_HOURS - h);
+}
+
 // ---- Format preview + format-performance panel -----------------------------
 // The visual format rotates by the post's scheduled ISO week. That maths is
 // small and stable, so it is duplicated here to preview the format BEFORE
@@ -9334,10 +9456,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.23.0"></script>
-<script src="assets/outreach.js?v=1.23.0"></script>
-<script src="assets/page-knowledge.js?v=1.23.0"></script>
-<script src="assets/hal-rail.js?v=1.23.0"></script>
+<script src="assets/outreach-data.js?v=1.23.1"></script>
+<script src="assets/outreach.js?v=1.23.1"></script>
+<script src="assets/page-knowledge.js?v=1.23.1"></script>
+<script src="assets/hal-rail.js?v=1.23.1"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
