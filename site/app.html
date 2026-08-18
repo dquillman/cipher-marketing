@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.24.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.25.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -904,6 +904,45 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 .archive-note { font-size: 0.78rem; color: var(--dim); }
 
+/* Hashtag bar scan. Written monthly by the cipher-hashtag-bar-scan task to
+   Firestore campaign/hashtagBar - never to site/data, which does not deploy. */
+.bar-scan .bar-meta {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline;
+  font-size: 0.8rem; color: var(--dim); margin-bottom: 12px;
+}
+.bar-scan .bar-meta .stale { color: var(--warn); font-weight: 700; }
+.bar-scan .bar-sep {
+  background: rgba(148,163,184,0.07); border-left: 3px solid var(--cyan);
+  padding: 10px 13px; border-radius: 0 4px 4px 0; margin-bottom: 14px;
+  font-size: 0.89rem; line-height: 1.5;
+}
+.bar-scan table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.bar-scan th {
+  text-align: left; font-size: 0.66rem; letter-spacing: 0.11em;
+  text-transform: uppercase; color: var(--dim); font-weight: 700;
+  padding: 0 10px 7px 0; border-bottom: 1px solid var(--border);
+}
+.bar-scan td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.bar-scan td.num { font-variant-numeric: tabular-nums; text-align: right; width: 4.5rem; }
+.bar-scan tr.ours { background: rgba(122,214,255,0.09); }
+.bar-scan tr.ours td:first-child { box-shadow: inset 3px 0 0 var(--cyan); }
+.bar-scan .who { font-weight: 600; }
+.bar-scan .excerpt { color: var(--dim); font-size: 0.84rem; display: block; margin-top: 2px; }
+.bar-scan .ours-tag {
+  font-size: 0.62rem; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--cyan); border: 1px solid currentColor; border-radius: 3px;
+  padding: 1px 5px; margin-left: 7px; vertical-align: 1px;
+}
+.bar-scan .bar-dead {
+  margin-top: 14px; padding: 10px 13px; border-radius: 4px;
+  background: rgba(251,191,36,0.10); border-left: 3px solid var(--warn);
+  font-size: 0.85rem;
+}
+.bar-scan .bar-dead code { font-size: 0.8rem; }
+.bar-scan .bar-limit { margin-top: 12px; font-size: 0.78rem; color: var(--dim); font-style: italic; }
+.bar-scroll { overflow-x: auto; }
+.bar-scroll > table { min-width: 560px; }
+
 #publish-next { }
 #publish-next .pn-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
 #publish-next .pn-grid { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:start; }
@@ -1700,7 +1739,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.24.0</span>
+      <span class="version-bar" title="Dashboard version">v1.25.0</span>
     </div>
   </div>
 </nav>
@@ -1972,6 +2011,11 @@ function cipherHelp() {
   <h2 style="margin-top:0;">Angle performance</h2>
   <p style="color:var(--dim);font-size:0.92rem;margin-top:-4px;">Grades grouped by <code>hook</code> — the field that records the angle. A single lifetime average hides two very different posting eras, so the cohorts are split out first.</p>
   <div id="angle-performance">Loading…</div>
+
+  <!-- Hashtag bar scan - monthly, written by cipher-hashtag-bar-scan -->
+  <h2 style="margin-top:0;">Hashtag bar</h2>
+  <p style="color:var(--dim);font-size:0.92rem;margin-top:-4px;">What actually earns engagement in <code>#PMP</code> and <code>#ProjectManagement</code> right now, with our best post placed in it honestly. Re-scanned on the 1st of each month.</p>
+  <div id="hashtag-bar" class="card bar-scan"><div class="trend-scout-empty">Loading…</div></div>
 
   <!-- KPI summary -->
   <h2 style="margin-top:0;">KPI summary</h2>
@@ -6162,8 +6206,97 @@ document.addEventListener('cipher:state-updated', function () {
     });
   }
 
+  // Same reasoning as Trend Scout: the monthly scan agent has no deploy step,
+  // so a file it writes could never reach the live dashboard. It writes
+  // campaign/hashtagBar, covered by the same marketingAdmin rule as campaign/*.
+  function subscribeHashtagBar() {
+    var ready = window._cipherAuthReady || Promise.reject(new Error('not signed in'));
+    ready.then(function () {
+      var db = window._cipherDb;
+      if (!db) throw new Error('Firestore unavailable');
+      db.collection('campaign').doc('hashtagBar').onSnapshot(
+        function (snap) { renderHashtagBar(snap.exists ? snap.data() : null); },
+        function (err) {
+          console.warn('[cipher] hashtagBar sync error:', err.message);
+          renderHashtagBar(null);
+        }
+      );
+    }).catch(function (err) {
+      console.warn('[cipher] hashtagBar not started:', err.message);
+      renderHashtagBar(null);
+    });
+  }
+
+  // Renders whatever the scan actually found. Every number here is a public
+  // reaction/comment count read off LinkedIn - there are no impressions or
+  // clicks for other people's posts, so the panel never invents a rate.
+  function renderHashtagBar(doc) {
+    var host = document.getElementById('hashtag-bar');
+    if (!host) return;
+
+    if (!doc || !Array.isArray(doc.posts) || !doc.posts.length) {
+      host.innerHTML = '<div class="trend-scout-empty">No scan yet. The monthly ' +
+        'hashtag scan runs on the 1st and writes <code>campaign/hashtagBar</code>.</div>';
+      return;
+    }
+
+    var scanned = doc.scannedAt ? new Date(doc.scannedAt) : null;
+    var ageDays = scanned && !isNaN(scanned) ? Math.floor((Date.now() - scanned.getTime()) / 86400000) : null;
+    // A bar older than ~6 weeks has outlived its scan cycle and should not be
+    // read as current - say so rather than presenting stale ranks as fact.
+    var stale = ageDays != null && ageDays > 45;
+
+    var meta = '<div class="bar-meta">' +
+      '<span' + (stale ? ' class="stale"' : '') + '>' +
+        (scanned && !isNaN(scanned)
+          ? 'Scanned ' + esc(scanned.toISOString().slice(0, 10)) + (ageDays != null ? ' · ' + ageDays + 'd ago' : '')
+          : 'Scan date unknown') +
+        (stale ? ' · stale' : '') +
+      '</span>' +
+      (doc.sampleSize ? '<span>' + Number(doc.sampleSize) + ' posts sampled</span>' : '') +
+      '</div>';
+
+    var sep = doc.separator
+      ? '<div class="bar-sep">' + esc(doc.separator) + '</div>'
+      : '';
+
+    var rows = doc.posts.map(function (p, i) {
+      var n = function (v) { return (v == null || v === '') ? '—' : Number(v).toLocaleString(); };
+      return '<tr' + (p.isOurs ? ' class="ours"' : '') + '>' +
+        '<td class="num">' + (i + 1) + '</td>' +
+        '<td><span class="who">' + esc(p.author || 'Unknown') +
+          (p.isOurs ? '<span class="ours-tag">ours</span>' : '') + '</span>' +
+          (p.excerpt ? '<span class="excerpt">' + esc(p.excerpt) + '</span>' : '') + '</td>' +
+        '<td class="num">' + n(p.reactions) + '</td>' +
+        '<td class="num">' + n(p.comments) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    var table = '<div class="bar-scroll"><table><thead><tr>' +
+      '<th>#</th><th>Post</th><th style="text-align:right;">React</th><th style="text-align:right;">Comm</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+
+    var dead = (Array.isArray(doc.deadDraftIds) && doc.deadDraftIds.length)
+      ? '<div class="bar-dead"><strong>' + doc.deadDraftIds.length + ' queued draft' +
+        (doc.deadDraftIds.length === 1 ? ' is' : 's are') + ' betting on a shape this scan shows is dead:</strong> ' +
+        doc.deadDraftIds.map(function (id) { return '<code>' + esc(id) + '</code>'; }).join(' ') + '</div>'
+      : '';
+
+    var changed = doc.changedSinceLastMonth
+      ? '<div class="bar-sep" style="border-left-color:var(--warn);margin:14px 0 0;"><strong>Since last month:</strong> ' +
+        esc(doc.changedSinceLastMonth) + '</div>'
+      : '';
+
+    var limit = doc.samplingNote
+      ? '<p class="bar-limit">' + esc(doc.samplingNote) + '</p>'
+      : '';
+
+    host.innerHTML = meta + sep + table + dead + changed + limit;
+  }
+
   function loadAndRender() {
     subscribeTrendScout();
+    subscribeHashtagBar();
 
     fetchLocalJson('data/anchors-index.json')
       .then(renderAnchorLibrary)
@@ -9537,10 +9670,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.24.0"></script>
-<script src="assets/outreach.js?v=1.24.0"></script>
-<script src="assets/page-knowledge.js?v=1.24.0"></script>
-<script src="assets/hal-rail.js?v=1.24.0"></script>
+<script src="assets/outreach-data.js?v=1.25.0"></script>
+<script src="assets/outreach.js?v=1.25.0"></script>
+<script src="assets/page-knowledge.js?v=1.25.0"></script>
+<script src="assets/hal-rail.js?v=1.25.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
