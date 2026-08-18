@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.23.1">
+<link rel="stylesheet" href="assets/outreach.css?v=1.24.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -887,6 +887,23 @@ details[open] summary::before { transform: rotate(90deg); }
   border-radius: 6px; padding: 3px 8px; font-size: 0.76rem; margin-left: auto; cursor: pointer;
 }
 
+/* Archived posts. The toggle swaps the view rather than appending to it, so
+   "archived" is always a place you are explicitly standing in - the same shape
+   as Admin-Core's Users page, which Dave already reads that way. */
+.archive-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; }
+.archive-toggle {
+  background: var(--surface); color: var(--dim); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+  font-family: 'Satoshi', system-ui, sans-serif;
+  font-weight: 600; font-size: 0.78rem; cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.archive-toggle:hover { background: rgba(255,255,255,0.06); color: #e6e8ee; }
+.archive-toggle.on {
+  background: rgba(122,214,255,0.12); border-color: rgba(122,214,255,0.45); color: #7ad6ff;
+}
+.archive-note { font-size: 0.78rem; color: var(--dim); }
+
 #publish-next { }
 #publish-next .pn-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
 #publish-next .pn-grid { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:start; }
@@ -1683,7 +1700,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.23.1</span>
+      <span class="version-bar" title="Dashboard version">v1.24.0</span>
     </div>
   </div>
 </nav>
@@ -2486,11 +2503,22 @@ function cipherHelp() {
       bannerEl.innerHTML = '<div class="sched-banner"><div class="sched-banner-icon">🌙</div><div class="sched-banner-body"><strong>Prep tonight:</strong> ' + tonightPosts.length + ' post' + (tonightPosts.length > 1 ? 's are' : ' is') + ' due tomorrow (' + toMTDateOnly(tonightPosts[0].scheduledTime) + '). Open each row to copy the text and schedule it.</div></div>';
     }
 
-    if (posts.length === 0) {
-      feedEl.innerHTML = '<p class="empty-state">No posts yet.</p>';
+    // Archived posts are hidden here by default, reachable from the toggle.
+    // `posts` deliberately stays whole: the button wiring below resolves ids
+    // against it, and an archived post that is on screen still has to answer
+    // those lookups.
+    var archive    = cipherArchiveSplit(posts, 'publish');
+    var visible    = archive.visible;
+    var archiveBar = cipherArchiveToggle(archive, 'publish');
+
+    if (visible.length === 0) {
+      feedEl.innerHTML = archiveBar +
+        '<p class="empty-state">' + (archive.showing ? 'No archived posts.' : 'No posts yet.') + '</p>';
     } else {
-      feedEl.innerHTML = '<div class="section-label">All posts — most recent first (' + posts.length + ')</div>' +
-        posts.map(function (p) { return renderWrap(p, variantFor(p)); }).join('');
+      feedEl.innerHTML = '<div class="section-label">' +
+        (archive.showing ? 'Archived posts' : 'All posts') +
+        ' — most recent first (' + visible.length + ')</div>' + archiveBar +
+        visible.map(function (p) { return renderWrap(p, variantFor(p)); }).join('');
     }
 
     // Wire up buttons after render
@@ -3017,9 +3045,15 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       summaryCard('Total link clicks', totalClicks.toLocaleString()) +
       summaryCard('Signups (GA4)', signupsValue, '', signupsSub);
 
-    document.getElementById('posts-pipeline').innerHTML = drafts.length
-      ? renderDraftWeeks(drafts)
-      : '<p class="empty-state">No drafts or scheduled posts.</p>';
+    // Same archived rule as the Publish feed. The summary cards above keep
+    // counting every post, archived included - those are analytics.
+    var draftArchive = cipherArchiveSplit(drafts, 'create');
+    document.getElementById('posts-pipeline').innerHTML =
+      cipherArchiveToggle(draftArchive, 'create') +
+      (draftArchive.visible.length
+        ? renderDraftWeeks(draftArchive.visible)
+        : '<p class="empty-state">' +
+          (draftArchive.showing ? 'No archived drafts.' : 'No drafts or scheduled posts.') + '</p>');
 
     document.getElementById('posts-awaiting').innerHTML = awaiting.length
       ? awaiting.map(renderPost).join('')
@@ -8718,6 +8752,53 @@ function cipherHoursToGradeable(p) {
   return h >= CIPHER_GRADE_FLOOR_HOURS ? 0 : Math.ceil(CIPHER_GRADE_FLOOR_HOURS - h);
 }
 
+// ---- Archived posts --------------------------------------------------------
+// campaign/posts items can carry archived:true - set when a post is skipped and
+// will never run. Archived posts stay in EVERY analytics and corpus
+// computation: a skipped hook is still evidence about that hook, and dropping
+// it would quietly flatter whichever angles got skipped most. So nothing here
+// touches window.__POSTS__ - the filtering happens per list view, at render.
+var CIPHER_ARCHIVE_SHOWN = Object.create(null);   // scope name -> bool
+
+function cipherIsArchived(p) { return !!(p && p.archived); }
+
+// The slice one list view should draw, plus the counts its toggle needs.
+function cipherArchiveSplit(list, scope) {
+  var archived = list.filter(cipherIsArchived);
+  var live     = list.filter(function (p) { return !cipherIsArchived(p); });
+  var showing  = !!CIPHER_ARCHIVE_SHOWN[scope];
+  return {
+    archived: archived, live: live, showing: showing,
+    count: archived.length,
+    visible: showing ? archived : live
+  };
+}
+
+// Renders nothing when there is nothing archived AND nothing to switch back
+// from - a permanent "Show archived (0)" button is noise on every clean list.
+function cipherArchiveToggle(split, scope) {
+  if (!split.count && !split.showing) return '';
+  return '<div class="archive-bar"><button type="button" class="archive-toggle' +
+    (split.showing ? ' on' : '') + '" data-archive-toggle="' + cipherEsc(scope) + '"' +
+    ' aria-pressed="' + (split.showing ? 'true' : 'false') + '">' +
+    (split.showing ? 'Viewing archived \u2014 show live' : 'Show archived (' + split.count + ')') +
+    '</button>' +
+    (split.showing
+      ? '<span class="archive-note">Skipped posts. They still count in every grade, angle and format calculation.</span>'
+      : '') +
+    '</div>';
+}
+
+// Re-uses the existing repaint path, so both lists restate themselves from the
+// flag and nothing else has to know the flag exists.
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest && e.target.closest('[data-archive-toggle]');
+  if (!btn) return;
+  var scope = btn.getAttribute('data-archive-toggle');
+  CIPHER_ARCHIVE_SHOWN[scope] = !CIPHER_ARCHIVE_SHOWN[scope];
+  document.dispatchEvent(new CustomEvent('cipher:posts-updated'));
+});
+
 // ---- Format preview + format-performance panel -----------------------------
 // The visual format rotates by the post's scheduled ISO week. That maths is
 // small and stable, so it is duplicated here to preview the format BEFORE
@@ -9456,10 +9537,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.23.1"></script>
-<script src="assets/outreach.js?v=1.23.1"></script>
-<script src="assets/page-knowledge.js?v=1.23.1"></script>
-<script src="assets/hal-rail.js?v=1.23.1"></script>
+<script src="assets/outreach-data.js?v=1.24.0"></script>
+<script src="assets/outreach.js?v=1.24.0"></script>
+<script src="assets/page-knowledge.js?v=1.24.0"></script>
+<script src="assets/hal-rail.js?v=1.24.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
