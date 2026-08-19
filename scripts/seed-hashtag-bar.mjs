@@ -49,20 +49,13 @@ const DOC = {
     { author: "Neal Rowland", excerpt: "Browser game explaining the PMP application change", reactions: 1, comments: null },
   ],
 
-  // Shapes with no support anywhere in the bar, or measured duds on both sides
-  // of the corpus. Every Monday slot for six weeks is on the first group.
-  deadDraftIds: [
-    "li-mon-2026-08-24-scoreboard-02",
-    "li-mon-2026-08-31-scoreboard-03",
-    "li-mon-2026-09-07-scoreboard-04",
-    "li-mon-2026-09-14-scoreboard-05",
-    "li-mon-2026-09-21-scoreboard-06",
-    "li-fri-2026-08-21-magnet-02-secplus",
-    "li-fri-2026-08-28-magnet-03-shrmcp",
-    "li-fri-2026-09-04-magnet-04-rerun",
-    "li-fri-2026-09-18-sme-10",
-    "li-fri-2026-09-25-sme-12",
-  ],
+  // RESOLVED 2026-08-18, same day. The scan flagged ten drafts on shapes with
+  // no support in the bar — five build-in-public Mondays, three magnet-drops,
+  // a data-drop and a contrarian. All ten were still empty placeholders, so
+  // they were re-slotted to comment-gated scenarios rather than rewritten.
+  // The panel warns on a NON-EMPTY list, so this stays empty until a future
+  // scan finds new offenders. The history lives in each post's planNote.
+  deadDraftIds: [],
 
   samplingNote:
     "First scan, seeded by hand on 2026-08-18 rather than by the monthly task. " +
@@ -71,6 +64,11 @@ const DOC = {
     "2nd on comments; that split is the finding. Separately observed in the feed (not from these " +
     "queries, so excluded from the ranking): a 'Renewed my PMP certification today' post at 64 " +
     "reactions / 9 comments — a second pass-announcement near the top.",
+
+  changedSinceLastMonth:
+    "Acted on same day: the ten drafts this scan flagged were all still empty placeholders, so " +
+    "they were re-slotted to comment-gated scenarios on ten distinct decision patterns and moved " +
+    "from 10:30 to 19:20 MT. No morning send on this account has ever earned a comment.",
 };
 
 function summarise(d) {
