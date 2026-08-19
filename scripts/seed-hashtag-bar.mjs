@@ -65,6 +65,36 @@ const DOC = {
     "queries, so excluded from the ranking): a 'Renewed my PMP certification today' post at 64 " +
     "reactions / 9 comments — a second pass-announcement near the top.",
 
+  // The control account. Markus Kopko runs the SAME worked-question format
+  // Dave's drafts use — answer reveal, ECO mapping, why-the-others-are-wrong —
+  // but with 28,164 followers, a PMI AI Standards Core Team credential, and an
+  // audience. He is the only instrument that separates "the format is weak"
+  // from "Dave has no authority", because nobody in the hashtag runs the format.
+  //
+  // Scraped 2026-08-18 from /in/markuskleinpmp/recent-activity/all/ (that slug
+  // is Kopko — the vanity URL does not match the display name).
+  control: {
+    name: "Markus Kopko",
+    profileUrl: "https://www.linkedin.com/in/markuskleinpmp/",
+    followers: 28164,
+    windowLabel: "~7 days",
+    originals: 24,
+    reposts: 34,
+    reactionsMedian: 3,
+    reactionsMean: 4.8,
+    reactionsBest: 26,
+    commentsMedian: 2,
+    commentsBest: 10,
+    verdict:
+      "The authority theory does not survive this. With 28,164 followers and a PMI credential, his " +
+      "own posts run a MEDIAN of 3 reactions and 2 comments — our comment-gated post beat his median " +
+      "on reactions (4 vs 3) and beat his single best post on comments (19 vs 10). His only large " +
+      "numbers come from RESHARING other people's viral quote-cards (one hit 1,673/416, and it was " +
+      "Daniel Hemhauser's post, not his). He also reposts more than he writes: 34 reposts against 24 " +
+      "originals in the window. So the format is not what is holding us back, and neither is the " +
+      "follower count — teaching posts underperform for the credentialed too.",
+  },
+
   changedSinceLastMonth:
     "Acted on same day: the ten drafts this scan flagged were all still empty placeholders, so " +
     "they were re-slotted to comment-gated scenarios on ten distinct decision patterns and moved " +
