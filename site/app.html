@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.27.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.28.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1005,6 +1005,20 @@ details[open] summary::before { transform: rotate(90deg); }
 .cq-copied { font-size: 0.8rem; color: var(--ok, #4ade80); opacity: 0; transition: opacity 0.2s; }
 .cq-copied.show { opacity: 1; }
 .cq-note { font-size: 0.8rem; color: var(--dim); font-style: italic; margin: 14px 0 0; }
+.cq-item.done { opacity: 0.72; }
+.cq-when.done { color: var(--ok, #4ade80); }
+.cq-baseline {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
+  padding: 15px 18px; margin-bottom: 18px;
+}
+.cq-baseline h3 { margin: 0 0 4px; font-size: 0.98rem; font-family: 'Satoshi', system-ui, sans-serif; }
+.cq-baseline p { margin: 0 0 10px; font-size: 0.85rem; color: var(--dim); line-height: 1.5; }
+.cq-baseline .bl-nums { display: flex; gap: 22px; flex-wrap: wrap; }
+.cq-baseline .bl-nums div { display: flex; flex-direction: column; }
+.cq-baseline .bl-nums .k {
+  font-size: 0.62rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--dim);
+}
+.cq-baseline .bl-nums .v { font-size: 1.3rem; font-variant-numeric: tabular-nums; }
 
 #publish-next { }
 #publish-next .pn-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
@@ -1803,7 +1817,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.27.0</span>
+      <span class="version-bar" title="Dashboard version">v1.28.0</span>
     </div>
   </div>
 </nav>
@@ -6446,11 +6460,34 @@ document.addEventListener('cipher:state-updated', function () {
       }
     }
 
-    host.innerHTML = items.map(function (it, i) {
-      var urgent = /now|today|asap/i.test(it.when || '');
-      return '<div class="cq-item">' +
+    // The payoff from a comment is not likes on the comment — it is profile
+    // views and followers, people who read it and went to look at us. That only
+    // reads as a lift against a baseline captured BEFORE it started working.
+    var baseline = '';
+    if (doc.baseline) {
+      var b = doc.baseline;
+      baseline = '<div class="cq-baseline">' +
+        '<h3>Baseline, captured before the first comment</h3>' +
+        '<p>What to watch is profile views and followers, not likes on the comment. ' +
+        'These are the numbers from Dave\'s LinkedIn sidebar at ' +
+        esc((b.capturedAt || '').slice(0, 16).replace('T', ' ')) + ' UTC. Re-read them in 7 days.</p>' +
+        '<div class="bl-nums">' +
+          (b.profileViewers != null ? '<div><span class="k">Profile viewers</span><span class="v">' + Number(b.profileViewers).toLocaleString() + '</span></div>' : '') +
+          (b.postImpressions != null ? '<div><span class="k">Post impressions</span><span class="v">' + Number(b.postImpressions).toLocaleString() + '</span></div>' : '') +
+          (b.followers != null ? '<div><span class="k">Followers</span><span class="v">' + Number(b.followers).toLocaleString() + '</span></div>' : '') +
+        '</div>' +
+      '</div>';
+    }
+
+    host.innerHTML = baseline + items.map(function (it, i) {
+      var done = !!it.postedAt;
+      var urgent = !done && /now|today|asap/i.test(it.when || '');
+      var whenLabel = done
+        ? 'Posted ' + esc(String(it.postedAt).slice(0, 10))
+        : esc(it.when || 'unscheduled');
+      return '<div class="cq-item' + (done ? ' done' : '') + '">' +
         '<div class="cq-head">' +
-          '<span class="cq-when' + (urgent ? ' now' : '') + '">' + esc(it.when || 'unscheduled') + '</span>' +
+          '<span class="cq-when' + (urgent ? ' now' : '') + (done ? ' done' : '') + '">' + whenLabel + '</span>' +
           '<span class="cq-author">' + esc(it.author || 'Unknown') + '</span>' +
           '<span class="cq-stats">' +
             (it.reactions != null ? Number(it.reactions).toLocaleString() + ' reactions' : '') +
@@ -6465,6 +6502,9 @@ document.addEventListener('cipher:state-updated', function () {
         '<div class="cq-actions">' +
           '<button type="button" class="btn-primary" data-cq-copy="' + i + '">Copy comment</button>' +
           (it.url ? '<a class="btn-secondary" href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">Open the post \u2197</a>' : '') +
+          (done
+            ? ''
+            : '<button type="button" class="btn-secondary" data-cq-posted="' + esc(it.url || String(i)) + '">Mark posted</button>') +
           '<span class="cq-copied" id="cq-copied-' + i + '">Copied</span>' +
         '</div>' +
       '</div>';
@@ -6483,6 +6523,32 @@ document.addEventListener('cipher:state-updated', function () {
     var done = function () { if (conf) { conf.classList.add('show'); setTimeout(function(){ conf.classList.remove('show'); }, 1800); } };
     if (window.safeCopy) window.safeCopy(ta.value, done, function(){ ta.select(); });
     else { ta.select(); try { document.execCommand('copy'); done(); } catch (err) {} }
+  });
+
+  // Transactional for the same reason every other write on this dashboard is:
+  // the whole queue lives in one document.
+  document.addEventListener('click', async function (e) {
+    var btn = e.target.closest && e.target.closest('[data-cq-posted]');
+    if (!btn) return;
+    var key = btn.getAttribute('data-cq-posted');
+    var db = window._cipherDb;
+    if (!db) return;
+    var ref = db.collection('campaign').doc('commentQueue');
+    btn.disabled = true;
+    try {
+      await db.runTransaction(async function (tx) {
+        var snap = await tx.get(ref);
+        var data = snap.data() || {};
+        var idx = (data.items || []).findIndex(function (x) { return (x.url || '') === key; });
+        if (idx === -1) throw new Error('Comment not found');
+        data.items[idx].postedAt = new Date().toISOString();
+        tx.set(ref, data);
+      });
+      if (typeof cipherToast === 'function') cipherToast('Marked posted. Re-read the baseline numbers in 7 days.');
+    } catch (err) {
+      btn.disabled = false;
+      if (typeof cipherToast === 'function') cipherToast('Could not mark posted: ' + (err.message || 'error'), true);
+    }
   });
 
   function loadAndRender() {
@@ -9862,10 +9928,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.27.0"></script>
-<script src="assets/outreach.js?v=1.27.0"></script>
-<script src="assets/page-knowledge.js?v=1.27.0"></script>
-<script src="assets/hal-rail.js?v=1.27.0"></script>
+<script src="assets/outreach-data.js?v=1.28.0"></script>
+<script src="assets/outreach.js?v=1.28.0"></script>
+<script src="assets/page-knowledge.js?v=1.28.0"></script>
+<script src="assets/hal-rail.js?v=1.28.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

@@ -33,6 +33,17 @@ const DRY = process.argv.includes("--dry");
 const DOC = {
   preparedAt: "2026-08-18T00:00:00.000Z",
 
+  // Captured from Dave's LinkedIn sidebar BEFORE the first comment went out.
+  // The payoff from commenting is profile views and followers — people who read
+  // it and came to look — not likes on the comment itself. Without a
+  // before-number there is nothing to compare against, so this is the whole
+  // measurement. Re-read on 2026-08-26.
+  baseline: {
+    capturedAt: "2026-08-19T02:12:29.721Z",
+    profileViewers: 17,
+    postImpressions: 1230,
+  },
+
   items: [
     {
       when: "Today — as soon as you can",
@@ -40,6 +51,7 @@ const DOC = {
       url: "https://www.linkedin.com/feed/update/urn:li:activity:7495123227401383937/",
       profile: "https://www.linkedin.com/in/acolemanpmp/",
       age: "1 day",
+      postedAt: "2026-08-19T02:15:00.000Z",   // Dave posted this one on 2026-08-18 MT
       reactions: 93,
       comments: 3,
       hostSummary:
