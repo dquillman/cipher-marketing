@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.25.1">
+<link rel="stylesheet" href="assets/outreach.css?v=1.26.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -943,6 +943,33 @@ details[open] summary::before { transform: rotate(90deg); }
 .bar-scroll { overflow-x: auto; }
 .bar-scroll > table { min-width: 560px; }
 
+/* Control account. Not the bar — the instrument that says WHICH explanation
+   for our numbers is true. Styled apart from the ranking for that reason. */
+.bar-control {
+  margin-top: 18px; padding: 15px 17px; border-radius: 4px;
+  background: rgba(122,214,255,0.07); border: 1px solid rgba(122,214,255,0.28);
+}
+.bar-control h4 {
+  margin: 0 0 4px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.98rem; font-weight: 700;
+}
+.bar-control .ctrl-sub { font-size: 0.78rem; color: var(--dim); margin-bottom: 11px; }
+.bar-control .ctrl-nums {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px; margin-bottom: 11px;
+}
+.bar-control .ctrl-nums div {
+  background: rgba(0,0,0,0.18); border-radius: 3px; padding: 7px 9px;
+}
+.bar-control .ctrl-nums .k {
+  display: block; font-size: 0.62rem; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--dim);
+}
+.bar-control .ctrl-nums .v {
+  display: block; font-size: 1.1rem; font-variant-numeric: tabular-nums; margin-top: 2px;
+}
+.bar-control .ctrl-verdict { font-size: 0.88rem; line-height: 1.55; margin: 0; }
+
 #publish-next { }
 #publish-next .pn-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
 #publish-next .pn-grid { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:start; }
@@ -1739,7 +1766,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.25.1</span>
+      <span class="version-bar" title="Dashboard version">v1.26.0</span>
     </div>
   </div>
 </nav>
@@ -6287,11 +6314,41 @@ document.addEventListener('cipher:state-updated', function () {
         esc(doc.changedSinceLastMonth) + '</div>'
       : '';
 
+    // The control is deliberately rendered BELOW the ranking and styled apart:
+    // it is not a competitor in the bar, it is the instrument that tells us
+    // which explanation for our own numbers is true.
+    var control = '';
+    var c = doc.control;
+    if (c && c.name) {
+      var num = function (label, value) {
+        if (value == null || value === '') return '';
+        return '<div><span class="k">' + esc(label) + '</span>' +
+               '<span class="v">' + esc(Number(value).toLocaleString()) + '</span></div>';
+      };
+      control = '<div class="bar-control">' +
+        '<h4>Control — ' + esc(c.name) + '</h4>' +
+        '<div class="ctrl-sub">' +
+          (c.followers ? Number(c.followers).toLocaleString() + ' followers · ' : '') +
+          (c.originals != null ? c.originals + ' original posts' : '') +
+          (c.reposts != null ? ' · ' + c.reposts + ' reposts' : '') +
+          (c.windowLabel ? ' · ' + esc(c.windowLabel) : '') +
+          '. Runs our exact format, with the audience we lack.' +
+        '</div>' +
+        '<div class="ctrl-nums">' +
+          num('React median', c.reactionsMedian) +
+          num('React best', c.reactionsBest) +
+          num('Comm median', c.commentsMedian) +
+          num('Comm best', c.commentsBest) +
+        '</div>' +
+        (c.verdict ? '<p class="ctrl-verdict">' + esc(c.verdict) + '</p>' : '') +
+      '</div>';
+    }
+
     var limit = doc.samplingNote
       ? '<p class="bar-limit">' + esc(doc.samplingNote) + '</p>'
       : '';
 
-    host.innerHTML = meta + sep + table + dead + changed + limit;
+    host.innerHTML = meta + sep + table + dead + control + changed + limit;
   }
 
   function loadAndRender() {
@@ -9670,10 +9727,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.25.1"></script>
-<script src="assets/outreach.js?v=1.25.1"></script>
-<script src="assets/page-knowledge.js?v=1.25.1"></script>
-<script src="assets/hal-rail.js?v=1.25.1"></script>
+<script src="assets/outreach-data.js?v=1.26.0"></script>
+<script src="assets/outreach.js?v=1.26.0"></script>
+<script src="assets/page-knowledge.js?v=1.26.0"></script>
+<script src="assets/hal-rail.js?v=1.26.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
