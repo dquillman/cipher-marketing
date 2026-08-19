@@ -98,10 +98,11 @@ const DOC = {
       "18 and 4. Our single comment-gated post beat his median on reactions (4 vs 3) and beat his " +
       "BEST post on comments by nearly 5x (19 vs 4). His only large numbers come from resharing other " +
       "people's viral quote-cards — one hit 1,673 reactions and it was Daniel Hemhauser's post, not " +
-      "his. Nor does the Group surface rescue him: 60 of his older originals were posted into Project " +
+      "his — and a reshare card shows the ORIGINAL post's counts, so that number says nothing about " +
+      "what his reshare earned. Nor does the Group surface rescue him: 60 of his older originals were posted into Project " +
       "Management Excellence (PMP) and land 1-4 reactions each. So neither the format nor the follower " +
       "count is what holds us back. Teaching posts underperform for the credentialed too, and reach in " +
-      "this niche is bought by resharing, not by authority.",
+      "this niche is not something a follower count buys. What his reshares earn is UNKNOWN and untested.",
   },
 
   changedSinceLastMonth:
