@@ -73,26 +73,35 @@ const DOC = {
   //
   // Scraped 2026-08-18 from /in/markuskleinpmp/recent-activity/all/ (that slug
   // is Kopko — the vanity URL does not match the display name).
+  // CORRECTED 2026-08-18, second pass. The first pull used a loose regex that
+  // took the first age-looking token in each card, which on reshares is the
+  // INNER post's age — so both the window and the best-post figures were wrong
+  // (it reported 24 originals in ~7 days, best 26 reactions / 10 comments).
+  // This pass reads .update-components-actor__sub-description, which is the
+  // card's own timestamp, and .social-details-social-counts for the counts.
+  // The conclusion did not change; it got stronger.
   control: {
     name: "Markus Kopko",
     profileUrl: "https://www.linkedin.com/in/markuskleinpmp/",
     followers: 28164,
-    windowLabel: "~7 days",
-    originals: 24,
+    windowLabel: "30 days",
+    originals: 10,
     reposts: 34,
     reactionsMedian: 3,
-    reactionsMean: 4.8,
-    reactionsBest: 26,
+    reactionsMean: 5.0,
+    reactionsBest: 18,
     commentsMedian: 2,
-    commentsBest: 10,
+    commentsBest: 4,
     verdict:
-      "The authority theory does not survive this. With 28,164 followers and a PMI credential, his " +
-      "own posts run a MEDIAN of 3 reactions and 2 comments — our comment-gated post beat his median " +
-      "on reactions (4 vs 3) and beat his single best post on comments (19 vs 10). His only large " +
-      "numbers come from RESHARING other people's viral quote-cards (one hit 1,673/416, and it was " +
-      "Daniel Hemhauser's post, not his). He also reposts more than he writes: 34 reposts against 24 " +
-      "originals in the window. So the format is not what is holding us back, and neither is the " +
-      "follower count — teaching posts underperform for the credentialed too.",
+      "The authority theory does not survive this. With 28,164 followers and a PMI AI Standards Core " +
+      "Team credential, his own posts over 30 days run a MEDIAN of 3 reactions and 2 comments, best " +
+      "18 and 4. Our single comment-gated post beat his median on reactions (4 vs 3) and beat his " +
+      "BEST post on comments by nearly 5x (19 vs 4). His only large numbers come from resharing other " +
+      "people's viral quote-cards — one hit 1,673 reactions and it was Daniel Hemhauser's post, not " +
+      "his. Nor does the Group surface rescue him: 60 of his older originals were posted into Project " +
+      "Management Excellence (PMP) and land 1-4 reactions each. So neither the format nor the follower " +
+      "count is what holds us back. Teaching posts underperform for the credentialed too, and reach in " +
+      "this niche is bought by resharing, not by authority.",
   },
 
   changedSinceLastMonth:
