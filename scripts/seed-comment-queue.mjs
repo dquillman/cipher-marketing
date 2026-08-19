@@ -50,16 +50,22 @@ const DOC = {
         "audience is looking and nobody is talking — a comment here is seen, not buried. It is one " +
         "day old, so it is still being distributed. And her method IS adaptive routing to weak areas, " +
         "which is the thing you built, so you can add something real without mentioning the product.",
+      // REWRITTEN 2026-08-18 after Dave flagged the first version as aggressive.
+      // He was right. This is a WIN post. The first draft explained her own
+      // method back to her and then warned her the tool she used was flawed —
+      // on the post celebrating that it worked. That reads as a reply-guy
+      // correction, and by the same status logic that explains this hashtag, it
+      // makes the READER not want to be associated with it either.
+      // This version congratulates first, agrees, and aims the teaching at the
+      // people who will try to copy her — not at her.
       comment:
-        "The ChatGPT-for-ten-questions-a-day part is doing more work than the course choice, and most " +
-        "people will skim past it.\n\n" +
-        "Ten questions drawn from what you got wrong tells you where to go next. Ten random questions " +
-        "tells you nothing. That is the difference between testing yourself and reviewing.\n\n" +
-        "One failure mode worth knowing: it will happily write a question whose “correct” answer is " +
-        "not the one PMI would pick, because it is pattern-matching plausible PM advice rather than " +
-        "the ECO. Anything that surprises you is worth checking against the ECO task it maps to " +
-        "before you rewire your thinking around it.\n\n" +
-        "Congratulations on Above Target in all areas.",
+        "Congratulations — Above Target in all areas is a serious result.\n\n" +
+        "The line I would point people to is the ChatGPT one. Not because it is AI, but because of " +
+        "what you did with it: ten questions a day drawn from the subjects you were actually weak in. " +
+        "That is a feedback loop, and it is probably why one course was enough. Most people add more " +
+        "resources when what they are missing is a signal about where to aim.\n\n" +
+        "For anyone copying this — the part doing the work is reviewing what you got wrong, not the " +
+        "number of questions.",
     },
 
     {
