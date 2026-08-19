@@ -1196,7 +1196,15 @@
       "planPostType": "authority",
       "scenarioId": "PMP-031",
       "scenarioArchetype": "check-the-data-before-you-respond",
-      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-031 check-the-data-before-you-respond, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-08-31 10:30 MT -> 2026-08-31 19:20 MT (no morning send has ever earned a comment)."
+      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-031 check-the-data-before-you-respond, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-08-31 10:30 MT -> 2026-08-31 19:20 MT (no morning send has ever earned a comment). | flagged 2026-08-31 as the #PMPExam single-variable hashtag test on 2026-08-18. Scheduled AFTER the 08-26 baseline read so the comment-tactic result is banked before a new variable is introduced, and after the 08-19 withhold-removal post so those two do not overlap. Hashtags are the ONLY thing that may change on this post.",
+      "experiment": {
+        "name": "hashtag-pmpexam",
+        "variable": "hashtags only",
+        "control": "#PMP #ProjectManagement",
+        "variant": "#PMP #ProjectManagement #PMPExam",
+        "readOn": "outOfNetworkPct",
+        "note": "ADD #PMPExam, do not swap. The existing pair is on the account's only A-grade post, so it stays. #ProjectManagement reaches people doing the job; #PMPExam reaches people studying for it, which is who we sell to. Everything else is held constant: same comment-gated shape, same 19:20 MT slot, same CTA in the first comment, no other copy change. Read the result on OUT-OF-NETWORK percentage, not reactions — the A-grade post hit 93% out-of-network, and if a hashtag buys anything it shows there. Prior on this account is weak and against: #pmpexam has appeared on 3 posts, all D, but all three were early and bad for unrelated reasons, so it is noise rather than evidence. Honest expectation is no effect — LinkedIn has been demoting hashtags for years and our 2,731 impressions came from comment velocity. It costs one line and settles the question."
+      }
     },
     {
       "id": "li-wed-2026-09-02-sme-06",
@@ -1653,7 +1661,7 @@
   },
   "_meta": {
     "lastUpdatedBy": "pre-seed repair: scoreboard-01 restored from Firestore (local had stale placeholder)",
-    "lastUpdatedAt": "2026-08-19T00:57:05.671Z",
+    "lastUpdatedAt": "2026-08-19T02:28:50.642Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
