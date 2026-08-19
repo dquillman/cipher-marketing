@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.26.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.27.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -970,6 +970,42 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 .bar-control .ctrl-verdict { font-size: 0.88rem; line-height: 1.55; margin: 0; }
 
+/* Comment queue. A comment's reach comes from the HOST post's audience, not
+   ours, so these are ordered by how live the host post is — not by its
+   all-time counts. A 2-week-old post with 200 reactions is a dead room. */
+.cq-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
+  padding: 18px 20px; margin-bottom: 16px;
+}
+.cq-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.cq-when {
+  font-family: 'Satoshi', system-ui, sans-serif; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--cyan); border: 1px solid currentColor; border-radius: 3px; padding: 2px 8px;
+}
+.cq-when.now { color: var(--warn); }
+.cq-author { font-weight: 700; font-size: 1rem; }
+.cq-stats { font-size: 0.8rem; color: var(--dim); font-variant-numeric: tabular-nums; }
+.cq-hostline { font-size: 0.87rem; color: var(--dim); margin: 0 0 12px; }
+.cq-why {
+  font-size: 0.85rem; margin: 0 0 12px; padding: 9px 12px; border-radius: 3px;
+  background: rgba(148,163,184,0.07); border-left: 3px solid var(--muted);
+}
+.cq-label {
+  font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--dim); font-weight: 700; margin-bottom: 5px;
+}
+.cq-comment {
+  width: 100%; min-height: 150px; resize: vertical;
+  background: rgba(0,0,0,0.22); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 12px 13px; font-size: 0.9rem; line-height: 1.55;
+  font-family: 'General Sans', system-ui, sans-serif;
+}
+.cq-actions { display: flex; gap: 9px; margin-top: 11px; align-items: center; flex-wrap: wrap; }
+.cq-copied { font-size: 0.8rem; color: var(--ok, #4ade80); opacity: 0; transition: opacity 0.2s; }
+.cq-copied.show { opacity: 1; }
+.cq-note { font-size: 0.8rem; color: var(--dim); font-style: italic; margin: 14px 0 0; }
+
 #publish-next { }
 #publish-next .pn-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
 #publish-next .pn-grid { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:start; }
@@ -1745,6 +1781,7 @@ function cipherHelp() {
       <button class="nav-link" type="button" data-route="posts" onclick="cipherShow('posts')" title="Draft and review marketing posts">Create</button>
       <button class="nav-link" type="button" data-route="schedule" onclick="cipherShow('schedule')" title="Publish posts and record live URLs">Publish</button>
       <button class="nav-link" type="button" data-route="dashboard" onclick="cipherShow('dashboard')" title="Campaign performance and blockers">Results</button>
+      <button class="nav-link" type="button" data-route="comments" onclick="cipherShow('comments')" title="Drafted comments on other people's high-performing posts">Comments</button>
     </div>
     <div class="nav-utilities">
       <span class="sync-health" id="sync-health" role="status" aria-live="polite">Connecting…</span>
@@ -1766,7 +1803,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.26.0</span>
+      <span class="version-bar" title="Dashboard version">v1.27.0</span>
     </div>
   </div>
 </nav>
@@ -2011,6 +2048,24 @@ function cipherHelp() {
   </div>
     </div>
   </details>
+</section>
+
+<section class="route-section" data-route="comments">
+  <h1>Comments</h1>
+  <p class="sub">Drafted comments on other people's high-performing posts. A comment reaches the host post's audience, not ours — which is the whole point while ours is near zero.</p>
+
+  <div class="card" style="margin-bottom:22px;">
+    <h3 style="margin:0 0 8px;">Why this exists</h3>
+    <p style="margin:0;color:var(--dim);font-size:0.9rem;line-height:1.55;">
+      Resharing puts someone else's post in front of our ~0 followers. Commenting puts us
+      in front of the people already engaging with a post that is working — candidates who
+      have just self-identified, at the moment they are paying attention. Recorded in
+      <code>grading-lessons.md</code> on 2026-08-18. Comments go out in the MORNING; our own
+      posts go out at 19:20 MT. Different mechanics, so they do not compete.
+    </p>
+  </div>
+
+  <div id="comment-queue"><div class="trend-scout-empty">Loading…</div></div>
 </section>
 
 <section class="route-section" data-route="dashboard">
@@ -6351,9 +6406,89 @@ document.addEventListener('cipher:state-updated', function () {
     host.innerHTML = meta + sep + table + dead + control + changed + limit;
   }
 
+  function subscribeCommentQueue() {
+    var ready = window._cipherAuthReady || Promise.reject(new Error('not signed in'));
+    ready.then(function () {
+      var db = window._cipherDb;
+      if (!db) throw new Error('Firestore unavailable');
+      db.collection('campaign').doc('commentQueue').onSnapshot(
+        function (snap) { renderCommentQueue(snap.exists ? snap.data() : null); },
+        function (err) {
+          console.warn('[cipher] commentQueue sync error:', err.message);
+          renderCommentQueue(null);
+        }
+      );
+    }).catch(function (err) {
+      console.warn('[cipher] commentQueue not started:', err.message);
+      renderCommentQueue(null);
+    });
+  }
+
+  // Each item carries the host post's numbers so the decay is visible: these
+  // go stale fast, and a comment on a dead post is wasted effort.
+  function renderCommentQueue(doc) {
+    var host = document.getElementById('comment-queue');
+    if (!host) return;
+    var items = (doc && Array.isArray(doc.items)) ? doc.items : [];
+    if (!items.length) {
+      host.innerHTML = '<div class="trend-scout-empty">No comment targets queued. ' +
+        'The monthly hashtag scan writes <code>campaign/commentQueue</code>.</div>';
+      return;
+    }
+
+    var staleNote = '';
+    if (doc.preparedAt) {
+      var d = new Date(doc.preparedAt);
+      var days = isNaN(d) ? null : Math.floor((Date.now() - d.getTime()) / 86400000);
+      if (days != null && days > 4) {
+        staleNote = '<p class="cq-note">Prepared ' + days + ' days ago. Host posts decay fast — ' +
+          'check each one is still active before commenting.</p>';
+      }
+    }
+
+    host.innerHTML = items.map(function (it, i) {
+      var urgent = /now|today|asap/i.test(it.when || '');
+      return '<div class="cq-item">' +
+        '<div class="cq-head">' +
+          '<span class="cq-when' + (urgent ? ' now' : '') + '">' + esc(it.when || 'unscheduled') + '</span>' +
+          '<span class="cq-author">' + esc(it.author || 'Unknown') + '</span>' +
+          '<span class="cq-stats">' +
+            (it.reactions != null ? Number(it.reactions).toLocaleString() + ' reactions' : '') +
+            (it.comments != null ? ' · ' + it.comments + ' comments' : '') +
+            (it.age ? ' · ' + esc(it.age) + ' old' : '') +
+          '</span>' +
+        '</div>' +
+        (it.hostSummary ? '<p class="cq-hostline">' + esc(it.hostSummary) + '</p>' : '') +
+        (it.why ? '<div class="cq-why">' + esc(it.why) + '</div>' : '') +
+        '<div class="cq-label">Comment to post</div>' +
+        '<textarea class="cq-comment" id="cq-text-' + i + '" spellcheck="false">' + esc(it.comment || '') + '</textarea>' +
+        '<div class="cq-actions">' +
+          '<button type="button" class="btn-primary" data-cq-copy="' + i + '">Copy comment</button>' +
+          (it.url ? '<a class="btn-secondary" href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">Open the post \u2197</a>' : '') +
+          '<span class="cq-copied" id="cq-copied-' + i + '">Copied</span>' +
+        '</div>' +
+      '</div>';
+    }).join('') + staleNote +
+    (doc.excluded ? '<p class="cq-note">' + esc(doc.excluded) + '</p>' : '');
+  }
+
+  // Copy uses the textarea's CURRENT value, so Dave's edits are what land.
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-cq-copy]');
+    if (!btn) return;
+    var i = btn.getAttribute('data-cq-copy');
+    var ta = document.getElementById('cq-text-' + i);
+    var conf = document.getElementById('cq-copied-' + i);
+    if (!ta) return;
+    var done = function () { if (conf) { conf.classList.add('show'); setTimeout(function(){ conf.classList.remove('show'); }, 1800); } };
+    if (window.safeCopy) window.safeCopy(ta.value, done, function(){ ta.select(); });
+    else { ta.select(); try { document.execCommand('copy'); done(); } catch (err) {} }
+  });
+
   function loadAndRender() {
     subscribeTrendScout();
     subscribeHashtagBar();
+    subscribeCommentQueue();
 
     fetchLocalJson('data/anchors-index.json')
       .then(renderAnchorLibrary)
@@ -9727,10 +9862,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.26.0"></script>
-<script src="assets/outreach.js?v=1.26.0"></script>
-<script src="assets/page-knowledge.js?v=1.26.0"></script>
-<script src="assets/hal-rail.js?v=1.26.0"></script>
+<script src="assets/outreach-data.js?v=1.27.0"></script>
+<script src="assets/outreach.js?v=1.27.0"></script>
+<script src="assets/page-knowledge.js?v=1.27.0"></script>
+<script src="assets/hal-rail.js?v=1.27.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
