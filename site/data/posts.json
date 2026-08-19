@@ -1083,8 +1083,8 @@
     {
       "id": "li-wed-2026-08-26-sme-05",
       "scheduled": "2026-08-26",
-      "scheduledTime": "2026-08-26T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-08-26 10:30 MT",
+      "scheduledTime": "2026-08-27T01:20:00.000Z",
+      "scheduledTimeLocal": "2026-08-26 19:20 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1119,7 +1119,8 @@
       "firstComment": "The reasoning pattern behind this one, plus more worked PMP scenarios, sits inside the trial. Start Free Trial, seven days, no credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=sme-05-0826",
       "scenarioId": "PMP-016",
       "scenarioArchetype": "use-the-agreed-process",
-      "canvaCandidate": false
+      "canvaCandidate": false,
+      "planNote": "time moved 2026-08-26 10:30 MT -> 2026-08-26 19:20 MT on 2026-08-18: this is a comment-gated post and no morning send on this account has ever earned a comment (10:30 sends landed 32 and 45 impressions, the month worst two); both prior gated posts ran ~19:20 MT, including the 2,731-impression winner. Copy unchanged."
     },
     {
       "id": "li-fri-2026-08-28-magnet-03-shrmcp",
@@ -1200,8 +1201,8 @@
     {
       "id": "li-wed-2026-09-02-sme-06",
       "scheduled": "2026-09-02",
-      "scheduledTime": "2026-09-02T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-09-02 10:30 MT",
+      "scheduledTime": "2026-09-03T01:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-02 19:20 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1236,7 +1237,8 @@
       "firstComment": "Compliance items like this one are worked end to end inside the trial. Start Free Trial, seven days, no credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=sme-06-0902",
       "scenarioId": "PMP-023",
       "scenarioArchetype": "compliance-consequence-drives-the-response",
-      "canvaCandidate": false
+      "canvaCandidate": false,
+      "planNote": "time moved 2026-09-02 10:30 MT -> 2026-09-02 19:20 MT on 2026-08-18: this is a comment-gated post and no morning send on this account has ever earned a comment (10:30 sends landed 32 and 45 impressions, the month worst two); both prior gated posts ran ~19:20 MT, including the 2,731-impression winner. Copy unchanged."
     },
     {
       "id": "li-fri-2026-09-04-magnet-04-rerun",
@@ -1317,8 +1319,8 @@
     {
       "id": "li-wed-2026-09-09-sme-07",
       "scheduled": "2026-09-09",
-      "scheduledTime": "2026-09-09T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-09-09 10:30 MT",
+      "scheduledTime": "2026-09-10T01:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-09 19:20 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1353,13 +1355,14 @@
       "firstComment": "Every worked scenario in the trial ends with the pattern, not just the letter. Start Free Trial, seven days, no credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=sme-07-0909",
       "scenarioId": "PMP-020",
       "scenarioArchetype": "reserves-follow-governance",
-      "canvaCandidate": false
+      "canvaCandidate": false,
+      "planNote": "time moved 2026-09-09 10:30 MT -> 2026-09-09 19:20 MT on 2026-08-18: this is a comment-gated post and no morning send on this account has ever earned a comment (10:30 sends landed 32 and 45 impressions, the month worst two); both prior gated posts ran ~19:20 MT, including the 2,731-impression winner. Copy unchanged."
     },
     {
       "id": "li-fri-2026-09-11-sme-08",
       "scheduled": "2026-09-11",
-      "scheduledTime": "2026-09-11T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-09-11 10:30 MT",
+      "scheduledTime": "2026-09-12T01:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-11 19:20 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1394,7 +1397,8 @@
       "firstComment": "People items turn on this kind of distinction constantly. The trial works them one at a time. Start Free Trial, seven days, no credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=sme-08-0911",
       "scenarioId": "PMP-002",
       "scenarioArchetype": "conflict-resolved-at-lowest-level",
-      "canvaCandidate": false
+      "canvaCandidate": false,
+      "planNote": "time moved 2026-09-11 10:30 MT -> 2026-09-11 19:20 MT on 2026-08-18: this is a comment-gated post and no morning send on this account has ever earned a comment (10:30 sends landed 32 and 45 impressions, the month worst two); both prior gated posts ran ~19:20 MT, including the 2,731-impression winner. Copy unchanged."
     },
     {
       "id": "li-mon-2026-09-14-scoreboard-05",
@@ -1437,8 +1441,8 @@
     {
       "id": "li-wed-2026-09-16-sme-09",
       "scheduled": "2026-09-16",
-      "scheduledTime": "2026-09-16T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-09-16 10:30 MT",
+      "scheduledTime": "2026-09-17T01:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-16 19:20 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1473,7 +1477,8 @@
       "firstComment": "This is the pattern the trial is built around: knowing which rule the stem is actually testing. Start Free Trial, seven days, no credit card:\nhttps://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=sme-09-0916",
       "scenarioId": "PMP-001",
       "scenarioArchetype": "route-to-governance",
-      "canvaCandidate": false
+      "canvaCandidate": false,
+      "planNote": "time moved 2026-09-16 10:30 MT -> 2026-09-16 19:20 MT on 2026-08-18: this is a comment-gated post and no morning send on this account has ever earned a comment (10:30 sends landed 32 and 45 impressions, the month worst two); both prior gated posts ran ~19:20 MT, including the 2,731-impression winner. Copy unchanged."
     },
     {
       "id": "li-fri-2026-09-18-sme-10",
@@ -1554,8 +1559,8 @@
     {
       "id": "li-wed-2026-09-23-sme-11",
       "scheduled": "2026-09-23",
-      "scheduledTime": "2026-09-23T16:30:00.000Z",
-      "scheduledTimeLocal": "2026-09-23 10:30 MT",
+      "scheduledTime": "2026-09-24T01:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-23 19:20 MT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1584,7 +1589,8 @@
       "planDraftOn": "Tue 09-22",
       "planPipeline": "/sme-post",
       "planSource": "19-revenue-plan-2026-08.md §2 (canonical calendar)",
-      "planPostType": "authority"
+      "planPostType": "authority",
+      "planNote": "time moved 2026-09-23 10:30 MT -> 2026-09-23 19:20 MT on 2026-08-18: this is a comment-gated post and no morning send on this account has ever earned a comment (10:30 sends landed 32 and 45 impressions, the month worst two); both prior gated posts ran ~19:20 MT, including the 2,731-impression winner. Copy unchanged."
     },
     {
       "id": "li-fri-2026-09-25-sme-12",
@@ -1647,7 +1653,7 @@
   },
   "_meta": {
     "lastUpdatedBy": "pre-seed repair: scoreboard-01 restored from Firestore (local had stale placeholder)",
-    "lastUpdatedAt": "2026-08-19T00:43:57.372Z",
+    "lastUpdatedAt": "2026-08-19T00:57:05.671Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
