@@ -99,9 +99,35 @@
       }
     }
 
+    // Live data the page already holds in memory, packed small. Without this
+    // the brain answers "I can't see your screen" to questions about what a
+    // panel shows (2026-08-21) — it only ever received page DESCRIPTIONS.
+    function livePanelData() {
+      var out = [];
+      try {
+        var t = window.__TREND__;
+        if (t && t.angles && t.angles.length) {
+          out.push("Trend Scout scan " + (t.scanDate || "?") + ":");
+          t.angles.slice(0, 3).forEach(function (a) {
+            out.push("  #" + a.rank + " [" + (a.exam || "?") + "] " + (a.label || "") +
+              (a.angleForBrad ? " — angle: " + a.angleForBrad : ""));
+          });
+          if (t.honestyCaveat) out.push("  Caveat: " + t.honestyCaveat);
+        } else if (t) {
+          out.push("Trend Scout: no angles in the current scan (" + (t.scanDate || "?") + ").");
+        }
+      } catch (e) {}
+      try {
+        var st = window.__CAMPAIGN_STATE__;
+        var f = st && st.funnel;
+        if (f) out.push("Funnel: " + JSON.stringify(f).slice(0, 220));
+      } catch (e) {}
+      return out.length ? "[LIVE PANEL DATA]\n" + out.join("\n") + "\n\n" : "";
+    }
+
     function pageContextQuestion(question) {
       var guide = currentPageGuide();
-      return "[CURRENT APP PAGE]\n" +
+      return livePanelData() + "[CURRENT APP PAGE]\n" +
         "Page: " + guide.label + "\n" +
         "Purpose: " + guide.purpose + "\n" +
         "Key sections: " + (guide.sections || []).join("; ") + "\n" +
