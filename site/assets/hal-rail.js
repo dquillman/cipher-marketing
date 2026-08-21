@@ -497,6 +497,41 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         (guide.watchFor ? "\n\nImportant: " + guide.watchFor : "");
     }
 
+    // Task commands: "run trend scout" and friends. The rail triggers the
+    // dashboard's own headless runner (window.cipherRunTrendScout, defined by
+    // the Run Trend Scout button in app.html) instead of asking the HAL
+    // server, which reasons over files but cannot execute Claude Code agents —
+    // routing these to the brain was the original dead end. Client-side, no
+    // round-trip, works even when the HAL server is down. Named tasks only:
+    // this is deliberately NOT a general "run any Claude command" pipe.
+    function halFindTask(text) {
+      var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
+      var lead = /^(?:(?:hey\s+)?(?:hal|brad|jarvis|assistant)[,:\s]+|please\s+)*/;
+      var body = t.replace(lead, "");
+      if (/^(?:run|start|kick\s*off|fire\s*up|launch|do)\s+(?:the\s+|a\s+)?(?:weekly\s+)?trend\s*scout(?:\s+scan|\s+now|\s+again)?$/.test(body) ||
+          /^(?:scan|check)\s+(?:the\s+)?(?:weekly\s+)?trends?(?:\s+now)?$/.test(body) ||
+          /^trend\s*scout(?:\s+now)?$/.test(body)) {
+        return "trend-scout";
+      }
+      return null;
+    }
+
+    function runTask(kind) {
+      var who = FACES[face].name;
+      if (kind === "trend-scout") {
+        if (typeof window.cipherRunTrendScout !== "function") {
+          return "The trend scout runner lives on the main dashboard. Open app.html (the launcher does this) and ask me there.";
+        }
+        window.cipherRunTrendScout();
+        return who === "J.A.R.V.I.S."
+          ? "Right away, sir. The trend scout is running headless — the Trend Scout panel on Today updates itself when the scan lands, usually within ten minutes."
+          : who === "HAL 9000"
+          ? "Certainly, Dave. The trend scout is running. The panel on the Today tab will update itself when the scan is complete. This should take only a few minutes."
+          : "Started. The scout runs headless for a few minutes; the Trend Scout panel on Today updates itself when it finishes. The button shows its progress.";
+      }
+      return "I know that task's name but not how to run it — that is a bug worth telling Dave about.";
+    }
+
     // DJ mode: "play music" (default: 70s greatest hits), "play some 80s
     // music", etc. Opens YouTube in a new tab - no server round-trip, works
     // even when the HAL server is down. Ported verbatim from MFI HalPanel
@@ -519,6 +554,13 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     function send(raw) {
       var text = (raw !== undefined ? raw : input.value).trim();
       if (!text || busy) return;
+      var task = halFindTask(text);
+      if (task) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        var tline = runTask(task);
+        append("assistant", tline); speak(tline); setState();
+        return;
+      }
       var helpGuide = halFindPageHelp(text);
       if (helpGuide) {
         pendingGreeting = null; input.value = ""; append("user", text);
