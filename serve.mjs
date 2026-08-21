@@ -150,8 +150,9 @@ const SCOUT_PROMPT =
   "Follow its agent definition exactly, including writing the structured scan to the Firestore " +
   "document campaign/trendScout in project cipher-marketing-daveq. This is a headless run: X and " +
   "LinkedIn cannot be scanned - record them as unscanned in honestyCaveat rather than reporting " +
-  "them as quiet. If Reddit API credentials are missing, mark Reddit unscanned as the agent " +
-  "definition instructs.";
+  "them as quiet. For Reddit, run node scripts/scan-reddit.mjs --json; without API credentials it " +
+  "falls back to RSS top-of-week order automatically - use that data under the agent definition's " +
+  "RSS rules (cite rank order, never invent scores).";
 
 const scoutState = {
   running: false,
