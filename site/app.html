@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.28.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.29.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -943,6 +943,23 @@ details[open] summary::before { transform: rotate(90deg); }
 .bar-scroll { overflow-x: auto; }
 .bar-scroll > table { min-width: 560px; }
 
+/* Groups block of the hashtag bar. Same table idiom as the ranking; the
+   member count sits under the group name so a 255k-member group with a
+   median of 2 indicts itself without commentary. */
+.bar-groups { margin-top: 18px; }
+.bar-groups h4 {
+  margin: 0 0 8px; font-family: 'Satoshi', system-ui, sans-serif;
+  font-size: 0.98rem; font-weight: 700;
+}
+.bar-groups .grp-verdict {
+  margin: 12px 0 0; padding: 10px 13px; border-radius: 0 4px 4px 0;
+  background: rgba(148,163,184,0.07); border-left: 3px solid var(--cyan);
+  font-size: 0.89rem; line-height: 1.5;
+}
+.bar-groups .grp-questions { margin-top: 12px; font-size: 0.88rem; }
+.bar-groups .grp-questions ul { margin: 6px 0 0; padding-left: 20px; }
+.bar-groups .grp-questions li { margin-bottom: 4px; color: var(--dim); }
+
 /* Control account. Not the bar — the instrument that says WHICH explanation
    for our numbers is true. Styled apart from the ranking for that reason. */
 .bar-control {
@@ -1665,6 +1682,11 @@ body.fx-on .command-center::before{opacity:.9;animation:halo-spin 7s linear infi
   background:transparent; color:var(--dim); text-align:left; font:inherit; font-size:.88rem;
 }
 .resource-panel button:hover,.resource-panel a:hover { color:var(--text); background:var(--surface-2); }
+.resource-panel .resource-group {
+  margin-top:6px; padding:8px 11px 3px; border-top:1px solid var(--border);
+  font-size:.64rem; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--muted);
+}
 .sync-health {
   display:inline-flex; align-items:center; gap:6px; min-height:30px; padding:4px 9px;
   border:1px solid var(--border); border-radius:999px; color:var(--dim);
@@ -1803,21 +1825,25 @@ function cipherHelp() {
         <summary>Resources</summary>
         <div class="resource-panel">
           <button type="button" onclick="cipherShow('competitors');this.closest('details').open=false">Competitor research</button>
-          <button type="button" onclick="cipherShow('outreach');this.closest('details').open=false">Outreach operations</button>
           <button type="button" onclick="cipherShow('testimonials');this.closest('details').open=false">Testimonials</button>
           <button type="button" onclick="cipherShow('strategy');this.closest('details').open=false">Campaign strategy</button>
-          <button type="button" onclick="cipherShow('content');this.closest('details').open=false">Content library</button>
-          <button type="button" onclick="cipherShow('landing');this.closest('details').open=false">Landing pages</button>
           <a href="funnel.html">Funnel diagnostic ↗</a>
           <a href="sprint.html">Activation sprint ↗</a>
+          <button type="button" onclick="cipherShow('settings');this.closest('details').open=false">Settings</button>
+          <!-- Frozen campaign-setup documents (May 2026). Kept for reference;
+               nothing below updates or feeds the daily workflow. Grouped so the
+               menu itself says what is ignorable — Dave asked 2026-08-20. -->
+          <div class="resource-group">Archive — setup docs, frozen</div>
+          <button type="button" onclick="cipherShow('content');this.closest('details').open=false">Content library</button>
+          <button type="button" onclick="cipherShow('landing');this.closest('details').open=false">Landing pages</button>
           <button type="button" onclick="cipherShow('engineering');this.closest('details').open=false">Engineering reference</button>
           <button type="button" onclick="cipherShow('voice');this.closest('details').open=false">Brand voice</button>
-          <button type="button" onclick="cipherShow('settings');this.closest('details').open=false">Settings</button>
+          <button type="button" onclick="cipherShow('outreach');this.closest('details').open=false">Outreach operations</button>
         </div>
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.28.0</span>
+      <span class="version-bar" title="Dashboard version">v1.29.0</span>
     </div>
   </div>
 </nav>
@@ -1886,7 +1912,7 @@ function cipherHelp() {
       <ul>
         <li><strong>Sundays = DRAFT DAY.</strong> This is the most important habit. Say <code>Brad, draft next week's [PMP / Sec+ / SHRM] posts</code>. Brad runs trend scout first, then drafts 6 posts (Mon/Wed/Fri × LinkedIn + X). You approve before they flip to <em>scheduled</em>. <strong>Miss this and the dashboard goes empty by Monday.</strong></li>
         <li><strong>If you ever land here and the Right Now card says "NO POSTS IN PIPELINE"</strong> — that means you missed Sunday. Draft immediately or you'll lose a posting week. The dashboard will keep nagging until you do.</li>
-        <li><strong>Mondays</strong> — say <code>Brad, run trend scout</code>. Quick weekly trend scan; Brad surfaces 3 angles. (Skip if you already ran it Sunday before drafting.)</li>
+        <li><strong>Mondays</strong> — press <strong>Run Trend Scout</strong> on the Today tab. One press runs the weekly scan headless; 3 angles land in the panel. (Skip if you already ran it Sunday before drafting.)</li>
         <li><strong>End of week</strong> — Brad can produce a weekly performance report: <code>Brad, weekly performance report</code>.</li>
       </ul>
 
@@ -1978,41 +2004,81 @@ function cipherHelp() {
   <button id="run-trend-scout" type="button" class="btn-primary" style="padding:10px 18px;margin-bottom:10px;">Run Trend Scout</button>
   <div id="trend-scout-panel" class="trend-scout-panel"><div class="trend-scout-empty">Loading latest scan…</div></div>
   <script>
-  // The trend scout is a Claude Code subagent, not an HTTP service — there is
-  // no /api endpoint to call. So this hands the job to Brad through the same
-  // cipherAskBrad bridge the other "do this for me" buttons use (Create posts,
-  // Explain the choices, Generate weekly report), and falls back to the
-  // clipboard when the rail isn't open. The scan lands in the panel below once
-  // Brad writes it back to campaign state.
+  // POST /api/trend-scout/run on the local server starts the headless scan;
+  // the scan writes the Firestore document campaign/trendScout, and the panel
+  // below subscribes to that document, so results land live with no manual
+  // step. The deployed dashboard has no such endpoint — there the fetch 404s
+  // and we point at the local launcher instead.
   (function () {
     var btn = document.getElementById('run-trend-scout');
     if (!btn) return;
-    var REQUEST = 'Brad, run the cipher-trend-scout subagent now: scan Reddit, LinkedIn and X for the last 7 days, '
-                + 'return the three strongest angles for the active exam clusters, then write the scan to the '
-                + 'Firestore document campaign/trendScout (NOT site/data/trend-scout.json — that file is never '
-                + 'deployed). The Trend Scout panel subscribes to campaign/trendScout and updates live.';
-    btn.addEventListener('click', function () {
-      if (btn.disabled) return;
-      var original = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = 'Running scout…';
-      try {
-        if (window.cipherAskBrad) {
-          window.cipherAskBrad(REQUEST);
-        } else if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(REQUEST);
-          window.alert('Brad is unavailable. The scout request was copied so you can paste it into Brad.');
-        } else {
-          window.alert('Open Brad from the right edge and ask him to run the trend scout.');
+    var POLL_MS = 5000;
+    var original = btn.textContent;
+    var startedAt = null;
+
+    function minutes() {
+      if (!startedAt) return '';
+      var m = Math.floor((Date.now() - startedAt) / 60000);
+      return m > 0 ? ' (' + m + 'm)' : '';
+    }
+    function setRunning(r) {
+      btn.disabled = r;
+      btn.textContent = r ? 'Scout running…' + minutes() : original;
+    }
+    function fail(msg) {
+      setRunning(false);
+      window.alert(msg);
+    }
+    function statusFetch() {
+      return window.cipherAuthHeaders().then(function (headers) {
+        return fetch('/api/trend-scout/status', { headers: headers });
+      });
+    }
+    function poll() {
+      statusFetch().then(function (r) { return r.json(); }).then(function (s) {
+        if (s.running) { setRunning(true); setTimeout(poll, POLL_MS); return; }
+        setRunning(false);
+        if (s.exitCode === 0) {
+          btn.textContent = 'Scan complete ✓';
+          setTimeout(function () { btn.textContent = original; }, 5000);
+        } else if (s.startedAt) {
+          fail('Trend scout run failed' +
+            (s.error ? ': ' + s.error : (s.exitCode != null ? ' (exit ' + s.exitCode + ')' : '')) +
+            '. Details: site/data/trend-scout-run.log');
         }
-      } finally {
-        // Dispatch is fire-and-forget — Brad reports back in the rail, so
-        // "complete" here means the request was handed off.
-        setTimeout(function () {
-          btn.disabled = false;
-          btn.textContent = original;
-        }, 1500);
-      }
+      }).catch(function () { setTimeout(poll, POLL_MS); });
+    }
+    function run() {
+      if (btn.disabled) return;
+      setRunning(true);
+      startedAt = Date.now();
+      window.cipherAuthHeaders().then(function (headers) {
+        return fetch('/api/trend-scout/run', { method: 'POST', headers: headers });
+      }).then(function (r) {
+        if (r.status === 409) { setTimeout(poll, POLL_MS); return; } // already running — just watch it
+        if (r.status === 404) {
+          fail('The trend scout runs from the local dashboard. Open Cipher Marketing with its launcher (Open Cipher Marketing.vbs) and press this button there.');
+          return;
+        }
+        if (!r.ok) {
+          return r.json().catch(function () { return {}; }).then(function (b) {
+            fail('Could not start the scout: ' + (b.error || ('HTTP ' + r.status)));
+          });
+        }
+        setTimeout(poll, POLL_MS);
+      }).catch(function (e) { fail('Could not reach the local server: ' + e.message); });
+    }
+    window.cipherRunTrendScout = run;
+    btn.addEventListener('click', run);
+    // A reload mid-scan should pick the run back up instead of looking idle.
+    document.addEventListener('cipher:operator-ready', function () {
+      statusFetch().then(function (r) { return r.ok ? r.json() : null; }).then(function (s) {
+        if (s && s.running) {
+          startedAt = s.startedAt ? new Date(s.startedAt).getTime() : Date.now();
+          setRunning(true);
+          setTimeout(poll, POLL_MS);
+        }
+      }).catch(function () {});
     });
   })();
   </script>
@@ -6173,7 +6239,7 @@ document.addEventListener('cipher:state-updated', function () {
     var el = document.getElementById('trend-scout-panel');
     if (!el) return;
     if (!data || !data.angles || data.angles.length === 0) {
-      el.innerHTML = '<div class="trend-scout-empty">No scan yet. Ask Brad to <em>"run trend scout"</em>.</div>';
+      el.innerHTML = '<div class="trend-scout-empty">No scan yet. Press the <strong>Run Trend Scout</strong> button above.</div>';
       return;
     }
     var html = '<header><h3>' + esc(data.examsScanned ? data.examsScanned.join(' · ') : '') + '</h3>'
@@ -6290,7 +6356,14 @@ document.addEventListener('cipher:state-updated', function () {
       var db = window._cipherDb;
       if (!db) throw new Error('Firestore unavailable');
       db.collection('campaign').doc('trendScout').onSnapshot(
-        function (snap) { renderTrendScout(snap.exists ? snap.data() : null); },
+        function (snap) {
+          var d = snap.exists ? snap.data() : null;
+          // Publish for the Today sequence / command center, which need the
+          // scan date for their staleness rules — same doc, one subscription.
+          window.__TREND__ = d;
+          document.dispatchEvent(new CustomEvent('cipher:trend-updated'));
+          renderTrendScout(d);
+        },
         function (err) {
           console.warn('[cipher] trendScout sync error:', err.message);
           renderTrendScout(null);
@@ -6413,11 +6486,50 @@ document.addEventListener('cipher:state-updated', function () {
       '</div>';
     }
 
+    // Groups are a distribution surface Dave has joined but never posted into.
+    // The panel reports them as a measurement, not a recommendation: member
+    // counts are huge and medians are usually tiny, and showing the median next
+    // to the member count is the whole point. Absent on headless scans, which
+    // cannot read member-only pages at all — that is why "unscanned" is a
+    // rendered field rather than an omission.
+    var groups = '';
+    var g = doc.groups;
+    if (g && Array.isArray(g.rows) && g.rows.length) {
+      var gn = function (v) { return (v == null || v === '') ? '—' : Number(v).toLocaleString(); };
+      var grows = g.rows.map(function (r) {
+        return '<tr>' +
+          '<td><span class="who">' + esc(r.name || 'Unknown group') + '</span>' +
+            '<span class="excerpt">' + gn(r.members) + ' members' +
+              (r.sampled != null ? ' · ' + r.sampled + ' sampled' : '') +
+              (r.postsPerWeek != null ? ' · ~' + r.postsPerWeek + '/wk' : '') +
+              (r.spamShare ? ' · ' + esc(r.spamShare) + ' self-promo' : '') +
+            '</span></td>' +
+          '<td class="num">' + gn(r.reactionsMedian) + '</td>' +
+          '<td class="num">' + gn(r.reactionsBest) + '</td>' +
+          '<td class="num">' + gn(r.commentsMedian) + '</td>' +
+        '</tr>';
+      }).join('');
+      groups = '<div class="bar-groups">' +
+        '<h4>Groups — member-only surface</h4>' +
+        '<div class="bar-scroll"><table><thead><tr>' +
+          '<th>Group</th><th style="text-align:right;">React med</th>' +
+          '<th style="text-align:right;">React best</th><th style="text-align:right;">Comm med</th>' +
+        '</tr></thead><tbody>' + grows + '</tbody></table></div>' +
+        (g.verdict ? '<p class="grp-verdict">' + esc(g.verdict) + '</p>' : '') +
+        (Array.isArray(g.questions) && g.questions.length
+          ? '<div class="grp-questions"><strong>What candidates are asking:</strong><ul>' +
+            g.questions.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') +
+            '</ul></div>'
+          : '') +
+        (g.unscanned ? '<p class="bar-limit">Unscanned: ' + esc(g.unscanned) + '</p>' : '') +
+      '</div>';
+    }
+
     var limit = doc.samplingNote
       ? '<p class="bar-limit">' + esc(doc.samplingNote) + '</p>'
       : '';
 
-    host.innerHTML = meta + sep + table + dead + control + changed + limit;
+    host.innerHTML = meta + sep + table + dead + control + groups + changed + limit;
   }
 
   function subscribeCommentQueue() {
@@ -7464,12 +7576,11 @@ document.addEventListener('cipher:state-updated', function () {
       return {
         type: 'trend',
         title: 'RUN TREND SCOUT',
-        sub: 'Monday morning — scan the past 7 days for trending angles before this week\'s content cycle.',
-        detail:
-          '<div class="cc-detail-label">Say to Brad</div>' +
-          '<pre>Brad, run trend scout</pre>',
+        sub: 'Monday morning — scan the past 7 days for trending angles before this week\'s content cycle. One press; results land in the panel below.',
+        detail: null,
         buttons: [
-          { label: 'See latest scan', onclick: "document.getElementById('trend-scout-panel').scrollIntoView({behavior:'smooth'})" }
+          { label: 'Run Trend Scout now', onclick: "cipherRunTrendScout ? cipherRunTrendScout() : document.getElementById('run-trend-scout').click()" },
+          { label: 'See latest scan', cls: 'secondary', onclick: "document.getElementById('trend-scout-panel').scrollIntoView({behavior:'smooth'})" }
         ]
       };
     }
@@ -7584,7 +7695,7 @@ document.addEventListener('cipher:state-updated', function () {
     if (dow === 1 || staleTrends) {
       steps.push({
         title: 'Run trend scout',
-        desc: staleTrends ? 'Last scan stale — say "Brad, run trend scout"' : 'Already fresh — checked',
+        desc: staleTrends ? 'Last scan stale — press the Run Trend Scout button below' : 'Already fresh — checked',
         done: !staleTrends
       });
     }
@@ -7708,10 +7819,12 @@ document.addEventListener('cipher:state-updated', function () {
 
   var _trendData = null;
   function loadTrend() {
-    return fetch('data/trend-scout.json', { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { _trendData = d; return d; })
-      .catch(function () { _trendData = null; return null; });
+    // The live scan is the Firestore doc campaign/trendScout, published to
+    // window.__TREND__ by the panel's subscription. The old static-file fetch
+    // (data/trend-scout.json) is gone: that file is never deployed and its
+    // local copy froze in May, so staleness rules read stale forever.
+    _trendData = window.__TREND__ || null;
+    return Promise.resolve(_trendData);
   }
 
   var _inboxData = null;
@@ -7942,6 +8055,10 @@ document.addEventListener('cipher:state-updated', function () {
   }
   document.addEventListener('cipher:posts-updated', reRender);
   document.addEventListener('cipher:state-updated', reRender);
+  document.addEventListener('cipher:trend-updated', function () {
+    _trendData = window.__TREND__ || null;
+    reRender();
+  });
 })();
 
 // ---- Angle performance (Results tab) -------------------------------------
@@ -9928,10 +10045,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.28.0"></script>
-<script src="assets/outreach.js?v=1.28.0"></script>
-<script src="assets/page-knowledge.js?v=1.28.0"></script>
-<script src="assets/hal-rail.js?v=1.28.0"></script>
+<script src="assets/outreach-data.js?v=1.29.0"></script>
+<script src="assets/outreach.js?v=1.29.0"></script>
+<script src="assets/page-knowledge.js?v=1.29.0"></script>
+<script src="assets/hal-rail.js?v=1.29.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

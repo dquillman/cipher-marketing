@@ -134,6 +134,79 @@ function triggerRebuild() {
   }
 }
 
+// ---- Trend Scout runner ----
+// The scout is a Claude Code agent, not an HTTP service, so the dashboard's
+// "Run Trend Scout" button lands here: spawn `claude -p` headless, let the
+// cipher-trend-scout agent do its scan and write campaign/trendScout in
+// Firestore, which the panel already subscribes to. The child inherits this
+// process's env (FIREBASE_SERVICE_ACCOUNT etc) and gets only the tools the
+// scout's definition actually uses — no blanket permissions.
+const SCOUT_LOG = join(ROOT, "data/trend-scout-run.log"); // site/data is never deployed
+const SCOUT_TIMEOUT_MS = 25 * 60 * 1000;
+const SCOUT_ALLOWED_TOOLS =
+  "Task,Read,Glob,Grep,Write,WebSearch,WebFetch,Bash(node:*)";
+const SCOUT_PROMPT =
+  "Run the cipher-trend-scout subagent now for all active exams (PMP, Security+, SHRM-CP). " +
+  "Follow its agent definition exactly, including writing the structured scan to the Firestore " +
+  "document campaign/trendScout in project cipher-marketing-daveq. This is a headless run: X and " +
+  "LinkedIn cannot be scanned - record them as unscanned in honestyCaveat rather than reporting " +
+  "them as quiet. If Reddit API credentials are missing, mark Reddit unscanned as the agent " +
+  "definition instructs.";
+
+const scoutState = {
+  running: false,
+  startedAt: null,
+  finishedAt: null,
+  exitCode: null,
+  error: null,
+};
+
+function startScout() {
+  scoutState.running = true;
+  scoutState.startedAt = new Date().toISOString();
+  scoutState.finishedAt = null;
+  scoutState.exitCode = null;
+  scoutState.error = null;
+
+  let log = `=== trend scout run ${scoutState.startedAt} ===\n`;
+  const finish = (code, error) => {
+    if (!scoutState.running) return;
+    scoutState.running = false;
+    scoutState.finishedAt = new Date().toISOString();
+    scoutState.exitCode = code;
+    scoutState.error = error || null;
+    log += `\n=== finished ${scoutState.finishedAt} exit=${code}${error ? " error=" + error : ""} ===\n`;
+    writeFile(SCOUT_LOG, log, "utf8").catch(() => {});
+    console.log(`[scout] finished: exit=${code}${error ? " (" + error + ")" : ""}`);
+  };
+
+  let child;
+  try {
+    // shell:true so Windows resolves the `claude` shim; prompt goes via stdin
+    // to sidestep cmd.exe quoting entirely.
+    child = spawn("claude", ["-p", "--allowedTools", `"${SCOUT_ALLOWED_TOOLS}"`], {
+      cwd: HERE,
+      shell: true,
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+  } catch (e) {
+    finish(null, e.message);
+    return;
+  }
+  child.stdin.write(SCOUT_PROMPT);
+  child.stdin.end();
+  child.stdout.on("data", (d) => { log += d; });
+  child.stderr.on("data", (d) => { log += d; });
+  child.on("error", (e) => finish(null, e.message));
+  child.on("close", (code) => finish(code));
+  const timer = setTimeout(() => {
+    finish(null, `timed out after ${SCOUT_TIMEOUT_MS / 60000} min`);
+    try { child.kill(); } catch { /* ignore */ }
+  }, SCOUT_TIMEOUT_MS);
+  timer.unref?.();
+  console.log("[scout] started headless trend scout");
+}
+
 // ---- API routes ----
 async function handleApi(req, res) {
   const url = req.url.split("?")[0];
@@ -266,6 +339,26 @@ async function handleApi(req, res) {
     }
     return;
   }
+  // Trend Scout: POST /api/trend-scout/run starts a headless scan for the
+  // operator (one at a time); GET /api/trend-scout/status is the poll target
+  // the dashboard button watches until the run completes.
+  if (url === "/api/trend-scout/run" || url === "/api/trend-scout/status") {
+    try { await authenticateOperator(req); } catch (error) { apiError(res, error); return; }
+    if (req.method === "GET" && url === "/api/trend-scout/status") {
+      jsonOk(res, { ok: true, ...scoutState });
+    } else if (req.method === "POST" && url === "/api/trend-scout/run") {
+      if (scoutState.running) {
+        jsonErr(res, 409, "a trend scout run is already in progress");
+      } else {
+        startScout();
+        jsonOk(res, { ok: true, startedAt: scoutState.startedAt });
+      }
+    } else {
+      jsonErr(res, 405, "method not allowed");
+    }
+    return;
+  }
+
   jsonErr(res, 404, "unknown api route");
 }
 
