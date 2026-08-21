@@ -86,6 +86,7 @@ const DOC = {
       url: "https://www.linkedin.com/feed/update/urn:li:activity:7493719477059063808/",
       profile: "https://www.linkedin.com/in/bryancampbell/",
       age: "5 days",
+      postedAt: "2026-08-20T13:15:00.000Z",   // Dave posted this one 2026-08-20 MT
       reactions: 7,
       comments: 0,
       hostSummary:
