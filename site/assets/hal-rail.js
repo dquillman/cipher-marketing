@@ -158,17 +158,31 @@
         var cq = window.__COMMENT_QUEUE__;
         var items = (cq && cq.items) || [];
         if (items.length) {
-          out.push("Comment queue (" + items.length + " target(s), prepared " + clip(cq.preparedAt, 10) + "):");
-          // Full detail on the top two — these are the ones Dave acts on, and
-          // "who is she and what do I reply" must be answerable from here.
-          items.slice(0, 2).forEach(function (i, n) {
-            out.push("  target " + (n + 1) + ": " + clip(i.author, 40) + " · " + clip(i.when, 30));
-            if (i.hostSummary) out.push("    their post: " + clip(i.hostSummary, 160));
-            if (i.why) out.push("    why: " + clip(i.why, 140));
-            if (i.comment) out.push("    Dave's drafted reply (he posts it himself): " + clip(i.comment, 350));
-          });
-          if (items.length > 2) {
-            out.push("  also queued: " + items.slice(2).map(function (i) { return clip(i.author, 22); }).join(", "));
+          // postedAt is the record that Dave already commented. Ignoring it
+          // made Brad urge him to post a comment he had already posted
+          // (2026-08-21) — a done target must never be presented as pending.
+          var pending = items.filter(function (i) { return !i.postedAt; });
+          var doneItems = items.filter(function (i) { return i.postedAt; });
+          if (doneItems.length) {
+            out.push("Comment queue — ALREADY POSTED by Dave (do not suggest these again): " +
+              doneItems.map(function (i) { return clip(i.author, 30) + " on " + String(i.postedAt).slice(0, 10); }).join("; "));
+          }
+          if (!pending.length) {
+            out.push("Comment queue: nothing pending — every queued target has been commented on. " +
+              "The next batch comes from the monthly hashtag scan.");
+          } else {
+            out.push("Comment queue — " + pending.length + " STILL PENDING (prepared " + clip(cq.preparedAt, 10) + "):");
+            // Full detail on the top two pending: "who is she and what do I
+            // reply" must be answerable from this digest alone.
+            pending.slice(0, 2).forEach(function (i, n) {
+              out.push("  target " + (n + 1) + ": " + clip(i.author, 40) + " · " + clip(i.when, 30));
+              if (i.hostSummary) out.push("    their post: " + clip(i.hostSummary, 160));
+              if (i.why) out.push("    why: " + clip(i.why, 140));
+              if (i.comment) out.push("    Dave's drafted reply (he posts it himself): " + clip(i.comment, 350));
+            });
+            if (pending.length > 2) {
+              out.push("  also pending: " + pending.slice(2).map(function (i) { return clip(i.author, 22); }).join(", "));
+            }
           }
         }
       } catch (e) {}
@@ -619,6 +633,32 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       return null;
     }
 
+    // "I posted to Alece" / "mark bryan posted" — record the fact instead of
+    // just hearing it. Brad could previously only talk about the queue; saying
+    // a comment was posted changed nothing, so he kept nagging about it.
+    function halFindMarkPosted(text) {
+      var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
+      var lead = /^(?:(?:hey\s+)?(?:hal|brad|jarvis|assistant)[,:\s]+|please\s+|would you (?:please )?)*/;
+      var body = t.replace(lead, "");
+      var m = body.match(/^(?:remember (?:that )?)?(?:i (?:already )?)?(?:posted|commented|replied)(?:\s+(?:to|on))?\s+(?:the\s+)?(.+?)(?:'s)?(?:\s+post)?$/) ||
+              body.match(/^mark\s+(.+?)(?:'s)?\s+(?:comment\s+)?(?:as\s+)?posted$/);
+      if (!m) return null;
+      var who = m[1].replace(/^(to|on)\s+/, "").trim();
+      if (!who || who.length > 40) return null;
+      return who;
+    }
+
+    function markPosted(who) {
+      if (typeof window.cipherMarkCommentPosted !== "function") {
+        return Promise.resolve("I can only record that on the main dashboard. Open app.html with the launcher and tell me there.");
+      }
+      return window.cipherMarkCommentPosted(who).then(function (author) {
+        return "Recorded — " + author + " is marked posted, so I will stop surfacing it. Watch profile views and followers over the next 7 days against the baseline, not likes on the comment.";
+      }).catch(function (e) {
+        return "I could not record that: " + (e.message || "error") + ". The Comments tab has a Mark posted button on each card.";
+      });
+    }
+
     // Fire an allowlisted server task and resolve to the line Brad speaks.
     // trend-scout goes through the page's own button function when present so
     // the button UI shows progress; everything else posts to /api/tasks/run.
@@ -698,6 +738,15 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     function send(raw) {
       var text = (raw !== undefined ? raw : input.value).trim();
       if (!text || busy) return;
+      var posted = halFindMarkPosted(text);
+      if (posted) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        markPosted(posted).then(function (line) {
+          append("assistant", line); speak(line); setState();
+        });
+        setState();
+        return;
+      }
       var task = halFindTask(text);
       if (task) {
         pendingGreeting = null; input.value = ""; append("user", text);

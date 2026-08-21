@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.29.8">
+<link rel="stylesheet" href="assets/outreach.css?v=1.29.9">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1843,7 +1843,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.29.8</span>
+      <span class="version-bar" title="Dashboard version">v1.29.9</span>
     </div>
   </div>
 </nav>
@@ -6647,23 +6647,44 @@ document.addEventListener('cipher:state-updated', function () {
 
   // Transactional for the same reason every other write on this dashboard is:
   // the whole queue lives in one document.
+  // Exposed so Brad can record "I posted to Alece" by name — the same write the
+  // Mark posted button performs. Without a way to SAY it, the only record was a
+  // button click, so telling Brad you had posted changed nothing and he kept
+  // surfacing the target as pending (2026-08-21). Matches URL first, then a
+  // case-insensitive author substring. Returns the matched author name.
+  window.cipherMarkCommentPosted = async function (key) {
+    var db = window._cipherDb;
+    if (!db) throw new Error('Firestore is unavailable');
+    var ref = db.collection('campaign').doc('commentQueue');
+    var matched = null;
+    await db.runTransaction(async function (tx) {
+      var snap = await tx.get(ref);
+      var data = snap.data() || {};
+      var items = data.items || [];
+      var needle = String(key || '').trim().toLowerCase();
+      var idx = items.findIndex(function (x) { return (x.url || '') === key; });
+      if (idx === -1 && needle) {
+        idx = items.findIndex(function (x) {
+          return String(x.author || '').toLowerCase().indexOf(needle) !== -1;
+        });
+      }
+      if (idx === -1) throw new Error('no queued comment matches "' + key + '"');
+      if (items[idx].postedAt) { matched = items[idx].author; return; }
+      matched = items[idx].author;
+      items[idx].postedAt = new Date().toISOString();
+      tx.set(ref, data);
+    });
+    return matched;
+  };
+
   document.addEventListener('click', async function (e) {
     var btn = e.target.closest && e.target.closest('[data-cq-posted]');
     if (!btn) return;
     var key = btn.getAttribute('data-cq-posted');
-    var db = window._cipherDb;
-    if (!db) return;
-    var ref = db.collection('campaign').doc('commentQueue');
+    if (!window._cipherDb) return;
     btn.disabled = true;
     try {
-      await db.runTransaction(async function (tx) {
-        var snap = await tx.get(ref);
-        var data = snap.data() || {};
-        var idx = (data.items || []).findIndex(function (x) { return (x.url || '') === key; });
-        if (idx === -1) throw new Error('Comment not found');
-        data.items[idx].postedAt = new Date().toISOString();
-        tx.set(ref, data);
-      });
+      await window.cipherMarkCommentPosted(key);
       if (typeof cipherToast === 'function') cipherToast('Marked posted. Re-read the baseline numbers in 7 days.');
     } catch (err) {
       btn.disabled = false;
@@ -10053,10 +10074,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.29.8"></script>
-<script src="assets/outreach.js?v=1.29.8"></script>
-<script src="assets/page-knowledge.js?v=1.29.8"></script>
-<script src="assets/hal-rail.js?v=1.29.8"></script>
+<script src="assets/outreach-data.js?v=1.29.9"></script>
+<script src="assets/outreach.js?v=1.29.9"></script>
+<script src="assets/page-knowledge.js?v=1.29.9"></script>
+<script src="assets/hal-rail.js?v=1.29.9"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

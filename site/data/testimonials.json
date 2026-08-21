@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "firestore://exam-coach-ai-platform/published_testimonials (public-read REST)",
-    "pulledAt": "2026-08-21T19:49:08.969Z",
+    "pulledAt": "2026-08-21T21:41:51.815Z",
     "pulledBy": "pull-testimonials",
     "count": 0
   },
