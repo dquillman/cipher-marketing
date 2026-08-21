@@ -177,12 +177,28 @@
         var pending = ((inbox && inbox.questions) || []).filter(function (q) { return q.status === "pending"; });
         if (pending.length) out.push("Brad inbox: " + pending.length + " question(s) awaiting Dave.");
       } catch (e) {}
-      return out.length ? "[LIVE PANEL DATA]\n" + out.join("\n") + "\n\n" : "";
+      if (!out.length) return "";
+      // Hard budget. The server caps the whole payload at 4000 chars; keeping
+      // the digest well under that leaves room for the page guide AND the
+      // trailing question marker the server classifies on.
+      var text = out.join("\n");
+      if (text.length > 2200) text = text.slice(0, 2200) + "\n  …(digest trimmed)";
+      return "[LIVE PANEL DATA]\n" + text + "\n\n";
     }
 
+    // Dave's question goes FIRST and is repeated at the end. The server caps
+    // the payload at 4000 chars; with context first, a long panel digest
+    // truncated the question off the end entirely and every message read as
+    // whatever the digest happened to mention (2026-08-21: everything looked
+    // like trend-scout talk). Leading with the question makes truncation lose
+    // context, never the request.
     function pageContextQuestion(question) {
       var guide = currentPageGuide();
-      return livePanelData() + "[CURRENT APP PAGE]\n" +
+      // The leading copy uses a DIFFERENT label: the server splits on the
+      // canonical "Dave's question:" marker to classify intent, and must find
+      // the trailing one (question only), not this one (question + context).
+      return "[DAVE ASKED] " + question + "\n\n" +
+        livePanelData() + "[CURRENT APP PAGE]\n" +
         "Page: " + guide.label + "\n" +
         "Purpose: " + guide.purpose + "\n" +
         "Key sections: " + (guide.sections || []).join("; ") + "\n" +
