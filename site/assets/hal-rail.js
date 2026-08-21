@@ -509,7 +509,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       var t = text.toLowerCase().trim().replace(/[.!?]+$/, "");
       var lead = /^(?:(?:hey\s+)?(?:hal|brad|jarvis|assistant)[,:\s]+|please\s+)*/;
       var body = t.replace(lead, "");
-      if (/^(?:run|start|kick\s*off|fire\s*up|launch|do)\s+(?:the\s+|a\s+)?(?:weekly\s+)?trend\s*scout(?:\s+scan|\s+now|\s+again)?$/.test(body) ||
+      if (/^(?:run|start|kick\s*off|fire\s*up|launch|do|test|try|trigger)\s+(?:the\s+|a\s+)?(?:weekly\s+)?trend\s*scout(?:\s+scan|\s+now|\s+again)?$/.test(body) ||
           /^(?:scan|check)\s+(?:the\s+)?(?:weekly\s+)?trends?(?:\s+now)?$/.test(body) ||
           /^trend\s*scout(?:\s+now)?$/.test(body)) {
         return "trend-scout";
@@ -528,7 +528,12 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (/\b(?:can|could)\s+you\b|\bare\s+you\s+able\b|\bdo\s+you\s+know\s+how\b|\btest\b.*\b(?:if|whether|to see)\b|\bis\s+it\s+possible\b/.test(t)) {
         return "Yes. Say “run trend scout” and I will start it right now — it runs headless on this machine and the Trend Scout panel on Today updates itself when the scan lands.";
       }
-      return null;
+      // Catch-all: ANY other trend-scout talk stays client-side. Every phrasing
+      // that reached the server brain produced a confident hallucination about
+      // what can and cannot run (2026-08-21, twice, different fictions each
+      // time) — the brain has no way to know what this client does, so on this
+      // topic it must never be asked.
+      return "About the trend scout: say “run trend scout” and I will actually run it from here. The scan takes a few minutes and the panel on Today updates itself. Yesterday's scan is in the panel now.";
     }
 
     function runTask(kind) {
