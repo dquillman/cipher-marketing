@@ -109,7 +109,8 @@
         "Best first action: " + guide.start + "\n" +
         "Terms: " + (guide.terms || []).join("; ") + "\n" +
         "Important caution: " + (guide.watchFor || "None") + "\n" +
-        "Related pages: " + (guide.related || []).join("; ") + "\n\n" +
+        "Related pages: " + (guide.related || []).join("; ") + "\n" +
+        "Console abilities: typing the exact phrase \"run trend scout\" into this rail actually RUNS the weekly trend scout headless on Dave's machine (same as the Run Trend Scout button); the Trend Scout panel updates itself when the scan lands. You (the brain) cannot run tasks yourself — if Dave wants a task run, tell him the exact phrase to type. Never claim task execution is impossible or locked; the rail handles it.\n\n" +
         "Answer as an expert on this exact Cipher Marketing page. Explain unfamiliar terms in plain language and give Dave a concrete next action.\n\n" +
         "Dave's question: " + question;
     }
@@ -516,6 +517,20 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       return null;
     }
 
+    // Capability questions about tasks ("can you run trend scout", "test if
+    // you can run the scout") must be answered HERE, truthfully. Left to the
+    // server brain, they hallucinate: on 2026-08-21 it invented "Claude Code
+    // is in don't-ask mode, subagent invocation is locked" — pure fiction.
+    // The brain cannot know what this client can do, so the client answers.
+    function halFindTaskQuestion(text) {
+      var t = text.toLowerCase();
+      if (!/trend\s*scout|scan\s+(?:the\s+)?trends?/.test(t)) return null;
+      if (/\b(?:can|could)\s+you\b|\bare\s+you\s+able\b|\bdo\s+you\s+know\s+how\b|\btest\b.*\b(?:if|whether|to see)\b|\bis\s+it\s+possible\b/.test(t)) {
+        return "Yes. Say “run trend scout” and I will start it right now — it runs headless on this machine and the Trend Scout panel on Today updates itself when the scan lands.";
+      }
+      return null;
+    }
+
     function runTask(kind) {
       var who = FACES[face].name;
       if (kind === "trend-scout") {
@@ -559,6 +574,12 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         pendingGreeting = null; input.value = ""; append("user", text);
         var tline = runTask(task);
         append("assistant", tline); speak(tline); setState();
+        return;
+      }
+      var taskAnswer = halFindTaskQuestion(text);
+      if (taskAnswer) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        append("assistant", taskAnswer); speak(taskAnswer); setState();
         return;
       }
       var helpGuide = halFindPageHelp(text);
