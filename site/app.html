@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.29.5">
+<link rel="stylesheet" href="assets/outreach.css?v=1.29.6">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1843,7 +1843,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.29.5</span>
+      <span class="version-bar" title="Dashboard version">v1.29.6</span>
     </div>
   </div>
 </nav>
@@ -6384,7 +6384,11 @@ document.addEventListener('cipher:state-updated', function () {
       var db = window._cipherDb;
       if (!db) throw new Error('Firestore unavailable');
       db.collection('campaign').doc('hashtagBar').onSnapshot(
-        function (snap) { renderHashtagBar(snap.exists ? snap.data() : null); },
+        function (snap) {
+          // Published for Brad's rail context (livePanelData in hal-rail.js).
+          window.__HASHTAG_BAR__ = snap.exists ? snap.data() : null;
+          renderHashtagBar(window.__HASHTAG_BAR__);
+        },
         function (err) {
           console.warn('[cipher] hashtagBar sync error:', err.message);
           renderHashtagBar(null);
@@ -6538,7 +6542,11 @@ document.addEventListener('cipher:state-updated', function () {
       var db = window._cipherDb;
       if (!db) throw new Error('Firestore unavailable');
       db.collection('campaign').doc('commentQueue').onSnapshot(
-        function (snap) { renderCommentQueue(snap.exists ? snap.data() : null); },
+        function (snap) {
+          // Published for Brad's rail context (livePanelData in hal-rail.js).
+          window.__COMMENT_QUEUE__ = snap.exists ? snap.data() : null;
+          renderCommentQueue(window.__COMMENT_QUEUE__);
+        },
         function (err) {
           console.warn('[cipher] commentQueue sync error:', err.message);
           renderCommentQueue(null);
@@ -7831,7 +7839,7 @@ document.addEventListener('cipher:state-updated', function () {
   function loadInbox() {
     return fetch('data/brad-inbox.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { _inboxData = d; return d; })
+      .then(function (d) { _inboxData = d; window.__BRAD_INBOX__ = d; return d; })
       .catch(function () { _inboxData = null; return null; });
   }
 
@@ -10045,10 +10053,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.29.5"></script>
-<script src="assets/outreach.js?v=1.29.5"></script>
-<script src="assets/page-knowledge.js?v=1.29.5"></script>
-<script src="assets/hal-rail.js?v=1.29.5"></script>
+<script src="assets/outreach-data.js?v=1.29.6"></script>
+<script src="assets/outreach.js?v=1.29.6"></script>
+<script src="assets/page-knowledge.js?v=1.29.6"></script>
+<script src="assets/hal-rail.js?v=1.29.6"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

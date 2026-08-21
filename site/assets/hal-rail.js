@@ -102,25 +102,70 @@
     // Live data the page already holds in memory, packed small. Without this
     // the brain answers "I can't see your screen" to questions about what a
     // panel shows (2026-08-21) — it only ever received page DESCRIPTIONS.
+    // Every panel is digested, each capped hard, so the full picture costs a
+    // page of text rather than the raw documents.
     function livePanelData() {
       var out = [];
+      var clip = function (s, n) { return String(s == null ? "" : s).slice(0, n); };
       try {
         var t = window.__TREND__;
         if (t && t.angles && t.angles.length) {
           out.push("Trend Scout scan " + (t.scanDate || "?") + ":");
           t.angles.slice(0, 3).forEach(function (a) {
-            out.push("  #" + a.rank + " [" + (a.exam || "?") + "] " + (a.label || "") +
-              (a.angleForBrad ? " — angle: " + a.angleForBrad : ""));
+            out.push("  #" + a.rank + " [" + (a.exam || "?") + "] " + clip(a.label, 90) +
+              (a.angleForBrad ? " — angle: " + clip(a.angleForBrad, 140) : ""));
           });
-          if (t.honestyCaveat) out.push("  Caveat: " + t.honestyCaveat);
+          if (t.honestyCaveat) out.push("  Caveat: " + clip(t.honestyCaveat, 200));
         } else if (t) {
           out.push("Trend Scout: no angles in the current scan (" + (t.scanDate || "?") + ").");
         }
       } catch (e) {}
       try {
         var st = window.__CAMPAIGN_STATE__;
-        var f = st && st.funnel;
-        if (f) out.push("Funnel: " + JSON.stringify(f).slice(0, 220));
+        if (st && st.funnel) out.push("Funnel: " + clip(JSON.stringify(st.funnel), 220));
+        var bp = st && st.boardPriorities;
+        if (bp && bp.items && bp.items.length) {
+          out.push("Board priorities (" + (bp.cycleDate || "?") + "): " +
+            bp.items.slice(0, 6).map(function (it) { return (it.priority || "?") + " " + clip(it.text, 80); }).join(" | "));
+        }
+      } catch (e) {}
+      try {
+        var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+        if (posts.length) {
+          var by = {};
+          posts.forEach(function (p) { by[p.status || "?"] = (by[p.status || "?"] || 0) + 1; });
+          var graded = posts.filter(function (p) { return p.grade; }).slice(-3)
+            .map(function (p) { return (p.scheduled || "?") + " " + (p.channel || "?") + "=" + p.grade; });
+          var next = posts.filter(function (p) { return p.status === "scheduled" || p.status === "draft"; })
+            .sort(function (a, b) { return String(a.scheduled).localeCompare(String(b.scheduled)); })[0];
+          out.push("Posts: " + JSON.stringify(by) +
+            (next ? " · next up " + (next.scheduled || "?") + " " + (next.channel || "?") + " (" + (next.status || "?") + ")" : "") +
+            (graded.length ? " · recent grades " + graded.join(", ") : ""));
+        }
+      } catch (e) {}
+      try {
+        var h = window.__HASHTAG_BAR__;
+        if (h && h.posts && h.posts.length) {
+          var ours = h.posts.findIndex(function (p) { return p.isOurs; });
+          out.push("Hashtag bar (" + clip(h.scannedAt, 10) + "): top " +
+            h.posts.slice(0, 3).map(function (p) { return clip(p.author, 22) + " " + p.reactions + "r"; }).join(", ") +
+            (ours >= 0 ? " · ours ranks #" + (ours + 1) : "") +
+            (h.separator ? " · finding: " + clip(h.separator, 180) : ""));
+          if (h.groups && h.groups.verdict) out.push("Groups: " + clip(h.groups.verdict, 220));
+        }
+      } catch (e) {}
+      try {
+        var cq = window.__COMMENT_QUEUE__;
+        var items = (cq && cq.items) || [];
+        if (items.length) {
+          out.push("Comment queue (" + items.length + "): " +
+            items.slice(0, 3).map(function (i) { return clip(i.author, 22) + " (" + clip(i.when, 26) + ")"; }).join("; "));
+        }
+      } catch (e) {}
+      try {
+        var inbox = window.__BRAD_INBOX__;
+        var pending = ((inbox && inbox.questions) || []).filter(function (q) { return q.status === "pending"; });
+        if (pending.length) out.push("Brad inbox: " + pending.length + " question(s) awaiting Dave.");
       } catch (e) {}
       return out.length ? "[LIVE PANEL DATA]\n" + out.join("\n") + "\n\n" : "";
     }
