@@ -58,6 +58,7 @@ const PULL_ONLY  = args.has("--pull");
 const GRADE_FIELDS  = ["metrics", "grade", "gradeNotes", "recommendations"];
 const POSTED_FIELDS = ["postedAt", "postUrl"];
 const VIDEO_FIELDS  = ["videoUrl", "videoStatus", "renderedAt", "videoJobId"];
+const DASHBOARD_FIELDS = ["archived"];   // set from the dashboard, absent from posts.json
 
 // ---- Firestore REST <-> JS conversion ----
 
@@ -167,6 +168,17 @@ function mergePostsPreservingGrades(localPosts, remotePosts) {
         if (hasRealValue(remote[f])) {
           out[f] = remote[f];
           videoChanged = true;
+        }
+      }
+
+      // DASHBOARD_FIELDS: state the dashboard writes and posts.json does not
+      // track. Local-file-wins would silently DELETE these on every re-seed —
+      // which is exactly what happened to archived on 2026-08-19, wiping the
+      // flag off all six skipped posts and making the Show-archived toggle
+      // vanish. Preserve remote unless the local file has a real value.
+      for (const f of DASHBOARD_FIELDS) {
+        if (!hasRealValue(localPost[f]) && hasRealValue(remote[f])) {
+          out[f] = remote[f];
         }
       }
 

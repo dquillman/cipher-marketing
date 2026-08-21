@@ -439,7 +439,8 @@
       "gradeNotes": null,
       "recommendations": null,
       "track": "product",
-      "producedBy": "hand"
+      "producedBy": "hand",
+      "archived": true
     },
     {
       "id": "li-fri-2026-05-29-scenario",
@@ -473,7 +474,8 @@
       "recommendations": null,
       "holdLiftedAt": "2026-07-16",
       "track": "product",
-      "producedBy": "hand"
+      "producedBy": "hand",
+      "archived": true
     },
     {
       "id": "x-fri-2026-05-29-scenario",
@@ -507,7 +509,8 @@
       "recommendations": null,
       "holdLiftedAt": "2026-07-16",
       "track": "product",
-      "producedBy": "hand"
+      "producedBy": "hand",
+      "archived": true
     },
     {
       "id": "li-mon-2026-06-01-domains",
@@ -541,7 +544,8 @@
       "recommendations": null,
       "holdLiftedAt": "2026-07-16",
       "track": "product",
-      "producedBy": "hand"
+      "producedBy": "hand",
+      "archived": true
     },
     {
       "id": "x-mon-2026-06-01-domains",
@@ -575,7 +579,8 @@
       "recommendations": null,
       "holdLiftedAt": "2026-07-16",
       "track": "product",
-      "producedBy": "hand"
+      "producedBy": "hand",
+      "archived": true
     },
     {
       "id": "li-mon-2026-08-03-exam-change",
@@ -964,7 +969,8 @@
       "planPipeline": "/sme-post",
       "planSource": "19-revenue-plan-2026-08.md §2 (canonical calendar)",
       "planPostType": "authority",
-      "planNote": "SKIPPED 2026-08-12. Never drafted (brief only). li-mon-2026-08-10-bizenv-reprice — already gauntlet-finished — absorbed the Fri 08-14 SME slot after the magnet post took 08-12. This restores calendar alignment: SME #2 never got its own slot because li-mon-2026-08-10-decision-pattern took Mon 08-10."
+      "planNote": "SKIPPED 2026-08-12. Never drafted (brief only). li-mon-2026-08-10-bizenv-reprice — already gauntlet-finished — absorbed the Fri 08-14 SME slot after the magnet post took 08-12. This restores calendar alignment: SME #2 never got its own slot because li-mon-2026-08-10-decision-pattern took Mon 08-10.",
+      "archived": true
     },
     {
       "id": "li-mon-2026-08-17-scoreboard-01",
@@ -1740,7 +1746,7 @@
   },
   "_meta": {
     "lastUpdatedBy": "seed-firestore --pull",
-    "lastUpdatedAt": "2026-08-20T22:03:17.797Z",
+    "lastUpdatedAt": "2026-08-21T04:07:07.523Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",
