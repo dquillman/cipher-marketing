@@ -158,8 +158,18 @@
         var cq = window.__COMMENT_QUEUE__;
         var items = (cq && cq.items) || [];
         if (items.length) {
-          out.push("Comment queue (" + items.length + "): " +
-            items.slice(0, 3).map(function (i) { return clip(i.author, 22) + " (" + clip(i.when, 26) + ")"; }).join("; "));
+          out.push("Comment queue (" + items.length + " target(s), prepared " + clip(cq.preparedAt, 10) + "):");
+          // Full detail on the top two — these are the ones Dave acts on, and
+          // "who is she and what do I reply" must be answerable from here.
+          items.slice(0, 2).forEach(function (i, n) {
+            out.push("  target " + (n + 1) + ": " + clip(i.author, 40) + " · " + clip(i.when, 30));
+            if (i.hostSummary) out.push("    their post: " + clip(i.hostSummary, 160));
+            if (i.why) out.push("    why: " + clip(i.why, 140));
+            if (i.comment) out.push("    Dave's drafted reply (he posts it himself): " + clip(i.comment, 350));
+          });
+          if (items.length > 2) {
+            out.push("  also queued: " + items.slice(2).map(function (i) { return clip(i.author, 22); }).join(", "));
+          }
         }
       } catch (e) {}
       try {
