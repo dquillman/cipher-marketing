@@ -110,7 +110,7 @@
         "Terms: " + (guide.terms || []).join("; ") + "\n" +
         "Important caution: " + (guide.watchFor || "None") + "\n" +
         "Related pages: " + (guide.related || []).join("; ") + "\n" +
-        "Console abilities: typing the exact phrase \"run trend scout\" into this rail actually RUNS the weekly trend scout headless on Dave's machine (same as the Run Trend Scout button); the Trend Scout panel updates itself when the scan lands. You (the brain) cannot run tasks yourself — if Dave wants a task run, tell him the exact phrase to type. Never claim task execution is impossible or locked; the rail handles it.\n\n" +
+        "Console abilities: this rail actually RUNS tasks headless on Dave's machine. \"run trend scout\" runs the weekly trend scout (panel updates itself); \"draft next week's posts\" drafts the coming week's posts into Create for Dave's approval. You (the brain) cannot run tasks yourself — if Dave wants a task run, tell him the exact phrase to type. Never claim task execution is impossible or locked; the rail handles it.\n\n" +
         "Answer as an expert on this exact Cipher Marketing page. Explain unfamiliar terms in plain language and give Dave a concrete next action.\n\n" +
         "Dave's question: " + question;
     }
@@ -514,7 +514,50 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
           /^trend\s*scout(?:\s+now)?$/.test(body)) {
         return "trend-scout";
       }
+      if (/^(?:draft|prep|prepare|write|create)\s+(?:me\s+)?(?:the\s+)?(?:next\s+)?week(?:'?s)?\s+(?:posts|content|drafts)(?:\s+now)?$/.test(body) ||
+          /^draft\s+(?:the\s+)?(?:posts|content)\s+for\s+(?:next\s+)?week$/.test(body) ||
+          /^draft\s+week\s+posts$/.test(body)) {
+        return "draft-week-posts";
+      }
       return null;
+    }
+
+    // Fire an allowlisted server task and resolve to the line Brad speaks.
+    // trend-scout goes through the page's own button function when present so
+    // the button UI shows progress; everything else posts to /api/tasks/run.
+    function startNamedTask(kind) {
+      var who = FACES[face].name;
+      if (kind === "trend-scout" && typeof window.cipherRunTrendScout === "function") {
+        window.cipherRunTrendScout();
+        return Promise.resolve(
+          who === "J.A.R.V.I.S."
+            ? "Right away, sir. The trend scout is running headless — the Trend Scout panel on Today updates itself when the scan lands, usually within ten minutes."
+            : who === "HAL 9000"
+            ? "Certainly, Dave. The trend scout is running. The panel on the Today tab will update itself when the scan is complete. This should take only a few minutes."
+            : "Started. The scout runs headless for a few minutes; the Trend Scout panel on Today updates itself when it finishes. The button shows its progress.");
+      }
+      if (!window.cipherAuthHeaders) {
+        return Promise.resolve("I need the operator-authenticated dashboard for that. Open app.html with the launcher and ask me there.");
+      }
+      var doneLine = {
+        "trend-scout": "Started. The scout runs headless for a few minutes; the Trend Scout panel on Today updates itself when it finishes.",
+        "draft-week-posts": "Started. Drafting next week's posts headless — give it several minutes, then review them in Create. Everything lands as a draft for your approval; nothing gets scheduled without you.",
+      };
+      return window.cipherAuthHeaders().then(function (headers) {
+        headers["Content-Type"] = "application/json";
+        return fetch("/api/tasks/run", { method: "POST", headers: headers, body: JSON.stringify({ task: kind }) });
+      }).then(function (r) {
+        if (r.status === 409) return r.json().catch(function () { return {}; }).then(function (b) {
+          return "One thing at a time - " + (b.error || "a task is already in progress") + ". Give it a few minutes.";
+        });
+        if (r.status === 404) return "That task needs the local dashboard server. Open Cipher Marketing with its launcher and ask me there.";
+        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (b) {
+          return "I couldn't start it: " + (b.error || ("HTTP " + r.status));
+        });
+        return doneLine[kind] || "Started.";
+      }).catch(function (e) {
+        return "I couldn't reach the local server: " + e.message;
+      });
     }
 
     // Capability questions about tasks ("can you run trend scout", "test if
@@ -534,22 +577,6 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       // time) — the brain has no way to know what this client does, so on this
       // topic it must never be asked.
       return "About the trend scout: say “run trend scout” and I will actually run it from here. The scan takes a few minutes and the panel on Today updates itself. Yesterday's scan is in the panel now.";
-    }
-
-    function runTask(kind) {
-      var who = FACES[face].name;
-      if (kind === "trend-scout") {
-        if (typeof window.cipherRunTrendScout !== "function") {
-          return "The trend scout runner lives on the main dashboard. Open app.html (the launcher does this) and ask me there.";
-        }
-        window.cipherRunTrendScout();
-        return who === "J.A.R.V.I.S."
-          ? "Right away, sir. The trend scout is running headless — the Trend Scout panel on Today updates itself when the scan lands, usually within ten minutes."
-          : who === "HAL 9000"
-          ? "Certainly, Dave. The trend scout is running. The panel on the Today tab will update itself when the scan is complete. This should take only a few minutes."
-          : "Started. The scout runs headless for a few minutes; the Trend Scout panel on Today updates itself when it finishes. The button shows its progress.";
-      }
-      return "I know that task's name but not how to run it — that is a bug worth telling Dave about.";
     }
 
     // DJ mode: "play music" (default: 70s greatest hits), "play some 80s
@@ -577,8 +604,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       var task = halFindTask(text);
       if (task) {
         pendingGreeting = null; input.value = ""; append("user", text);
-        var tline = runTask(task);
-        append("assistant", tline); speak(tline); setState();
+        startNamedTask(task).then(function (tline) {
+          append("assistant", tline); speak(tline); setState();
+        });
+        setState();
         return;
       }
       var taskAnswer = halFindTaskQuestion(text);

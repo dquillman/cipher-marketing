@@ -134,58 +134,78 @@ function triggerRebuild() {
   }
 }
 
-// ---- Trend Scout runner ----
-// The scout is a Claude Code agent, not an HTTP service, so the dashboard's
-// "Run Trend Scout" button lands here: spawn `claude -p` headless, let the
-// cipher-trend-scout agent do its scan and write campaign/trendScout in
-// Firestore, which the panel already subscribes to. The child inherits this
-// process's env (FIREBASE_SERVICE_ACCOUNT etc) and gets only the tools the
-// scout's definition actually uses — no blanket permissions.
-const SCOUT_LOG = join(ROOT, "data/trend-scout-run.log"); // site/data is never deployed
-const SCOUT_TIMEOUT_MS = 25 * 60 * 1000;
-const SCOUT_ALLOWED_TOOLS =
-  "Task,Read,Glob,Grep,Write,WebSearch,WebFetch,Bash(node:*)";
-const SCOUT_PROMPT =
-  "Run the cipher-trend-scout subagent now for all active exams (PMP, Security+, SHRM-CP). " +
-  "Follow its agent definition exactly, including writing the structured scan to the Firestore " +
-  "document campaign/trendScout in project cipher-marketing-daveq. This is a headless run: X and " +
-  "LinkedIn cannot be scanned - record them as unscanned in honestyCaveat rather than reporting " +
-  "them as quiet. For Reddit, run node scripts/scan-reddit.mjs --json; without API credentials it " +
-  "falls back to RSS top-of-week order automatically - use that data under the agent definition's " +
-  "RSS rules (cite rank order, never invent scores).";
+// ---- Named-task runner ----
+// CM's operations are Claude Code agents/skills, not HTTP services, so the
+// dashboard's buttons and Brad's rail land here: spawn `claude -p` headless
+// with a per-task prompt and a scoped tool allowlist. The child inherits this
+// process's env (FIREBASE_SERVICE_ACCOUNT etc). This is a fixed ALLOWLIST of
+// named tasks — deliberately not a general run-any-prompt pipe, because that
+// would let any authenticated page execute arbitrary commands on this machine.
+// One task at a time; per-task log in site/data (never deployed).
+const TASK_TIMEOUT_MS = 25 * 60 * 1000;
+const TASK_ALLOWED_TOOLS =
+  "Task,Read,Glob,Grep,Write,Edit,WebSearch,WebFetch,Bash(node:*)";
 
-const scoutState = {
+const TASKS = {
+  "trend-scout": {
+    label: "trend scout",
+    prompt:
+      "Run the cipher-trend-scout subagent now for all active exams (PMP, Security+, SHRM-CP). " +
+      "Follow its agent definition exactly, including writing the structured scan to the Firestore " +
+      "document campaign/trendScout in project cipher-marketing-daveq. This is a headless run: X and " +
+      "LinkedIn cannot be scanned - record them as unscanned in honestyCaveat rather than reporting " +
+      "them as quiet. For Reddit, run node scripts/scan-reddit.mjs --json; without API credentials it " +
+      "falls back to RSS top-of-week order automatically - use that data under the agent definition's " +
+      "RSS rules (cite rank order, never invent scores).",
+  },
+  "draft-week-posts": {
+    label: "draft next week's posts",
+    prompt:
+      "Use the draft-week-posts skill to draft next week's CipherExam posts now. Follow the skill " +
+      "exactly: check current campaign status and existing drafts first, fold in the latest trend " +
+      "scout angles from Firestore campaign/trendScout, respect the 2026-08-07 decision that X " +
+      "standalone posts are paused, and write the drafts to site/data/posts.json with status " +
+      "\"draft\" only - Dave approves before anything is scheduled. Never mark anything posted or " +
+      "scheduled yourself.",
+  },
+};
+
+const taskState = {
   running: false,
+  task: null,
   startedAt: null,
   finishedAt: null,
   exitCode: null,
   error: null,
 };
 
-function startScout() {
-  scoutState.running = true;
-  scoutState.startedAt = new Date().toISOString();
-  scoutState.finishedAt = null;
-  scoutState.exitCode = null;
-  scoutState.error = null;
+function startTask(id) {
+  const def = TASKS[id];
+  taskState.running = true;
+  taskState.task = id;
+  taskState.startedAt = new Date().toISOString();
+  taskState.finishedAt = null;
+  taskState.exitCode = null;
+  taskState.error = null;
 
-  let log = `=== trend scout run ${scoutState.startedAt} ===\n`;
+  const logPath = join(ROOT, `data/${id}-run.log`);
+  let log = `=== ${def.label} run ${taskState.startedAt} ===\n`;
   const finish = (code, error) => {
-    if (!scoutState.running) return;
-    scoutState.running = false;
-    scoutState.finishedAt = new Date().toISOString();
-    scoutState.exitCode = code;
-    scoutState.error = error || null;
-    log += `\n=== finished ${scoutState.finishedAt} exit=${code}${error ? " error=" + error : ""} ===\n`;
-    writeFile(SCOUT_LOG, log, "utf8").catch(() => {});
-    console.log(`[scout] finished: exit=${code}${error ? " (" + error + ")" : ""}`);
+    if (!taskState.running) return;
+    taskState.running = false;
+    taskState.finishedAt = new Date().toISOString();
+    taskState.exitCode = code;
+    taskState.error = error || null;
+    log += `\n=== finished ${taskState.finishedAt} exit=${code}${error ? " error=" + error : ""} ===\n`;
+    writeFile(logPath, log, "utf8").catch(() => {});
+    console.log(`[task:${id}] finished: exit=${code}${error ? " (" + error + ")" : ""}`);
   };
 
   let child;
   try {
     // shell:true so Windows resolves the `claude` shim; prompt goes via stdin
     // to sidestep cmd.exe quoting entirely.
-    child = spawn("claude", ["-p", "--allowedTools", `"${SCOUT_ALLOWED_TOOLS}"`], {
+    child = spawn("claude", ["-p", "--allowedTools", `"${TASK_ALLOWED_TOOLS}"`], {
       cwd: HERE,
       shell: true,
       stdio: ["pipe", "pipe", "pipe"],
@@ -194,18 +214,18 @@ function startScout() {
     finish(null, e.message);
     return;
   }
-  child.stdin.write(SCOUT_PROMPT);
+  child.stdin.write(def.prompt);
   child.stdin.end();
   child.stdout.on("data", (d) => { log += d; });
   child.stderr.on("data", (d) => { log += d; });
   child.on("error", (e) => finish(null, e.message));
   child.on("close", (code) => finish(code));
   const timer = setTimeout(() => {
-    finish(null, `timed out after ${SCOUT_TIMEOUT_MS / 60000} min`);
+    finish(null, `timed out after ${TASK_TIMEOUT_MS / 60000} min`);
     try { child.kill(); } catch { /* ignore */ }
-  }, SCOUT_TIMEOUT_MS);
+  }, TASK_TIMEOUT_MS);
   timer.unref?.();
-  console.log("[scout] started headless trend scout");
+  console.log(`[task:${id}] started headless`);
 }
 
 // ---- API routes ----
@@ -340,19 +360,29 @@ async function handleApi(req, res) {
     }
     return;
   }
-  // Trend Scout: POST /api/trend-scout/run starts a headless scan for the
-  // operator (one at a time); GET /api/trend-scout/status is the poll target
-  // the dashboard button watches until the run completes.
-  if (url === "/api/trend-scout/run" || url === "/api/trend-scout/status") {
+  // Named tasks: POST /api/tasks/run {task} starts an allowlisted headless
+  // task for the operator (one at a time, whole-server); GET /api/tasks/status
+  // is the poll target. /api/trend-scout/* remains as an alias so the deployed
+  // dashboard's button keeps working against older pages.
+  if (url === "/api/tasks/run" || url === "/api/tasks/status" ||
+      url === "/api/trend-scout/run" || url === "/api/trend-scout/status") {
     try { await authenticateOperator(req); } catch (error) { apiError(res, error); return; }
-    if (req.method === "GET" && url === "/api/trend-scout/status") {
-      jsonOk(res, { ok: true, ...scoutState });
-    } else if (req.method === "POST" && url === "/api/trend-scout/run") {
-      if (scoutState.running) {
-        jsonErr(res, 409, "a trend scout run is already in progress");
+    const isStatus = url.endsWith("/status");
+    if (req.method === "GET" && isStatus) {
+      jsonOk(res, { ok: true, tasks: Object.keys(TASKS), ...taskState });
+    } else if (req.method === "POST" && !isStatus) {
+      let id = "trend-scout";
+      if (url === "/api/tasks/run") {
+        let body;
+        try { body = await readBody(req); } catch (error) { apiError(res, error); return; }
+        id = String(body.task || "");
+        if (!TASKS[id]) { jsonErr(res, 400, `unknown task "${id}" - known: ${Object.keys(TASKS).join(", ")}`); return; }
+      }
+      if (taskState.running) {
+        jsonErr(res, 409, `task "${taskState.task}" is already in progress`);
       } else {
-        startScout();
-        jsonOk(res, { ok: true, startedAt: scoutState.startedAt });
+        startTask(id);
+        jsonOk(res, { ok: true, task: id, startedAt: taskState.startedAt });
       }
     } else {
       jsonErr(res, 405, "method not allowed");
