@@ -300,7 +300,8 @@
         return text ? "[ON SCREEN RIGHT NOW - literal text of the visible part of the page]\n" +
           "Legend: lines starting '## ' are headings or item titles (the bold, prominent text); '[button: …]' is a clickable control; " +
           "'[link: …]' is a link; '[tag: …]' is a small category chip next to a title; other lines are body text or detail rows under the nearest '## ' line. " +
-          "When Dave asks for titles, headlines or 'what does it say', lead with the '## ' lines. If a question could mean two different elements, answer with the prominent one and name the other in one clause.\n" +
+          "A body line that starts with a short capitalised word followed by text (e.g. 'Source …', 'Signal …', 'Why hot …', 'Angle …', 'Status …') is a FIELD of the item under the nearest '## ' line - the word is the field's label, not the item's title. " +
+          "When Dave asks for titles, headlines, names or 'what does it say', lead with the '## ' lines even if a field label happens to share a word with his question; then offer the matching field in one clause. If a question could mean two different elements, answer with the prominent one and name the other.\n" +
           text + "\n\n" : "";
       } catch (e) { return ""; }
     }
