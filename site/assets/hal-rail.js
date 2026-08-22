@@ -845,12 +845,15 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (/\b(?:can|could)\s+you\b|\bare\s+you\s+able\b|\bdo\s+you\s+know\s+how\b|\btest\b.*\b(?:if|whether|to see)\b|\bis\s+it\s+possible\b/.test(t)) {
         return "Yes. Say “run trend scout” and I will start it right now — it runs headless on this machine and the Trend Scout panel on Today updates itself when the scan lands.";
       }
-      // Catch-all: ANY other trend-scout talk stays client-side. Every phrasing
-      // that reached the server brain produced a confident hallucination about
-      // what can and cannot run (2026-08-21, twice, different fictions each
-      // time) — the brain has no way to know what this client does, so on this
-      // topic it must never be asked.
-      return "About the trend scout: say “run trend scout” and I will actually run it from here. The scan takes a few minutes and the panel on Today updates itself. Yesterday's scan is in the panel now.";
+      // Capability / how-do-I phrasing only. The old catch-all swallowed EVERY
+      // trend-scout mention, which made "quote the three angles on my screen"
+      // unanswerable (gauntlet round 3, 2026-08-22). Now that the brain gets
+      // the literal screen text and the panel digest, questions about the
+      // scan's CONTENT go through; only run/capability talk stays client-side.
+      if (/(?:how (?:do|can|would) i|how to|what(?:'s| is) the (?:command|phrase)|make it run|get it (?:to )?run|start it|kick it off)/.test(t)) {
+        return "Say “run trend scout” and I will actually run it from here. The scan takes a few minutes and the panel on Today updates itself.";
+      }
+      return null;
     }
 
     // DJ mode: "play music" (default: 70s greatest hits), "play some 80s
