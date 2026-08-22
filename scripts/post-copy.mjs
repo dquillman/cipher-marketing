@@ -2,7 +2,7 @@
 // Prints today's ready-to-paste post copy from posts.json.
 //
 // Usage:
-//   node scripts/post-copy.mjs                        # today (MT)
+//   node scripts/post-copy.mjs                        # today (CT)
 //   node scripts/post-copy.mjs --date 2026-05-20      # specific date
 //   node scripts/post-copy.mjs --platform linkedin     # filter to one platform
 //   node scripts/post-copy.mjs --platform x
@@ -24,13 +24,13 @@ for (let i = 0; i < args.length; i++) {
   if (args[i] === "--platform" && args[i + 1]) platformFilter = args[++i].toLowerCase();
 }
 
-// Mountain Daylight Time = UTC-6 (May through Nov)
-function todayMT() {
-  const mt = new Date(Date.now() - 6 * 60 * 60 * 1000);
-  return mt.toISOString().slice(0, 10);
+// ---- Campaign clock: Central Time (moved off Mountain 2026-08-22) ----
+// A real zone lookup, not a fixed offset, so CDT/CST handles itself.
+function todayCT() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago" }).format(new Date());
 }
 
-if (!targetDate) targetDate = todayMT();
+if (!targetDate) targetDate = todayCT();
 
 // ---- Load posts ----
 const { posts } = JSON.parse(readFileSync(POSTS_FILE, "utf8"));

@@ -18,9 +18,10 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const POSTS_FILE = join(HERE, "../site/data/posts.json");
 
-// ---- Mountain Daylight Time (UTC-6, May–Nov) ----
-function todayMT() {
-  return new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString().slice(0, 10);
+// ---- Campaign clock: Central Time (moved off Mountain 2026-08-22) ----
+// A real zone lookup, not a fixed offset, so CDT/CST handles itself.
+function todayCT() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago" }).format(new Date());
 }
 
 // ---- Parse args ----
@@ -40,7 +41,7 @@ if (!postUrl.startsWith("http")) {
 
 // ---- Load posts ----
 const data = JSON.parse(readFileSync(POSTS_FILE, "utf8"));
-const today = todayMT();
+const today = todayCT();
 
 function findPost(alias) {
   // 1. Exact ID match

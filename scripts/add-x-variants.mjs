@@ -256,7 +256,7 @@ function buildPost(x) {
     status: x.status,
     scheduled: x.date,
     scheduledTime: `${x.date}T17:30:00.000Z`,
-    scheduledTimeLocal: `${x.date} 11:30 MT`,
+    scheduledTimeLocal: `${x.date} 11:30 CT`,
     copy: x.copy,
     cta: CTA(x.hook),
     video: videoInfo.file,

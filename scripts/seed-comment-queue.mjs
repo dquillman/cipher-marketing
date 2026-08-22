@@ -16,11 +16,11 @@
 //   3. Can a comment add something true? If we cannot say something a PMP
 //      candidate would not already know, we skip it. No "great post!" filler.
 //
-// TIMING: comments go out in the MORNING (~07:15 MT = 09:15 ET), because a
+// TIMING: comments go out in the MORNING (~07:15 CT = 08:15 ET), because a
 // comment's visibility tracks the HOST post's audience, which is US-heavy and
 // most active mid-morning Eastern. This is the opposite of our own posts, which
-// go at 19:20 MT — that hour is tuned to OUR distribution, a different mechanic.
-// Dave does not post before 07:00 MT, so 07:15 is the earliest honest slot.
+// go at 19:20 CT — that hour is tuned to OUR distribution, a different mechanic.
+// Dave does not post before 07:00 CT, so 07:15 is the earliest honest slot.
 //
 // Usage:
 //   node scripts/seed-comment-queue.mjs

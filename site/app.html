@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.29.14">
+<link rel="stylesheet" href="assets/outreach.css?v=1.29.15">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1843,7 +1843,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.29.14</span>
+      <span class="version-bar" title="Dashboard version">v1.29.15</span>
     </div>
   </div>
 </nav>
@@ -2141,7 +2141,7 @@ function cipherHelp() {
       in front of the people already engaging with a post that is working — candidates who
       have just self-identified, at the moment they are paying attention. Recorded in
       <code>grading-lessons.md</code> on 2026-08-18. Comments go out in the MORNING; our own
-      posts go out at 19:20 MT. Different mechanics, so they do not compete.
+      posts go out at 19:20 CT. Different mechanics, so they do not compete.
     </p>
   </div>
 
@@ -2788,7 +2788,7 @@ function cipherHelp() {
     // listener fights the delegated one and the form briefly opens then closes.
   }
 
-  // Short MT date — "May 18" — for the row label.
+  // Short local date — "May 18" — for the row label (TZ = browser zone, Central on Dave's machine).
   function shortMTDate(isoStr) {
     if (!isoStr) return '';
     try {
@@ -7273,7 +7273,7 @@ document.addEventListener('cipher:state-updated', function () {
       return {
         type: 'post',
         title: 'POST: ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
-        sub: 'Two clipboard buttons below — one for the body, one for the specific CTA URL with the right UTM. Use both; never paste a URL from memory or from a different post. Before you hit Schedule: confirm the time in LinkedIn’s own scheduler reads 19:20 MT — it is a separate store from this dashboard, and on 2026-08-19 it fired a 19:20 post at 07:52 because it still held an old time.',
+        sub: 'Two clipboard buttons below — one for the body, one for the specific CTA URL with the right UTM. Use both; never paste a URL from memory or from a different post. Before you hit Schedule: confirm the time in LinkedIn’s own scheduler reads 19:20 CT (Central — the campaign moved off Mountain on 2026-08-22) — it is a separate store from this dashboard, and on 2026-08-19 it fired a 19:20 post at 07:52 because it still held an old time.',
         detail:
           '<div class="cc-detail-label">Post body (copy → paste in composer)</div>' +
           '<pre id="cc-copy-text">' + esc(p.copy || '') + '</pre>' +
@@ -10074,10 +10074,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.29.14"></script>
-<script src="assets/outreach.js?v=1.29.14"></script>
-<script src="assets/page-knowledge.js?v=1.29.14"></script>
-<script src="assets/hal-rail.js?v=1.29.14"></script>
+<script src="assets/outreach-data.js?v=1.29.15"></script>
+<script src="assets/outreach.js?v=1.29.15"></script>
+<script src="assets/page-knowledge.js?v=1.29.15"></script>
+<script src="assets/hal-rail.js?v=1.29.15"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

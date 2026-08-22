@@ -69,11 +69,13 @@ const median = (xs) => {
 };
 
 // postedAt is the ONLY trustworthy send time. scheduledTimeLocal records intent
-// and says 10:30 MT on every post regardless of what actually happened.
+// and says a default slot time on every post regardless of what actually happened.
 const mtHour = (iso) => {
   const t = Date.parse(iso);
   if (!Number.isFinite(t)) return null;
-  return new Date(t - 6 * 3600_000).getUTCHours(); // MDT = UTC-6
+  // Hour in the campaign's zone. Central since 2026-08-22; a real zone
+  // lookup so historical posts still bucket correctly across DST.
+  return Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", hour: "numeric", hour12: false }).format(new Date(t)));
 };
 
 let db;
@@ -133,7 +135,7 @@ const splits = [
   split('any question mark (naive test)', (r) => r.anyQuestionMark),
   split('URL in post body', (r) => r.urlInBody),
   split('dated-stat opener', (r) => r.datedStatOpener),
-  split('sent in the evening (>=17:00 MT)', (r) => r.slot === 'evening'),
+  split('sent in the evening (>=17:00 CT)', (r) => r.slot === 'evening'),
 ];
 
 // ---- Confounds --------------------------------------------------------------

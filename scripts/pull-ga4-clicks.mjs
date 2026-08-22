@@ -65,7 +65,7 @@ for (const post of targets) {
   }
 
   // postedAt is UTC; GA4 buckets by the property's local day. A post published
-  // in the evening Mountain time carries the NEXT UTC date, so slicing the
+  // in the evening Central time carries the NEXT UTC date, so slicing the
   // timestamp drops that first evening's sessions — it hid 2 of the sponsor
   // post's 5. Back up a day and let the utm_source + utm_content filter do the
   // narrowing.
