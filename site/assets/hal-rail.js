@@ -242,9 +242,29 @@
           }
         });
         var leafTags = /^(P|H1|H2|H3|H4|H5|LI|TD|TH|BUTTON|A|SPAN|LABEL|PRE|CODE|SUMMARY|TEXTAREA|INPUT)$/;
+        // A container whose own text sits beside child spans (e.g. an angle
+        // title next to its hook pill) is content too. Without this the title
+        // vanished and only the pills survived, so "quote the angle labels"
+        // returned hook names (gauntlet round 4, 2026-08-22).
+        var hasOwnText = function (node) {
+          for (var i = 0; i < node.childNodes.length; i++) {
+            var c = node.childNodes[i];
+            if (c.nodeType === 3 && c.textContent.replace(/\s+/g, " ").trim().length > 1) return true;
+          }
+          return false;
+        };
+        var pillish = /pill|tag|badge|chip/i;
         var el;
         while ((el = walker.nextNode())) {
-          if (!leafTags.test(el.tagName)) continue;
+          var mixed = !leafTags.test(el.tagName) && /^(DIV|SECTION|HEADER|FOOTER|ARTICLE|FIGCAPTION)$/.test(el.tagName) && hasOwnText(el);
+          if (!leafTags.test(el.tagName) && !mixed) continue;
+          if (el.tagName === "SPAN" && pillish.test(String(el.className || ""))) {
+            var pr = el.getBoundingClientRect();
+            if (pr.bottom < 0 || pr.top > vh || pr.width === 0) continue;
+            var pt = (el.innerText || "").replace(/\s+/g, " ").trim();
+            if (pt && seen.indexOf("[tag] " + pt) === -1) { seen.push("[tag] " + pt); out.push("[tag: " + pt + "]"); }
+            continue;
+          }
           var r = el.getBoundingClientRect();
           if (r.bottom < 0 || r.top > vh || r.width === 0 || r.height === 0) continue;
           var t = (el.tagName === "TEXTAREA" || el.tagName === "INPUT") ? (el.value || "") : (el.innerText || "");
