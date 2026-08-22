@@ -704,13 +704,32 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       if (!post) return Promise.resolve("I cannot find a post scheduled " + g.day + ". Check the date on the Create tab.");
       if (post.grade && !g.force) return Promise.resolve("That post already carries a " + post.grade + ". If you have newer numbers, start with 'regrade' instead of 'grade' and I will submit them over it.");
       if (!window.cipherAuthHeaders) return Promise.resolve("Grading needs the signed-in dashboard. Open app.html with the launcher.");
+      // GA4 first. LinkedIn shows no clicks and signups are the one metric
+      // that can lift a grade a full letter, so a grade without them is
+      // graded blind. Only fill a field Dave did not state himself; if GA4
+      // is unreachable, grade anyway and say so - never invent, never stall.
+      var ga4Note = "";
+      var authHeaders;
       return window.cipherAuthHeaders().then(function (h) {
-        h["Content-Type"] = "application/json";
-        return fetch("/api/grade", { method: "POST", headers: h, body: JSON.stringify({ postId: post.id, metrics: g.metrics }) });
+        authHeaders = h;
+        return fetch("/api/ga4-clicks?post=" + encodeURIComponent(post.id), { headers: h })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .catch(function () { return null; });
+      }).then(function (ga) {
+        if (ga && ga.ok) {
+          if (g.metrics.linkClicks == null && ga.linkClicks != null) g.metrics.linkClicks = ga.linkClicks;
+          if (g.metrics.trialSignupsAttributed == null && ga.trialSignupsAttributed != null) g.metrics.trialSignupsAttributed = ga.trialSignupsAttributed;
+          ga4Note = " GA4: " + (ga.linkClicks == null ? "?" : ga.linkClicks) + " link clicks, " +
+            (ga.trialSignupsAttributed == null ? "?" : ga.trialSignupsAttributed) + " attributed signups.";
+        } else {
+          ga4Note = " GA4 was unreachable, so clicks and signups are recorded as not-measured - regrade later to fill them in.";
+        }
+        authHeaders["Content-Type"] = "application/json";
+        return fetch("/api/grade", { method: "POST", headers: authHeaders, body: JSON.stringify({ postId: post.id, metrics: g.metrics }) });
       }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (x) {
         if (!x.ok) return "Grading failed: " + (x.j.error || "server error");
-        return "Graded " + x.j.grade + " on " + post.id + ". The Create tab shows the full breakdown." +
-          (x.j.grade === "D" ? " Remember the standing rule: at this reach, a D is a distribution D, not a copy D." : "");
+        return "Graded " + x.j.grade + " on " + post.id + "." + ga4Note + " The Create tab shows the full breakdown." +
+          (x.j.grade === "D" ? " Standing rule: at this reach, a D is a distribution D, not a copy D." : "");
       }).catch(function (e) { return "I could not reach the grader: " + e.message; });
     }
 

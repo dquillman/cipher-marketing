@@ -11,7 +11,7 @@ import http from "node:http";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, dirname, extname, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync, spawn } from "node:child_process";
+import { execFile, execSync, spawn } from "node:child_process";
 import {
   RESET_CONFIRMATION,
   buildFreshCompetitors,
@@ -386,6 +386,59 @@ async function handleApi(req, res) {
       }
     } else {
       jsonErr(res, 405, "method not allowed");
+    }
+    return;
+  }
+
+  // POST /api/grade - proxy to the deployed grading function. Grading lives in
+  // a Cloud Function behind a hosting rewrite; the deployed dashboard reaches
+  // it at the same relative path, but this local server never did, so the
+  // grade modal AND Brad's voice grading 404'd locally (caught 2026-08-21).
+  // The operator token is verified upstream - forward it untouched.
+  if (req.method === "POST" && url === "/api/grade") {
+    let body;
+    try { body = await readBody(req); } catch (error) { apiError(res, error); return; }
+    try {
+      const up = await fetch("https://cipher-marketing-daveq.web.app/api/grade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: req.headers.authorization || "" },
+        body: JSON.stringify(body),
+      });
+      const text = await up.text();
+      res.writeHead(up.status, { "Content-Type": "application/json" });
+      res.end(text);
+    } catch (e) {
+      jsonErr(res, 502, "grader unreachable: " + e.message);
+    }
+    return;
+  }
+
+  // GET /api/ga4-clicks?post=<id> - link clicks + attributed trial signups for
+  // one post, resolved from its CTA's UTM tags against GA4. LinkedIn never
+  // shows clicks, so this is the only honest source; Brad's rail calls it
+  // before submitting a grade so a voice-graded post is not graded blind
+  // (signups are the one metric that can lift a grade a full letter).
+  if (req.method === "GET" && url === "/api/ga4-clicks") {
+    try { await authenticateOperator(req); } catch (error) { apiError(res, error); return; }
+    const postId = new URL(req.url, "http://x").searchParams.get("post") || "";
+    if (!/^[a-z0-9-]+$/i.test(postId)) { jsonErr(res, 400, "post id required"); return; }
+    try {
+      const out = await new Promise((resolve, reject) => {
+        execFile(process.execPath, [join(HERE, "scripts/pull-ga4-clicks.mjs"), "--post", postId, "--json"],
+          { cwd: HERE, timeout: 60000, maxBuffer: 1024 * 1024 },
+          (err, stdout, stderr) => {
+            // The script intermittently trips a libuv assertion ON EXIT, after
+            // it has already printed its JSON (seen 2026-08-21). A nonzero exit
+            // with good output is still good output - only fail when the
+            // JSON is genuinely absent.
+            if (stdout && stdout.indexOf("{") !== -1) return resolve(stdout);
+            reject(new Error(((stderr || (err && err.message) || "no output")).trim().slice(0, 300)));
+          });
+      });
+      const parsed = JSON.parse(out.slice(out.indexOf("{"), out.lastIndexOf("}") + 1));
+      jsonOk(res, { ok: true, ...parsed });
+    } catch (e) {
+      jsonErr(res, 502, "GA4 lookup failed: " + e.message);
     }
     return;
   }

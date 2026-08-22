@@ -379,16 +379,42 @@ ${isRedditOrganic ? "REDDIT NOTES: This is organic Reddit. There are no impressi
   "recommendation": "<1 sentence: the single highest-leverage change for the next post in this slot>"
 }`;
 
-  const resp = await client.messages.create({
-    model: MODEL,
-    max_tokens: 600,
-    messages: [{ role: "user", content: prompt }],
-  });
+  // Two real-world failure modes (both hit on 2026-08-21): the model ran past
+  // max_tokens mid-JSON, leaving no closing brace for the regex; and an empty
+  // text response. So: a larger budget, tolerant extraction with truncation
+  // repair, and one full retry before giving up.
+  const extract = (text) => {
+    const t = String(text || "").trim();
+    if (!t) throw new Error("empty AI response");
+    try { return JSON.parse(t); } catch {}
+    const m = t.match(/\{[\s\S]*\}/);
+    if (m) { try { return JSON.parse(m[0]); } catch {} }
+    const start = t.indexOf("{");
+    if (start !== -1) {
+      const frag = t.slice(start);
+      for (const tail of ['"}', '"...(truncated)"}', "}"]) {
+        try { return JSON.parse(frag + tail); } catch {}
+      }
+    }
+    throw new Error("AI response did not contain parseable JSON: " + t.slice(0, 200));
+  };
 
-  const text = resp.content.map(b => b.type === "text" ? b.text : "").join("");
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("AI response did not contain JSON: " + text.slice(0, 200));
-  return JSON.parse(jsonMatch[0]);
+  let lastErr;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const resp = await client.messages.create({
+      model: MODEL,
+      max_tokens: 1024,
+      messages: [{ role: "user", content: prompt }],
+    });
+    const text = resp.content.map(b => b.type === "text" ? b.text : "").join("");
+    try {
+      return extract(text);
+    } catch (err) {
+      lastErr = err;
+      console.error(`aiNotes attempt ${attempt + 1} unparseable (stop_reason=${resp.stop_reason}):`, err.message);
+    }
+  }
+  throw lastErr;
 }
 
 export const gradePost = onRequest(
