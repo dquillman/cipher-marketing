@@ -1105,7 +1105,7 @@
       "videoTheme": null,
       "imageUrl": null,
       "canvaDesignId": null,
-      "copy": "[TO DRAFT via /sme-post] Sec+ scenario: alerting fires on lateral movement mid-workday. Correct answer is CONTAIN, not investigate first — the opposite reflex to the PMP \"assess first\" family. Magnet link moves to the first comment instead of being the post.",
+      "copy": "When you hire a security analyst, what you are actually buying is their judgment under partial information.\n\nThe tooling is commodity now. Everyone has the same EDR and it fires for everyone. The separation shows up in the first few minutes after it fires, when the analyst has an incomplete picture, a live business on the other side of the call, and nobody free to ask.\n\nHere is a Security+ scenario that lives in those few minutes.\n\nYour EDR fires at 10:40 on a Tuesday. A finance workstation is authenticating to three servers it has never touched, using credentials that belong to someone in another department.\n\nTwo hundred people are working. Nobody has reported anything.\n\nWhat do you do first?\n\nA. Pull the full telemetry and authentication logs to rule out a false positive\nB. Isolate the workstation from the network\nC. Notify the incident response lead and wait for direction\nD. Disable the account and force a password reset\n\nThe incident response lifecycle puts analysis before containment, which is exactly what makes this hard. Three of these are defensible on a quiet afternoon. One of them is right while something is still moving.\n\nPost your letter and, more importantly, your reason.\n\nFull elimination on all four options goes in this thread tonight, comments or no comments.\n\n#SecurityPlus #CompTIA",
       "cta": "https://cipherexam.com/lp/security-plus?utm_source=linkedin&utm_medium=social&utm_campaign=li-magnet-secplus-0821&utm_content=magnet-02",
       "postedAt": null,
       "postUrl": null,
@@ -1181,7 +1181,7 @@
       "videoTheme": null,
       "imageUrl": null,
       "canvaDesignId": null,
-      "copy": "Your team’s working agreement says no merges after Thursday noon without a second reviewer.\n\nA team member merged a hotfix alone on Friday night. It worked. A customer outage was resolved before Monday. Two other engineers have since asked whether the rule still applies.\n\nWhat do you do?\n\nA. Thank her publicly for the save and treat the agreement as guidance rather than a gate.\nB. Address the violation with her privately, reaffirm the ground rule with the team, then have the team decide whether it needs a documented emergency path.\nC. Add an emergency-outage exception to the working agreement.\nD. Escalate the breach to her functional manager as a discipline matter.\n\nThe outcome was good. That is what makes it hard.\n\nOne letter, then your reason. I read the reasons.\n\nPattern goes in the comments after the discussion has run.\n\nPeople is 33% of the exam, and managing conflict is one of its named tasks.\n\n#PMP #ProjectManagement",
+      "copy": "The point of a working agreement is not the rule. It is that everyone on the team can predict everyone else without having to ask.\n\nWhich means an agreement is worth exactly what the team believes about it on the day it gets tested.\n\nHere is one of those days.\n\nYour team’s working agreement says no merges after Thursday noon without a second reviewer.\n\nA team member merged a hotfix alone on Friday night. It worked. A customer outage was resolved before Monday. Two other engineers have since asked whether the rule still applies.\n\nWhat do you do?\n\nA. Thank her publicly for the save and treat the agreement as guidance rather than a gate.\nB. Address the violation with her privately, reaffirm the ground rule with the team, then have the team decide whether it needs a documented emergency path.\nC. Add an emergency-outage exception to the working agreement.\nD. Escalate the breach to her functional manager as a discipline matter.\n\nThe outcome was good. That is what makes it hard.\n\nOne letter, then your reason. I read the reasons.\n\nPattern goes in the comments after the discussion has run.\n\nPeople is 33% of the exam, and managing conflict is one of its named tasks.\n\n#PMP #ProjectManagement",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=sme-05-0826",
       "postedAt": null,
       "postUrl": null,
@@ -1745,8 +1745,8 @@
     }
   },
   "_meta": {
-    "lastUpdatedBy": "seed-firestore --pull",
-    "lastUpdatedAt": "2026-08-21T04:07:07.523Z",
+    "lastUpdatedBy": "brad",
+    "lastUpdatedAt": "2026-08-22T00:24:57.858Z",
     "instructions": "Post drafts + performance archive. Brad drafts posts here; post-performance-grader grades them after Dave reports metrics. Bump _meta.lastUpdatedAt on every edit.",
     "schemaVersion": 1,
     "trackValues": "product = Brad campaign posts. sme = Dave founder/authority posts. One feed, two tracks.",

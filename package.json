@@ -1,6 +1,6 @@
 {
   "name": "cipher-marketing",
-  "version": "1.29.9",
+  "version": "1.29.10",
   "private": true,
   "type": "module",
   "description": "Marketing campaign for CipherExam (cipherexam.com) — strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",

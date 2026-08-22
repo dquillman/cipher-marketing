@@ -659,6 +659,59 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       });
     }
 
+    // "grade my 2026-08-19 post: impressions 113, reactions 0, comments 2"
+    // The grade math lives in /api/grade, the same endpoint the modal uses -
+    // no browser and no headless worker needed once Dave supplies the numbers.
+    // What Brad still cannot do alone is READ LinkedIn analytics; those exist
+    // only behind Dave's login, so the numbers arrive in the message.
+    function halFindGrade(text) {
+      var t = text.toLowerCase().trim();
+      var m = t.match(/grade\s+(?:my\s+)?(\d{4}-\d{2}-\d{2}|\d{2}-\d{2})\s+post/);
+      if (!m) return null;
+      var day = m[1].length === 5 ? (new Date().getFullYear() + "-" + m[1]) : m[1];
+      var fields = {
+        impressions: /impressions?\s*[:=]?\s*([\d,]+)/,
+        membersReached: /members?\s*reached\s*[:=]?\s*([\d,]+)/,
+        reactions: /reactions?\s*[:=]?\s*([\d,]+)/,
+        comments: /comments?\s*[:=]?\s*([\d,]+)/,
+        reposts: /reposts?\s*[:=]?\s*([\d,]+)/,
+        saves: /saves?\s*[:=]?\s*([\d,]+)/,
+        sends: /sends?\s*[:=]?\s*([\d,]+)/,
+        profileViewers: /profile\s*view(?:er)?s?\s*[:=]?\s*([\d,]+)/,
+        followersGained: /followers?(?:\s*gained)?\s*[:=]?\s*([\d,]+)/,
+        linkClicks: /(?:link\s*)?clicks?\s*[:=]?\s*([\d,]+)/,
+        trialSignupsAttributed: /(?:trial\s*)?signups?\s*[:=]?\s*([\d,]+)/
+      };
+      var metrics = {}, found = 0;
+      Object.keys(fields).forEach(function (k) {
+        var fm = t.match(fields[k]);
+        if (fm) { metrics[k] = Number(fm[1].replace(/,/g, "")); found++; }
+        else { metrics[k] = null; }  // not stated = not measured, never 0
+      });
+      if (!found) return { day: day, ask: true };
+      return { day: day, metrics: metrics };
+    }
+
+    function submitGrade(g) {
+      if (g.ask) {
+        return Promise.resolve("Give me the numbers in the same message and I will grade it - for example: grade my " + g.day + " post: impressions 113, members reached 51, reactions 0, comments 2, reposts 0. Anything you do not state I record as not-measured, never as zero.");
+      }
+      var posts = (window.__POSTS__ && window.__POSTS__.posts) || [];
+      var post = posts.find(function (p) { return p.scheduled === g.day && p.status === "posted"; }) ||
+                 posts.find(function (p) { return p.scheduled === g.day; });
+      if (!post) return Promise.resolve("I cannot find a post scheduled " + g.day + ". Check the date on the Create tab.");
+      if (post.grade) return Promise.resolve("That post already carries a " + post.grade + ". If you have newer numbers, say 'regrade' and I will submit them over it.");
+      if (!window.cipherAuthHeaders) return Promise.resolve("Grading needs the signed-in dashboard. Open app.html with the launcher.");
+      return window.cipherAuthHeaders().then(function (h) {
+        h["Content-Type"] = "application/json";
+        return fetch("/api/grade", { method: "POST", headers: h, body: JSON.stringify({ postId: post.id, metrics: g.metrics }) });
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); }).then(function (x) {
+        if (!x.ok) return "Grading failed: " + (x.j.error || "server error");
+        return "Graded " + x.j.grade + " on " + post.id + ". The Create tab shows the full breakdown." +
+          (x.j.grade === "D" ? " Remember the standing rule: at this reach, a D is a distribution D, not a copy D." : "");
+      }).catch(function (e) { return "I could not reach the grader: " + e.message; });
+    }
+
     // Fire an allowlisted server task and resolve to the line Brad speaks.
     // trend-scout goes through the page's own button function when present so
     // the button UI shows progress; everything else posts to /api/tasks/run.
@@ -738,6 +791,15 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     function send(raw) {
       var text = (raw !== undefined ? raw : input.value).trim();
       if (!text || busy) return;
+      var gradeReq = halFindGrade(text);
+      if (gradeReq) {
+        pendingGreeting = null; input.value = ""; append("user", text);
+        submitGrade(gradeReq).then(function (line) {
+          append("assistant", line); speak(line); setState();
+        });
+        setState();
+        return;
+      }
       var posted = halFindMarkPosted(text);
       if (posted) {
         pendingGreeting = null; input.value = ""; append("user", text);
