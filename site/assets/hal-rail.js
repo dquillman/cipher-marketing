@@ -267,9 +267,21 @@
           }
           var r = el.getBoundingClientRect();
           if (r.bottom < 0 || r.top > vh || r.width === 0 || r.height === 0) continue;
-          var t = (el.tagName === "TEXTAREA" || el.tagName === "INPUT") ? (el.value || "") : (el.innerText || "");
+          var t;
+          if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") t = el.value || "";
+          else if (mixed) {
+            // Own text only - child pills/tags are emitted separately as [tag: …]
+            // so a headline never arrives fused with its category chips.
+            t = "";
+            for (var k = 0; k < el.childNodes.length; k++) {
+              var cn = el.childNodes[k];
+              if (cn.nodeType === 3) t += cn.textContent + " ";
+              else if (cn.nodeType === 1 && !pillish.test(String(cn.className || "")) && /^(SPAN|B|STRONG|EM|I)$/.test(cn.tagName)) t += (cn.innerText || "") + " ";
+            }
+          } else t = el.innerText || "";
           t = t.replace(/\s+/g, " ").trim();
           if (!t || t.length < 2) continue;
+          var titleLike = mixed && /(^|\s|-)(label|title|headline|head|name)(\s|-|$)/i.test(String(el.className || "")) && !/sub|meta|desc/i.test(String(el.className || ""));
           var interactive = el.tagName === "BUTTON" || (el.tagName === "A" && el.getAttribute("href"));
           // Containment de-dup hides a button whose label also appears in
           // nearby prose ("1. Review unfinished posts." swallowed the button
@@ -278,14 +290,18 @@
           if (!interactive && seen.some(function (s) { return s.indexOf(t) !== -1; })) continue;
           if (interactive && seen.indexOf("[ui] " + t) !== -1) continue;
           seen.push(interactive ? "[ui] " + t : t);
-          if (/^(H1|H2|H3|H4|H5|SUMMARY)$/.test(el.tagName)) t = "## " + t;
+          if (/^(H1|H2|H3|H4|H5|SUMMARY)$/.test(el.tagName) || titleLike) t = "## " + t;
           else if (el.tagName === "BUTTON") t = "[button: " + t + "]";
           else if (interactive) t = "[link: " + t + "]";
           out.push(t);
         }
         var text = out.join("\n");
         if (text.length > budget) text = text.slice(0, budget) + "\n…(screen text trimmed)";
-        return text ? "[ON SCREEN RIGHT NOW - literal text of the visible part of the page]\n" + text + "\n\n" : "";
+        return text ? "[ON SCREEN RIGHT NOW - literal text of the visible part of the page]\n" +
+          "Legend: lines starting '## ' are headings or item titles (the bold, prominent text); '[button: …]' is a clickable control; " +
+          "'[link: …]' is a link; '[tag: …]' is a small category chip next to a title; other lines are body text or detail rows under the nearest '## ' line. " +
+          "When Dave asks for titles, headlines or 'what does it say', lead with the '## ' lines. If a question could mean two different elements, answer with the prominent one and name the other in one clause.\n" +
+          text + "\n\n" : "";
       } catch (e) { return ""; }
     }
 
