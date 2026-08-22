@@ -134,13 +134,28 @@
         if (posts.length) {
           var by = {};
           posts.forEach(function (p) { by[p.status || "?"] = (by[p.status || "?"] || 0) + 1; });
-          var graded = posts.filter(function (p) { return p.grade; }).slice(-3)
-            .map(function (p) { return (p.scheduled || "?") + " " + (p.channel || "?") + "=" + p.grade; });
+          // Recent grades carry their reach and engagement, not just the
+          // letter. With letters alone the brain narrated "two consecutive Ds
+          // = a deteriorating pattern" (2026-08-22) when the numbers say the
+          // opposite: same format as the A post, 28x less distribution.
+          var gradedPosts = posts.filter(function (p) { return p.grade; }).slice(-4);
+          var graded = gradedPosts.map(function (p) {
+            var m = p.metrics || {};
+            return (p.scheduled || "?") + " " + (p.channel || "?") + " " + p.grade +
+              " (" + (m.impressions == null ? "?" : m.impressions) + " impr, " +
+              (m.reactions == null ? "?" : m.reactions) + " react, " +
+              (m.comments == null ? "?" : m.comments) + " comm, hook " + (p.hook || "?") + ")";
+          });
           var next = posts.filter(function (p) { return p.status === "scheduled" || p.status === "draft"; })
             .sort(function (a, b) { return String(a.scheduled).localeCompare(String(b.scheduled)); })[0];
           out.push("Posts: " + JSON.stringify(by) +
-            (next ? " · next up " + (next.scheduled || "?") + " " + (next.channel || "?") + " (" + (next.status || "?") + ")" : "") +
-            (graded.length ? " · recent grades " + graded.join(", ") : ""));
+            (next ? " · next up " + (next.scheduled || "?") + " " + (next.channel || "?") + " (" + (next.status || "?") + ")" : ""));
+          if (graded.length) {
+            out.push("Recent grades: " + graded.join("; "));
+            out.push("Standing rule (grading-lessons): under ~200 impressions a D is a DISTRIBUTION D, not a copy D - " +
+              "do not read a run of low-reach Ds as the copy or format deteriorating. The A-grade post used the same " +
+              "format; it differed in reach, not approach. Say this when asked about grade trends.");
+          }
         }
       } catch (e) {}
       try {
