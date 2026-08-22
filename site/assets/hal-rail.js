@@ -250,10 +250,17 @@
           var t = (el.tagName === "TEXTAREA" || el.tagName === "INPUT") ? (el.value || "") : (el.innerText || "");
           t = t.replace(/\s+/g, " ").trim();
           if (!t || t.length < 2) continue;
-          if (seen.some(function (s) { return s.indexOf(t) !== -1; })) continue;
-          seen.push(t);
+          var interactive = el.tagName === "BUTTON" || (el.tagName === "A" && el.getAttribute("href"));
+          // Containment de-dup hides a button whose label also appears in
+          // nearby prose ("1. Review unfinished posts." swallowed the button
+          // "Review unfinished posts" - round 1 of the gauntlet, 2026-08-22).
+          // Interactive elements are always listed; prose de-dups by containment.
+          if (!interactive && seen.some(function (s) { return s.indexOf(t) !== -1; })) continue;
+          if (interactive && seen.indexOf("[ui] " + t) !== -1) continue;
+          seen.push(interactive ? "[ui] " + t : t);
           if (/^(H1|H2|H3|H4|H5|SUMMARY)$/.test(el.tagName)) t = "## " + t;
           else if (el.tagName === "BUTTON") t = "[button: " + t + "]";
+          else if (interactive) t = "[link: " + t + "]";
           out.push(t);
         }
         var text = out.join("\n");
