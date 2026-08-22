@@ -666,8 +666,10 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
     // only behind Dave's login, so the numbers arrive in the message.
     function halFindGrade(text) {
       var t = text.toLowerCase().trim();
-      var m = t.match(/grade\s+(?:my\s+)?(\d{4}-\d{2}-\d{2}|\d{2}-\d{2})\s+post/);
+      var m = t.match(/(re)?grade\s+(?:my\s+)?(\d{4}-\d{2}-\d{2}|\d{2}-\d{2})\s+post/);
       if (!m) return null;
+      var force = !!m[1];
+      m = [m[0], m[2]];
       var day = m[1].length === 5 ? (new Date().getFullYear() + "-" + m[1]) : m[1];
       var fields = {
         impressions: /impressions?\s*[:=]?\s*([\d,]+)/,
@@ -689,7 +691,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
         else { metrics[k] = null; }  // not stated = not measured, never 0
       });
       if (!found) return { day: day, ask: true };
-      return { day: day, metrics: metrics };
+      return { day: day, metrics: metrics, force: force };
     }
 
     function submitGrade(g) {
@@ -700,7 +702,7 @@ body.hal-collapsed .hal-handle-chev { transform:rotate(180deg); }
       var post = posts.find(function (p) { return p.scheduled === g.day && p.status === "posted"; }) ||
                  posts.find(function (p) { return p.scheduled === g.day; });
       if (!post) return Promise.resolve("I cannot find a post scheduled " + g.day + ". Check the date on the Create tab.");
-      if (post.grade) return Promise.resolve("That post already carries a " + post.grade + ". If you have newer numbers, say 'regrade' and I will submit them over it.");
+      if (post.grade && !g.force) return Promise.resolve("That post already carries a " + post.grade + ". If you have newer numbers, start with 'regrade' instead of 'grade' and I will submit them over it.");
       if (!window.cipherAuthHeaders) return Promise.resolve("Grading needs the signed-in dashboard. Open app.html with the launcher.");
       return window.cipherAuthHeaders().then(function (h) {
         h["Content-Type"] = "application/json";
