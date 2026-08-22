@@ -221,13 +221,54 @@
     // whatever the digest happened to mention (2026-08-21: everything looked
     // like trend-scout talk). Leading with the question makes truncation lose
     // context, never the request.
+    // The literal screen. Dave looks at a rendered page; Brad used to get a
+    // digest of it. This walks the active section and collects the text of
+    // every block that intersects the viewport right now, in reading order -
+    // cards, headings, numbers, button labels - so "what does that card say"
+    // is answered from the same pixels Dave is reading. Off-screen panels
+    // still reach Brad through the digest. Capped hard: the HAL server rejects
+    // oversize payloads, and the question must always survive truncation.
+    function visibleScreenText(budget) {
+      try {
+        var root = document.querySelector(".route-section.active") || document.querySelector("main") || document.body;
+        var vh = window.innerHeight || 800;
+        var seen = [], out = [];
+        var walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, {
+          acceptNode: function (el) {
+            if (el.closest && el.closest("#halw-rail, script, style, noscript, [hidden], .grade-modal")) return NodeFilter.FILTER_REJECT;
+            var cs = getComputedStyle(el);
+            if (cs.display === "none" || cs.visibility === "hidden") return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        });
+        var leafTags = /^(P|H1|H2|H3|H4|H5|LI|TD|TH|BUTTON|A|SPAN|LABEL|PRE|CODE|SUMMARY|TEXTAREA|INPUT)$/;
+        var el;
+        while ((el = walker.nextNode())) {
+          if (!leafTags.test(el.tagName)) continue;
+          var r = el.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > vh || r.width === 0 || r.height === 0) continue;
+          var t = (el.tagName === "TEXTAREA" || el.tagName === "INPUT") ? (el.value || "") : (el.innerText || "");
+          t = t.replace(/\s+/g, " ").trim();
+          if (!t || t.length < 2) continue;
+          if (seen.some(function (s) { return s.indexOf(t) !== -1; })) continue;
+          seen.push(t);
+          if (/^(H1|H2|H3|H4|H5|SUMMARY)$/.test(el.tagName)) t = "## " + t;
+          else if (el.tagName === "BUTTON") t = "[button: " + t + "]";
+          out.push(t);
+        }
+        var text = out.join("\n");
+        if (text.length > budget) text = text.slice(0, budget) + "\n…(screen text trimmed)";
+        return text ? "[ON SCREEN RIGHT NOW - literal text of the visible part of the page]\n" + text + "\n\n" : "";
+      } catch (e) { return ""; }
+    }
+
     function pageContextQuestion(question) {
       var guide = currentPageGuide();
       // The leading copy uses a DIFFERENT label: the server splits on the
       // canonical "Dave's question:" marker to classify intent, and must find
       // the trailing one (question only), not this one (question + context).
       return "[DAVE ASKED] " + question + "\n\n" +
-        livePanelData() + "[CURRENT APP PAGE]\n" +
+        visibleScreenText(5000) + livePanelData() + "[CURRENT APP PAGE]\n" +
         "Page: " + guide.label + "\n" +
         "Purpose: " + guide.purpose + "\n" +
         "Key sections: " + (guide.sections || []).join("; ") + "\n" +
