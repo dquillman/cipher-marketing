@@ -1,6 +1,6 @@
 {
   "name": "cipher-marketing",
-  "version": "1.29.22",
+  "version": "1.30.0",
   "private": true,
   "type": "module",
   "description": "Marketing campaign for CipherExam (cipherexam.com) — strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
@@ -24,7 +24,9 @@
     "check:sync": "node scripts/check-sync.mjs",
     "check:js": "node scripts/check-html-js.mjs",
     "predeploy:hosting": "node scripts/check-html-js.mjs",
-    "release": "node scripts/release.mjs"
+    "release": "node scripts/release.mjs",
+    "card": "node scripts/render-post-card.mjs",
+    "cards:drafts": "node scripts/render-post-card.mjs --all-drafts"
   },
   "repository": {
     "type": "git",

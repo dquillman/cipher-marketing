@@ -1,0 +1,221 @@
+{
+  "_readme": "Roster and rules for the daily comment scan. Consumed by the `comment-scan` skill, which writes campaign/commentQueue via scripts/push-comment-queue.mjs. Rules here were derived by hand on 2026-08-18 and are recorded in grading-lessons.md; do not loosen them to manufacture work.",
+
+  "why": "A reshare puts someone else's post in front of our ~0 followers. A comment puts us in front of the people already engaging with a post that is working. Out-of-network reach is earned by borrowing an audience, not by posting harder.",
+
+  "howToScan": "Walk each target's activity page — https://www.linkedin.com/in/<slug>/recent-activity/all/ — and pull permalinks from the DOM. Hashtag SEARCH results carry no urn:li:activity, so nothing found there can be queued; use the feeds only to discover new names for this roster. Learned 2026-08-25.",
+
+  "timing": {
+    "slotLocal": "07:15 CT",
+    "why": "A comment's visibility tracks the HOST post's audience, which is US-heavy and most active mid-morning Eastern. This is the opposite of our own posts at 19:20 CT — a different mechanic. Dave does not act before 07:00 CT, so 07:15 is the earliest honest slot.",
+    "scanBy": "05:30 CT so the queue is ready before the slot"
+  },
+
+  "selection": {
+    "maxHostAgeDays": 5,
+    "maxHostComments": 20,
+    "minHostReactions": 5,
+    "targetShape": "high reactions, LOW comments — a big audience looking and almost nobody talking",
+    "hardRules": [
+      "The host post must still be LIVE. A two-week-old post with 200 reactions is a dead room; all-time counts mean nothing.",
+      "Skip any post already past maxHostComments — a comment is buried on arrival.",
+      "Skip video-only posts. A comment cannot be drafted without watching the video, so those are flagged for Dave to write live.",
+      "If we cannot say something true that a PMP or Security+ candidate would not already know, SKIP. No 'great post' filler, ever.",
+      "On a WIN post (someone passed), congratulate first and aim any teaching at people who will copy them — never correct the person celebrating. Dave flagged the first draft of one of these as aggressive and he was right.",
+      "Never mention CipherExam, a trial, or a link in a comment. The payoff is profile views and follows, not clicks.",
+      "Skip recruiter and job-ad posts even when the room is huge. A 440-reaction job listing has no opening for anything true about exam reasoning."
+    ],
+    "lowReachException": "A small room (under ~10 reactions) is still worth a comment when the host is a genuine peer and comment count is zero — yours is the only one they read. Mark those as a relationship play, not reach."
+  },
+
+  "measurement": {
+    "metric": "profile viewers and followers, read off Dave's LinkedIn sidebar",
+    "why": "The payoff from commenting is people who read it and came to look — not likes on the comment itself. Without a before-number there is nothing to compare against.",
+    "baselineDoc": "campaign/commentQueue.baseline",
+    "rereadEveryDays": 7
+  },
+
+  "rosterHealth": "Every slug below was read out of a real LinkedIn page on 2026-08-25 — none are guessed. `confidence` says how much we actually know: `proven` means we have seen the person post on-topic with measured engagement; `likely` means the profile is real and on-topic but reach is unmeasured; `unproven` means the name surfaced on a cert hashtag and nothing more. Each scan should record what it observes and DROP unproven names that never post with reach. A roster full of silent accounts wastes the scan.",
+
+  "targets": [
+    {
+      "name": "Andrew Ramdayal",
+      "profile": "https://www.linkedin.com/in/andrewramdayal/",
+      "audience": "PMP candidates — the largest on the platform",
+      "confidence": "proven",
+      "videoOnly": true,
+      "note": "29 reactions / 1 comment at 23h on 2026-08-25 — the best room found that day. Every post is VIDEO, so never auto-draft: send to `manual` for Dave to watch and answer live.",
+      "priority": 1
+    },
+    {
+      "name": "Alece Coleman, LCSW, PMP",
+      "profile": "https://www.linkedin.com/in/acolemanpmp/",
+      "audience": "PMP candidates and career-changers",
+      "confidence": "proven",
+      "note": "Posts most days. 93r/3c on a study-method post 2026-08-18 — best target that week. But the 2026-08-25 sweep found five posts in a row on career-pivot, networking and PMI-chapter topics with nothing exam-related to add. Check her, do not assume her.",
+      "priority": 1
+    },
+    {
+      "name": "Bryan Campbell",
+      "profile": "https://www.linkedin.com/in/bryancampbell/",
+      "audience": "PgMP/PMP practitioners",
+      "confidence": "proven",
+      "note": "Builds his own PM tool (PM Pixel) with ChatGPT and Claude — a genuine peer, not a competitor. Small rooms, zero comments. Relationship play; end on a question.",
+      "priority": 2
+    },
+    {
+      "name": "Markus Kopko",
+      "profile": "https://www.linkedin.com/in/markuskleinpmp/",
+      "audience": "PMP/PgMP practitioners, PMI-adjacent",
+      "confidence": "proven",
+      "note": "GAVE US OUR ONLY TESTIMONIAL and sits on the PMI AI Standards Core Team. Build next to him, never against him — never name him as a competitor, never counter his content. His three-state self-scoring post (2026-08-20) is the structure we want to borrow, rewritten.",
+      "priority": 1
+    },
+    {
+      "name": "Darron Clark",
+      "profile": "https://www.linkedin.com/in/darronclarkemba/",
+      "audience": "PMP candidates",
+      "confidence": "likely",
+      "note": "Posts a PMP course series on exactly our thesis — 'the PMP exam is a judgment exam, not a memorization exam'. Sells a competing course, so add something true rather than arguing. Room was 3r/0c on 2026-08-25, below the floor.",
+      "priority": 2
+    },
+    {
+      "name": "Colleen E. Lofton, EdD, PMP",
+      "profile": "https://www.linkedin.com/in/colleenlofton/",
+      "audience": "PMP candidates deciding whether to certify",
+      "confidence": "likely",
+      "note": "Writes 'should you get the PMP' guidance with a Substack. 7r/3c on 2026-08-19 but six days old by the time we saw it — catch her posts inside the 5-day window.",
+      "priority": 2
+    },
+    {
+      "name": "Dharam Singh",
+      "profile": "https://www.linkedin.com/in/dharamsingh/",
+      "audience": "PfMP/PgMP/PMP mentees — 30K followers",
+      "confidence": "likely",
+      "note": "One of the largest PM-credential audiences we have found. Reach unmeasured; measure it on the first scan.",
+      "priority": 1
+    },
+    {
+      "name": "Abhishek Sengupta",
+      "profile": "https://www.linkedin.com/in/senguptabhishek/",
+      "audience": "PgMP/PMP practitioners — 30K followers",
+      "confidence": "likely",
+      "note": "Large credential audience. Reach unmeasured; measure it on the first scan.",
+      "priority": 2
+    },
+    {
+      "name": "Salina Thompson, PMP",
+      "profile": "https://www.linkedin.com/in/savvyempireceo/",
+      "audience": "PMP holders, applied-mindset content",
+      "confidence": "likely",
+      "note": "Launching a 'Universal PMP' podcast — PM thinking applied to life. Near-zero engagement on the teaser. Watch for whether the series finds a room.",
+      "priority": 3
+    },
+    {
+      "name": "Beatrice Aina, PMP",
+      "profile": "https://www.linkedin.com/in/b-aina/",
+      "audience": "PMP candidates",
+      "confidence": "likely",
+      "note": "98r/31c on 'a PMP certification can open doors, but experience is built by walking through them'. Good reach, but comment count runs high — check it against the 20-comment cap before drafting.",
+      "priority": 2
+    },
+    {
+      "name": "Rocío Granela, PMP, CSM",
+      "profile": "https://www.linkedin.com/in/rociogranela/",
+      "audience": "New PMP holders",
+      "confidence": "likely",
+      "note": "123r/16c on a pass announcement. WIN-post rules apply: congratulate first, teach the copycats, never correct her.",
+      "priority": 3
+    },
+    {
+      "name": "Garima Grover, PMP",
+      "profile": "https://www.linkedin.com/in/garimagrover/",
+      "audience": "PM practitioners",
+      "confidence": "unproven",
+      "note": "Project Manager at Microsoft, mutual connection with Markus Kopko. No posting cadence observed yet.",
+      "priority": 3
+    },
+    {
+      "name": "Dan Cline, P.E., PMP, PSM",
+      "profile": "https://www.linkedin.com/in/danclinepe/",
+      "audience": "PM practitioners",
+      "confidence": "unproven",
+      "note": "Mutual connection with Markus Kopko. No posting cadence observed yet.",
+      "priority": 3
+    },
+    {
+      "name": "Andrew Whitmire, PMP",
+      "profile": "https://www.linkedin.com/in/andrewwhitmire/",
+      "audience": "PM job seekers — very large reach",
+      "confidence": "proven",
+      "watchOnly": true,
+      "note": "440r/28c on a job listing. Big room but he posts PM ROLES, not exam content, and job ads leave no opening for anything true about exam reasoning. Keep him on the roster to catch the occasional non-job post; skip the listings.",
+      "priority": 3
+    },
+    {
+      "name": "Torge Oeverdiek",
+      "profile": null,
+      "resolveBy": "search LinkedIn for \"Torge Oeverdiek\" — runs a daily 'PMP Question of the Day' under a 'PMI Prep' group name (NOT official PMI; never describe it as such)",
+      "audience": "PMP candidates",
+      "confidence": "likely",
+      "note": "Ran a four-option question as a NATIVE POLL and got 317 votes against our comment-gate's 14 comments (observed 2026-08-11, in grading-lessons.md). Direct format competitor and the best source of poll-format evidence.",
+      "priority": 2
+    },
+    {
+      "name": "Eric Reed",
+      "profile": "https://www.linkedin.com/in/ericreedlive/",
+      "audience": "Security+ / cyber candidates",
+      "confidence": "unproven",
+      "note": "The only name on the #SecurityPlus sweep that reads as a creator rather than a cert holder. Measure before trusting.",
+      "priority": 2
+    },
+    {
+      "name": "George Cole",
+      "profile": "https://www.linkedin.com/in/george-cole-cyber/",
+      "audience": "Security+ / cyber candidates",
+      "confidence": "unproven",
+      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "priority": 3
+    },
+    {
+      "name": "Kyle Fullford, CISSP",
+      "profile": "https://www.linkedin.com/in/kyle-fullford-cissp-27270228a/",
+      "audience": "Security certification path",
+      "confidence": "unproven",
+      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "priority": 3
+    },
+    {
+      "name": "Douglas Ogwola, CISM, CySA, SecPlus",
+      "profile": "https://www.linkedin.com/in/douglas-ogwola-cism-cysa-secplus-cissp-candidate-283399258/",
+      "audience": "Security certification stackers",
+      "confidence": "unproven",
+      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "priority": 3
+    },
+    {
+      "name": "Jazmyn Vines",
+      "profile": "https://www.linkedin.com/in/jazmyn-r-vines/",
+      "audience": "Security+ candidates",
+      "confidence": "unproven",
+      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "priority": 3
+    }
+  ],
+
+  "feeds": [
+    { "hashtag": "PMP", "audience": "PMP candidates", "note": "Mostly recruiters. Use for DISCOVERING names, not for queueing." },
+    { "hashtag": "PMPExam", "audience": "PMP candidates" },
+    { "hashtag": "ProjectManagement", "audience": "broad PM" },
+    { "hashtag": "SecurityPlus", "audience": "Security+ candidates", "note": "Thin, and dominated by individual cert holders rather than creators." },
+    { "hashtag": "CompTIA", "audience": "Security+ candidates" }
+  ],
+
+  "excludedHistory": [
+    "Julia Manning (168 reactions / 23 comments, 2026-08-18) — roughly two weeks old, dead room.",
+    "Yanique J. (56/2, 2026-08-18) — roughly two weeks old, dead room.",
+    "Ramdayal's live-Q&A announcement (68 comments) — buried on arrival.",
+    "Recruiters surfaced on #PMP 2026-08-25 (Mary Yannuzzi, Jacki Miller, Ernest Ambrose's open-to-work post) — job content, no exam-reasoning opening.",
+    "Learning Tree International (2026-08-25) — vendor promo for a competing Security+ course."
+  ]
+}

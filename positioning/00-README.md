@@ -25,12 +25,14 @@ This kit is everything you need to run that test this week.
 | `04-decision-rubric.md` | Keep frame / pivot frame / pivot offer — decide from what you hear | After all 5 calls |
 | `05-call-log.md` | One block per call — capture their exact words | Fill in live during/after each call |
 
-## Run of show (1 week)
+## Run of show — REVISED 2026-08-22: public frame test, not calls
 
-1. **Today:** read `01-one-pager.md`. Pick the ONE category frame you'll lead with (or test all 3 — see the file).
-2. **Today–Day 2:** post/DM from `03-outreach.md`. Target: book 5 calls with **real PMP candidates** — people sitting the exam in the next 1–3 months. Not friends. Not other founders.
-3. **Day 2–6:** run the calls with `02-interview-script.md`. Log each in `05-call-log.md` in their words, not your paraphrase.
-4. **Day 7:** score against `04-decision-rubric.md`. Decide: keep frame / pivot frame / pivot offer. Their words become the next draft of the homepage H1 and the PMP LP.
+**The 5 PMP candidate calls are replaced by a public LinkedIn frame test.** Dave will not run calls or DMs. `02-interview-script.md` and `03-outreach.md` are parked; the test now runs in the feed.
+
+1. **Done 2026-08-22:** three LinkedIn posts drafted, one per frame from `01-one-pager.md` — `li-frame-test-01` (Frame A), `li-frame-test-02` (Frame B), `li-frame-test-03` (Frame C). Identical format, identical slot, identical hashtags; the frame line is the only variable.
+2. **Aug 24 / 26 / 28, 19:20 CT:** post them, CTA in the first comment (`/lp/pmp`, `utm_campaign=frame-test`, `utm_content=frame-a|b|c`).
+3. **Winner = most LP clicks / trial starts per impression.** Tie-break on comments. Reach alone does not win it.
+4. **After all 3 have 48h grades:** score against `04-decision-rubric.md`. Decide: keep frame / pivot frame / pivot offer. Read the grade caveat first — this account's grades understate at 48h, so treat the 48h read as the earliest decision point, not the final number.
 
 ## The three things you're listening for (and nothing else)
 
