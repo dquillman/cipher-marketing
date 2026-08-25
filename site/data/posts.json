@@ -1869,6 +1869,25 @@
       "scenarioArchetype": "risk-has-become-an-issue",
       "planNote": "Minted 2026-08-22 for the public LinkedIn frame test replacing the positioning kit's 5 PMP candidate calls. Takes the 2026-08-28 slot; the draft that held it (li-fri-2026-08-28-magnet-03-shrmcp, SHRM-CP) moved to 2026-10-02. Frame C's opener was rewritten off the one-pager's competitor-contrast wording - see predictionNote.",
       "shortLink": "https://cipherexam.com/go/pmp-frame-c"
+    },
+    {
+      "id": "li-wed-2026-08-26-llm-compare",
+      "channel": "linkedin",
+      "track": "sme",
+      "status": "draft",
+      "examFocus": "PMP",
+      "scheduledTime": "2026-08-26T19:20:00-06:00",
+      "copy": "I asked ChatGPT for ten intermediate PMP questions. Then I put one of them next to one of mine.\n\nTheirs:\n\nA previously identified risk occurs and begins affecting the schedule. A planned contingency response exists. What should the project manager do next?\n\nA. Implement the planned risk response\nB. Immediately escalate the risk to the sponsor\nC. Create a new risk management plan\nD. Remove the risk from the risk register\n\nMine:\n\nA risk you identified carried a $180,000 contingency allocation. It just materialized at $210,000. You hold no unallocated budget, and the $30,000 difference pushes you past your approved cost baseline.\n\nA. Draw the full $210,000 from contingency reserve and report the overrun in the next status report\nB. Apply the $180,000 contingency, and request the $30,000 through the governance process that controls management reserve and baseline change\nC. Absorb the $30,000 by deferring a discretionary scope item to a later release\nD. Re-estimate the remaining work to find $30,000 of savings before reporting anything\n\nBoth are about a risk that materialized when a response was already planned.\n\nThe first has one defensible option and three nobody would pick. The second has four things a working PM has actually done on a real Tuesday.\n\nI am not going to tell you the first question is bad. It is a reasonable warm-up and it took eleven seconds to produce. If you are three months out, it is fine.\n\nBut the exam does not test whether you know a contingency plan should be used. It tests whether you know which pot the money comes from when the number goes over — and whether you know that crossing a cost baseline was never your call to make.\n\nThat distinction is the difference between passing and being surprised.\n\nWhich one would you rather be practicing the night before?\n\nGive me the letter you would pick on the second one, and your reason. The reason is the part I read.\n\nAnswer and full breakdown in the first comment.\n\nCipherExam works every PMP question this way — the reasoning, not the letter. Free 7 days, no card.\n\nFinance planning sits in Process, which is 41% of the exam.\n\n#PMP #ProjectManagement",
+      "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=llm-compare",
+      "shortLink": "https://cipherexam.com/go/pmp-llm-compare",
+      "firstComment": "As promised — the answer and the full breakdown.\n\nB. Apply the $180,000 contingency, then request the $30,000 through the governance process that controls management reserve and baseline change.\n\nA is what almost everybody actually does, and it answers a different question. Contingency reserve covers identified risks up to what was allocated. Drawing $210,000 from a $180,000 allocation and mentioning it in a status report is a baseline change performed by press release.\n\nC quietly trades scope for cost without the change control that governs either.\nD is the most respectable-looking wrong answer: re-estimating to find savings before reporting means the sponsor learns about the overrun after you have already decided what to do about it.\n\nThe split in B is the whole point. The $180,000 is yours — it was allocated for exactly this. The $30,000 is not, because it crosses the cost baseline, and crossing a baseline is never a project manager's call.\n\nThe numbers were never the hard part. Which pot the money comes from is.\n\nAnd that is the honest gap between the two questions above. A generated item will reliably teach you that a contingency plan exists to be used. It will not reliably teach you the boundary between contingency and management reserve, because to write that question you have to already know where the boundary is.\n\nhttps://cipherexam.com/go/pmp-llm-compare",
+      "predictedGrade": "B",
+      "predictionNote": "Rides the comment-gate format; the LLM contrast is the hook, not an attack on a category.",
+      "notes": [
+        "Tests Dave's 2026-08-24 doubt that an LLM makes CipherExam redundant. The audience decides, not us.",
+        "Deliberately concedes the generated question is a fine warm-up — category-adversarial openers collapse reach on this account.",
+        "Needs /go/pmp-llm-compare added to firebase.json redirects and deployed BEFORE this posts."
+      ]
     }
   ],
   "benchmarks": {
