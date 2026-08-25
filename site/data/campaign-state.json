@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-08-22T13:05:36.250Z",
+    "lastUpdatedBy": "claude — validation email logged",
+    "lastUpdatedAt": "2026-08-25T14:00:00.000Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -54,27 +54,27 @@
       }
     },
     "funnel": {
-      "asOf": "2026-08-22T13:05:36.250Z",
+      "asOf": "2026-08-25T13:08:30.342Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
       "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
-        "impressions": 3801,
-        "lpVisits": 17,
+        "impressions": 4144,
+        "lpVisits": 20,
         "signups": 2,
         "examPicked": 2,
         "activated": 1
       },
       "perCluster": {
         "PMP": {
-          "impressions": 3801,
-          "lpVisits": 17,
+          "impressions": 3935,
+          "lpVisits": 20,
           "signups": 1,
           "examPicked": 1,
           "activated": 0
         },
         "Security+": {
-          "impressions": 0,
+          "impressions": 209,
           "lpVisits": 1,
           "signups": 0,
           "examPicked": 0,
@@ -504,6 +504,11 @@
       "date": "2026-08-12",
       "what": "LinkedIn CTA goes in the first comment, never the post body. Gated posts send ~19:20 MT.",
       "why": "Measured across the full graded corpus: 5 posts with a body CTA drew 0 comments between them (May and August, four hooks, both slots); the 3 without drew 7. Separately, every comment this account has ever received came from an evening send — morning is 0-for-5 across 5 posts. The best post on record (li-thu-2026-08-07-sponsor-scenario, 2,134 impressions / 466 reached / 6 comments) went out Friday 19:25 MT. Honest limit: 6 of the 7 lifetime comments came from that one gated post, so evening and format are still tangled; li-mon-2026-08-10-bizenv-reprice on Fri 08-14 19:20 MT matches its day and hour precisely so format is the only variable left."
+    },
+    {
+      "date": "2026-08-22",
+      "decision": "Replace the positioning kit 5-call validation with a 3-post public LinkedIn category-frame test (Frames A/B/C).",
+      "rationale": "Dave will not run calls or DMs. The frame is testable in the feed at zero outreach cost, and the metric (LP clicks per impression) is measurable where the calls metric was not."
     }
   ],
   "dailyLog": [
@@ -610,6 +615,10 @@
     {
       "date": "2026-08-08",
       "entry": "REVENUE PLAN LOADED into campaign data. Source: 19-revenue-plan-2026-08.md (canonical copy at G:\\Users\\daveq\\GL-Cash\\REVENUE-PLAN-2026-08.md), built by a gauntlet run in which all six sections beat published Kahl/Levels/Walling references in blind judging, then survived a completeness critic (12 holes found and repaired). Loaded: 19 new LinkedIn post slots (drafts) covering Fri 08-14 -> Fri 09-25, each carrying its own drafting brief, pipeline, and draft-by date; the existing li-fri-2026-08-14-pmp-lens-magnet draft moved Fri 08-14 -> Wed 08-12 to become magnet #1 (the first magnet-drop post ever). Also loaded: 7 plan decisions, and a new revenuePlan block holding the dated gate calendar, revenue targets, and the single-channel scope ruling. Machine truth at load time: $0 recorded revenue portfolio-wide, 0 activated users, 0 lead captures, ~638 lifetime LinkedIn impressions. NOT done by this load and still owed by Dave: the live $59 buy-and-refund pipe proof, the Tue 08-11 CAN-SPAM/emailOptOut deploy (blocks the 08-12 magnet post), the $189-copy and TRIAL_DAYS 14->7 fixes, Stripe dunning toggles, and the MT Payment Link deactivation. See the Tomorrow-morning checklist in the plan."
+    },
+    {
+      "date": "2026-08-22",
+      "entry": "Positioning validation switched from 5 PMP candidate calls to a public LinkedIn frame test (Dave: no calls, no DMs). Three drafts minted - li-frame-test-01/02/03, one per category frame from positioning/01-one-pager.md - for 08-24/26/28 at 19:20 CT. Identical gated format, CTA in first comment, utm_campaign=frame-test. Winner = LP clicks / trial starts per impression, tie-break comments; decide with 04-decision-rubric.md after all three have 48h grades. Three queued drafts displaced to 09-28/09-30/10-02 so the pre-registered #PMPExam test keeps 08-31."
     }
   ],
   "boardPriorities": {
@@ -733,5 +742,17 @@
       "No traffic to any product whose payment path cannot fulfill.",
       "No \"guaranteed pass\" language; no invented statistics; no revenue figures in public posts."
     ]
+  },
+  "validation": {
+    "firstBuyerQuestion": {
+      "sentAt": "2026-08-25",
+      "to": "sdas.kolkata.97@gmail.com",
+      "who": "User 1 — 99 questions answered, built a study plan, viewed the pricing page, did not buy",
+      "question": "What would you have needed to see on that pricing page to believe this was worth $59?",
+      "why": "The only human on record who reached the price and declined. Trial ends 2026-08-27.",
+      "constraint": "No call, no discount, no offer — a question, not a pitch.",
+      "reply": null,
+      "note": "n=1. Generates a hypothesis, not a result. Do not treat a single answer as a mandate."
+    }
   }
 }
