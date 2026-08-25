@@ -1784,7 +1784,8 @@
       "scenarioId": "PMP-040",
       "scenarioArchetype": "improvement-lands-in-the-asset",
       "planNote": "Minted 2026-08-22 for the public LinkedIn frame test that replaces the positioning kit's 5 PMP candidate calls (Dave will not do calls or DMs). Takes the 2026-08-24 slot; the draft that held it (li-mon-2026-08-24-scoreboard-02) moved to 2026-09-28. Scenario PMP-040 chosen from the unreserved pool - PMP-034/032/033/030/016 are already reserved by queued drafts and PMP-021 shipped 2026-08-19 without being recorded in the bank. Correct letters across the three frame posts are A/C/B (distinct); trap position is D on two of three, which is the one rotation constraint the unreserved pool would not satisfy.",
-      "shortLink": "https://cipherexam.com/go/pmp-frame-a"
+      "shortLink": "https://cipherexam.com/go/pmp-frame-a",
+      "firstCommentPostedAt": "2026-08-25"
     },
     {
       "id": "li-frame-test-02",
