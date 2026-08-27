@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.14">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.15">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.14</span>
+      <span class="version-bar" title="Dashboard version">v1.30.15</span>
     </div>
   </div>
 </nav>
@@ -7385,7 +7385,10 @@ document.addEventListener('cipher:state-updated', function () {
     // Infinity >= 48 would let an unparseable postedAt bypass the floor.
     var ungraded = posts.filter(function (p) {
       var h = hoursAgo(p.postedAt);
-      return p.status === 'posted' && !p.grade && p.postedAt && isFinite(h) && h >= CIPHER_GRADE_FLOOR_HOURS;
+      // CIPHER_GRADE_OVERDUE_HOURS, not the 48h floor. Between 48h and here,
+      // the daily 08:04 auto-grade run has not had its turn yet, so telling
+      // Dave to grade is asking him to race a robot he already built.
+      return p.status === 'posted' && !p.grade && p.postedAt && isFinite(h) && h >= CIPHER_GRADE_OVERDUE_HOURS;
     });
     if (ungraded.length > 0) {
       var pg = ungraded[0];
@@ -7723,32 +7726,12 @@ document.addEventListener('cipher:state-updated', function () {
         urgent: true
       });
     });
-    posts.forEach(function (p) {
-      var left = (typeof cipherHoursToGradeable === 'function') ? cipherHoursToGradeable(p) : null;
-      if (left != null && left > 0) {
-        // Name the POST, not just its date. Two posts scheduled on the same
-        // day produced two steps reading 'Grade LINKEDIN post from
-        // 2026-08-26' — identical labels for different work, which looks like
-        // a duplicated row (Dave, 2026-08-26).
-        //
-        // And date it by when it actually WENT OUT. li-wed-2026-08-26-llm-compare
-        // was scheduled for the 26th but published on the 25th, so the
-        // scheduled date was simply the wrong number to show on a posted post.
-        var gradeDay = (p.postedAt ? String(p.postedAt).slice(0, 10) : null) || p.scheduled || '?';
-        // hook is the best short handle, but not every post carries one — the
-        // llm-compare draft has none, which left its row reading just 'PMP'.
-        // Fall through to the plan slot, the frame name, then the id, so two
-        // rows can never read the same.
-        var gradeTag = p.hook || p.planSlot || p.frameName || p.id;
-        var gradeWhat = [p.examFocus, gradeTag].filter(Boolean).join(' · ');
-        steps.push({
-          title: 'Grade ' + (p.channel || '?').toUpperCase() + ' — ' + gradeWhat + ' (posted ' + gradeDay + ') — gradeable in ~' + left + 'h',
-          desc: '48h floor: LinkedIn is still serving it; earlier numbers read as a false D. Auto-grade picks it up once it qualifies.',
-          done: false,
-          urgent: true
-        });
-      }
-    });
+    // No 'grade this later' steps. cipher-auto-grade runs at 08:04 every day
+    // and does the whole job — finds what is due, reads LinkedIn, pulls GA4,
+    // submits. Listing a post that is not even gradeable yet as a numbered
+    // action, under a description that says a robot handles it, is a to-do
+    // that contradicts itself (Dave, 2026-08-26). Grading only reaches Dave
+    // when the automation has actually MISSED it — see the RIGHT NOW rule.
 
     // Step: trend scout (Monday or if stale)
     var staleTrends = !trendData || !trendData.scanDate || (
@@ -9313,6 +9296,10 @@ function cipherIdDateLies(p) {
 // warming up, not the post, and lands as a false D. This constant is a display
 // threshold mirroring that rule, not a measured value.
 var CIPHER_GRADE_FLOOR_HOURS = 48;
+// Auto-grade runs daily at 08:04. A post that passed the floor gets its first
+// automated attempt within 24h of doing so, so nothing is 'overdue' for a human
+// until the automation has demonstrably missed a run.
+var CIPHER_GRADE_OVERDUE_HOURS = CIPHER_GRADE_FLOOR_HOURS + 24;
 // Hours until a posted-ungraded post clears the floor: 0 = gradeable now,
 // null = not applicable (not posted, already graded, or no timestamp).
 function cipherHoursToGradeable(p) {
@@ -10154,10 +10141,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.14"></script>
-<script src="assets/outreach.js?v=1.30.14"></script>
-<script src="assets/page-knowledge.js?v=1.30.14"></script>
-<script src="assets/hal-rail.js?v=1.30.14"></script>
+<script src="assets/outreach-data.js?v=1.30.15"></script>
+<script src="assets/outreach.js?v=1.30.15"></script>
+<script src="assets/page-knowledge.js?v=1.30.15"></script>
+<script src="assets/hal-rail.js?v=1.30.15"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
