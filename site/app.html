@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.2">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.3">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1843,7 +1843,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.2</span>
+      <span class="version-bar" title="Dashboard version">v1.30.3</span>
     </div>
   </div>
 </nav>
@@ -2618,6 +2618,21 @@ function cipherHelp() {
     } catch(e) { return ''; }
   }
 
+  // ONE definition of which day a post belongs to, shared by Today, Create and
+  // Publish. They used to disagree: Today read `scheduled` (a date string) and
+  // the Publish banner read `scheduledTime` (an instant), so a post carrying
+  // one field but not the other showed up on one page and vanished from the
+  // other. That is exactly what li-wed-2026-08-26-llm-compare did on
+  // 2026-08-26 — Publish listed two posts for the day, Today listed one.
+  // Prefer the plain date string; fall back to the instant.
+  window.cipherPostDay = function (p) {
+    if (!p) return '';
+    if (p.scheduled) return String(p.scheduled).slice(0, 10);
+    return scheduledDateMT(p.scheduledTime);
+  };
+  // Same "today" everywhere, in the viewer's zone.
+  window.cipherCampaignToday = function () { return todayInMT(); };
+
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -2689,7 +2704,7 @@ function cipherHelp() {
     }
     function variantFor(p) {
       if (p.status === 'posted') return 'posted';
-      var d = scheduledDateMT(p.scheduledTime);
+      var d = window.cipherPostDay(p);
       if (d === today || d === tomorrow) return 'tonight';
       return 'upcoming';
     }
@@ -2699,8 +2714,8 @@ function cipherHelp() {
       return effectiveDateIso(b).localeCompare(effectiveDateIso(a));
     });
 
-    var tonightPosts = posts.filter(function (p) { return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === tomorrow; });
-    var todayPosts   = posts.filter(function (p) { return p.status !== 'posted' && scheduledDateMT(p.scheduledTime) === today; });
+    var tonightPosts = posts.filter(function (p) { return p.status !== 'posted' && window.cipherPostDay(p) === tomorrow; });
+    var todayPosts   = posts.filter(function (p) { return p.status !== 'posted' && window.cipherPostDay(p) === today; });
 
     // Banner: show if there are posts due today or tomorrow
     if (todayPosts.length > 0) {
@@ -7229,7 +7244,7 @@ document.addEventListener('cipher:state-updated', function () {
   window.cipherRenderContactTracker = renderContactTracker;
 
   function computeNextAction(posts, trendData) {
-    var todayStr = mtTodayStr();
+    var todayStr = window.cipherCampaignToday();
     var hour = mtHour();
     var dow = dayOfWeek();
     var campaignState = window.__CAMPAIGN_STATE__ || {};
@@ -7656,7 +7671,7 @@ document.addEventListener('cipher:state-updated', function () {
   }
 
   function computeTodaySequence(posts, trendData) {
-    var todayStr = mtTodayStr();
+    var todayStr = window.cipherCampaignToday();
     var dow = dayOfWeek();
     var steps = [];
 
@@ -7683,7 +7698,7 @@ document.addEventListener('cipher:state-updated', function () {
     }
 
     // Step: today's scheduled posts (one step per post)
-    var todayPosts = posts.filter(function (p) { return p.scheduled === todayStr; });
+    var todayPosts = posts.filter(function (p) { return window.cipherPostDay(p) === todayStr; });
     todayPosts.forEach(function (p) {
       steps.push({
         title: 'Post to ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
@@ -10095,10 +10110,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.2"></script>
-<script src="assets/outreach.js?v=1.30.2"></script>
-<script src="assets/page-knowledge.js?v=1.30.2"></script>
-<script src="assets/hal-rail.js?v=1.30.2"></script>
+<script src="assets/outreach-data.js?v=1.30.3"></script>
+<script src="assets/outreach.js?v=1.30.3"></script>
+<script src="assets/page-knowledge.js?v=1.30.3"></script>
+<script src="assets/hal-rail.js?v=1.30.3"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

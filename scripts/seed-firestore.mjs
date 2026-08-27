@@ -265,6 +265,27 @@ async function runSeed() {
     console.log("  Fetching live campaign/posts to preserve grades…");
     const remotePosts = await getDoc("campaign", "posts");
     const mergedPosts = mergePostsPreservingGrades(localPosts, remotePosts);
+
+    // Every post needs BOTH date fields. The dashboard derives a post's day
+    // from `scheduled` and falls back to `scheduledTime`; when a post carries
+    // only one, pages that read the other silently disagree about what is due.
+    // That shipped: on 2026-08-26 the Publish page listed two posts for the day
+    // and the Today page listed one, because li-wed-2026-08-26-llm-compare had
+    // a scheduledTime and no scheduled date.
+    const undated = mergedPosts.posts.filter(
+      (p) => !p.archived && (!p.scheduled || !p.scheduledTime)
+    );
+    if (undated.length) {
+      console.error("\n  ABORT — posts missing a date field:\n");
+      for (const p of undated) {
+        console.error(
+          `   - ${p.id}: scheduled=${p.scheduled || "MISSING"} scheduledTime=${p.scheduledTime || "MISSING"}`
+        );
+      }
+      console.error("\n  Set both, then re-run. Nothing was written.\n");
+      process.exit(1);
+    }
+
     await upsert("campaign", "posts", mergedPosts);
     console.log(`  ✓  campaign/posts  (${mergedPosts.posts.length} posts)`);
   } else {
