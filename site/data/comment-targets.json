@@ -3,9 +3,9 @@
   "why": "A reshare puts someone else's post in front of our ~0 followers. A comment puts us in front of the people already engaging with a post that is working. Out-of-network reach is earned by borrowing an audience, not by posting harder.",
   "howToScan": "Walk each target's activity page — https://www.linkedin.com/in/<slug>/recent-activity/all/ — and pull permalinks from the DOM. Hashtag SEARCH results carry no urn:li:activity, so nothing found there can be queued; use the feeds only to discover new names for this roster. Learned 2026-08-25. A target activity page mixes their own posts with their reshares — check for a \"reposted this\" line and take the byline UNDERNEATH it as the author.",
   "timing": {
-    "slotLocal": "07:15 CT",
-    "why": "A comment's visibility tracks the HOST post's audience, which is US-heavy and most active mid-morning Eastern. This is the opposite of our own posts at 19:20 CT — a different mechanic. Dave does not act before 07:00 CT, so 07:15 is the earliest honest slot.",
-    "scanBy": "05:30 CT so the queue is ready before the slot"
+    "slotLocal": "09:30 CT",
+    "why": "Dave is rarely at his desk before 09:30 (stated 2026-08-26), so the old 07:15 slot was a time nobody was there for. A comment's visibility still tracks the HOST post's audience — US-heavy, most active mid-morning Eastern — and 09:30 CT is 10:30 ET, which is inside that window. This is the opposite of our own posts at 19:20 CT, a different mechanic.",
+    "scanBy": "05:36 CT, unattended — the queue only has to be ready before Dave is."
   },
   "selection": {
     "maxHostAgeDays": 5,
