@@ -42,8 +42,14 @@ const FEATURES = {
   asksForReason: (c) => /\byour reason\b|\band why\b|\bwhy\?|more importantly, your reason/i.test(c),
   // Answer withheld + reveal promised. This is what makes commenting the way to
   // find out.
+  // Third-person reveal promises count too. The first version matched only
+  // first-person ("I'll share the answer..."), so li-wed-2026-08-19-sme-04 —
+  // "The answer and the full elimination on all four options go in this thread
+  // tonight" — was scored as NOT withholding, which put a withholding post in
+  // the control group and understated the split (found 2026-08-27).
   withholdsAnswer: (c) =>
-    /I(?: will|'ll) (?:share|post|put)\b[^.]*\b(?:pattern|answer|reasoning)\b|after the discussion|once the discussion/i.test(c),
+    /I(?: will|'ll) (?:share|post|put)\b[^.]*\b(?:pattern|answer|reasoning)\b|after the discussion|once the discussion/i.test(c) ||
+    /\b(?:the answer|the reasoning|the pattern|the full elimination|the breakdown)\b[^.]{0,120}?\b(?:thread|comments?|first comment)\b/i.test(c),
   // Any question mark at all — the naive reading of the grader's advice, kept
   // here specifically so the report can show it does NOT separate the groups.
   anyQuestionMark: (c) => c.includes('?'),
