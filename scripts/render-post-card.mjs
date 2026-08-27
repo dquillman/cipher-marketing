@@ -30,7 +30,8 @@
 // Output: videos/out/post-cards/<postId>.png
 
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -182,8 +183,17 @@ for (const post of targets) {
   );
 
   if (writeBack) {
+    // Publish the render into site/assets so hosting actually serves it, and
+    // stamp the URL with a content hash. The filename never changes, so
+    // without the hash a browser keeps showing the previous card forever —
+    // which it did on 2026-08-26, still displaying a gated post's answer
+    // hours after the fix had shipped and been verified on the server.
+    const published = join(ROOT, "site/assets/post-cards", `${post.id}.png`);
+    mkdirSync(dirname(published), { recursive: true });
+    copyFileSync(outPath, published);
+    const hash = createHash("sha1").update(readFileSync(published)).digest("hex").slice(0, 8);
     post.cardLook = props.look;
-    post.imageUrl = `videos/out/post-cards/${post.id}.png`;
+    post.imageUrl = `/assets/post-cards/${post.id}.png?v=${hash}`;
   }
 }
 

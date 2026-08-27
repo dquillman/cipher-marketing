@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "seed-firestore",
-    "lastUpdatedAt": "2026-08-27T01:20:55.712Z",
+    "lastUpdatedAt": "2026-08-27T01:49:52.088Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
