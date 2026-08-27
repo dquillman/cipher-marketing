@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.12">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.14">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.12</span>
+      <span class="version-bar" title="Dashboard version">v1.30.14</span>
     </div>
   </div>
 </nav>
@@ -7726,8 +7726,23 @@ document.addEventListener('cipher:state-updated', function () {
     posts.forEach(function (p) {
       var left = (typeof cipherHoursToGradeable === 'function') ? cipherHoursToGradeable(p) : null;
       if (left != null && left > 0) {
+        // Name the POST, not just its date. Two posts scheduled on the same
+        // day produced two steps reading 'Grade LINKEDIN post from
+        // 2026-08-26' — identical labels for different work, which looks like
+        // a duplicated row (Dave, 2026-08-26).
+        //
+        // And date it by when it actually WENT OUT. li-wed-2026-08-26-llm-compare
+        // was scheduled for the 26th but published on the 25th, so the
+        // scheduled date was simply the wrong number to show on a posted post.
+        var gradeDay = (p.postedAt ? String(p.postedAt).slice(0, 10) : null) || p.scheduled || '?';
+        // hook is the best short handle, but not every post carries one — the
+        // llm-compare draft has none, which left its row reading just 'PMP'.
+        // Fall through to the plan slot, the frame name, then the id, so two
+        // rows can never read the same.
+        var gradeTag = p.hook || p.planSlot || p.frameName || p.id;
+        var gradeWhat = [p.examFocus, gradeTag].filter(Boolean).join(' · ');
         steps.push({
-          title: 'Grade ' + (p.channel || '?').toUpperCase() + ' post from ' + (p.scheduled || '?') + ' — gradeable in ~' + left + 'h',
+          title: 'Grade ' + (p.channel || '?').toUpperCase() + ' — ' + gradeWhat + ' (posted ' + gradeDay + ') — gradeable in ~' + left + 'h',
           desc: '48h floor: LinkedIn is still serving it; earlier numbers read as a false D. Auto-grade picks it up once it qualifies.',
           done: false,
           urgent: true
@@ -10139,10 +10154,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.12"></script>
-<script src="assets/outreach.js?v=1.30.12"></script>
-<script src="assets/page-knowledge.js?v=1.30.12"></script>
-<script src="assets/hal-rail.js?v=1.30.12"></script>
+<script src="assets/outreach-data.js?v=1.30.14"></script>
+<script src="assets/outreach.js?v=1.30.14"></script>
+<script src="assets/page-knowledge.js?v=1.30.14"></script>
+<script src="assets/hal-rail.js?v=1.30.14"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
