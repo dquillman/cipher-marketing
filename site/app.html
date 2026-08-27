@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.9">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.10">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.9</span>
+      <span class="version-bar" title="Dashboard version">v1.30.10</span>
     </div>
   </div>
 </nav>
@@ -1908,7 +1908,7 @@ function cipherHelp() {
       <h4>Every weekday morning</h4>
       <ol>
         <li><strong>Check today's scheduled posts.</strong> The Right Now card above tells you which post + which video + the exact copy to paste. Copy → paste → schedule (or post immediately) → paste the live URL back into the dashboard. Status flips to <em>posted</em>.</li>
-        <li><strong>Grade yesterday's post</strong> (if 24+ hours have passed). Open the platform's analytics and use the Grade this post button.</li>
+        <li><strong>Grade yesterday's post</strong> (if 24+ hours have passed). Open the Publish page and use Auto-grade or Enter manually on that post's row.</li>
         <li><strong>Engage</strong> (10-15 min). Reply to comments on your last 3 posts. Skim r/pmp, r/CompTIA, r/humanresources for questions you can answer authentically. Value-first replies; mention CipherExam only if directly asked.</li>
         <li><strong>Founder email</strong> (only when applicable). If you have a new signup, send the matching template from <code>07-founder-1to1-emails.md</code> (Day 0 / Day 3 / Day 6). Brad surfaces which template during the walkthrough.</li>
       </ol>
@@ -3220,7 +3220,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
   <ol style="color:var(--dim);font-size:0.92rem;line-height:1.6;">
     <li><strong>Review drafts</strong> and approve only the posts you are comfortable publishing. If a draft needs changes, choose <strong>Ask Brad to revise</strong> on that draft and tell Brad what you want changed.</li>
     <li><strong>Publish</strong> from the Publish tab and save the live post URL.</li>
-    <li><strong>Wait 24–48 hours</strong>, open the platform's analytics, and use Grade this post to enter the numbers.</li>
+    <li><strong>Wait 24–48 hours</strong>, then grade it from its row on the Publish page.</li>
     <li><strong>Use the result</strong> to improve the next set of posts.</li>
   </ol>
   </details>
@@ -7378,22 +7378,22 @@ document.addEventListener('cipher:state-updated', function () {
     });
     if (ungraded.length > 0) {
       var pg = ungraded[0];
+      // Today points; Publish acts. Grading is the last step of a post's own
+      // life — draft, scheduled, posted, graded — and Publish already owns
+      // that row with Auto-grade, Enter manually and Unpost on it. The old
+      // button opened the grade modal from here, and fell back to the CREATE
+      // page when it could not find the trigger, which was doubly wrong.
       return {
         type: 'grade',
         title: 'GRADE: ' + (pg.channel || '?').toUpperCase() + ' — ' + (pg.examFocus || '?') + ' from ' + (pg.scheduled || '?'),
-        sub: 'Open ' + (pg.channel || 'the platform') + ' analytics for this post. Copy the metrics, then tell Brad: "grade my ' + (pg.scheduled || '?') + ' post".',
-        detail:
-          (pg.postUrl ? '<div class="cc-detail-label">Live post</div><code>' + esc(pg.postUrl) + '</code><br><br>' : '') +
-          '<div class="cc-detail-label">What to grab from analytics</div>' +
-          '<pre>Impressions · Reactions/Likes · Comments · Reposts · Link clicks · Trial signups (UTM)</pre>',
+        sub: 'Grade it on the Publish page — the row has Auto-grade and Enter manually on it. Wait 48 hours after posting; grading earlier measures the algorithm warming up, not the post.',
+        detail: (pg.postUrl
+          ? '<div class="cc-detail-label">Live post</div><code>' + esc(pg.postUrl) + '</code>'
+          : '<div class="cc-detail-label">No live URL saved</div>'),
         buttons: [
           {
-            label: 'Grade this post',
-            onclick: (function (postId) { return function () {
-              var trigger = document.querySelector('[data-grade-open="' + postId + '"]');
-              if (trigger) { trigger.click(); }
-              else if (typeof cipherShow === 'function') { cipherShow('posts'); }
-            }; })(pg.id)
+            label: 'Open in Publish →',
+            onclick: function () { if (typeof cipherShow === 'function') cipherShow('schedule'); }
           },
           (pg.postUrl ? {
             label: 'Open live post',
@@ -10128,10 +10128,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.9"></script>
-<script src="assets/outreach.js?v=1.30.9"></script>
-<script src="assets/page-knowledge.js?v=1.30.9"></script>
-<script src="assets/hal-rail.js?v=1.30.9"></script>
+<script src="assets/outreach-data.js?v=1.30.10"></script>
+<script src="assets/outreach.js?v=1.30.10"></script>
+<script src="assets/page-knowledge.js?v=1.30.10"></script>
+<script src="assets/hal-rail.js?v=1.30.10"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
