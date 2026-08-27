@@ -9106,7 +9106,11 @@ function cipherStaleVideoPosts() {
     bar.id = 'stale-video-bar';
     bar.innerHTML = '<span id="stale-video-text"></span>' +
       '<button class="btn-warn" type="button" data-regen-stale>Regenerate outdated videos</button>';
-    var host = document.querySelector('h1');
+    // Videos live on the posts tab. A bare querySelector('h1') grabs the
+    // Comments heading, which is first in the DOM, so this bar used to nag
+    // from a tab that has no videos on it at all.
+    var host = document.querySelector('[data-route="posts"] h1') ||
+      document.querySelector('h1');
     if (host && host.parentNode) host.parentNode.insertBefore(bar, host.nextSibling);
     else document.body.insertBefore(bar, document.body.firstChild);
     return bar;
