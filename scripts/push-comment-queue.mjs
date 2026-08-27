@@ -147,10 +147,47 @@ try {
 // today's number erases the comparison, so it is preserved unless the caller
 // deliberately supplies a new one.
 const ref = db.collection("campaign").doc("commentQueue");
+
+// A ledger of posts Dave has ALREADY commented on. Without it the scan
+// re-queues the same host post every morning until it ages out — the item
+// still has a big audience and few comments, because our own comment does
+// not change that shape much. Carried across every write; the scan reads it
+// and skips those URLs.
+{
+  const prior = await ref.get();
+  const ledger = (prior.exists ? prior.data()?.commentedOn : null) || [];
+  const incoming = doc.commentedOn || [];
+  const seen = new Set(ledger.map((e) => e.url));
+  doc.commentedOn = ledger.concat(incoming.filter((e) => !seen.has(e.url)));
+}
 if (KEEP_BASELINE || !doc.baseline) {
   const existing = await ref.get();
   const prior = existing.exists ? existing.data()?.baseline : null;
   if (prior) doc.baseline = prior;
+}
+
+// Refuse to re-queue a thread Dave has already answered. The scan is told to
+// skip these, but the validator is the backstop — being in the same thread
+// twice reads as not remembering your own comment.
+{
+  const done = new Set((doc.commentedOn || []).map((e) => e.url));
+  const dupes = (doc.items || []).filter((it) => done.has(it.url));
+  if (dupes.length) {
+    for (const d of dupes) console.error();
+    doc.items = doc.items.filter((it) => !done.has(it.url));
+  }
+}
+
+// Refuse to re-queue a thread Dave has already answered. The scan is told to
+// skip these, but the validator is the backstop — turning up twice in the same
+// thread reads as not remembering your own comment.
+{
+  const done = new Set((doc.commentedOn || []).map((e) => e.url));
+  const dupes = (doc.items || []).filter((it) => done.has(it.url));
+  for (const d of dupes) {
+    console.error(`DROPPED ${d.author} — already commented on that post`);
+  }
+  if (dupes.length) doc.items = doc.items.filter((it) => !done.has(it.url));
 }
 
 await ref.set(doc);
