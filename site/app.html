@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.8">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.9">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.8</span>
+      <span class="version-bar" title="Dashboard version">v1.30.9</span>
     </div>
   </div>
 </nav>
@@ -9480,11 +9480,13 @@ function cipherFormatLine(p) {
       e.preventDefault();
       var ctaId = ctaBtn.getAttribute('data-copy-cta');
       var ctaPost = ((window.__POSTS__ && window.__POSTS__.posts) || []).find(function (p) { return p.id === ctaId; });
-      if (!ctaPost || !(ctaPost.shortLink || ctaPost.cta)) return;
-      // Prefer the /go/ short link. It 302s to the same UTM, so attribution is
-      // identical, and the destination can be repointed later without editing
-      // a post that is already published. Falls back to the raw UTM URL.
-      var ctaUrl = ctaPost.shortLink || ctaPost.cta;
+      if (!ctaPost || !(ctaPost.ctaComment || ctaPost.shortLink || ctaPost.cta)) return;
+      // Copy the WHOLE first comment when the post carries one — the link on
+      // its own is not a comment, and pasting a bare URL under your own post
+      // reads like a bot. Falls back to the /go/ short link, which 302s to the
+      // same UTM (identical attribution, repointable later), then to the raw
+      // UTM URL.
+      var ctaUrl = ctaPost.ctaComment || ctaPost.shortLink || ctaPost.cta;
       var ctaLabel = ctaBtn.textContent;
       var restoreCta = function () { setTimeout(function () { ctaBtn.textContent = ctaLabel; }, 2000); };
       window.safeCopy(ctaUrl,
@@ -9692,7 +9694,7 @@ function cipherNextToPublish() {
         // posts are for. X keeps the URL in the body, so it is skipped there.
         (p.cta && !isX
           ? '<li><span class="pn-step-text">Post the CTA link as your FIRST comment — do it straight away, not later</span>' +
-            '<button class="copy-post-btn" type="button" data-copy-cta="' + cipherEsc(p.id) + '">Copy CTA link</button></li>'
+            '<button class="copy-post-btn" type="button" data-copy-cta="' + cipherEsc(p.id) + '">' + (p.ctaComment ? 'Copy first comment' : 'Copy CTA link') + '</button></li>'
           : '') +
         '<li><span class="pn-step-text">Bring the live link back here</span>' +
           '<input type="url" id="pn-url" placeholder="https://www.linkedin.com/feed/update/..." />' +
@@ -10126,10 +10128,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.8"></script>
-<script src="assets/outreach.js?v=1.30.8"></script>
-<script src="assets/page-knowledge.js?v=1.30.8"></script>
-<script src="assets/hal-rail.js?v=1.30.8"></script>
+<script src="assets/outreach-data.js?v=1.30.9"></script>
+<script src="assets/outreach.js?v=1.30.9"></script>
+<script src="assets/page-knowledge.js?v=1.30.9"></script>
+<script src="assets/hal-rail.js?v=1.30.9"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
