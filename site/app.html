@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.5">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.6">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.5</span>
+      <span class="version-bar" title="Dashboard version">v1.30.6</span>
     </div>
   </div>
 </nav>
@@ -9471,6 +9471,24 @@ function cipherFormatLine(p) {
   // nothing, which left the clipboard empty at the composer (Dave, 2026-08-01).
   // Delegation also stops duplicate listeners stacking up on re-render.
   document.addEventListener('click', async function (e) {
+    // The CTA link is short enough for the plain path, and it goes to a
+    // different box than the body — the first comment. Pasting the wrong
+    // post's UTM is unrecoverable, so this reads p.cta rather than anything
+    // on screen, and reports honestly when the clipboard refuses.
+    var ctaBtn = e.target.closest && e.target.closest('[data-copy-cta]');
+    if (ctaBtn) {
+      e.preventDefault();
+      var ctaId = ctaBtn.getAttribute('data-copy-cta');
+      var ctaPost = ((window.__POSTS__ && window.__POSTS__.posts) || []).find(function (p) { return p.id === ctaId; });
+      if (!ctaPost || !ctaPost.cta) return;
+      var ctaLabel = ctaBtn.textContent;
+      var restoreCta = function () { setTimeout(function () { ctaBtn.textContent = ctaLabel; }, 2000); };
+      window.safeCopy(ctaPost.cta,
+        function () { ctaBtn.textContent = 'Copied ✓'; restoreCta(); },
+        function () { ctaBtn.textContent = '✗ Blocked — copy it from the post record'; restoreCta(); });
+      return;
+    }
+
     var btn = e.target.closest && e.target.closest('[data-copy-id]');
     if (!btn) return;
     e.preventDefault();
@@ -9653,13 +9671,25 @@ function cipherNextToPublish() {
       '<ol class="pn-steps">' +
         '<li><span class="pn-step-text">Copy the post text (press Ctrl+C if the button asks)</span>' +
           '<button class="copy-post-btn" type="button" data-copy-id="' + cipherEsc(p.id) + '">Copy text</button></li>' +
+        (p.imageUrl
+          ? '<li><span class="pn-step-text">Save the card — right-click the image above, Save image as</span>' +
+            '<a class="btn-secondary" href="' + cipherEsc(p.imageUrl) + '" download="' + cipherEsc(p.id) + '.png" target="_blank" rel="noopener">Open card</a></li>'
+          : '') +
         (p.videoUrl
           ? '<li><span class="pn-step-text">Save the video to your computer</span>' +
             '<button class="btn-secondary" type="button" data-video-download="' + cipherEsc(p.id) + '">Download video</button></li>'
           : '') +
         '<li><span class="pn-step-text">' + (isX ? 'Open X' : 'Open LinkedIn, then click “Start a post” yourself') + '</span>' +
           '<button class="btn-publish-kit" type="button" data-open-composer="' + cipherEsc(p.id) + '">Open ' + (isX ? 'X' : 'LinkedIn') + '</button></li>' +
-        '<li><span class="pn-step-text">Click inside the box, paste the text' + (p.videoUrl ? ', attach the video' : '') + ', then press Post there</span></li>' +
+        '<li><span class="pn-step-text">Click inside the box, paste the text' + (p.imageUrl ? ', attach the card' : '') + (p.videoUrl ? ', attach the video' : '') + ', then press Post there</span></li>' +
+        // THE step that was missing. On LinkedIn the CTA URL goes in the first
+        // comment, never the body — so without this the post ships with no
+        // clickable path to a signup at all, which is the only thing these
+        // posts are for. X keeps the URL in the body, so it is skipped there.
+        (p.cta && !isX
+          ? '<li><span class="pn-step-text">Post the CTA link as your FIRST comment — do it straight away, not later</span>' +
+            '<button class="copy-post-btn" type="button" data-copy-cta="' + cipherEsc(p.id) + '">Copy CTA link</button></li>'
+          : '') +
         '<li><span class="pn-step-text">Bring the live link back here</span>' +
           '<input type="url" id="pn-url" placeholder="https://www.linkedin.com/feed/update/..." />' +
           '<button class="btn-approve" type="button" data-mark-posted="' + cipherEsc(p.id) + '">Mark posted</button></li>' +
@@ -10092,10 +10122,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.5"></script>
-<script src="assets/outreach.js?v=1.30.5"></script>
-<script src="assets/page-knowledge.js?v=1.30.5"></script>
-<script src="assets/hal-rail.js?v=1.30.5"></script>
+<script src="assets/outreach-data.js?v=1.30.6"></script>
+<script src="assets/outreach.js?v=1.30.6"></script>
+<script src="assets/page-knowledge.js?v=1.30.6"></script>
+<script src="assets/hal-rail.js?v=1.30.6"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
