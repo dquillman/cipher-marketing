@@ -1,16 +1,12 @@
 {
   "_readme": "Roster and rules for the daily comment scan. Consumed by the `comment-scan` skill, which writes campaign/commentQueue via scripts/push-comment-queue.mjs. Rules here were derived by hand on 2026-08-18 and are recorded in grading-lessons.md; do not loosen them to manufacture work.",
-
   "why": "A reshare puts someone else's post in front of our ~0 followers. A comment puts us in front of the people already engaging with a post that is working. Out-of-network reach is earned by borrowing an audience, not by posting harder.",
-
   "howToScan": "Walk each target's activity page — https://www.linkedin.com/in/<slug>/recent-activity/all/ — and pull permalinks from the DOM. Hashtag SEARCH results carry no urn:li:activity, so nothing found there can be queued; use the feeds only to discover new names for this roster. Learned 2026-08-25.",
-
   "timing": {
     "slotLocal": "07:15 CT",
     "why": "A comment's visibility tracks the HOST post's audience, which is US-heavy and most active mid-morning Eastern. This is the opposite of our own posts at 19:20 CT — a different mechanic. Dave does not act before 07:00 CT, so 07:15 is the earliest honest slot.",
     "scanBy": "05:30 CT so the queue is ready before the slot"
   },
-
   "selection": {
     "maxHostAgeDays": 5,
     "maxHostComments": 20,
@@ -27,16 +23,13 @@
     ],
     "lowReachException": "A small room (under ~10 reactions) is still worth a comment when the host is a genuine peer and comment count is zero — yours is the only one they read. Mark those as a relationship play, not reach."
   },
-
   "measurement": {
     "metric": "profile viewers and followers, read off Dave's LinkedIn sidebar",
     "why": "The payoff from commenting is people who read it and came to look — not likes on the comment itself. Without a before-number there is nothing to compare against.",
     "baselineDoc": "campaign/commentQueue.baseline",
     "rereadEveryDays": 7
   },
-
   "rosterHealth": "Every slug below was read out of a real LinkedIn page on 2026-08-25 — none are guessed. `confidence` says how much we actually know: `proven` means we have seen the person post on-topic with measured engagement; `likely` means the profile is real and on-topic but reach is unmeasured; `unproven` means the name surfaced on a cert hashtag and nothing more. Each scan should record what it observes and DROP unproven names that never post with reach. A roster full of silent accounts wastes the scan.",
-
   "targets": [
     {
       "name": "Andrew Ramdayal",
@@ -91,9 +84,9 @@
       "name": "Dharam Singh",
       "profile": "https://www.linkedin.com/in/dharamsingh/",
       "audience": "PfMP/PgMP/PMP mentees — 30K followers",
-      "confidence": "likely",
-      "note": "One of the largest PM-credential audiences we have found. Reach unmeasured; measure it on the first scan.",
-      "priority": 1
+      "confidence": "proven",
+      "note": "30,000 followers but the rooms are EMPTY — measured 2026-08-26: 1 to 9 reactions across five posts, zero comments, all promoting his own PMOCP and PgMP training. Follower count is vanity. Keep him only as an occasional check; do not treat the audience size as reach.",
+      "priority": 3
     },
     {
       "name": "Abhishek Sengupta",
@@ -202,15 +195,30 @@
       "priority": 3
     }
   ],
-
   "feeds": [
-    { "hashtag": "PMP", "audience": "PMP candidates", "note": "Mostly recruiters. Use for DISCOVERING names, not for queueing." },
-    { "hashtag": "PMPExam", "audience": "PMP candidates" },
-    { "hashtag": "ProjectManagement", "audience": "broad PM" },
-    { "hashtag": "SecurityPlus", "audience": "Security+ candidates", "note": "Thin, and dominated by individual cert holders rather than creators." },
-    { "hashtag": "CompTIA", "audience": "Security+ candidates" }
+    {
+      "hashtag": "PMP",
+      "audience": "PMP candidates",
+      "note": "Mostly recruiters. Use for DISCOVERING names, not for queueing."
+    },
+    {
+      "hashtag": "PMPExam",
+      "audience": "PMP candidates"
+    },
+    {
+      "hashtag": "ProjectManagement",
+      "audience": "broad PM"
+    },
+    {
+      "hashtag": "SecurityPlus",
+      "audience": "Security+ candidates",
+      "note": "Thin, and dominated by individual cert holders rather than creators."
+    },
+    {
+      "hashtag": "CompTIA",
+      "audience": "Security+ candidates"
+    }
   ],
-
   "excludedHistory": [
     "Julia Manning (168 reactions / 23 comments, 2026-08-18) — roughly two weeks old, dead room.",
     "Yanique J. (56/2, 2026-08-18) — roughly two weeks old, dead room.",

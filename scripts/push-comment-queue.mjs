@@ -120,9 +120,17 @@ if (DRY) {
   process.exit(0);
 }
 
+// ALWAYS write, even with nothing to show. Skipping the write leaves
+// yesterday's queue sitting on the Comments page looking current, so a scan
+// that broke is indistinguishable from a scan that honestly found nothing —
+// which is exactly what happened on the 2026-08-26 run. The stamp is the
+// difference between "checked today, nothing good" and "the scan is dead".
+if (!doc.preparedAt) {
+  console.error("REJECTED: no preparedAt — the page cannot show when this was scanned.");
+  process.exit(1);
+}
 if (!hasItems && !doc.manual?.length) {
-  console.log("nothing to write.");
-  process.exit(0);
+  console.log("nothing cleared the bar — writing an empty queue with today's stamp.");
 }
 
 let db;
