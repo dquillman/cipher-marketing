@@ -42,6 +42,14 @@ export type PostCardProps = {
   /** answerSheet + markedUp — four options and the index (0-3) that scores. */
   options?: CardOption[];
   correctIndex?: number;
+  /**
+   * True when the post promises the answer in the first comment. The card
+   * then hides the filled bubble, the red circle, the why and the margin
+   * notes — showing them would give away the thing the post is gating and
+   * make the copy read as a lie. The data is kept for the reveal card.
+   */
+  gated?: boolean;
+
   /** answerSheet — the "Why C" explanation. markedUp — the margin notes. */
   why?: string;
   marginNotes?: string[];

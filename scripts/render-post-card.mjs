@@ -101,7 +101,15 @@ function buildProps(post, lookOverride) {
     throw new Error(`${post.id}: look "${look}" needs card.${missing.join(", card.")}`);
   }
   const { look: _drop, ...rest } = card;
-  return { look, eyebrow: card.eyebrow ?? "", meta: card.meta ?? "", ...rest };
+  const props = { look, eyebrow: card.eyebrow ?? "", meta: card.meta ?? "", ...rest };
+
+  // On a gated post the URL lives in the first comment, not the body. Saying
+  // "link in this post" sends the reader hunting through copy that has no
+  // link in it, and signups are the only thing this card is for.
+  if (card.gated && !card.ctaSub) {
+    props.ctaSub = "7-day free trial · no credit card · link in the first comment";
+  }
+  return props;
 }
 
 // ---- args ----

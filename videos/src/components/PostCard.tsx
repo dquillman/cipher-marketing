@@ -202,9 +202,26 @@ const Bubble: React.FC<{ filled: boolean }> = ({ filled }) => (
   />
 );
 
+/**
+ * A gated post promises the answer in the first comment. The card must not
+ * give it away — filling the right bubble kills the reason to comment and
+ * makes the copy read as a lie. `gated: true` keeps correctIndex/why in the
+ * data for the reveal card, and hides them here.
+ */
+const GatedNote: React.FC<{ font: string; color: string; accent: string }> = ({ font, color, accent }) => (
+  <div style={{ borderLeft: "5px solid " + accent, paddingLeft: 30, display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ fontFamily: font, fontSize: 19, letterSpacing: "0.16em", textTransform: "uppercase", color: accent }}>
+      Your call
+    </div>
+    <div style={{ fontSize: 36, lineHeight: 1.4, maxWidth: 830, color }}>
+      Answer and the full elimination in the first comment.
+    </div>
+  </div>
+);
+
 const AnswerSheet: React.FC<PostCardProps> = (p) => {
   const options: CardOption[] = p.options ?? [];
-  const correct = p.correctIndex ?? -1;
+  const correct = p.gated ? -1 : p.correctIndex ?? -1;
   return (
     <div
       style={{
@@ -273,7 +290,9 @@ const AnswerSheet: React.FC<PostCardProps> = (p) => {
           ))}
         </div>
 
-        {p.why ? (
+        {p.gated ? (
+          <GatedNote font="'IBM Plex Mono', monospace" color="#14161a" accent={INDIGO} />
+        ) : p.why ? (
           <div style={{ borderLeft: "5px solid " + INDIGO, paddingLeft: 30, display: "flex", flexDirection: "column", gap: 12 }}>
             <div
               style={{
@@ -394,7 +413,10 @@ const CIRCLE =
 
 const MarkedUp: React.FC<PostCardProps> = (p) => {
   const options: CardOption[] = p.options ?? [];
-  const correct = p.correctIndex ?? -1;
+  // Gated: no red circle, no margin notes — the pen marks would hand over the
+  // answer the post is holding back. See GatedNote above.
+  const correct = p.gated ? -1 : p.correctIndex ?? -1;
+  const notes = p.gated ? ["Your call. Answer and the full elimination in the first comment."] : p.marginNotes ?? [];
   return (
     <div
       style={{
@@ -457,7 +479,7 @@ const MarkedUp: React.FC<PostCardProps> = (p) => {
           </div>
 
           <div style={{ width: 356, display: "flex", flexDirection: "column", gap: 26, paddingTop: 96 }}>
-            {(p.marginNotes ?? []).map((note, i) => (
+            {notes.map((note, i) => (
               <React.Fragment key={i}>
                 {i > 0 ? <div style={{ height: 2, width: 84, background: "#e2b9b9" }} /> : null}
                 <div style={{ fontStyle: "italic", fontSize: 31, lineHeight: 1.4, color: "#b91c1c" }}>{note}</div>

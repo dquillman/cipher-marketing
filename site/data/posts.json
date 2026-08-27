@@ -1310,7 +1310,8 @@
           "The good outcome is the trap. The exam is not asking whether the merge was justified.",
           "It is asking what a working agreement is for."
         ],
-        "support": "CipherExam marks up every question this way — the reasoning, not the letter."
+        "support": "CipherExam marks up every question this way — the reasoning, not the letter.",
+        "gated": true
       },
       "cardLook": "markedUp"
     },
@@ -1464,7 +1465,8 @@
           }
         ],
         "correctIndex": 0,
-        "why": "She is accountable for the business line. She is not accountable for the standard."
+        "why": "She is accountable for the business line. She is not accountable for the standard.",
+        "gated": true
       },
       "cardLook": "answerSheet"
     },
@@ -1614,7 +1616,8 @@
           "Contingency covers an identified risk up to what was allocated. Not a dollar past it.",
           "A is what almost everybody does. It answers a different question."
         ],
-        "support": "CipherExam marks up every question this way — the reasoning, not the letter."
+        "support": "CipherExam marks up every question this way — the reasoning, not the letter.",
+        "gated": true
       },
       "cardLook": "markedUp"
     },
@@ -1688,7 +1691,8 @@
           "A is tempting because it looks like leadership.",
           "The components are not drifting for want of a decision."
         ],
-        "support": "CipherExam marks up every question this way — the reasoning, not the letter."
+        "support": "CipherExam marks up every question this way — the reasoning, not the letter.",
+        "gated": true
       },
       "cardLook": "markedUp"
     },
@@ -1796,7 +1800,8 @@
           }
         ],
         "correctIndex": 2,
-        "why": "You do not need an impact study to know that 14% above a charter threshold crosses the threshold."
+        "why": "You do not need an impact study to know that 14% above a charter threshold crosses the threshold.",
+        "gated": true
       },
       "cardLook": "answerSheet"
     },
@@ -2088,7 +2093,8 @@
           }
         ],
         "correctIndex": 2,
-        "why": "A restatement only fixes a vision that was never heard. These three heard it and read it differently."
+        "why": "A restatement only fixes a vision that was never heard. These three heard it and read it differently.",
+        "gated": true
       },
       "cardLook": "answerSheet"
     },
@@ -2161,7 +2167,8 @@
           "It happened. The probability is 100%, and a thing at 100% is not a risk any more.",
           "A is the tell: diligent-looking admin on something that already landed."
         ],
-        "support": "CipherExam marks up every question this way — the reasoning, not the letter."
+        "support": "CipherExam marks up every question this way — the reasoning, not the letter.",
+        "gated": true
       },
       "cardLook": "markedUp"
     },
@@ -2206,7 +2213,8 @@
           }
         ],
         "correctIndex": 1,
-        "why": "Contingency covers the risk you planned for. The $30,000 that crosses your cost baseline was never yours to approve."
+        "why": "Contingency covers the risk you planned for. The $30,000 that crosses your cost baseline was never yours to approve.",
+        "gated": true
       },
       "cardLook": "answerSheet",
       "imageUrl": "/assets/post-cards/li-wed-2026-08-26-llm-compare.png"
