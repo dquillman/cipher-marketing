@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.15">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.16">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.15</span>
+      <span class="version-bar" title="Dashboard version">v1.30.16</span>
     </div>
   </div>
 </nav>
@@ -1903,13 +1903,22 @@ function cipherHelp() {
   <details class="daily-playbook">
     <summary>Daily playbook — how this works</summary>
     <div class="pb-body">
-      <p style="margin-top:0;color:var(--dim);font-size:0.92rem;">The repeatable routine. ~30 min/day total. Open this if you're new, lost, or starting your day cold.</p>
+      <p style="margin-top:0;color:var(--dim);font-size:0.92rem;">The repeatable routine. About 15 min/day now that the mornings run themselves. Open this if you are new, lost, or starting your day cold.</p>
 
-      <h4>Every weekday morning</h4>
+      <h4>What runs without you</h4>
+      <ul>
+        <li><strong>05:36 — comment scan.</strong> Walks 20 target creators, keeps the posts with a big audience and few comments, drafts a comment for each, and fills the <strong>Comments</strong> page. An empty queue is a real answer — a filler comment costs more credibility than a missed day costs reach.</li>
+        <li><strong>08:04 — auto-grade.</strong> Finds every post past 48h with no metrics, reads its LinkedIn analytics in your Chrome, pulls clicks and signups from GA4, and submits. You never type a number.</li>
+        <li><strong>09:15 — reveal check.</strong> If a gated post promised its answer in the first comment and has not delivered, the exact text is pushed to your phone ready to paste.</li>
+        <li><strong>19:35 — CTA comment check.</strong> If a post went live without its CTA first comment, that text is pushed to your phone too.</li>
+        <li>These only run while this app is open. If the machine was off overnight they fire when you next launch, so a late start means a late run, not a missed one.</li>
+      </ul>
+
+      <h4>Every weekday morning — about 15 minutes</h4>
       <ol>
-        <li><strong>Check today's scheduled posts.</strong> The Right Now card above tells you which post + which video + the exact copy to paste. Copy → paste → schedule (or post immediately) → paste the live URL back into the dashboard. Status flips to <em>posted</em>.</li>
-        <li><strong>Grade yesterday's post</strong> (if 24+ hours have passed). Open the Publish page and use Auto-grade or Enter manually on that post's row.</li>
-        <li><strong>Engage</strong> (10-15 min). Reply to comments on your last 3 posts. Skim r/pmp, r/CompTIA, r/humanresources for questions you can answer authentically. Value-first replies; mention CipherExam only if directly asked.</li>
+        <li><strong>Open Today.</strong> It names the single next action and links out. It no longer holds copy or buttons; that was three pages doing the same job badly.</li>
+        <li><strong>If a post is due, go to Publish.</strong> Six steps in order on that page: copy the text, save the card, open LinkedIn, paste and attach the card, <strong>post the CTA link as the FIRST comment straight away</strong>, then bring the live URL back and Mark posted. The link is the only clickable path to a signup — a post without it cannot convert and cannot be attributed.</li>
+        <li><strong>Work the Comments page.</strong> Paste whatever the 05:36 scan queued. This is the reach lever: your own posts reach almost nobody until your network engages, and a comment borrows an audience that is already engaged. Measure it by profile views and followers, never by likes on the comment.</li>
         <li><strong>Founder email</strong> (only when applicable). If you have a new signup, send the matching template from <code>07-founder-1to1-emails.md</code> (Day 0 / Day 3 / Day 6). Brad surfaces which template during the walkthrough.</li>
       </ol>
 
@@ -1930,7 +1939,7 @@ function cipherHelp() {
       <h4>Hard rules — don't break these</h4>
       <ul>
         <li><strong>Don't post before 7 AM local time.</strong> The scheduler accepts earlier times; you should not.</li>
-        <li><strong>Don't grade a post less than 48h old.</strong> LinkedIn keeps serving it for ~2 days — earlier numbers read as a false D. The dashboard shows a countdown until each post is gradeable.</li>
+        <li><strong>Do not grade by hand.</strong> The 08:04 run does it. The 48h floor is why: LinkedIn keeps serving a post for ~2 days, so earlier numbers read as a false D. Today only raises grading when the automation has actually missed a run — if you see it there, something broke.</li>
         <li><strong>Don't post on weekends</strong> (LinkedIn engagement collapses Sat/Sun; X is OK but quiet).</li>
         <li><strong>Don't claim you took an exam.</strong> You haven't — use builder POV, tool-builder framings.</li>
         <li><strong>Keep campaign maintenance in Settings.</strong> Daily work belongs on Today, Create, Publish, and Results.</li>
@@ -10141,10 +10150,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.15"></script>
-<script src="assets/outreach.js?v=1.30.15"></script>
-<script src="assets/page-knowledge.js?v=1.30.15"></script>
-<script src="assets/hal-rail.js?v=1.30.15"></script>
+<script src="assets/outreach-data.js?v=1.30.16"></script>
+<script src="assets/outreach.js?v=1.30.16"></script>
+<script src="assets/page-knowledge.js?v=1.30.16"></script>
+<script src="assets/hal-rail.js?v=1.30.16"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
