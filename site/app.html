@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.10">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.12">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.10</span>
+      <span class="version-bar" title="Dashboard version">v1.30.12</span>
     </div>
   </div>
 </nav>
@@ -3474,9 +3474,15 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       gradeBlock += '</div>';
     }
 
+    // Create writes and reviews; Publish ships and grades. This card used to
+    // carry its own Auto-grade and Enter manually, which meant the same two
+    // controls existed on three pages and none of them was obviously the real
+    // one. It links to the Publish row instead.
     var awaitingGrade = p.status === 'posted' && !p.grade;
     var gradeBtn = awaitingGrade
-      ? '<button class="btn-primary" type="button" data-grade-auto="' + esc(p.id) + '" style="margin-left:8px;">Auto-grade (Claude)</button>' + '<button class="btn-secondary" type="button" data-grade-open="' + esc(p.id) + '" style="margin-left:8px;">Enter manually</button>'
+      ? '<button class="btn-secondary" type="button" style="margin-left:8px;" ' +
+        'onclick="cipherShow(\'schedule\')" ' +
+        'title="Grade it on the Publish page — that row has Auto-grade and Enter manually">Grade in Publish →</button>'
       : '';
 
     var reviseBtn = p.status === 'draft'
@@ -3563,7 +3569,12 @@ details.post-card > summary .post-head { margin-bottom: 0; }
         '<div class="post-copy">' + esc(p.copy || '') + '</div>' +
         humanizerNote +
         '<div class="post-action-row">' +
-          '<button class="copy-post-btn" type="button" data-copy-id="' + esc(p.id) + '">Copy post</button>' +
+          // Create reviews the copy; it does not hand it to LinkedIn. Copying
+          // to publish lives on Publish, next to the card, the CTA comment and
+          // Mark posted — the steps that have to happen together. The full copy
+          // is already readable above, so nothing is lost here.
+          '<button class="copy-post-btn" type="button" onclick="cipherShow(\'schedule\')" ' +
+            'title="Copy and publish from the Publish page">Open in Publish →</button>' +
           reviseBtn +
           approveBtn +
           publishKitBtn +
@@ -10128,10 +10139,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.10"></script>
-<script src="assets/outreach.js?v=1.30.10"></script>
-<script src="assets/page-knowledge.js?v=1.30.10"></script>
-<script src="assets/hal-rail.js?v=1.30.10"></script>
+<script src="assets/outreach-data.js?v=1.30.12"></script>
+<script src="assets/outreach.js?v=1.30.12"></script>
+<script src="assets/page-knowledge.js?v=1.30.12"></script>
+<script src="assets/hal-rail.js?v=1.30.12"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
