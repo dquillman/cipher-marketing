@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.0">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.1">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1843,7 +1843,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.0</span>
+      <span class="version-bar" title="Dashboard version">v1.30.1</span>
     </div>
   </div>
 </nav>
@@ -3509,6 +3509,16 @@ details.post-card > summary .post-head { margin-bottom: 0; }
       // shows the video's opening instead of a black rectangle (Dave, 2026-08-01).
       ? '<video controls preload="metadata" src="' + esc(p.videoUrl) + '#t=0.5" style="width:100%;max-width:420px;border-radius:10px;margin-top:10px;background:#000;display:block;"></video>'
       : '';
+    // The 1080x1350 LinkedIn card, rendered by scripts/render-post-card.mjs.
+    // Click opens it full size so Dave can right-click > Save before posting.
+    var cardEmbed = p.imageUrl
+      ? '<a href="' + esc(p.imageUrl) + '" target="_blank" rel="noopener" ' +
+        'title="Open full size — right-click to save, then attach when you post">' +
+        '<img src="' + esc(p.imageUrl) + '" alt="LinkedIn card for ' + esc(p.id) + '" loading="lazy" ' +
+        'style="width:100%;max-width:300px;border-radius:10px;margin-top:10px;border:1px solid var(--border);display:block;"></a>' +
+        '<div class="pn-meta" style="margin-top:6px;">card · ' + esc(p.cardLook || '—') +
+        ' · attach <code>' + esc(p.id) + '.png</code></div>'
+      : '';
     var isGraded = !!p.grade;
     var summaryHead = '<summary>' +
       '<div class="post-head">' +
@@ -3537,6 +3547,7 @@ details.post-card > summary .post-head { margin-bottom: 0; }
           gradeBtn +
         '</div>' +
         videoEmbed +
+        cardEmbed +
         (typeof cipherFormatLine === 'function' ? cipherFormatLine(p) : '') +
         fields +
         metrics +
@@ -9605,6 +9616,16 @@ function cipherNextToPublish() {
 
     var isX = (p.channel || '') === 'x';
 
+    // The LinkedIn card is the thing Dave attaches, so it sits above the video
+    // in the Media block. Right-click > Save from the full-size view.
+    var cardBlock = p.imageUrl
+      ? '<a href="' + cipherEsc(p.imageUrl) + '" target="_blank" rel="noopener" title="Open full size — right-click to save">' +
+        '<img src="' + cipherEsc(p.imageUrl) + '" alt="LinkedIn card" loading="lazy" ' +
+        'style="width:100%;max-width:300px;border-radius:10px;border:1px solid var(--border);display:block;"></a>' +
+        '<div class="pn-meta">card · ' + cipherEsc(p.cardLook || '—') +
+        ' · attach <code>' + cipherEsc(p.id) + '.png</code></div>'
+      : '';
+
     var videoBlock = p.videoUrl
       // #t=0.5 makes the browser seek and paint a real frame instead of
       // showing a black rectangle until play is pressed.
@@ -9629,7 +9650,7 @@ function cipherNextToPublish() {
           '<div class="pn-copy-hint">Click Copy, then press Ctrl+C when asked — the button turns to “Copied ✓” only when the copy really happened.</div>' +
         '</div>' +
         '<div>' +
-          '<div class="pn-label">Media</div>' + videoBlock +
+          '<div class="pn-label">Media</div>' + cardBlock + videoBlock +
         '</div>' +
       '</div>' +
       '<ol class="pn-steps">' +
@@ -10074,10 +10095,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.0"></script>
-<script src="assets/outreach.js?v=1.30.0"></script>
-<script src="assets/page-knowledge.js?v=1.30.0"></script>
-<script src="assets/hal-rail.js?v=1.30.0"></script>
+<script src="assets/outreach-data.js?v=1.30.1"></script>
+<script src="assets/outreach.js?v=1.30.1"></script>
+<script src="assets/page-knowledge.js?v=1.30.1"></script>
+<script src="assets/hal-rail.js?v=1.30.1"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
