@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.4">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.5">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.4</span>
+      <span class="version-bar" title="Dashboard version">v1.30.5</span>
     </div>
   </div>
 </nav>
@@ -7305,64 +7305,30 @@ document.addEventListener('cipher:state-updated', function () {
       var ctaPlacement = isLI
         ? 'Post body alone — no URL in body. Drop the CTA URL as the <strong>first reply comment</strong> after publishing (Week 1 lesson — body links suppress reach).'
         : 'Include the CTA URL inside the post body. X collapses URLs to t.co.';
+      // Today says WHAT is due; Publish is the only place you copy from.
+      // This card used to carry the whole post body and its own copy
+      // buttons, which made Today a third publishing surface competing with
+      // Create and Publish (Dave, 2026-08-26).
       return {
         type: 'post',
         title: 'POST: ' + (p.channel || '?').toUpperCase() + ' — ' + (p.examFocus || '?') + ' (' + (p.hook || '?') + ')',
-        sub: 'Two clipboard buttons below — one for the body, one for the specific CTA URL with the right UTM. Use both; never paste a URL from memory or from a different post. Before you hit Schedule: confirm the time in LinkedIn’s own scheduler reads 19:20 CT (Central — the campaign moved off Mountain on 2026-08-22) — it is a separate store from this dashboard, and on 2026-08-19 it fired a 19:20 post at 07:52 because it still held an old time.',
+        sub: 'Open Publish to copy the body and the CTA URL. ' + (isLI
+          ? 'On LinkedIn the URL goes in the FIRST COMMENT, never the body — body links suppress reach.'
+          : 'On X the URL goes inside the post body.'),
         detail:
-          '<div class="cc-detail-label">Post body (copy → paste in composer)</div>' +
-          '<pre id="cc-copy-text">' + esc(p.copy || '') + '</pre>' +
-          '<div style="margin-top:10px;font-size:0.82rem;color:var(--dim);">' + ctaPlacement + '</div>' +
-          (p.cta ? '<div style="margin-top:12px;"><div class="cc-detail-label">CTA URL — unique to THIS post</div><code id="cc-cta-url" style="font-size:0.78rem;word-break:break-all;display:block;padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:4px;">' + esc(p.cta) + '</code></div>' : '') +
-          (p.video ? '<div style="margin-top:10px;"><div class="cc-detail-label">Video to attach</div><code>' + esc(p.video) + '</code> · <code>' + esc(p.videoFormat || '?') + '</code></div>' : ''),
+          '<div class="cc-detail-label">Scheduled</div>' +
+          '<div>' + esc(p.scheduledTimeLocal || 'today') + '</div>' +
+          (p.imageUrl
+            ? '<div style="margin-top:12px;"><div class="cc-detail-label">Card</div>' +
+              '<img src="' + esc(p.imageUrl) + '" alt="post card" loading="lazy" ' +
+              'style="width:100%;max-width:190px;border-radius:8px;border:1px solid var(--border);display:block;"></div>'
+            : ''),
         buttons: [
           {
-            label: 'Copy post body',
-            onclick: (function (copy) { return function () {
-              // Copies p.copy directly, NOT the rendered <pre>'s innerText.
-              // innerText returns the text as LAID OUT, so anything that
-              // reflows it — a wrap, a CSS change to that block — collapses the
-              // paragraph breaks and the composer receives one unbroken blob.
-              // The post's own string always has the real newlines.
-              //
-              // Also routed through safeCopy for the fallback: on this machine
-              // navigator.clipboard.writeText resolves WITHOUT writing
-              // (probe-verified 2026-08-01), and this handler used to announce
-              // "Copied ✓" regardless — so a silent failure looked identical to
-              // success, and the paste was whatever happened to be on the
-              // clipboard already.
-              var btn = this;
-              var restore = function (label) {
-                setTimeout(function () { btn.innerText = label; }, 2000);
-              };
-              window.safeCopy(copy || '',
-                function () { btn.innerText = 'Copied ✓'; restore('Copy post body'); },
-                function () {
-                  btn.innerText = '✗ Blocked — select the text above and Ctrl+C';
-                  restore('Copy post body');
-                });
-            }; })(p.copy)
-          },
-          (p.cta ? {
-            label: isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body',
-            onclick: (function (cta, label) { return function () {
-              // Same fix as the body button: honest success/failure rather than
-              // an unconditional "Copied ✓" over a clipboard that may not have
-              // been written. Pasting the wrong post's UTM is unrecoverable —
-              // it collapses that post's attribution permanently.
-              var btn = this;
-              var restore = function () { setTimeout(function () { btn.innerText = label; }, 2000); };
-              window.safeCopy(cta,
-                function () { btn.innerText = 'Copied ✓'; restore(); },
-                function () { btn.innerText = '✗ Blocked — copy the URL above by hand'; restore(); });
-            }; })(p.cta, isLI ? 'Copy CTA URL for first comment' : 'Copy CTA URL for post body')
-          } : null),
-          {
-            label: 'Open Publish',
-            cls: 'secondary',
+            label: 'Open Publish →',
             onclick: function () { if (typeof cipherShow === 'function') cipherShow('schedule'); }
           }
-        ].filter(Boolean)
+        ]
       };
     }
 
@@ -7375,7 +7341,7 @@ document.addEventListener('cipher:state-updated', function () {
       String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' +
       String(tomorrowDate.getDate()).padStart(2, '0');
     var dueTomorrow = posts.filter(function (p) {
-      return p.scheduled === tomorrowStr && p.status === 'draft';
+      return window.cipherPostDay(p) === tomorrowStr && p.status === 'draft';
     });
     if (dueTomorrow.length > 0) {
       var dt = dueTomorrow[0];
@@ -10126,10 +10092,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.4"></script>
-<script src="assets/outreach.js?v=1.30.4"></script>
-<script src="assets/page-knowledge.js?v=1.30.4"></script>
-<script src="assets/hal-rail.js?v=1.30.4"></script>
+<script src="assets/outreach-data.js?v=1.30.5"></script>
+<script src="assets/outreach.js?v=1.30.5"></script>
+<script src="assets/page-knowledge.js?v=1.30.5"></script>
+<script src="assets/hal-rail.js?v=1.30.5"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
