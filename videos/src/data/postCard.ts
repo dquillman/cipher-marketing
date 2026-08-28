@@ -65,4 +65,7 @@ export type PostCardProps = {
 };
 
 export const CTA_LINE = "Start free at cipherexam.com";
-export const CTA_SUB = "7-day free trial · no credit card · link in this post";
+// The URL always goes in the FIRST COMMENT on LinkedIn, gated or not — body
+// links suppress reach (39 median impressions vs 209, measured across 18 posts).
+// "link in this post" sent readers hunting through a body that never has one.
+export const CTA_SUB = "7-day free trial · no credit card · link in the first comment";
