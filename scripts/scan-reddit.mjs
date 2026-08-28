@@ -104,7 +104,9 @@ async function fetchTopRss(sub) {
 }
 
 async function mainRss(subs, json) {
-  console.error("⚠  Reddit API keys are not set — RSS fallback mode.");
+  console.error("⚠  RSS mode — this is PERMANENT, not a missing-key problem.");
+  console.error("   Reddit gates new Data API apps on a moderation use case, and");
+  console.error("   unauthenticated .json now returns HTML. Verified 2026-08-28.");
   console.error("   Real content in Reddit's own top-of-week ORDER, but NO scores or");
   console.error("   comment counts, so the outlier rule cannot run. Present results as");
   console.error("   \"Reddit's top-ranked this week\", never as measured outliers.\n");

@@ -37,11 +37,23 @@ function readCredentials() {
   if (missing.length) {
     throw new RedditCredentialError(
       `Missing ${missing.join(", ")}.\n\n` +
-        `Create a "script" app at https://www.reddit.com/prefs/apps, then set:\n` +
+        `DO NOT go and create a script app — that route is closed to us, and this\n` +
+        `message used to send people round it. Verified 2026-08-28:\n\n` +
+        `  1. reddit.com/prefs/apps still shows the create-app form, but it says\n` +
+        `     "you must also register to use the API". That link leads to\n` +
+        `     r/reddit.com/wiki/api, which says new Data API apps are for people\n` +
+        `     with "a valid moderation use case". Market research is not one.\n` +
+        `     Dave went round that loop twice.\n` +
+        `  2. Unauthenticated JSON is gone too: r/<sub>/top.json returns HTML,\n` +
+        `     on both www and old.reddit.com, even with a descriptive UA.\n\n` +
+        `So there is no route to Reddit SCORES for this use case. The scanner\n` +
+        `falls back to RSS top-of-week ORDER, which is real content but carries no\n` +
+        `score or comment count, so the 2x-median outlier rule can never run.\n` +
+        `Call it a topic scanner. Never present its output as measured engagement.\n\n` +
+        `If Reddit reopens general Data API access, set:\n` +
         `  setx REDDIT_CLIENT_ID "<the string under the app name>"\n` +
         `  setx REDDIT_CLIENT_SECRET "<the secret>"\n` +
-        `  setx REDDIT_USER_AGENT "windows:cipher-trend-scout:v1.0 (by /u/<yourname>)"\n\n` +
-        `Reddit rate-limits generic user agents hard — make it descriptive.`
+        `  setx REDDIT_USER_AGENT "windows:cipher-trend-scout:v1.0 (by /u/<yourname>)"`
     );
   }
   return { clientId, clientSecret, userAgent };
