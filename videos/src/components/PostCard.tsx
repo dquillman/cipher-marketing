@@ -213,8 +213,13 @@ const GatedNote: React.FC<{ font: string; color: string; accent: string }> = ({ 
     <div style={{ fontFamily: font, fontSize: 19, letterSpacing: "0.16em", textTransform: "uppercase", color: accent }}>
       Your call
     </div>
+    {/* Names Exam Lens on the PROMISE, because the demonstration itself lands
+        a post later in the reveal comment. 8 of 10 drafts are gated, so the
+        ungated 'Exam Lens · why B' label would almost never render — putting
+        the term only there would have kept it invisible. Here it says what is
+        coming, and the reveal delivers it. */}
     <div style={{ fontSize: 36, lineHeight: 1.4, maxWidth: 830, color }}>
-      Answer and the full elimination in the first comment.
+      Answer and the full Exam Lens breakdown in the first comment.
     </div>
   </div>
 );
@@ -303,7 +308,13 @@ const AnswerSheet: React.FC<PostCardProps> = (p) => {
                 color: INDIGO,
               }}
             >
-              Why {options[correct]?.letter ?? ""}
+              {/* Exam Lens is the locked umbrella brand term (2026-05-11) and it
+                  had gone missing: 1 of 35 LinkedIn posts named it. Naming it on
+                  THIS block attaches it to the demonstration — the reader has
+                  just seen the reasoning that makes one answer best, and this
+                  says what that is called. A benefit nobody can name is one
+                  nobody asks for. */}
+              Exam Lens · why {options[correct]?.letter ?? ""}
             </div>
             <div style={{ fontSize: 36, lineHeight: 1.4, maxWidth: 830 }}>{p.why}</div>
           </div>
@@ -416,7 +427,7 @@ const MarkedUp: React.FC<PostCardProps> = (p) => {
   // Gated: no red circle, no margin notes — the pen marks would hand over the
   // answer the post is holding back. See GatedNote above.
   const correct = p.gated ? -1 : p.correctIndex ?? -1;
-  const notes = p.gated ? ["Your call. Answer and the full elimination in the first comment."] : p.marginNotes ?? [];
+  const notes = p.gated ? ["Your call. Answer and the full Exam Lens breakdown in the first comment."] : p.marginNotes ?? [];
   return (
     <div
       style={{
