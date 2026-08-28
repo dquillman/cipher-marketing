@@ -2182,7 +2182,7 @@
       "track": "sme",
       "status": "scheduled",
       "examFocus": "PMP",
-      "scheduledTime": "2026-08-28T19:20:00-06:00",
+      "scheduledTime": "2026-09-01T00:20:00.000Z",
       "copy": "I asked ChatGPT for ten intermediate PMP questions. Then I put one of them next to one of mine.\n\nTheirs:\n\nA previously identified risk occurs and begins affecting the schedule. A planned contingency response exists. What should the project manager do next?\n\nA. Implement the planned risk response\nB. Immediately escalate the risk to the sponsor\nC. Create a new risk management plan\nD. Remove the risk from the risk register\n\nMine:\n\nA risk you identified carried a $180,000 contingency allocation. It just materialized at $210,000. You hold no unallocated budget, and the $30,000 difference pushes you past your approved cost baseline.\n\nA. Draw the full $210,000 from contingency reserve and report the overrun in the next status report\nB. Apply the $180,000 contingency, and request the $30,000 through the governance process that controls management reserve and baseline change\nC. Absorb the $30,000 by deferring a discretionary scope item to a later release\nD. Re-estimate the remaining work to find $30,000 of savings before reporting anything\n\nBoth are about a risk that materialized when a response was already planned.\n\nThe first has one defensible option and three nobody would pick. The second has four things a working PM has actually done on a real Tuesday.\n\nI am not going to tell you the first question is bad. It is a reasonable warm-up and it took eleven seconds to produce. If you are three months out, it is fine.\n\nBut the exam does not test whether you know a contingency plan should be used. It tests whether you know which pot the money comes from when the number goes over — and whether you know that crossing a cost baseline was never your call to make.\n\nThat distinction is the difference between passing and being surprised.\n\nWhich one would you rather be practicing the night before?\n\nGive me the letter you would pick on the second one, and your reason. The reason is the part I read.\n\nAnswer and full breakdown in the first comment.\n\nCipherExam works every PMP question this way — the reasoning, not the letter. Free 7 days, no card.\n\nFinance planning sits in Process, which is 41% of the exam.\n\n#PMP #ProjectManagement",
       "cta": "https://cipherexam.com/lp/pmp?utm_source=linkedin&utm_medium=social&utm_campaign=pmp_judgment_2026&utm_content=llm-compare",
       "shortLink": "https://cipherexam.com/go/pmp-llm-compare",
@@ -2197,8 +2197,8 @@
       ],
       "cardLook": "answerSheet",
       "imageUrl": "/assets/post-cards/li-wed-2026-08-26-llm-compare.png?v=51730b12",
-      "scheduled": "2026-08-26",
-      "scheduledTimeLocal": "2026-08-26 19:20 CT",
+      "scheduled": "2026-08-31",
+      "scheduledTimeLocal": "2026-08-31 19:20 CT",
       "postedAt": null,
       "postUrl": null,
       "postingNote": "SHIPPED COPY DIFFERS FROM THE DRAFT. Posted 2026-08-25 10:55 CT, off-slot (standing LinkedIn slot is 19:20 CT). The image was the /design canvas MOCK card, not the rendered llm-compare card, so it carried an invented question and gave away its own answer. The body went out as a bare link first, was edited twice, and ended as the offer line plus the tracked short link with NO question stem — so the four options on the image answer a question that is nowhere in the post. The 2,145-character drafted copy and its 1,199-character first comment were never used and are still in this record. Grade this as a distribution and format datapoint, not as a test of the copy. Answer reveal verified live on LinkedIn 2026-08-27.",
@@ -2229,7 +2229,7 @@
         "why": "Contingency covers the risk you planned for. The $30,000 that crosses your cost baseline was never yours to approve.",
         "gated": true
       },
-      "planNote": "Rescheduled 2026-08-26 -> 2026-08-28. The 08-25 attempt published with the BODY MISSING - only the offer lines and the link went out, no question, no comparison (183 impressions on what was effectively a bare advert, live at activity 7498045383969820673, patched by hand with an unrelated data-residency question). The test never ran. Card removed for the retry: same empty-body failure as the 08-25 canvas export, and the card is the only thing this post had that a plain text post does not. SHIP AS TEXT. After scheduling natively, re-read the live post first line before walking away."
+      "planNote": "Rescheduled 2026-08-26 -> 2026-08-28. The 08-25 attempt published with the BODY MISSING - only the offer lines and the link went out, no question, no comparison (183 impressions on what was effectively a bare advert, live at activity 7498045383969820673, patched by hand with an unrelated data-residency question). The test never ran. Card removed for the retry: same empty-body failure as the 08-25 canvas export, and the card is the only thing this post had that a plain text post does not. SHIP AS TEXT. After scheduling natively, re-read the live post first line before walking away. MOVED 2026-08-28 from 08-28 to 08-31 19:20 CT. It had landed on the same evening as li-frame-test-03, and two PMP posts sharing a 19:20 slot on a ~500-follower account compete with each other. Frame C keeps the night because it completes a three-post frame test whose other two legs are already live. This post has now failed to run twice and it is the only one on the calendar that tests whether anyone can tell a curated question from a generated one — it gets its own evening."
     }
   ],
   "benchmarks": {

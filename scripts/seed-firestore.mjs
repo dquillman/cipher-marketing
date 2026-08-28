@@ -272,17 +272,36 @@ async function runSeed() {
     // That shipped: on 2026-08-26 the Publish page listed two posts for the day
     // and the Today page listed one, because li-wed-2026-08-26-llm-compare had
     // a scheduledTime and no scheduled date.
-    const undated = mergedPosts.posts.filter(
-      (p) => !p.archived && (!p.scheduled || !p.scheduledTime)
-    );
-    if (undated.length) {
-      console.error("\n  ABORT — posts missing a date field:\n");
-      for (const p of undated) {
-        console.error(
-          `   - ${p.id}: scheduled=${p.scheduled || "MISSING"} scheduledTime=${p.scheduledTime || "MISSING"}`
-        );
+    // Both must exist AND agree. Checking only for existence was too weak: on
+    // 2026-08-27 a reschedule moved scheduledTime to the 28th and left
+    // `scheduled` on the 26th, so one post rendered as two different days
+    // depending on which field the view happened to read.
+    const CAMPAIGN_TZ = "America/Chicago";
+    const dayOf = (iso) => {
+      try {
+        return new Intl.DateTimeFormat("en-CA", { timeZone: CAMPAIGN_TZ }).format(new Date(iso));
+      } catch {
+        return null;
       }
-      console.error("\n  Set both, then re-run. Nothing was written.\n");
+    };
+    const bad = mergedPosts.posts
+      .filter((p) => !p.archived)
+      .map((p) => {
+        if (!p.scheduled || !p.scheduledTime) {
+          return `${p.id}: scheduled=${p.scheduled || "MISSING"} scheduledTime=${p.scheduledTime || "MISSING"}`;
+        }
+        const rendered = dayOf(p.scheduledTime);
+        if (rendered && rendered !== p.scheduled) {
+          return `${p.id}: scheduled=${p.scheduled} but scheduledTime lands on ${rendered} (${CAMPAIGN_TZ})`;
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    if (bad.length) {
+      console.error("\n  ABORT — post dates are missing or disagree:\n");
+      for (const line of bad) console.error(`   - ${line}`);
+      console.error("\n  Set both to the same day, then re-run. Nothing was written.\n");
       process.exit(1);
     }
 
