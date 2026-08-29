@@ -977,7 +977,8 @@
       "planNote": "APPLIED 2026-08-12: date fields actually moved 08-14 -> 08-12 (the 08-08 plan load logged the move but never wrote it). LINK PLACEMENT = FIRST COMMENT, Dave's call 2026-08-12, overriding the plan's 'magnet #1 body / magnet #2 comment' A/B. Evidence on record: li-thu-2026-08-07-sponsor-scenario (no body link) graded B — the only B on the LinkedIn feed — while li-mon-2026-08-03-exam-change and li-wed-2026-08-05-experience-trap (both body links) graded C. The body-vs-comment test is retired; comment placement is the standing default for magnet posts. Exact comment text is in the firstComment field. Post the comment yourself within ~60s of publishing. COPY DEFECT 2026-08-12: the published version carries literal asterisks around *frame* (LinkedIn does not render markdown). Source copy has been stripped; the live post still shows them unless edited on LinkedIn.",
       "planPostType": "magnet",
       "firstComment": "Here it is — the lens, five worked scenarios, and the five traps including the case-set one. No credit card:\nhttps://cipherexam.com/go/pmp-magnet-01",
-      "shortLink": "https://cipherexam.com/go/pmp-magnet-01"
+      "shortLink": "https://cipherexam.com/go/pmp-magnet-01",
+      "firstCommentPostedAt": "2026-08-12"
     },
     {
       "id": "li-fri-2026-08-14-sme-03",
@@ -2174,7 +2175,8 @@
         "support": "CipherExam marks up every question this way — the reasoning, not the letter.",
         "gated": true
       },
-      "cardLook": "markedUp"
+      "cardLook": "markedUp",
+      "firstCommentPostedAt": "2026-08-28"
     },
     {
       "id": "li-wed-2026-08-26-llm-compare",

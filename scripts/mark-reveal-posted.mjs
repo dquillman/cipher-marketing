@@ -73,31 +73,43 @@ if (!target.firstComment) {
   console.error(`x  "${postId}" has no firstComment - there is no reveal to mark as posted`);
   process.exit(1);
 }
+// The reveal can never predate its own post. `when` defaults to the Central
+// Time date, but `postedAt` is stored in UTC - so a post published after 6pm CT
+// carries the NEXT day's UTC date, and a same-evening reveal would be written
+// with an earlier date than the post. The reveal-due check reads exactly that
+// as "still owed" and would raise the same false alarm every single morning.
+const postedDay = String(target.postedAt || target.date || "").slice(0, 10);
+let stamp = when;
+if (postedDay && stamp < postedDay) {
+  console.log(`note  ${stamp} predates postedAt ${postedDay} (timezone skew) - using ${postedDay}`);
+  stamp = postedDay;
+}
+
 if (target.firstCommentPostedAt) {
   console.log(`already marked: ${postId} firstCommentPostedAt = ${target.firstCommentPostedAt}`);
-  if (target.firstCommentPostedAt === when) process.exit(0);
-  console.log(`overwriting with ${when}`);
+  if (target.firstCommentPostedAt === stamp) process.exit(0);
+  console.log(`overwriting with ${stamp}`);
 }
 
 if (dry) {
-  console.log(`[dry] would set firstCommentPostedAt = ${when} on ${postId}`);
+  console.log(`[dry] would set firstCommentPostedAt = ${stamp} on ${postId}`);
   console.log(`[dry] reveal text starts: ${String(target.firstComment).slice(0, 80)}...`);
   process.exit(0);
 }
 
-target.firstCommentPostedAt = when;
+target.firstCommentPostedAt = stamp;
 await ref.set({ ...remote, posts }, { merge: true });
-console.log(`firestore  ${postId}.firstCommentPostedAt = ${when}`);
+console.log(`firestore  ${postId}.firstCommentPostedAt = ${stamp}`);
 
 // Mirror into the local file so the repo and Firestore agree.
 try {
   const local = JSON.parse(readFileSync(POSTS_FILE, "utf8"));
   const lp = (local.posts || []).find((p) => p.id === postId);
   if (lp) {
-    lp.firstCommentPostedAt = when;
+    lp.firstCommentPostedAt = stamp;
     delete lp.revealPostedAt; // the dead field name
     writeFileSync(POSTS_FILE, JSON.stringify(local, null, 2) + "\n");
-    console.log(`posts.json  ${postId}.firstCommentPostedAt = ${when}`);
+    console.log(`posts.json  ${postId}.firstCommentPostedAt = ${stamp}`);
   } else {
     console.log(`posts.json  no local entry for ${postId} - Firestore updated only`);
   }
