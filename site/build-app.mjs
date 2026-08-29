@@ -49,7 +49,10 @@ const tpl = pages.find(p => p.route === "today").html;
 
 // app.html is the canonical deployed dashboard and is never generated. This
 // permanently removes the destructive path that previously erased features.
-const REQUIRED_APP_MARKERS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp", "hal-rail.js", "operator-auth.js"];
+// "Write these live" is the Comments page section that renders the scan's
+// video picks. It only exists as a direct edit in app.html (2026-08-29), and
+// losing it silently makes a productive scan look like a dead one.
+const REQUIRED_APP_MARKERS = ["cc-title", "sched-row", "reddit-organic", "cipherHelp", "hal-rail.js", "operator-auth.js", "Write these live"];
 const existingApp = readFileSync(join(HERE, "app.html"), "utf8");
 const missingMarkers = REQUIRED_APP_MARKERS.filter(marker => !existingApp.includes(marker));
 if (missingMarkers.length > 0) {
