@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.19">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.20">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.19</span>
+      <span class="version-bar" title="Dashboard version">v1.30.20</span>
     </div>
   </div>
 </nav>
@@ -6619,16 +6619,27 @@ document.addEventListener('cipher:state-updated', function () {
     var host = document.getElementById('comment-queue');
     if (!host) return;
     var items = (doc && Array.isArray(doc.items)) ? doc.items : [];
-    if (!items.length) {
-      host.innerHTML = '<div class="trend-scout-empty">No comment targets queued. ' +
-        'The monthly hashtag scan writes <code>campaign/commentQueue</code>.</div>';
+    // Video host posts cannot be drafted blind, so the scan hands them to Dave
+    // to answer live. They were written to Firestore and then never rendered,
+    // so a scan that found two good rooms looked exactly like a scan that found
+    // nothing (2026-08-29). They are work. They get a section.
+    var manual = (doc && Array.isArray(doc.manual)) ? doc.manual : [];
+    if (!doc) {
+      host.innerHTML = '<div class="trend-scout-empty">Comment queue not synced yet.</div>';
       return;
     }
 
+    // The stamp is always shown. Without it an empty page cannot be told apart
+    // from a scan that died overnight, which is what happened on 2026-08-26
+    // when the previous day's queue sat there looking current.
     var staleNote = '';
+    var stamp = '';
     if (doc.preparedAt) {
       var d = new Date(doc.preparedAt);
       var days = isNaN(d) ? null : Math.floor((Date.now() - d.getTime()) / 86400000);
+      var when = isNaN(d) ? String(doc.preparedAt) : d.toLocaleString();
+      stamp = '<p class="cq-note">Scanned ' + esc(when) +
+        (days != null ? ' · ' + (days === 0 ? 'today' : days + 'd ago') : '') + '.</p>';
       if (days != null && days > 4) {
         staleNote = '<p class="cq-note">Prepared ' + days + ' days ago. Host posts decay fast — ' +
           'check each one is still active before commenting.</p>';
@@ -6654,7 +6665,7 @@ document.addEventListener('cipher:state-updated', function () {
       '</div>';
     }
 
-    host.innerHTML = baseline + items.map(function (it, i) {
+    var itemsHtml = items.map(function (it, i) {
       var done = !!it.postedAt;
       var urgent = !done && /now|today|asap/i.test(it.when || '');
       var whenLabel = done
@@ -6683,7 +6694,40 @@ document.addEventListener('cipher:state-updated', function () {
           '<span class="cq-copied" id="cq-copied-' + i + '">Copied</span>' +
         '</div>' +
       '</div>';
-    }).join('') + staleNote +
+    }).join('');
+
+    // No textarea here on purpose: nothing can be drafted for a video, so a
+    // copy box would only offer filler. The job is watch it, then write.
+    var manualHtml = manual.length
+      ? '<div class="cq-baseline"><h3>Write these live — ' + manual.length + '</h3>' +
+        '<p>Video host posts. They cannot be drafted without watching them, so the scan ranks the room and leaves the words to you.</p></div>' +
+        manual.map(function (m) {
+          return '<div class="cq-item">' +
+            '<div class="cq-head">' +
+              '<span class="cq-when now">Watch, then reply</span>' +
+              '<span class="cq-author">' + esc(m.author || 'Unknown') + '</span>' +
+              '<span class="cq-stats">' +
+                (m.reactions != null ? Number(m.reactions).toLocaleString() + ' reactions' : '') +
+                (m.comments != null ? ' · ' + m.comments + ' comments' : '') +
+                (m.age ? ' · ' + esc(m.age) + ' old' : '') +
+              '</span>' +
+            '</div>' +
+            (m.why ? '<div class="cq-why">' + esc(m.why) + '</div>' : '') +
+            '<div class="cq-actions">' +
+              (m.url ? '<a class="btn-primary" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">Open the post ↗</a>' : '') +
+            '</div>' +
+          '</div>';
+        }).join('')
+      : '';
+
+    // An honest empty is a result, not a blank page. Say the bar held and show
+    // what was rejected, so a dead scan and a quiet morning never look alike.
+    var nothing = (!items.length && !manual.length)
+      ? '<div class="trend-scout-empty">Nothing cleared the bar this morning. ' +
+        'An empty queue is a valid result — a filler comment costs more than a missed day.</div>'
+      : '';
+
+    host.innerHTML = stamp + nothing + (items.length ? baseline : '') + itemsHtml + manualHtml + staleNote +
     (doc.excluded ? '<p class="cq-note">' + esc(doc.excluded) + '</p>' : '');
   }
 
@@ -10213,10 +10257,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.19"></script>
-<script src="assets/outreach.js?v=1.30.19"></script>
-<script src="assets/page-knowledge.js?v=1.30.19"></script>
-<script src="assets/hal-rail.js?v=1.30.19"></script>
+<script src="assets/outreach-data.js?v=1.30.20"></script>
+<script src="assets/outreach.js?v=1.30.20"></script>
+<script src="assets/page-knowledge.js?v=1.30.20"></script>
+<script src="assets/hal-rail.js?v=1.30.20"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
