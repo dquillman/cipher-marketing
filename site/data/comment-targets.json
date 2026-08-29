@@ -144,7 +144,7 @@
       "audience": "PM job seekers — very large reach",
       "confidence": "proven",
       "watchOnly": true,
-      "note": "440r/28c on a job listing. Big room but he posts PM ROLES, not exam content, and job ads leave no opening for anything true about exam reasoning. Keep him on the roster to catch the occasional non-job post; skip the listings. Scanned 2026-08-29: confirmed again — 460r/64c on a Museum of Ice Cream job listing, 122r/17c on a Royal Caribbean listing. Job ads with the comment count already over the cap.",
+      "note": "440r/28c on a job listing. Big room but he posts PM ROLES, not exam content, and job ads leave no opening for anything true about exam reasoning. Keep him on the roster to catch the occasional non-job post; skip the listings. Scanned 2026-08-29: confirmed again — 460r/64c on a Museum of Ice Cream job listing, 122r/17c on a Royal Caribbean listing. Job ads with the comment count already over the cap. Evening re-sweep 2026-08-29 found the non-job post the roster keeps him for — a PMIEF International Youth Day webinar recording, 26r/2c at 4d, which clears every NUMBER in the selection rules. It was still skipped: a youth-webinar recording gives a PMP candidate no exam-reasoning opening. So the standing question about him is now answered — his non-job posts are PMIEF philanthropy, not exam content, and they will keep clearing the numbers while failing the say-something-true test.",
       "priority": 3
     },
     {
@@ -177,7 +177,7 @@
       "profile": "https://www.linkedin.com/in/kyle-fullford-cissp-27270228a/",
       "audience": "Security certification path",
       "confidence": "unproven",
-      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "note": "MEASURED 2026-08-29: newest post is a month old at 4 reactions, and his page is personal degree news (SNHU honor roll, coursework deadlines) rather than cert-prep content. Nothing to comment on as a Security+ candidate. Drop at the next roster prune unless he starts writing about the exams.",
       "priority": 3
     },
     {
@@ -185,16 +185,16 @@
       "profile": "https://www.linkedin.com/in/douglas-ogwola-cism-cysa-secplus-cissp-candidate-283399258/",
       "audience": "Security certification stackers",
       "confidence": "unproven",
-      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "note": " DEAD 2026-08-29: the entire activity page holds ONE item, a two-year-old reshare of a balloon parable. He has never posted anything of his own. Remove from the roster at the next prune.",
       "priority": 3
     },
     {
       "name": "Jazmyn Vines",
       "profile": "https://www.linkedin.com/in/jazmyn-r-vines/",
       "audience": "Security+ candidates",
-      "confidence": "unproven",
-      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
-      "priority": 3
+      "confidence": "likely",
+      "note": "MEASURED 2026-08-29 (evening sweep): the best target found all day and the first one this roster has produced from the Security+ side. Her mid-study post — study app, book, notes, flashcards, 'trying different ways to make sure I'm actually UNDERSTANDING the material, not just memorizing answers' — took 18r/3c in four days and ends by ASKING what helped people who already passed. That is our thesis stated by the host plus an open invitation, which is the rarest shape on the roster. Cadence is slow (previous post two weeks earlier, 5r), so she is not a daily check, but catch her study posts inside the window. Queued 2026-08-29.",
+      "priority": 2
     },
     {
       "name": "Amer Ali",
@@ -254,6 +254,10 @@
     "Learning Tree International (2026-08-25) — vendor promo for a competing Security+ course.",
     "Motolani Oluwaturoti Security+ pass post (117r/33c, 2026-08-27) — real room, but already at 33 comments when scanned on 08-29, over the cap.",
     "#SecurityPlus latest feed sweep 2026-08-29 (Kaluram Kakade, Ismail Ali, CyberON, Shanaya Sharma) — all vendor promotion, hashtag-stuffed cert roadmaps, or pay-after-you-pass exam-proxy offers. No creator worth adding.",
-    "Alece Coleman job-environment post (45r/7c) and PMI Atlanta chapter call (42r/2c), 2026-08-29 — good rooms, no exam-reasoning opening."
+    "Alece Coleman job-environment post (45r/7c) and PMI Atlanta chapter call (42r/2c), 2026-08-29 — good rooms, no exam-reasoning opening.",
+    "Mahmoud Yousry 76-page PMP revision guide (73r/5c), queued by the morning hashtag-bar scan on a rounded 'five days' label — the urn timestamp put it at 5.17 days by the evening re-sweep, past maxHostAgeDays. DROPPED. Lesson: record postedAt from the urn, not an age string, or a post can sit in the queue a day past the live window.",
+    "Markus Kopko PgMP panel-review post (3r/1c at 6h, 2026-08-29) — on-thesis writing about the panel review being the real gate, and he is our most important relationship, but 3 reactions is under the minHostReactions floor of 5 and the single comment is his own reveal comment. The floor stands; the lowReachException wants a peer room at ZERO comments, not a self-gated one.",
+    "Amer Ali 'Most PMP practice questions can be answered without reading the scenario' (2026-08-29, 4h) — the single most on-thesis piece of writing found all day, and LinkedIn rendered NO social-counts element on it at all, meaning zero reactions. Below the floor, and he sells a competing coaching product. Watch him: if one of these ever finds a room it is the closest match on the platform.",
+    "Andrew Whitmire PMIEF youth-webinar recording (26r/2c, 4d, 2026-08-29) — clears every number in the rules and was still skipped. A webinar recording offers a PMP candidate no exam-reasoning opening, and passing the numbers is not the same as having something true to say."
   ]
 }
