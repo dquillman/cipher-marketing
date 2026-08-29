@@ -74,7 +74,22 @@ const FEATURES = {
   // split on the wrong groups. Match a scheme OR any bare domain followed by a
   // path, which is what a reader and the algorithm both see as a link.
   urlInBody: (c) => /https?:\/\//.test(c) || /(?:^|[\s(])(?:www\.)?[a-z0-9][a-z0-9-]*\.(?:com|io|app|co|net|org)\//im.test(c),
-  datedStatOpener: (c) => /^[^\n]*\b(?:\d{1,3}%|\d{1,2}%\s*to\s*\d{1,3}%|on \w+ \d{1,2})/m.test(c.split('\n')[0] || ''),
+  // Fifth miss of the same shape, found 2026-08-29 by hand-labelling all 15
+  // posts blind. This matched a percentage or an explicit "on <Month> <day>",
+  // and so read two openers that lead on a date as plain prose:
+  //   "Cert prep tools haven't changed since 2010."                 (bare year)
+  //   "CompTIA is flipping Security+ ... around October."           (month, no day)
+  // Both are the same move as "The PMP exam changed on July 9, 2026", which it
+  // already caught. A 4-digit year and a bare month name now count.
+  // Deliberately NOT counted: relative time ("Last week", "Two days before a
+  // release") — those openers were hand-labelled false and a reader does not
+  // read them as leading on a statistic.
+  datedStatOpener: (c) => {
+    const first = (c.split('\n').find((l) => l.trim()) || '');
+    return /\b\d{1,3}%/.test(first)
+      || /\b(?:19|20)\d{2}\b/.test(first)
+      || /\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\b/i.test(first);
+  },
 };
 
 // The full gate = all three load-bearing mechanics shipping together.

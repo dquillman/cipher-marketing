@@ -1827,7 +1827,9 @@ if (document.readyState === 'loading') {
     +       '<div class="grade-form-section imp-field">'
     +         '<div class="grade-form-section-label">Discovery</div>'
     +         '<label>Impressions <input type="number" min="0" name="impressions" required></label>'
-    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" value="0"></label>'
+    +         '<label class="li-field">Members reached <input type="number" min="0" name="membersReached" placeholder="blank if not shown"></label>'
+    +         '<label class="li-field">In-network % <input type="number" min="0" max="100" step="0.01" name="inNetworkPct" placeholder="e.g. 59"></label>'
+    +         '<label class="li-field">Out-of-network % <input type="number" min="0" max="100" step="0.01" name="outOfNetworkPct" placeholder="e.g. 41 — expansion signal"></label>'
     +       '</div>'
     +       '<div class="grade-form-section ro-field">'
     +         '<div class="grade-form-section-label">Reddit post</div>'
@@ -1851,7 +1853,8 @@ if (document.readyState === 'loading') {
     +         '<label class="li-field">Saves <input type="number" min="0" name="saves" value="0"></label>'
     +         '<label class="li-field">Sends <input type="number" min="0" name="sends" value="0"></label>'
     +         '<label class="x-field">Bookmarks <input type="number" min="0" name="bookmarks" value="0"></label>'
-    +         '<label class="not-ro">Link clicks <input type="number" min="0" name="linkClicks" value="0"></label>'
+    +         '<label class="x-field">Detail expands <input type="number" min="0" name="detailExpands" placeholder="X only"></label>'
+    +         '<label class="not-ro">Link clicks <input type="number" min="0" name="linkClicks" placeholder="LinkedIn: from GA4, else blank"></label>'
     +       '</div>'
     +       '<div class="grade-form-section ra-field">'
     +         '<div class="grade-form-section-label">Ad spend</div>'
@@ -1943,25 +1946,52 @@ if (document.readyState === 'loading') {
       if (ratioRaw !== null && String(ratioRaw).trim() !== '') metrics.upvoteRatio = Number(ratioRaw);
       metrics.autoRemoved          = fd.get('autoRemoved') === 'on';
     } else if (channel === 'linkedin') {
+      // BLANK MEANS NOT MEASURED. `Number(fd.get(x) || 0)` turned every field
+      // the operator left empty into a measured zero, and the grader bands an
+      // exact 0 at -1 — so not filling in a box actively lowered the grade,
+      // and a blank membersReached fabricated a 0.00% reach ratio, the exact
+      // zero site/data/metrics-schema.md forbids. This page is DEPLOYED
+      // (posts.html is absent from firebase.json's ignore list), so it was
+      // producing different letters from app.html for the same post: replaying
+      // the corpus, li-thu-2026-08-07-sponsor-scenario came out A via app.html
+      // and B here, and 3 more posts differed by a letter. Found 2026-08-29.
+      var num = function (name) {
+        var raw = fd.get(name);
+        if (raw === null || String(raw).trim() === '') return null;
+        var n = Number(raw);
+        return Number.isFinite(n) ? n : null;
+      };
       metrics.impressions          = Number(fd.get('impressions') || 0);
-      metrics.membersReached       = Number(fd.get('membersReached') || 0);
-      metrics.socialEngagements    = Number(fd.get('socialEngagements') || 0);
-      metrics.reactions            = Number(fd.get('reactions') || 0);
-      metrics.comments             = Number(fd.get('comments') || 0);
-      metrics.reposts              = Number(fd.get('reposts') || 0);
-      metrics.saves                = Number(fd.get('saves') || 0);
-      metrics.sends                = Number(fd.get('sends') || 0);
-      metrics.linkClicks           = Number(fd.get('linkClicks') || 0);
-      metrics.profileViewers       = Number(fd.get('profileViewers') || 0);
-      metrics.followersGained      = Number(fd.get('followersGained') || 0);
-      // The grading API reads engagementActions for the engagement-rate component.
-      metrics.engagementActions    = metrics.socialEngagements > 0
-        ? metrics.socialEngagements
-        : metrics.reactions + metrics.comments + metrics.reposts;
+      metrics.membersReached       = num('membersReached');
+      metrics.socialEngagements    = num('socialEngagements');
+      metrics.reactions            = num('reactions');
+      metrics.comments             = num('comments');
+      metrics.reposts              = num('reposts');
+      metrics.saves                = num('saves');
+      metrics.sends                = num('sends');
+      metrics.linkClicks           = num('linkClicks');
+      metrics.profileViewers       = num('profileViewers');
+      metrics.followersGained      = num('followersGained');
+      // The network split is the strongest distribution signal the rubric has
+      // and this modal never sent it, silently changing max from 6 to 4.
+      metrics.inNetworkPct         = num('inNetworkPct');
+      metrics.outOfNetworkPct      = num('outOfNetworkPct');
+      // The grading API reads engagementActions for the engagement-rate
+      // component. The parts are nullable now, so sum only what was actually
+      // entered and leave it off entirely when nothing was — the server
+      // derives it in that case rather than being handed a fabricated 0.
+      if (metrics.socialEngagements != null && metrics.socialEngagements > 0) {
+        metrics.engagementActions = metrics.socialEngagements;
+      } else {
+        var parts = [metrics.reactions, metrics.comments, metrics.reposts].filter(function (v) { return v != null; });
+        if (parts.length) {
+          metrics.engagementActions = parts.reduce(function (a, b) { return a + b; }, 0);
+        }
+      }
       if (hasVideo) {
-        metrics.videoViews         = Number(fd.get('videoViews') || 0);
-        metrics.watchTimeSeconds   = Number(fd.get('watchTimeSeconds') || 0);
-        metrics.avgWatchTimeSeconds= Number(fd.get('avgWatchTimeSeconds') || 0);
+        metrics.videoViews         = num('videoViews');
+        metrics.watchTimeSeconds   = num('watchTimeSeconds');
+        metrics.avgWatchTimeSeconds= num('avgWatchTimeSeconds');
       }
     } else if (channel === 'reddit-ads') {
       metrics.impressions          = Number(fd.get('impressions') || 0);
@@ -2186,8 +2216,8 @@ function escHtml(s) {
 </script>
 <!--/INLINE-ASSETS-->
 <!--HAL-RAIL-->
-<script src="assets/page-knowledge.js?v=1.30.19"></script>
-<script src="assets/hal-rail.js?v=1.30.19"></script>
+<script src="assets/page-knowledge.js?v=1.30.20"></script>
+<script src="assets/hal-rail.js?v=1.30.20"></script>
 <!--/HAL-RAIL-->
 </body>
 </html>

@@ -16,7 +16,7 @@ import {
   requireMarketingAdmin,
   validateGradePayload,
 } from "./security.js";
-import { letterGrade, pct, weightedEngagementRatePct } from "./rubric.js";
+import { letterGrade, pct, weightedEngagementRatePct, LOW_CONFIDENCE_IMPRESSIONS } from "./rubric.js";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   RESET_CONFIRMATION,
@@ -286,13 +286,26 @@ function letterGradeRedditOrganic({ upvotes, comments, upvoteRatio, autoRemoved,
 
   const upBand    = upvotes        >= upGreat    ? 2 : upvotes        >= upGood    ? 1 : 0;
   const cmtBand   = comments       >= cmtGreat   ? 2 : comments       >= cmtGood   ? 1 : 0;
-  const ratioBand = upvoteRatio    >= ratioGreat ? 2 : upvoteRatio    >= ratioGood ? 1 : 0;
+
+  // An unmeasured ratio is not a bad ratio. With upvoteRatio null both
+  // comparisons above are false, so ratioBand was 0 while the A threshold
+  // stayed at 5 of 6 — capping a post at B forever for a number nobody
+  // captured. Same defect class as the linkClicks one in letterGrade. Scale
+  // the thresholds to the bands actually available instead (found 2026-08-29,
+  // before any Reddit post has ever been logged, so this has never yet bitten).
+  const ratioMeasured = upvoteRatio != null;
+  const ratioBand = ratioMeasured
+    ? (upvoteRatio >= ratioGreat ? 2 : upvoteRatio >= ratioGood ? 1 : 0)
+    : 0;
 
   const score = upBand + cmtBand + ratioBand;
-  // max = 6. A = 5-6, B = 3-4, C = 1-2, D = 0
-  if (score >= 5) return "A";
-  if (score >= 3) return "B";
-  if (score >= 1) return "C";
+  const max   = ratioMeasured ? 6 : 4;
+  // A >= 5/6, B >= 3/6, C >= 1/6, D otherwise — held constant as a fraction
+  // of the bands that were actually measured.
+  const pctOfMax = score / max;
+  if (pctOfMax >= 5 / 6) return "A";
+  if (pctOfMax >= 3 / 6) return "B";
+  if (pctOfMax >= 1 / 6) return "C";
   return "D";
 }
 
@@ -441,7 +454,14 @@ export const gradePost = onRequest(
       const benchmarks = data.benchmarks?.[post.channel];
       if (!benchmarks) { res.status(500).json({ error: `no benchmarks for channel "${post.channel}"` }); return; }
 
-      const hasVideo = !!post.video;
+      // post.video is a hand-maintained flag and it disagrees with the metrics
+      // in both directions. li-wed-2026-08-05-experience-trap is stored
+      // video:false while its own notes record a real video with 43 views and
+      // 14s average watch — its 31.85% view rate would have banded "good" and
+      // was silently discarded. Trust reported views as well as the flag; the
+      // band itself is skipped when views are null, so a false positive here
+      // costs nothing.
+      const hasVideo = !!post.video || metrics.videoViews != null;
       const isRedditOrganic = post.channel === "reddit-organic";
 
       let grade;
@@ -476,15 +496,31 @@ export const gradePost = onRequest(
             (Number(metrics.reactions ?? metrics.likes ?? 0) +
              Number(metrics.comments ?? metrics.replies ?? 0) +
              Number(metrics.reposts ?? 0));
-        const linkClicks        = Number(metrics.linkClicks || 0);
-        const videoViews        = Number(metrics.videoViews || 0);
+        // null means NOT MEASURED and must survive all the way into the rubric.
+        // `Number(metrics.linkClicks || 0)` turned "GA4 was never checked" into
+        // "nobody clicked", which band()s as -1 and made an A unreachable for
+        // every LinkedIn post — see the contract note in rubric.js. Every other
+        // layer already preserved the null; this was the one that threw it away.
+        const linkClicks        = metrics.linkClicks != null ? Number(metrics.linkClicks) : null;
+        const videoViews        = metrics.videoViews != null ? Number(metrics.videoViews) : null;
 
         const engagementRatePct = pct(engagementActions, impressions);
-        const linkClickRatePct  = pct(linkClicks, impressions);
-        const videoViewRatePct  = pct(videoViews, impressions);
+        const linkClickRatePct  = linkClicks != null ? pct(linkClicks, impressions) : null;
+        const videoViewRatePct  = videoViews != null ? pct(videoViews, impressions) : null;
 
         const gradedEngagementRatePct = weightedEngagementRatePct(metrics, impressions, engagementRatePct);
         const outOfNetworkPct = metrics.outOfNetworkPct != null ? Number(metrics.outOfNetworkPct) : null;
+        // The documented stand-in for an unmeasured click rate. Derived here
+        // rather than trusted from the client, which may send a stale value.
+        const impressionsToReachPct = metrics.membersReached != null && impressions > 0
+          ? pct(Number(metrics.membersReached), impressions)
+          : null;
+
+        // Below the channel's floor every rate is computed on too small a
+        // denominator to trust, so bands are capped at "good" instead of the
+        // post losing a whole letter after the fact. See rubric.js.
+        const floor = LOW_CONFIDENCE_IMPRESSIONS[post.channel];
+        const lowConfidence = floor != null && impressions < floor;
 
         grade = letterGrade({
           engagementRatePct: gradedEngagementRatePct,
@@ -493,37 +529,55 @@ export const gradePost = onRequest(
           hasVideo,
           benchmarks,
           outOfNetworkPct,
+          impressionsToReachPct,
+          lowConfidence,
+          // LinkedIn always reports the network split, so a missing one is a
+          // collection failure and must not be rewarded.
+          expectsNetworkSplit: post.channel === "linkedin",
         });
 
-        // Reddit Ads: penalize over-budget CPC by one tier
+        // Reddit Ads: penalize over-budget CPC by one tier.
+        // Spending money and buying ZERO clicks is the worst efficiency
+        // achievable, and it used to escape the penalty entirely because an
+        // infinite CPC was represented as null and applyRedditAdsCpcPenalty
+        // returns untouched on null — so $200 for 0 clicks graded better than
+        // $2 for 1 click. Treat spend-with-no-clicks as unambiguously over
+        // ceiling (found 2026-08-29).
         if (post.channel === "reddit-ads") {
           const spend = Number(metrics.totalSpendUsd || 0);
-          const cpcUsd = linkClicks > 0 ? spend / linkClicks : null;
-          grade = applyRedditAdsCpcPenalty(grade, cpcUsd, benchmarks);
-          computed.cpcUsd = cpcUsd != null ? Number(cpcUsd.toFixed(2)) : null;
+          const clicksForCpc = linkClicks ?? 0;
+          if (clicksForCpc > 0) {
+            const cpcUsd = spend / clicksForCpc;
+            grade = applyRedditAdsCpcPenalty(grade, cpcUsd, benchmarks);
+            computed.cpcUsd = Number(cpcUsd.toFixed(2));
+          } else if (spend > 0) {
+            grade = applyRedditAdsCpcPenalty(grade, Number.POSITIVE_INFINITY, benchmarks);
+            computed.cpcUsd = null; // undefined, not zero — no click to divide into
+          } else {
+            computed.cpcUsd = null;
+          }
         }
 
-        // Conversion bump
+        // The full-letter "tiny reach" penalty used to sit here. It is gone:
+        // it was a step function on a quantity that only grows, so a post
+        // could gain a letter purely by being re-measured, and the 48h grade
+        // and the 7d grade were never on the same scale. Small samples are now
+        // handled inside letterGrade by capping bands, which is monotonic.
+        //
+        // Conversion bump — the last word, so nothing downstream erases it.
+        // auto-grade-posts/SKILL.md promises trialSignupsAttributed "is the
+        // only number that ultimately matters, and it is the one metric that
+        // can raise a post a full letter grade".
         if (Number(metrics.trialSignupsAttributed || 0) > 0) {
           const order = ["D", "C", "B", "A"];
           const i = order.indexOf(grade);
           if (i >= 0 && i < order.length - 1) grade = order[i + 1];
         }
 
-        // Tiny-reach penalty for organic LI/X
-        if (post.channel === "linkedin" && impressions < 200) {
-          const order = ["A", "B", "C", "D"];
-          const i = order.indexOf(grade);
-          if (i >= 0 && i < order.length - 1) grade = order[i + 1];
-        } else if (post.channel === "x" && impressions < 500) {
-          const order = ["A", "B", "C", "D"];
-          const i = order.indexOf(grade);
-          if (i >= 0 && i < order.length - 1) grade = order[i + 1];
-        }
-
         computed.engagementRatePct = Number(engagementRatePct.toFixed(2));
-        computed.linkClickRatePct  = Number(linkClickRatePct.toFixed(2));
-        if (hasVideo) computed.videoViewRatePct = Number(videoViewRatePct.toFixed(2));
+        // A rate whose numerator was never measured is itself not measured.
+        computed.linkClickRatePct  = linkClickRatePct != null ? Number(linkClickRatePct.toFixed(2)) : null;
+        if (hasVideo && videoViewRatePct != null) computed.videoViewRatePct = Number(videoViewRatePct.toFixed(2));
       }
 
       // The letter grade is already computed mechanically above; the AI only

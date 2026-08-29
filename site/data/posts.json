@@ -2251,7 +2251,9 @@
       "videoViewRatePctGreatAtLeast": 50,
       "engagementRatePctGoodAtLeast": 2,
       "outOfNetworkPctGoodAtLeast": 40,
-      "outOfNetworkPctGreatAtLeast": 70
+      "outOfNetworkPctGreatAtLeast": 70,
+      "impressionsToReachPctGoodAtLeast": 20,
+      "impressionsToReachPctGreatAtLeast": 45
     }
   },
   "_meta": {
