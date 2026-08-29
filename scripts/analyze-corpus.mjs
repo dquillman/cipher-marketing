@@ -47,9 +47,22 @@ const FEATURES = {
   // "The answer and the full elimination on all four options go in this thread
   // tonight" — was scored as NOT withholding, which put a withholding post in
   // the control group and understated the split (found 2026-08-27).
+  // Third and fourth misses, same shape (found 2026-08-29): the 08-27 pattern
+  // requires a leading article, so both li-frame-test-02 ("Answer and full
+  // elimination in the first comment tomorrow morning.") and
+  // li-fri-2026-08-21-magnet-02-secplus ("Full elimination on all four options
+  // goes in this thread tonight") opened the sentence on a bare noun and were
+  // again scored as NOT withholding. The bare-noun form is only safe anchored to
+  // a sentence or line start; matching "answer" anywhere would also catch "post
+  // your answer in the comments", which ASKS for an answer rather than
+  // withholding one. Hence two arms: article-anywhere, bare-noun-at-start.
+  // Residual known gap: a line that literally opens "Answer in the comments
+  // below" would still false-positive. No post in the corpus does; if one ever
+  // does, the flag is wrong and the by-eye spot-check below is what catches it.
   withholdsAnswer: (c) =>
     /I(?: will|'ll) (?:share|post|put)\b[^.]*\b(?:pattern|answer|reasoning)\b|after the discussion|once the discussion/i.test(c) ||
-    /\b(?:the answer|the reasoning|the pattern|the full elimination|the breakdown)\b[^.]{0,120}?\b(?:thread|comments?|first comment)\b/i.test(c),
+    /\b(?:the answer|the reasoning|the pattern|the full elimination|the breakdown)\b[^.]{0,120}?\b(?:thread|comments?|first comment)\b/i.test(c) ||
+    /(?:^|[.!?]\s|\n)\s*(?:answer|reasoning|full elimination|breakdown)\b[^.]{0,120}?\b(?:thread|comments?|first comment)\b/im.test(c),
   // Any question mark at all — the naive reading of the grader's advice, kept
   // here specifically so the report can show it does NOT separate the groups.
   anyQuestionMark: (c) => c.includes('?'),
