@@ -46,7 +46,7 @@
       "profile": "https://www.linkedin.com/in/acolemanpmp/",
       "audience": "PMP candidates and career-changers",
       "confidence": "proven",
-      "note": "Posts most days. 93r/3c on a study-method post 2026-08-18 — best target that week. But the 2026-08-25 sweep found five posts in a row on career-pivot, networking and PMI-chapter topics with nothing exam-related to add. Check her, do not assume her.",
+      "note": "Posts most days. 93r/3c on a study-method post 2026-08-18 — best target that week. But the 2026-08-25 sweep found five posts in a row on career-pivot, networking and PMI-chapter topics with nothing exam-related to add. Check her, do not assume her. Scanned 2026-08-29: two live rooms (45r/7c job-search post, 42r/2c PMI Atlanta chapter call) and neither had an exam-reasoning opening. Third sweep in a row with reach but no exam topic — she posts career and chapter content, not exam content.",
       "priority": 1
     },
     {
@@ -54,7 +54,7 @@
       "profile": "https://www.linkedin.com/in/bryancampbell/",
       "audience": "PgMP/PMP practitioners",
       "confidence": "proven",
-      "note": "Builds his own PM tool (PM Pixel) with ChatGPT and Claude — a genuine peer, not a competitor. Small rooms, zero comments. Relationship play; end on a question.",
+      "note": "Builds his own PM tool (PM Pixel) with ChatGPT and Claude — a genuine peer, not a competitor. Small rooms, zero comments. Relationship play; end on a question. Scanned 2026-08-29: no post in two weeks (newest 2w, 9r/1c on case-study timing). On-topic when he posts, but the cadence rarely lands inside the 5-day window.",
       "priority": 2
     },
     {
@@ -62,23 +62,24 @@
       "profile": "https://www.linkedin.com/in/markuskleinpmp/",
       "audience": "PMP/PgMP practitioners, PMI-adjacent",
       "confidence": "proven",
-      "note": "GAVE US OUR ONLY TESTIMONIAL and sits on the PMI AI Standards Core Team. Build next to him, never against him — never name him as a competitor, never counter his content. His three-state self-scoring post (2026-08-20) is the structure we want to borrow, rewritten.",
+      "note": "GAVE US OUR ONLY TESTIMONIAL and sits on the PMI AI Standards Core Team. Build next to him, never against him — never name him as a competitor, never counter his content. His three-state self-scoring post (2026-08-20) is the structure we want to borrow, rewritten. Scanned 2026-08-29: activity page is almost all reshares; his one original (1r/1c at 1h) was a bus-factor note ending in a link to his own PM Career OS community. No exam-reasoning opening.",
       "priority": 1
     },
     {
       "name": "Darron Clark",
       "profile": "https://www.linkedin.com/in/darronclarkemba/",
       "audience": "PMP candidates",
-      "confidence": "likely",
-      "note": "Posts a PMP course series on exactly our thesis — 'the PMP exam is a judgment exam, not a memorization exam'. Sells a competing course, so add something true rather than arguing. Room was 3r/0c on 2026-08-25, below the floor.",
-      "priority": 2
+      "confidence": "unproven",
+      "note": "Posts a PMP course series on exactly our thesis — 'the PMP exam is a judgment exam, not a memorization exam'. Sells a competing course, so add something true rather than arguing. Room was 3r/0c on 2026-08-25, below the floor. MEASURED 2026-08-29: posted the identical PMBOK-8 promo video FIVE times inside one hour, zero reactions on each. This is a broadcast account, not a room. Downgraded to priority 3 — check only for a rare non-promo post.",
+      "priority": 3,
+      "videoOnly": true
     },
     {
       "name": "Colleen E. Lofton, EdD, PMP",
       "profile": "https://www.linkedin.com/in/colleenlofton/",
       "audience": "PMP candidates deciding whether to certify",
       "confidence": "likely",
-      "note": "Writes 'should you get the PMP' guidance with a Substack. 7r/3c on 2026-08-19 but six days old by the time we saw it — catch her posts inside the 5-day window.",
+      "note": "Writes 'should you get the PMP' guidance with a Substack. 7r/3c on 2026-08-19 but six days old by the time we saw it — catch her posts inside the 5-day window. Scanned 2026-08-29: 2-11 reactions on higher-ed enrolment and PMI-chapter topics; nothing exam-related inside the window.",
       "priority": 2
     },
     {
@@ -93,16 +94,16 @@
       "name": "Abhishek Sengupta",
       "profile": "https://www.linkedin.com/in/senguptabhishek/",
       "audience": "PgMP/PMP practitioners — 30K followers",
-      "confidence": "likely",
-      "note": "Large credential audience. Reach unmeasured; measure it on the first scan.",
-      "priority": 2
+      "confidence": "unproven",
+      "note": " MEASURED 2026-08-29: newest ORIGINAL post is roughly two months old and his recent rooms run 2-3 reactions. The 30K follower count buys nothing. Dormant — check rarely.",
+      "priority": 3
     },
     {
       "name": "Salina Thompson, PMP",
       "profile": "https://www.linkedin.com/in/savvyempireceo/",
       "audience": "PMP holders, applied-mindset content",
       "confidence": "likely",
-      "note": "Launching a 'Universal PMP' podcast — PM thinking applied to life. Near-zero engagement on the teaser. Watch for whether the series finds a room.",
+      "note": "Launching a 'Universal PMP' podcast — PM thinking applied to life. Near-zero engagement on the teaser. Watch for whether the series finds a room. MEASURED 2026-08-29: posts daily but every room is 2-3 reactions with ZERO comments, and the content has drifted to AI-automation consulting rather than PMP. The podcast never found a room.",
       "priority": 3
     },
     {
@@ -110,7 +111,7 @@
       "profile": "https://www.linkedin.com/in/b-aina/",
       "audience": "PMP candidates",
       "confidence": "likely",
-      "note": "98r/31c on 'a PMP certification can open doors, but experience is built by walking through them'. Good reach, but comment count runs high — check it against the 20-comment cap before drafting.",
+      "note": "98r/31c on 'a PMP certification can open doors, but experience is built by walking through them'. Good reach, but comment count runs high — check it against the 20-comment cap before drafting. Scanned 2026-08-29: her big rooms (149r/18c) are all a week or older; the only in-window post was 3r/0c. Her cadence and our 5-day window rarely line up.",
       "priority": 2
     },
     {
@@ -118,7 +119,7 @@
       "profile": "https://www.linkedin.com/in/rociogranela/",
       "audience": "New PMP holders",
       "confidence": "likely",
-      "note": "123r/16c on a pass announcement. WIN-post rules apply: congratulate first, teach the copycats, never correct her.",
+      "note": "123r/16c on a pass announcement. WIN-post rules apply: congratulate first, teach the copycats, never correct her. Scanned 2026-08-29: nothing exam-related in the window — Eldest Daughter Day and coffee posts.",
       "priority": 3
     },
     {
@@ -126,7 +127,7 @@
       "profile": "https://www.linkedin.com/in/garimagrover/",
       "audience": "PM practitioners",
       "confidence": "unproven",
-      "note": "Project Manager at Microsoft, mutual connection with Markus Kopko. No posting cadence observed yet.",
+      "note": " MEASURED 2026-08-29: activity page is RESHARES ONLY — her newest original post is a 2023 certification announcement. Nothing to comment on, ever. Drop at the next roster prune unless she starts writing.",
       "priority": 3
     },
     {
@@ -134,7 +135,7 @@
       "profile": "https://www.linkedin.com/in/danclinepe/",
       "audience": "PM practitioners",
       "confidence": "unproven",
-      "note": "Mutual connection with Markus Kopko. No posting cadence observed yet.",
+      "note": " DEAD 2026-08-29: one post on the whole activity page, from 2018, 1 reaction. Remove from the roster at the next prune.",
       "priority": 3
     },
     {
@@ -143,32 +144,32 @@
       "audience": "PM job seekers — very large reach",
       "confidence": "proven",
       "watchOnly": true,
-      "note": "440r/28c on a job listing. Big room but he posts PM ROLES, not exam content, and job ads leave no opening for anything true about exam reasoning. Keep him on the roster to catch the occasional non-job post; skip the listings.",
+      "note": "440r/28c on a job listing. Big room but he posts PM ROLES, not exam content, and job ads leave no opening for anything true about exam reasoning. Keep him on the roster to catch the occasional non-job post; skip the listings. Scanned 2026-08-29: confirmed again — 460r/64c on a Museum of Ice Cream job listing, 122r/17c on a Royal Caribbean listing. Job ads with the comment count already over the cap.",
       "priority": 3
     },
     {
       "name": "Torge Oeverdiek",
       "profile": null,
-      "resolveBy": "search LinkedIn for \"Torge Oeverdiek\" — runs a daily 'PMP Question of the Day' under a 'PMI Prep' group name (NOT official PMI; never describe it as such)",
+      "resolveBy": "UNRESOLVABLE as of 2026-08-29 — LinkedIn people search for \"Torge Oeverdiek\" returns NO RESULTS. The poll evidence in grading-lessons.md stands on the 2026-08-11 observation; do not spend another scan hunting for this profile unless a new spelling turns up on a hashtag sweep.",
       "audience": "PMP candidates",
-      "confidence": "likely",
+      "confidence": "unproven",
       "note": "Ran a four-option question as a NATIVE POLL and got 317 votes against our comment-gate's 14 comments (observed 2026-08-11, in grading-lessons.md). Direct format competitor and the best source of poll-format evidence.",
-      "priority": 2
+      "priority": 3
     },
     {
       "name": "Eric Reed",
       "profile": "https://www.linkedin.com/in/ericreedlive/",
       "audience": "Security+ / cyber candidates",
       "confidence": "unproven",
-      "note": "The only name on the #SecurityPlus sweep that reads as a creator rather than a cert holder. Measure before trusting.",
-      "priority": 2
+      "note": " MEASURED 2026-08-29: posts on Security+ every single day, which is the good news; the bad news is every room is 1-3 reactions with ZERO comments and most posts are adverts for his own course. Relationship play only, and not yet worth a slot.",
+      "priority": 3
     },
     {
       "name": "George Cole",
       "profile": "https://www.linkedin.com/in/george-cole-cyber/",
       "audience": "Security+ / cyber candidates",
       "confidence": "unproven",
-      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
+      "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured. MEASURED 2026-08-29: 4-5 reactions, posts roughly weekly, mostly bootcamp promotion. Below the floor.",
       "priority": 3
     },
     {
@@ -194,6 +195,31 @@
       "confidence": "unproven",
       "note": "Surfaced on #SecurityPlus. Cadence and reach unmeasured.",
       "priority": 3
+    },
+    {
+      "name": "Amer Ali",
+      "profile": "https://www.linkedin.com/in/ameralipmp/",
+      "audience": "PMP candidates",
+      "confidence": "likely",
+      "videoOnly": true,
+      "note": "DISCOVERED 2026-08-29 on the #PMPExam latest feed. Bills himself as \"The AI-Powered PMP Coach\", claims 4,000+ passed, and posts exam-reasoning micro-lessons several times a day (secondary vs residual risk, contingency vs fallback) — the closest thing on the roster to our own thesis. Rooms measured at 1-6 reactions, so the reach is not there yet, and most posts are short vertical VIDEO. He sells a competing coaching product: add something true, never argue.",
+      "priority": 3
+    },
+    {
+      "name": "Karanveer Singh, PMP, CSM, LSSGB",
+      "profile": "https://www.linkedin.com/in/karanveer-singh-pmp%C2%AE-csm%C2%AE-lssgb-445554152/",
+      "audience": "PMP candidates",
+      "confidence": "unproven",
+      "note": "DISCOVERED 2026-08-29 on the #PMPExam latest feed. Runs a daily \"PMP Practice Question - Day N\" series as NATIVE POLLS with A-D options — the same format competitor shape as Torge Oeverdiek and easier to observe. Measured 2026-08-29: 0-3 reactions and 12 votes on the Day 104 poll, so the format is not carrying him. Worth watching as poll-format evidence, not as a room.",
+      "priority": 3
+    },
+    {
+      "name": "Motolani Oluwaturoti",
+      "profile": "https://www.linkedin.com/in/motolanioluwaturoti/",
+      "audience": "Security+ and entry-level cyber candidates",
+      "confidence": "likely",
+      "note": "DISCOVERED 2026-08-29 on the #SecurityPlus latest feed — the ONLY genuine human room found on that hashtag, which is otherwise vendor spam and pay-after-you-pass proxy offers. Her Security+ pass post took 117r/33c in two days, and an earlier ISC2 post took 141r/52c. WIN-post rules apply: congratulate first, teach the copycats, never correct her. Her comment counts run HIGH and blow past the 20-comment cap fast, so she only qualifies inside the first day or so.",
+      "priority": 2
     }
   ],
   "feeds": [
@@ -225,6 +251,9 @@
     "Yanique J. (56/2, 2026-08-18) — roughly two weeks old, dead room.",
     "Ramdayal's live-Q&A announcement (68 comments) — buried on arrival.",
     "Recruiters surfaced on #PMP 2026-08-25 (Mary Yannuzzi, Jacki Miller, Ernest Ambrose's open-to-work post) — job content, no exam-reasoning opening.",
-    "Learning Tree International (2026-08-25) — vendor promo for a competing Security+ course."
+    "Learning Tree International (2026-08-25) — vendor promo for a competing Security+ course.",
+    "Motolani Oluwaturoti Security+ pass post (117r/33c, 2026-08-27) — real room, but already at 33 comments when scanned on 08-29, over the cap.",
+    "#SecurityPlus latest feed sweep 2026-08-29 (Kaluram Kakade, Ismail Ali, CyberON, Shanaya Sharma) — all vendor promotion, hashtag-stuffed cert roadmaps, or pay-after-you-pass exam-proxy offers. No creator worth adding.",
+    "Alece Coleman job-environment post (45r/7c) and PMI Atlanta chapter call (42r/2c), 2026-08-29 — good rooms, no exam-reasoning opening."
   ]
 }
