@@ -1135,7 +1135,8 @@
       "videoStatus": "ready",
       "renderedAt": "2026-08-19T02:30:40.935Z",
       "videoJobId": "F8aUH1Jx7ojsjxHkD5ZD",
-      "shortLink": "https://cipherexam.com/go/pmp-sme-04-0819"
+      "shortLink": "https://cipherexam.com/go/pmp-sme-04-0819",
+      "firstCommentPostedAt": "2026-08-21T01:34:34.712Z"
     },
     {
       "id": "li-fri-2026-08-21-magnet-02-secplus",
@@ -2176,7 +2177,7 @@
         "gated": true
       },
       "cardLook": "markedUp",
-      "firstCommentPostedAt": "2026-08-28"
+      "firstCommentPostedAt": "2026-08-29T00:31:00.000Z"
     },
     {
       "id": "li-wed-2026-08-26-llm-compare",

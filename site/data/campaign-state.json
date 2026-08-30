@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-08-29T13:08:44.578Z",
+    "lastUpdatedAt": "2026-08-30T13:05:43.618Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -54,7 +54,7 @@
       }
     },
     "funnel": {
-      "asOf": "2026-08-29T13:08:44.578Z",
+      "asOf": "2026-08-30T13:05:43.618Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
       "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
@@ -619,11 +619,19 @@
     {
       "date": "2026-08-22",
       "entry": "Positioning validation switched from 5 PMP candidate calls to a public LinkedIn frame test (Dave: no calls, no DMs). Three drafts minted - li-frame-test-01/02/03, one per category frame from positioning/01-one-pager.md - for 08-24/26/28 at 19:20 CT. Identical gated format, CTA in first comment, utm_campaign=frame-test. Winner = LP clicks / trial starts per impression, tie-break comments; decide with 04-decision-rubric.md after all three have 48h grades. Three queued drafts displaced to 09-28/09-30/10-02 so the pre-registered #PMPExam test keeps 08-31."
+    },
+    {
+      "date": "2026-08-29",
+      "entry": "Competitor intel refreshed (monthly automated run). All three competitor_intel docs regenerated to site/data/competitor-intel/*.md and pushed to Firestore via scripts/write-competitor-intel.mjs (battlecard 7217 / deepdive 8996 / landscape 9987 chars, generated_at 2026-08-29T17:33:59Z). Battlecard moved to three new axes — practice score measures their bank not your readiness; Examzify is a search-lane fight not a price fight (never attack free); per-exam metering + conditional refunds vs Exam Pass $59/90d and the unused 60-day no-conditions guarantee. Deepdive on Pocket Prep keeps the domain-vs-person resolution ceiling and adds a Name-the-trap organic play. Landscape ranks Pocket Prep > Mindirus (unverified, positioning deliberately withheld) > Brain Sensei > AI-tutor cohort > Examzify; SHRM-CP flagged open for the second consecutive month. TASK DEFECT FOUND: the SKILL.md Firestore write pattern (API-key REST PATCH) still returns 403 PERMISSION_DENIED under the marketingAdmin rule and its hardcoded Known-competitors block still carries the false \"Pocket Prep: no explanations\" line that August corrected. competitors.json unchanged, so the campaign/competitors mirror was skipped per the skill."
+    },
+    {
+      "date": "2026-08-29",
+      "entry": "Competitor intel refreshed (monthly automated run, re-verification pass of the rewritten task). All three reports regenerated fresh — not a reword of the earlier run — and written to Firestore competitor_intel/{battlecard,deepdive,landscape} via scripts/write-competitor-intel.mjs (8615 / 10825 / 12091 chars, generated_at 2026-08-29T18:01:26.648Z, verified by reading the three docs back). Battlecard moved to three new axes: a large bank is a snapshot of the exam on the day it was written (PMI rebalanced the PMP outline 2026-07-09, Business Environment 8% -> 26%); CompTIA performance-based questions cannot exist in a single-MCQ drill format; volume answers a supply problem while our buyer has a time problem. Deepdive on Pocket Prep reframes them as selling the eight-minute session and attacks the cost side of their scale — maintenance liability when a standard moves, per-exam SKUs hostile to the cert stacker, and a performance-conditioned refund we already beat with the unused 60-day no-conditions guarantee; organic play is a count-your-own-bank audit prompt, gated on auditing our own PMP distribution first. Landscape re-ranked on who takes OUR current candidate rather than who resembles us: Pocket Prep > Brain Sensei (up from 3rd — PMI specialist, already shipped on the 2026 outline, and 100% of our measured impressions are PMP) > Mindirus (down to 3rd, still unverified after a month) > AI-tutor cohort > Examzify. SHRM-CP flagged open for the third consecutive scan with a ship-or-defer ultimatum. competitors.json unchanged this run, so the campaign/competitors mirror was correctly skipped. Note: this dailyLog entry is a local record only — no safe campaign/state appender exists, so it will not appear on the dashboard."
     }
   ],
   "boardPriorities": {
     "cycleDate": "2026-07-07",
-    "mirroredAt": "2026-07-07T23:00:41.237Z",
+    "mirroredAt": "2026-08-29T17:56:11.795Z",
     "source": "qcode ops-board.json (codeq-board cycle)",
     "items": [
       {
