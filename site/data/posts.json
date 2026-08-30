@@ -1206,9 +1206,9 @@
     },
     {
       "id": "li-mon-2026-08-24-scoreboard-02",
-      "scheduled": "2026-09-28",
-      "scheduledTime": "2026-09-29T00:20:00.000Z",
-      "scheduledTimeLocal": "2026-09-28 19:20 CT",
+      "scheduled": "2026-10-05",
+      "scheduledTime": "2026-10-06T00:20:00.000Z",
+      "scheduledTimeLocal": "2026-10-05 19:20 CT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1240,7 +1240,7 @@
       "planPostType": "authority",
       "scenarioId": "PMP-030",
       "scenarioArchetype": "protect-the-team-not-the-plan",
-      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-030 protect-the-team-not-the-plan, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-08-24 10:30 MT -> 2026-08-24 19:20 MT (no morning send has ever earned a comment). | rescheduled 2026-08-24 -> 2026-09-28 on 2026-08-22 (displaced by the three-post LinkedIn category-frame test that replaced the positioning kit's 5 PMP candidate calls; moved to the tail of the queue rather than cascading the whole calendar, so the pre-registered #PMPExam test keeps its 2026-08-31 slot). Copy, scenario and hook unchanged."
+      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-030 protect-the-team-not-the-plan, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-08-24 10:30 MT -> 2026-08-24 19:20 MT (no morning send has ever earned a comment). | rescheduled 2026-08-24 -> 2026-09-28 on 2026-08-22 (displaced by the three-post LinkedIn category-frame test that replaced the positioning kit's 5 PMP candidate calls; moved to the tail of the queue rather than cascading the whole calendar, so the pre-registered #PMPExam test keeps its 2026-08-31 slot). Copy, scenario and hook unchanged. | MOVED 2026-09-28 -> 2026-10-05 on 2026-08-30, as the tail of the scoreboard series sliding one MONDAY. Note the line above did not hold: the #PMPExam test did NOT keep 08-31, because li-wed-2026-08-26-llm-compare was rescheduled on top of it on 08-28. The test moved to 09-07. Weekday, 19:20 CT slot, scenario, hook and copy all unchanged."
     },
     {
       "id": "li-wed-2026-08-26-sme-05",
@@ -1357,9 +1357,9 @@
     },
     {
       "id": "li-mon-2026-08-31-scoreboard-03",
-      "scheduled": "2026-08-31",
-      "scheduledTime": "2026-09-01T00:20:00.000Z",
-      "scheduledTimeLocal": "2026-08-31 19:20 CT",
+      "scheduled": "2026-09-07",
+      "scheduledTime": "2026-09-08T00:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-07 19:20 CT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1391,7 +1391,7 @@
       "planPostType": "authority",
       "scenarioId": "PMP-031",
       "scenarioArchetype": "check-the-data-before-you-respond",
-      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-031 check-the-data-before-you-respond, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-08-31 10:30 MT -> 2026-08-31 19:20 MT (no morning send has ever earned a comment). | flagged 2026-08-31 as the #PMPExam single-variable hashtag test on 2026-08-18. Scheduled AFTER the 08-26 baseline read so the comment-tactic result is banked before a new variable is introduced, and after the 08-19 withhold-removal post so those two do not overlap. Hashtags are the ONLY thing that may change on this post. | 2026-08-22: date and single-variable design UNCHANGED, but one stated precondition moved - the 08-26 baseline read now falls on a category-frame-test post (li-frame-test-02), not li-wed-2026-08-26-sme-05, which slid to 09-30. The three frame-test posts on 08-24/26/28 all run the same gated shape, same 19:20 CT slot and the same #PMP #ProjectManagement pair, so #PMPExam remains this post's only changed variable against its immediate neighbours.",
+      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-031 check-the-data-before-you-respond, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-08-31 10:30 MT -> 2026-08-31 19:20 MT (no morning send has ever earned a comment). | flagged 2026-08-31 as the #PMPExam single-variable hashtag test on 2026-08-18. Scheduled AFTER the 08-26 baseline read so the comment-tactic result is banked before a new variable is introduced, and after the 08-19 withhold-removal post so those two do not overlap. Hashtags are the ONLY thing that may change on this post. | 2026-08-22: date and single-variable design UNCHANGED, but one stated precondition moved - the 08-26 baseline read now falls on a category-frame-test post (li-frame-test-02), not li-wed-2026-08-26-sme-05, which slid to 09-30. The three frame-test posts on 08-24/26/28 all run the same gated shape, same 19:20 CT slot and the same #PMP #ProjectManagement pair, so #PMPExam remains this post's only changed variable against its immediate neighbours. | MOVED 2026-08-31 -> 2026-09-07 on 2026-08-30, off a DOUBLE-BOOKED slot, Dave's call. li-wed-2026-08-26-llm-compare had been rescheduled onto 2026-08-31 19:20 CT on 08-28 to escape a clash with li-frame-test-03; 08-31 was already held by THIS post, so that move dodged one collision and created another on the one evening that could least afford it. Two PMP posts in a single 19:20 slot split a ~500-follower audience, and the metric this test is read on is outOfNetworkPct, which is exactly what a split makes unreadable. llm-compare keeps 08-31 because it is written, natively scheduled, and has already failed to publish twice; this post was still an unwritten [TO DRAFT via /sme-post] placeholder. THE SINGLE-VARIABLE DESIGN IS UNCHANGED — 09-07 is still a Monday, still 19:20 CT, still the same gated shape, and its neighbours still carry the #PMP #ProjectManagement control pair, so hashtags remain the only thing that differs. The whole scoreboard series slid one MONDAY rather than one slot, so no Wed/Fri post moved and every post kept its weekday. LESSON: before rescheduling any post, check the destination slot is empty — the 08-28 move recorded the reason two posts must not share an evening and then did it anyway.",
       "experiment": {
         "name": "hashtag-pmpexam",
         "variable": "hashtags only",
@@ -1512,9 +1512,9 @@
     },
     {
       "id": "li-mon-2026-09-07-scoreboard-04",
-      "scheduled": "2026-09-07",
-      "scheduledTime": "2026-09-08T00:20:00.000Z",
-      "scheduledTimeLocal": "2026-09-07 19:20 CT",
+      "scheduled": "2026-09-14",
+      "scheduledTime": "2026-09-15T00:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-14 19:20 CT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1546,7 +1546,7 @@
       "planPostType": "authority",
       "scenarioId": "PMP-033",
       "scenarioArchetype": "coach-do-not-rescue",
-      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-033 coach-do-not-rescue, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-09-07 10:30 MT -> 2026-09-07 19:20 MT (no morning send has ever earned a comment)."
+      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-033 coach-do-not-rescue, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-09-07 10:30 MT -> 2026-09-07 19:20 MT (no morning send has ever earned a comment). | MOVED 2026-09-07 -> 2026-09-14 on 2026-08-30. Not about this post: li-mon-2026-08-31-scoreboard-03 had to vacate a double-booked 08-31 and took 09-07, so the whole scoreboard series slid one MONDAY. Weekday, 19:20 CT slot, scenario, hook and copy all unchanged."
     },
     {
       "id": "li-wed-2026-09-09-sme-07",
@@ -1700,9 +1700,9 @@
     },
     {
       "id": "li-mon-2026-09-14-scoreboard-05",
-      "scheduled": "2026-09-14",
-      "scheduledTime": "2026-09-15T00:20:00.000Z",
-      "scheduledTimeLocal": "2026-09-14 19:20 CT",
+      "scheduled": "2026-09-21",
+      "scheduledTime": "2026-09-22T00:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-21 19:20 CT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1734,7 +1734,7 @@
       "planPostType": "authority",
       "scenarioId": "PMP-034",
       "scenarioArchetype": "sunk-cost-and-the-kill-decision",
-      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-034 sunk-cost-and-the-kill-decision, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-09-14 10:30 MT -> 2026-09-14 19:20 MT (no morning send has ever earned a comment)."
+      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-034 sunk-cost-and-the-kill-decision, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-09-14 10:30 MT -> 2026-09-14 19:20 MT (no morning send has ever earned a comment). | MOVED 2026-09-14 -> 2026-09-21 on 2026-08-30, as part of the scoreboard series sliding one MONDAY after li-mon-2026-08-31-scoreboard-03 vacated a double-booked 08-31. Weekday, 19:20 CT slot, scenario, hook and copy all unchanged."
     },
     {
       "id": "li-wed-2026-09-16-sme-09",
@@ -1847,9 +1847,9 @@
     },
     {
       "id": "li-mon-2026-09-21-scoreboard-06",
-      "scheduled": "2026-09-21",
-      "scheduledTime": "2026-09-22T00:20:00.000Z",
-      "scheduledTimeLocal": "2026-09-21 19:20 CT",
+      "scheduled": "2026-09-28",
+      "scheduledTime": "2026-09-29T00:20:00.000Z",
+      "scheduledTimeLocal": "2026-09-28 19:20 CT",
       "channel": "linkedin",
       "channelAccount": "personal",
       "track": "sme",
@@ -1881,7 +1881,7 @@
       "planPostType": "authority",
       "scenarioId": "PMP-036",
       "scenarioArchetype": "tailor-do-not-switch",
-      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-036 tailor-do-not-switch, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-09-21 10:30 MT -> 2026-09-21 19:20 MT (no morning send has ever earned a comment)."
+      "planNote": "re-slotted 2026-08-18 after the hashtag bar scan: hook build-in-public -> comment-gated-question (build-in-public has no support anywhere in the scanned bar; the gate is the only shape on this account sharing structure with the 199- and 168-reaction posts). Scenario set to PMP-036 tailor-do-not-switch, chosen to avoid the governance-routing family that four already-written drafts share with the posted winner. Time 2026-09-21 10:30 MT -> 2026-09-21 19:20 MT (no morning send has ever earned a comment). | MOVED 2026-09-21 -> 2026-09-28 on 2026-08-30, as part of the scoreboard series sliding one MONDAY after li-mon-2026-08-31-scoreboard-03 vacated a double-booked 08-31. Weekday, 19:20 CT slot, scenario, hook and copy all unchanged."
     },
     {
       "id": "li-wed-2026-09-23-sme-11",
