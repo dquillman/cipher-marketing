@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.20">
+<link rel="stylesheet" href="assets/outreach.css?v=1.30.21">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1848,7 +1848,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.20</span>
+      <span class="version-bar" title="Dashboard version">v1.30.21</span>
     </div>
   </div>
 </nav>
@@ -2026,6 +2026,7 @@ function cipherHelp() {
   (function () {
     var btn = document.getElementById('run-trend-scout');
     if (!btn) return;
+    var LOCAL_HOSTS = { localhost: 1, "127.0.0.1": 1, "::1": 1 };
     var POLL_MS = 5000;
     var original = btn.textContent;
     var startedAt = null;
@@ -2064,6 +2065,17 @@ function cipherHelp() {
     }
     function run() {
       if (btn.disabled) return;
+      // The scout spawns `claude` on the LOCAL server. On the deployed host
+      // (cipher-marketing-daveq.web.app) Firebase's catch-all rewrite serves
+      // app.html with HTTP 200 for any unknown /api path — so the fetch never
+      // 404s and the old code polled forever. Guard on hostname instead.
+      // Off-box there is nothing to spawn. Say so, and name the two routes
+      // that DO work, so this is a signpost rather than a dead end. The weekly
+      // cipher-trend-scout-weekly scheduled task keeps the panel fresh either way.
+      if (!LOCAL_HOSTS[window.location.hostname]) {
+        window.alert('The trend scout runs on your machine, so this button only works on the local dashboard.\n\nThe scan also runs by itself every Sunday morning, and the panel below updates live when it does.\n\nNeed it right now: open Cipher Marketing with its launcher (Open Cipher Marketing.vbs) and press this button there, or ask Brad "run trend scout".');
+        return;
+      }
       setRunning(true);
       startedAt = Date.now();
       window.cipherAuthHeaders().then(function (headers) {
@@ -2080,7 +2092,12 @@ function cipherHelp() {
           });
         }
         setTimeout(poll, POLL_MS);
-      }).catch(function (e) { fail('Could not reach the local server: ' + e.message); });
+      }).catch(function (e) {
+        var m = e && e.message ? e.message : String(e);
+        fail(/sign-in|sign in|auth/i.test(m)
+          ? 'Sign in first: use the operator sign-in at the top of the page, then press Run Trend Scout again.'
+          : 'Could not reach the local server: ' + m + '. Start it with the launcher (Open Cipher Marketing.vbs).');
+      });
     }
     window.cipherRunTrendScout = run;
     btn.addEventListener('click', run);
@@ -10257,10 +10274,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.20"></script>
-<script src="assets/outreach.js?v=1.30.20"></script>
-<script src="assets/page-knowledge.js?v=1.30.20"></script>
-<script src="assets/hal-rail.js?v=1.30.20"></script>
+<script src="assets/outreach-data.js?v=1.30.21"></script>
+<script src="assets/outreach.js?v=1.30.21"></script>
+<script src="assets/page-knowledge.js?v=1.30.21"></script>
+<script src="assets/hal-rail.js?v=1.30.21"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 
