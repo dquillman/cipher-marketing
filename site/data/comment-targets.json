@@ -38,7 +38,7 @@
       "audience": "PMP candidates — the largest on the platform",
       "confidence": "proven",
       "videoOnly": true,
-      "note": "29 reactions / 1 comment at 23h on 2026-08-25 — the best room found that day. Every post is VIDEO, so never auto-draft: send to `manual` for Dave to watch and answer live.",
+      "note": "29 reactions / 1 comment at 23h on 2026-08-25 — the best room found that day. Every post is VIDEO, so never auto-draft: send to `manual` for Dave to watch and answer live. Scanned 2026-08-30: three live video rooms — Practice Question 91 at 70r/9c (20h), Question 90 at 78r/14c (1.9d), and a study-advice clip at 28r/ZERO comments (1.7d). Still the biggest rooms available to us anywhere, and still all video. Same three sent to manual as on 08-29, which means the previous batch went unanswered.",
       "priority": 1
     },
     {
@@ -46,7 +46,7 @@
       "profile": "https://www.linkedin.com/in/acolemanpmp/",
       "audience": "PMP candidates and career-changers",
       "confidence": "proven",
-      "note": "Posts most days. 93r/3c on a study-method post 2026-08-18 — best target that week. But the 2026-08-25 sweep found five posts in a row on career-pivot, networking and PMI-chapter topics with nothing exam-related to add. Check her, do not assume her. Scanned 2026-08-29: two live rooms (45r/7c job-search post, 42r/2c PMI Atlanta chapter call) and neither had an exam-reasoning opening. Third sweep in a row with reach but no exam topic — she posts career and chapter content, not exam content.",
+      "note": "Posts most days. 93r/3c on a study-method post 2026-08-18 — best target that week. But the 2026-08-25 sweep found five posts in a row on career-pivot, networking and PMI-chapter topics with nothing exam-related to add. Check her, do not assume her. Scanned 2026-08-29: two live rooms (45r/7c job-search post, 42r/2c PMI Atlanta chapter call) and neither had an exam-reasoning opening. Third sweep in a row with reach but no exam topic — she posts career and chapter content, not exam content. Scanned 2026-08-30: two NEW posts, a pay-transparency salary take (2r) and \"reading the room is an underrated PM skill\" (3r/2c) — both under the 5-reaction floor. Fourth sweep in a row with no exam-reasoning opening; her reach also dropped from the 40-60r range to single digits on these two.",
       "priority": 1
     },
     {
@@ -54,7 +54,7 @@
       "profile": "https://www.linkedin.com/in/bryancampbell/",
       "audience": "PgMP/PMP practitioners",
       "confidence": "proven",
-      "note": "Builds his own PM tool (PM Pixel) with ChatGPT and Claude — a genuine peer, not a competitor. Small rooms, zero comments. Relationship play; end on a question. Scanned 2026-08-29: no post in two weeks (newest 2w, 9r/1c on case-study timing). On-topic when he posts, but the cadence rarely lands inside the 5-day window.",
+      "note": "Builds his own PM tool (PM Pixel) with ChatGPT and Claude — a genuine peer, not a competitor. Small rooms, zero comments. Relationship play; end on a question. Scanned 2026-08-29: no post in two weeks (newest 2w, 9r/1c on case-study timing). On-topic when he posts, but the cadence rarely lands inside the 5-day window. Scanned 2026-08-30: still nothing newer than the 2-week-old case-study post. Note his activity page needs a scroll-to-top before the DOM query returns anything — a query run straight after navigate returns an empty array and looks like a dead account.",
       "priority": 2
     },
     {
@@ -62,7 +62,7 @@
       "profile": "https://www.linkedin.com/in/markuskleinpmp/",
       "audience": "PMP/PgMP practitioners, PMI-adjacent",
       "confidence": "proven",
-      "note": "GAVE US OUR ONLY TESTIMONIAL and sits on the PMI AI Standards Core Team. Build next to him, never against him — never name him as a competitor, never counter his content. His three-state self-scoring post (2026-08-20) is the structure we want to borrow, rewritten. Scanned 2026-08-29: activity page is almost all reshares; his one original (1r/1c at 1h) was a bus-factor note ending in a link to his own PM Career OS community. No exam-reasoning opening.",
+      "note": "GAVE US OUR ONLY TESTIMONIAL and sits on the PMI AI Standards Core Team. Build next to him, never against him — never name him as a competitor, never counter his content. His three-state self-scoring post (2026-08-20) is the structure we want to borrow, rewritten. Scanned 2026-08-29: activity page is almost all reshares; his one original (1r/1c at 1h) was a bus-factor note ending in a link to his own PM Career OS community. No exam-reasoning opening. Scanned 2026-08-30: two originals, the same PgMP-pass-in-three-numbers post in English (4r/1c) and German (2r/1c), both under the floor. Everything else on the page is a reshare of PMI AI-standard content.",
       "priority": 1
     },
     {
@@ -79,7 +79,7 @@
       "profile": "https://www.linkedin.com/in/colleenlofton/",
       "audience": "PMP candidates deciding whether to certify",
       "confidence": "likely",
-      "note": "Writes 'should you get the PMP' guidance with a Substack. 7r/3c on 2026-08-19 but six days old by the time we saw it — catch her posts inside the 5-day window. Scanned 2026-08-29: 2-11 reactions on higher-ed enrolment and PMI-chapter topics; nothing exam-related inside the window.",
+      "note": "Writes 'should you get the PMP' guidance with a Substack. 7r/3c on 2026-08-19 but six days old by the time we saw it — catch her posts inside the 5-day window. Scanned 2026-08-29: 2-11 reactions on higher-ed enrolment and PMI-chapter topics; nothing exam-related inside the window. Scanned 2026-08-30: newest original is a software-adoption post at 3.99d with ZERO reactions and 1 comment. Higher-ed content, not exam content.",
       "priority": 2
     },
     {
@@ -111,7 +111,7 @@
       "profile": "https://www.linkedin.com/in/b-aina/",
       "audience": "PMP candidates",
       "confidence": "likely",
-      "note": "98r/31c on 'a PMP certification can open doors, but experience is built by walking through them'. Good reach, but comment count runs high — check it against the 20-comment cap before drafting. Scanned 2026-08-29: her big rooms (149r/18c) are all a week or older; the only in-window post was 3r/0c. Her cadence and our 5-day window rarely line up.",
+      "note": "98r/31c on 'a PMP certification can open doors, but experience is built by walking through them'. Good reach, but comment count runs high — check it against the 20-comment cap before drafting. Scanned 2026-08-29: her big rooms (149r/18c) are all a week or older; the only in-window post was 3r/0c. Her cadence and our 5-day window rarely line up. Scanned 2026-08-30: newest original is 5.7d at 3 reactions and everything newer on the page is a reshare. Third confirmation that her cadence and the 5-day window do not line up.",
       "priority": 2
     },
     {
@@ -193,7 +193,7 @@
       "profile": "https://www.linkedin.com/in/jazmyn-r-vines/",
       "audience": "Security+ candidates",
       "confidence": "likely",
-      "note": "MEASURED 2026-08-29 (evening sweep): the best target found all day and the first one this roster has produced from the Security+ side. Her mid-study post — study app, book, notes, flashcards, 'trying different ways to make sure I'm actually UNDERSTANDING the material, not just memorizing answers' — took 18r/3c in four days and ends by ASKING what helped people who already passed. That is our thesis stated by the host plus an open invitation, which is the rarest shape on the roster. Cadence is slow (previous post two weeks earlier, 5r), so she is not a daily check, but catch her study posts inside the window. Queued 2026-08-29.",
+      "note": "MEASURED 2026-08-29 (evening sweep): the best target found all day and the first one this roster has produced from the Security+ side. Her mid-study post — study app, book, notes, flashcards, 'trying different ways to make sure I'm actually UNDERSTANDING the material, not just memorizing answers' — took 18r/3c in four days and ends by ASKING what helped people who already passed. That is our thesis stated by the host plus an open invitation, which is the rarest shape on the roster. Cadence is slow (previous post two weeks earlier, 5r), so she is not a daily check, but catch her study posts inside the window. Queued 2026-08-29. AGED OUT 2026-08-30: the study post hit 5.45 days with no new post since, so the 2026-08-29 queue item expired before Dave posted it. Her cadence is roughly two weeks, so she will not be catchable most days.",
       "priority": 2
     },
     {
@@ -202,7 +202,7 @@
       "audience": "PMP candidates",
       "confidence": "likely",
       "videoOnly": true,
-      "note": "DISCOVERED 2026-08-29 on the #PMPExam latest feed. Bills himself as \"The AI-Powered PMP Coach\", claims 4,000+ passed, and posts exam-reasoning micro-lessons several times a day (secondary vs residual risk, contingency vs fallback) — the closest thing on the roster to our own thesis. Rooms measured at 1-6 reactions, so the reach is not there yet, and most posts are short vertical VIDEO. He sells a competing coaching product: add something true, never argue.",
+      "note": "DISCOVERED 2026-08-29 on the #PMPExam latest feed. Bills himself as \"The AI-Powered PMP Coach\", claims 4,000+ passed, and posts exam-reasoning micro-lessons several times a day (secondary vs residual risk, contingency vs fallback) — the closest thing on the roster to our own thesis. Rooms measured at 1-6 reactions, so the reach is not there yet, and most posts are short vertical VIDEO. He sells a competing coaching product: add something true, never argue. Scanned 2026-08-30: FIVE posts in 13 hours, measured at 0, 1, 2, 3 and 3 reactions. He is the most on-thesis writer on the roster and the volume is not buying him a room. Keep checking daily — it costs one page load and he is the single best match if one ever lands.",
       "priority": 3
     },
     {
@@ -218,8 +218,24 @@
       "profile": "https://www.linkedin.com/in/motolanioluwaturoti/",
       "audience": "Security+ and entry-level cyber candidates",
       "confidence": "likely",
-      "note": "DISCOVERED 2026-08-29 on the #SecurityPlus latest feed — the ONLY genuine human room found on that hashtag, which is otherwise vendor spam and pay-after-you-pass proxy offers. Her Security+ pass post took 117r/33c in two days, and an earlier ISC2 post took 141r/52c. WIN-post rules apply: congratulate first, teach the copycats, never correct her. Her comment counts run HIGH and blow past the 20-comment cap fast, so she only qualifies inside the first day or so.",
+      "note": "DISCOVERED 2026-08-29 on the #SecurityPlus latest feed — the ONLY genuine human room found on that hashtag, which is otherwise vendor spam and pay-after-you-pass proxy offers. Her Security+ pass post took 117r/33c in two days, and an earlier ISC2 post took 141r/52c. WIN-post rules apply: congratulate first, teach the copycats, never correct her. Her comment counts run HIGH and blow past the 20-comment cap fast, so she only qualifies inside the first day or so. Scanned 2026-08-30: the pass post is now 121r/34c — it crossed the 20-comment cap within ~2 days of posting, which confirms the note above. She only qualifies inside the first 24 hours.",
       "priority": 2
+    },
+    {
+      "name": "Dr. Charlene P.",
+      "profile": "https://www.linkedin.com/in/charleneparks1220/",
+      "audience": "PMP RETAKE candidates — people who have already failed once or twice",
+      "confidence": "proven",
+      "note": "DISCOVERED 2026-08-30 on the #PMPExam latest feed and QUEUED the same day — the best room the scan has found since it started. Her client-passed post took 50 reactions against only TWO comments in 1.7 days, which is the exact high-reactions/low-comments shape the rules ask for. She runs a paid \"PMP Retake Recovery\" coaching product, so she is a competitor: add something true, never argue, never name a tool. What makes her valuable is the subject matter — she writes about exam DECISION-MAKING (second-guessing a well-reasoned answer, diagnosing why someone failed rather than restudying everything), which is our thesis coming from the host. Her cadence is slow — the post before this one was 5.7 days earlier, a poll — so check her a few times a week, not daily.",
+      "priority": 1
+    },
+    {
+      "name": "Abitha William, PMP",
+      "profile": "https://www.linkedin.com/in/abithawilliam/",
+      "audience": "PMP and CAPM candidates",
+      "confidence": "likely",
+      "note": "DISCOVERED 2026-08-30 on the #PMPExam latest feed. She writes our thesis almost word for word — \"I did not have a PMP knowledge problem, I had a sequence problem\", about questions that ask what to do FIRST — and she posts daily, always ending on a question. The problem is the rooms: measured across five consecutive posts at 3, 0, 3, 3 and 5 reactions. WATCH, do not queue, until one of her posts clears the 5-reaction floor. If one ever does she is the easiest comment on the roster to write.",
+      "priority": 3
     }
   ],
   "feeds": [
@@ -258,6 +274,10 @@
     "Mahmoud Yousry 76-page PMP revision guide (73r/5c), queued by the morning hashtag-bar scan on a rounded 'five days' label — the urn timestamp put it at 5.17 days by the evening re-sweep, past maxHostAgeDays. DROPPED. Lesson: record postedAt from the urn, not an age string, or a post can sit in the queue a day past the live window.",
     "Markus Kopko PgMP panel-review post (3r/1c at 6h, 2026-08-29) — on-thesis writing about the panel review being the real gate, and he is our most important relationship, but 3 reactions is under the minHostReactions floor of 5 and the single comment is his own reveal comment. The floor stands; the lowReachException wants a peer room at ZERO comments, not a self-gated one.",
     "Amer Ali 'Most PMP practice questions can be answered without reading the scenario' (2026-08-29, 4h) — the single most on-thesis piece of writing found all day, and LinkedIn rendered NO social-counts element on it at all, meaning zero reactions. Below the floor, and he sells a competing coaching product. Watch him: if one of these ever finds a room it is the closest match on the platform.",
-    "Andrew Whitmire PMIEF youth-webinar recording (26r/2c, 4d, 2026-08-29) — clears every number in the rules and was still skipped. A webinar recording offers a PMP candidate no exam-reasoning opening, and passing the numbers is not the same as having something true to say."
+    "Andrew Whitmire PMIEF youth-webinar recording (26r/2c, 4d, 2026-08-29) — clears every number in the rules and was still skipped. A webinar recording offers a PMP candidate no exam-reasoning opening, and passing the numbers is not the same as having something true to say.",
+    "Diedra Grant \"I am studying for my PMP, send me all your advice\" (49r/60c, 3d, 2026-08-30) — a genuine candidate room and exactly our audience, but 60 comments is three times the cap and a comment is invisible on arrival. Lesson: an open advice request is the one post shape that blows past maxHostComments fastest, so it only qualifies in the first few hours.",
+    "Kevin B. PMP pass announcement, Above Target in every domain (125r/37c, 1w, 2026-08-30) — over both the age window and the comment cap.",
+    "Abitha William \"I did not have a knowledge problem, I had a sequence problem\" (3r/2c at 22h, 2026-08-30) — the closest thing to our own thesis found on the platform, and under the 5-reaction floor. The floor stands.",
+    "#SecurityPlus latest feed 2026-08-30 — Joshua Mui and Zeinab Ali both posted Security+ pass announcements inside the last hour with NO social-counts element rendered, meaning zero reactions so far. Zeinab names PBQs explicitly, which is an opening. Too new to judge, both still inside the window: re-check tomorrow. Cyber Defentech was vendor promotion."
   ]
 }
