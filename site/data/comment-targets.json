@@ -16,7 +16,7 @@
       "NEVER queue a RESHARE. Open the post page and read who actually wrote it — a reshare shows the resharer at the top and the real author underneath. On 2026-08-26 a post was queued under Markus Kopko that Hiromi Nakatani wrote; the drafted comment referenced a piece of Markus own writing she had never published. Commenting on a reshare also puts us in a stranger room under a roster name, which is not the audience we chose.",
       "The host post must still be LIVE. A two-week-old post with 200 reactions is a dead room; all-time counts mean nothing.",
       "Skip any post already past maxHostComments — a comment is buried on arrival.",
-      "Skip video-only posts. A comment cannot be drafted without watching the video, so those are flagged for Dave to write live.",
+      "Video posts are NOT automatically manual — CHECK THE FRAME FIRST (learned 2026-08-30). Andrew Ramdayal’s practice-question clips print the entire question and all four options on screen as text: navigate to the permalink, wait ~5s, and zoom a screenshot of the video region to read it, then draft normally. Two of his three videos were drafted this way on 2026-08-30, including a 70-reaction room. Only send a video to `manual` when there is genuinely nothing to read — a talking-head clip with no on-screen text and no caption track, which cannot be heard. Do not click the middle of the video to play it; that hits a link and navigates away. Also read the EXISTING comments before drafting: on Question 91 all nine said only \"A\" with no reasoning, which is what made a comment explaining the distractor worth writing.",
       "If we cannot say something true that a PMP or Security+ candidate would not already know, SKIP. No 'great post' filler, ever.",
       "On a WIN post (someone passed), congratulate first and aim any teaching at people who will copy them — never correct the person celebrating. Dave flagged the first draft of one of these as aggressive and he was right.",
       "Never mention CipherExam, a trial, or a link in a comment. The payoff is profile views and follows, not clicks.",
@@ -38,8 +38,9 @@
       "audience": "PMP candidates — the largest on the platform",
       "confidence": "proven",
       "videoOnly": true,
-      "note": "29 reactions / 1 comment at 23h on 2026-08-25 — the best room found that day. Every post is VIDEO, so never auto-draft: send to `manual` for Dave to watch and answer live. Scanned 2026-08-30: three live video rooms — Practice Question 91 at 70r/9c (20h), Question 90 at 78r/14c (1.9d), and a study-advice clip at 28r/ZERO comments (1.7d). Still the biggest rooms available to us anywhere, and still all video. Same three sent to manual as on 08-29, which means the previous batch went unanswered.",
-      "priority": 1
+      "note": "29 reactions / 1 comment at 23h on 2026-08-25 — the best room found that day. Every post is VIDEO, so never auto-draft: send to `manual` for Dave to watch and answer live. Scanned 2026-08-30: three live video rooms — Practice Question 91 at 70r/9c (20h), Question 90 at 78r/14c (1.9d), and a study-advice clip at 28r/ZERO comments (1.7d). Still the biggest rooms available to us anywhere, and still all video. Same three sent to manual as on 08-29, which means the previous batch went unanswered. BREAKTHROUGH 2026-08-30: his practice-question videos are READABLE without audio — the full stem and all four options are burned into the frame as text, so they can be screenshotted and answered. Question 91 (70r/9c) and Question 90 (78r/14c) were both drafted this way instead of going to manual. His non-question clips (\"Don’t do this when studying\") are talking head only, no on-screen text, no caption track, and still need Dave. This roughly doubles what the scan can queue, because his rooms are by far the largest we can reach.",
+      "priority": 1,
+      "videoIsReadable": true
     },
     {
       "name": "Alece Coleman, LCSW, PMP",
@@ -278,6 +279,7 @@
     "Diedra Grant \"I am studying for my PMP, send me all your advice\" (49r/60c, 3d, 2026-08-30) — a genuine candidate room and exactly our audience, but 60 comments is three times the cap and a comment is invisible on arrival. Lesson: an open advice request is the one post shape that blows past maxHostComments fastest, so it only qualifies in the first few hours.",
     "Kevin B. PMP pass announcement, Above Target in every domain (125r/37c, 1w, 2026-08-30) — over both the age window and the comment cap.",
     "Abitha William \"I did not have a knowledge problem, I had a sequence problem\" (3r/2c at 22h, 2026-08-30) — the closest thing to our own thesis found on the platform, and under the 5-reaction floor. The floor stands.",
-    "#SecurityPlus latest feed 2026-08-30 — Joshua Mui and Zeinab Ali both posted Security+ pass announcements inside the last hour with NO social-counts element rendered, meaning zero reactions so far. Zeinab names PBQs explicitly, which is an opening. Too new to judge, both still inside the window: re-check tomorrow. Cyber Defentech was vendor promotion."
+    "#SecurityPlus latest feed 2026-08-30 — Joshua Mui and Zeinab Ali both posted Security+ pass announcements inside the last hour with NO social-counts element rendered, meaning zero reactions so far. Zeinab names PBQs explicitly, which is an opening. Too new to judge, both still inside the window: re-check tomorrow. Cyber Defentech was vendor promotion.",
+    "Andrew Ramdayal talking-head clip \"Don’t do this when studying for the PMP\" (28r/0c, 1.7d, 2026-08-30) — kept in `manual`, not drafted. 43 seconds of speech, no on-screen text, and LinkedIn exposed no caption track when the CC control was invoked, so there is no way to know what he advised. A zero-comment room at 28 reactions is worth Dave watching for two minutes."
   ]
 }
