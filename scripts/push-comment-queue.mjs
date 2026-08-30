@@ -30,10 +30,11 @@ import { getDb, credentialHelp } from "./lib/firestore-access.mjs";
 const args = process.argv.slice(2);
 const DRY = args.includes("--dry");
 const KEEP_BASELINE = args.includes("--keep-baseline");
+const REPLACE_MANUAL = args.includes("--replace-manual");
 const file = args.find((a) => !a.startsWith("--"));
 
 if (!file) {
-  console.error("usage: node scripts/push-comment-queue.mjs <queue.json> [--dry] [--keep-baseline]");
+  console.error("usage: node scripts/push-comment-queue.mjs <queue.json> [--dry] [--keep-baseline] [--replace-manual]");
   process.exit(1);
 }
 
@@ -41,6 +42,20 @@ const doc = JSON.parse(readFileSync(file, "utf8"));
 
 const MAX_HOST_COMMENTS = 20;
 const MAX_HOST_AGE_DAYS = 5;
+
+// A LinkedIn activity id has the post's creation time in its top 42 bits, so a
+// permalink is self-dating. Returns null when the url carries no activity urn.
+function postedAtFromUrn(url) {
+  const m = /urn:li:activity:(\d+)/.exec(url || "");
+  if (!m) return null;
+  try {
+    const ms = Number(BigInt(m[1]) >> 22n);
+    if (!Number.isFinite(ms) || ms <= 0) return null;
+    return new Date(ms).toISOString();
+  } catch {
+    return null;
+  }
+}
 
 function fail(msg) {
   console.error(`REJECTED: ${msg}`);
@@ -80,11 +95,22 @@ function check(d) {
     if (typeof it.comments === "number" && it.comments > MAX_HOST_COMMENTS)
       fail(`${who}: host post already has ${it.comments} comments — buried on arrival`);
 
-    if (it.postedAt) {
-      const ageDays = (Date.now() - Date.parse(it.postedAt)) / 86400000;
-      if (Number.isFinite(ageDays) && ageDays > MAX_HOST_AGE_DAYS)
-        fail(`${who}: host post is ${ageDays.toFixed(1)} days old — dead room`);
-    }
+    // The age guard used to be `if (it.postedAt)`, so an item carrying only a
+    // rounded `age` string ("5 days") skipped it entirely. That is how Mahmoud
+    // Yousry sat in the queue on 2026-08-29 at a real 5.17 days, a day past the
+    // window, having been queued on the rounded label. The permalink already
+    // carries the true timestamp, so derive it rather than trusting the label,
+    // and refuse the item when neither is available. An unmeasurable room is a
+    // room you cannot say is alive.
+    const postedAt = it.postedAt || postedAtFromUrn(it.url);
+    if (!postedAt)
+      fail(`${who}: no postedAt and no activity urn in the url — cannot check the ${MAX_HOST_AGE_DAYS}-day window`);
+    const ageDays = (Date.now() - Date.parse(postedAt)) / 86400000;
+    if (!Number.isFinite(ageDays))
+      fail(`${who}: postedAt "${postedAt}" is not a readable time`);
+    if (ageDays > MAX_HOST_AGE_DAYS)
+      fail(`${who}: host post is ${ageDays.toFixed(1)} days old — dead room`);
+    it.postedAt = postedAt;
 
     if (!it.why || it.why.length < 40)
       fail(`${who}: no stated reason this target is worth a comment`);
@@ -164,6 +190,36 @@ if (KEEP_BASELINE || !doc.baseline) {
   const existing = await ref.get();
   const prior = existing.exists ? existing.data()?.baseline : null;
   if (prior) doc.baseline = prior;
+}
+
+// Video posts Dave has to write live. `manual` is owned by whichever run last
+// found one, and a caller that did not find any has no reason to know it
+// exists — so a bare .set() silently deletes it. That is not hypothetical:
+// on 2026-08-29 the monthly cipher-hashtag-bar-scan (09:14) wrote over the
+// daily cipher-comment-scan's (05:30) queue and destroyed both Andrew Ramdayal
+// targets, one of them a 15-reaction / ZERO-comment room at 16h that the scan
+// had called the highest-leverage item it found that day. On the 1st of every
+// month those two tasks are GUARANTEED to collide, 3h44m apart.
+//
+// Carried forward by url, exactly like commentedOn above, so the trap is shut
+// for every caller rather than for whoever remembers to read the SKILL.
+// Pass --replace-manual to deliberately drop entries that are no longer live.
+{
+  const prior = await ref.get();
+  const kept = (prior.exists ? prior.data()?.manual : null) || [];
+  const incoming = doc.manual || [];
+  if (REPLACE_MANUAL) {
+    doc.manual = incoming;
+  } else {
+    const seen = new Set(incoming.map((e) => e.url));
+    doc.manual = incoming.concat(kept.filter((e) => !seen.has(e.url)));
+    const revived = doc.manual.length - incoming.length;
+    if (revived > 0) {
+      console.log(`
+carried forward ${revived} write-live target(s) already in the queue:`);
+      for (const e of kept.filter((x) => !seen.has(x.url))) console.log(`  ${e.author} — ${e.url}`);
+    }
+  }
 }
 
 // Refuse to re-queue a thread Dave has already answered. The scan is told to

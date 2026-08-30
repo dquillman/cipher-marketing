@@ -19,6 +19,24 @@
 //   - Everything else (copy, scheduledTime, examFocus, video, hook, cta…) takes
 //     local-file-wins precedence — that's the source of truth for content.
 //
+// ⚠ DATA LOSS 2026-08-29 — campaign/state was blind-overwritten. Every write
+// here is a bare .set(), which REPLACES the document. campaign/posts had a
+// DASHBOARD_FIELDS preserve pass (added after the 2026-08-19 `archived` wipe
+// below); campaign/state had nothing. site/app.html deliberately writes three
+// field paths into campaign/state that campaign-state.json has never carried —
+// metrics.lastSeenFunnel, contacts.<id>, and contacts.<id>.contacted/.replied —
+// using field-path updates precisely so it could not clobber a sibling writer.
+// A verification run of `--state` then did exactly what the dashboard was
+// engineered never to do: the contacts roster and the funnel baseline that
+// lived only in Firestore are gone and unrecoverable.
+//
+// The fix is a GUARD, not a comment (see feedback_fix_means_cant_recur — patch
+// the instance AND close the trap; a guard that ABORTS beats a value written
+// once). Every upsert now reads the live document first and refuses to write if
+// the payload would delete any field path that exists in Firestore. It does NOT
+// silently merge them back — a silent merge would hide that the local file has
+// drifted. Deleting on purpose requires --allow-field-loss.
+//
 // Usage:
 //   node scripts/seed-firestore.mjs            # seed posts + state (merging grades)
 //   node scripts/seed-firestore.mjs --state    # state only, skip posts
@@ -26,6 +44,12 @@
 //   node scripts/seed-firestore.mjs --pull     # pull-only: copy Firestore grades
 //                                              # back into local posts.json
 //                                              # (no Firestore writes)
+//   node scripts/seed-firestore.mjs --allow-field-loss
+//                                              # proceed even though the write
+//                                              # deletes live-only field paths.
+//                                              # Only for a deliberate delete —
+//                                              # the deleted paths are printed
+//                                              # before the write either way.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -43,6 +67,7 @@ const args = new Set(process.argv.slice(2));
 const STATE_ONLY = args.has("--state");
 const POSTS_ONLY = args.has("--posts");
 const PULL_ONLY  = args.has("--pull");
+const ALLOW_FIELD_LOSS = args.has("--allow-field-loss");
 
 // Fields the dashboard or Cloud Function writes to Firestore that the local
 // posts.json does NOT track. These must be preserved on every re-seed so that
@@ -110,7 +135,95 @@ async function getDoc(collection, docId) {
   return snap.exists ? snap.data() : null;
 }
 
+// ---- Field-loss guard ----
+//
+// `.set()` REPLACES a document: any field path present in Firestore but absent
+// from the payload is deleted, with no diff, no confirmation, and no way back.
+// That is how `archived` died on 2026-08-19 and how the campaign/state contacts
+// roster + funnel baseline died on 2026-08-29.
+//
+// walkMissingPaths names the exact LEAF paths that would be destroyed, so a
+// whole missing branch reports as `contacts.abc.contacted` rather than the
+// useless `contacts` — you can read the abort and know precisely what is on the
+// chopping block. It descends through objects present on both sides too, which
+// is how `contacts.abc.replied` is caught when `contacts.abc` itself survives.
+//
+// Arrays are compared as opaque leaves on purpose. The only array this script
+// writes is posts.json's `posts`, whose per-element field preservation is
+// already handled by mergePostsPreservingGrades() keyed on post id — index-wise
+// diffing here would fight that merge and fire on every legitimate reorder.
+// The guard still catches an array being dropped from the document entirely.
+const isPlainObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+
+// Every leaf path under `value`. An empty object is itself a leaf.
+function leafPaths(value, prefix, out = []) {
+  if (isPlainObject(value) && Object.keys(value).length) {
+    for (const [k, v] of Object.entries(value)) leafPaths(v, `${prefix}.${k}`, out);
+  } else {
+    out.push(prefix);
+  }
+  return out;
+}
+
+function walkMissingPaths(live, local, prefix = "", out = []) {
+  if (!isPlainObject(live)) return out;
+  for (const [key, liveVal] of Object.entries(live)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (!isPlainObject(local) || !Object.prototype.hasOwnProperty.call(local, key)) {
+      // Not in the payload at all — `.set()` would delete this whole branch.
+      leafPaths(liveVal, path, out);
+      continue;
+    }
+    walkMissingPaths(liveVal, local[key], path, out);
+  }
+  return out;
+}
+
+// Reads the live doc and refuses the write if it would destroy field paths that
+// only exist in Firestore. Generic: it protects every doc this script upserts,
+// campaign/posts included. It does not overlap with the DASHBOARD_FIELDS
+// preserve pass — that pass runs first and merges remote-only post fields back
+// into the payload, so by the time the guard looks, those paths are present and
+// it stays quiet. The guard is the backstop for everything nobody thought to
+// add to a preserve list.
+async function assertNoFieldLoss(collection, docId, data) {
+  const live = await getDoc(collection, docId);
+  if (!live) return;                       // new doc — nothing to lose
+  const missing = walkMissingPaths(live, data);
+  if (!missing.length) return;
+
+  const ref = `${collection}/${docId}`;
+  const n = missing.length;
+  const plural = n === 1 ? "path that exists" : "paths that exist";
+  const MAX_LISTED = 60;
+  const listed = missing.slice(0, MAX_LISTED);
+  const extra = n - listed.length;
+
+  if (ALLOW_FIELD_LOSS) {
+    console.warn(`\n  ⚠ --allow-field-loss: deleting ${n} live-only field ${plural} in ${ref}:`);
+    for (const p of listed) console.warn(`     - ${p}`);
+    if (extra) console.warn(`     … and ${extra} more`);
+    console.warn("");
+    return;
+  }
+
+  console.error(`\n  ABORT — writing ${ref} would DELETE ${n} field ${plural} in Firestore and not in the local payload:\n`);
+  for (const p of listed) console.error(`   - ${p}`);
+  if (extra) console.error(`   … and ${extra} more`);
+  console.error(`
+  These are live values the local file does not carry. The dashboard writes
+  some of them with field-path updates (metrics.lastSeenFunnel, contacts.<id>)
+  specifically so it can never clobber another writer — a .set() from here
+  would. Nothing was written.
+
+  Either add them to the local file so the write carries them forward, or, if
+  deleting them is genuinely what you want, re-run with --allow-field-loss.
+`);
+  process.exit(1);
+}
+
 async function upsert(collection, docId, data) {
+  await assertNoFieldLoss(collection, docId, data);
   const db = await getDb();
   await db.collection(collection).doc(docId).set(data);
   return { ok: true };
@@ -321,8 +434,13 @@ async function runSeed() {
     state._meta = state._meta || {};
     state._meta.lastUpdatedAt = new Date().toISOString();
     state._meta.lastUpdatedBy = "seed-firestore";
-    writeFileSync(join(DATA, "campaign-state.json"), JSON.stringify(state, null, 2) + "\n");
+    // Firestore first, local file second. The stamp says "file and Firestore
+    // were aligned at this instant" — writing it before the upsert meant a run
+    // the field-loss guard aborts still left a fresh "synced" timestamp in the
+    // local file for a sync that never happened. An abort must write nothing,
+    // anywhere.
     await upsert("campaign", "state", state);
+    writeFileSync(join(DATA, "campaign-state.json"), JSON.stringify(state, null, 2) + "\n");
     console.log("  ✓  campaign/state (synced " + state._meta.lastUpdatedAt + ")");
   } else {
     console.log("  ⤳ skipping campaign/state (--posts)");

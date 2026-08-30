@@ -1,77 +1,88 @@
-## Competitive Intel: Pocket Prep — Deep Dive
+## Competitive Intel: Deep Dive — Pocket Prep
 
-*Refreshed 2026-08-01. Prior deep dive was built on a stale premise; this one corrects it.*
-
----
-
-### Their Positioning
-
-Pocket Prep is a mobile-first drill app that has been in market since 2011 — long enough that brand trust is real and not manufactured. The pitch is friction removal: open the app, answer a few questions, close it, repeat. Study fits into gaps in the day rather than requiring a study session.
-
-**Current shape of the product (verified 2026-08-01):**
-
-- **21 professional certification exams**, 22,000+ questions across the catalog
-- **2,450 PMP questions. 1,600 SHRM-CP questions.** Plus the CompTIA family. That is direct overlap with all three of our Tier-1 clusters.
-- **Expert-written explanations with textbook references** on questions — this is the correction to our old file, which claimed they had none
-- **Adaptive practice** that weights question selection toward demonstrated weak areas
-- **Mock exams** for test-day simulation
-- **$14.99–$29.99/month**, with per-exam packages reported in the $9.99–$20 range depending on bank size
-- An active content operation — they published a 2026 SHRM BASK change explainer, which is exactly the timely, high-intent content we don't currently produce
-
-The honest read: this is a competent, mature product, not a memorization toy. Marketing against a caricature of it will lose.
+*Generated 2026-08-29 (monthly automated refresh)*
+*Threat level: **HIGH** — the default result and the default forum recommendation on all three of our priority exams.*
 
 ---
 
-### What Their Users Actually Complain About
+### Current positioning
 
-Sourced from public review surfaces (app stores and review aggregators), so treat as directional rather than measured:
+Pocket Prep does not sell knowledge. It sells **a study session that fits in the gap you actually have.** That is the whole product thesis, and it is why they are hard to displace: a working professional with a commute, a lunch break, and a tired hour after the kids are down does not need a course, they need something that opens instantly and gives them credit for eight minutes. Native iOS and Android, one question at a time, an explanation with a textbook reference at the end of each one, a percentage that climbs.
 
-- **Cross-device licensing confusion** — at least one report of a purchase unlocking on iPad but not iPhone, raising the question of paying twice for the same content.
-- **Answer-accuracy reports** — users occasionally flagging incorrect answers surfaced during review.
-- **Conditional refund policy** — the money-back path is gated on hitting scores in their own quizzes. A guarantee with a scorecard attached is a weaker guarantee than it appears at the point of purchase.
-- **The recurring category complaint**, not specific to them: high practice scores that don't transfer to the real exam. This is the failure mode our whole product exists for, and it shows up in reviews of every question bank including theirs.
+Everything else in their marketing is legitimacy scaffolding around that thesis. Twenty-two thousand questions across twenty-one certifications — roughly 2,450 on PMP, 1,600 on SHRM-CP, the full CompTIA family. Mock exams. Adaptive practice that routes more questions toward the domains a candidate scores worst in. In market since 2011, with an app-store review footprint no new entrant can manufacture. A live content operation that publishes an explainer the week an exam changes and captures the search traffic at the exact moment a candidate is most anxious. Roughly $14.99–$29.99/month, or about $9.99–$20 for a single exam bank.
 
----
-
-### 3 Weaknesses to Exploit
-
-**1. Explanation without diagnosis.** Their explanation is authored once and identical for every candidate who sees that question. Their adaptivity resolves to the domain — "you're weak in Risk." Neither mechanism can surface *the pattern in how a specific person is wrong*. A candidate who consistently picks the option where the project manager acts before consulting the sponsor has a describable reasoning habit, and nothing in a domain-weighted drill will ever name it for them. CipherExam's per-user, per-exam thinking-traps tracking is aimed exactly here.
-
-**2. The drill format can't rehearse PBQs.** Single-MCQ delivery is the whole interaction model. Security+, Network+, and A+ include performance-based items that a one-question-at-a-time drill cannot represent. They can add more MCQs forever without closing this. CipherExam supports PBQs natively on the CompTIA family.
-
-**3. Per-exam purchasing versus one platform.** A candidate sitting PMP this year and Security+ next year buys twice and learns a second product's interface, progress model, and quirks. CipherExam is one login across 11 live certifications, with CISSP and AWS coming. The multi-cert professional is the customer we're structurally better suited to hold — and per PMI's own audience, that person is common.
+**The read for us:** last month's analysis landed on their *resolution* ceiling — feedback that resolves to the domain and never to the person — and that remains the correct central wedge. This month's pass looks at the other side of the ledger: the things their scale and their business model cost them. A competitor's strengths usually carry their weaknesses on the same axis, and Pocket Prep's do.
 
 ---
 
-### What Pocket Prep Genuinely Does Better
+### Specific user complaints
 
-Dave should read this section as-is rather than discounted:
+These are the reported, checkable friction points on record. Every one is a product or policy fact rather than an opinion, which is what makes them usable — and each one is the shadow of a strength.
 
-- **Native mobile.** They have real iOS and Android apps built for thumb-sized study sessions. CipherExam is a web product. On a phone, on a commute, they are the better experience today, and no amount of positioning changes that.
-- **Per-exam bank depth.** 2,450 PMP questions is a large, seriously maintained bank.
-- **Trust footprint.** Fifteen years in market, thousands of app-store ratings, brand recognition in IT cert circles. We have one canonical testimonial and reserved slots for two more.
-- **Content velocity.** They ship timely exam-change explainers. Our three cornerstone posts are strong and evergreen, but none of them capture the search spike that follows an exam blueprint change.
+- **Cross-device licensing confusion.** A purchase made on one device does not reliably unlock the same account on another; the reported shape is an iPad purchase that fails to carry to an iPhone. In a product whose entire promise is *study wherever you are*, friction between the candidate's own devices contradicts the pitch at its strongest point.
+- **Incorrect answers surfaced in review.** Users report finding wrong keys in the bank. This is the cost of scale: 22,000 items across 21 certifications is a maintenance surface, and a single wrong key does disproportionate damage in a product whose value proposition is an authoritative explanation with a citation attached.
+- **A refund conditioned on scores inside their own quizzes.** The refund path requires the candidate to have posted certain results in Pocket Prep's product. That is a performance test wearing the clothes of a guarantee, and it puts the vendor in the position of marking the paper that decides whether it keeps the money.
+- **Per-exam purchase economics on a multi-cert audience.** Each additional certification is a fresh purchase decision.
 
-We win on how feedback works. We do not currently win on volume, mobile, or trust — and pretending otherwise in copy is how a smart prospect stops believing the rest of the claim.
-
----
-
-### Recommended Post Hook
-
-> *"Adaptive means it noticed you're weak in Risk. Diagnostic means it noticed you always pick the answer where the manager acts before the sponsor is consulted. Those aren't the same tool, and only one of them changes what you do on exam day."*
-
-Runs in product voice or founder voice, names nobody, and states the actual distinction rather than a caricature.
+**Handling rule, unchanged:** none of this gets named in public copy. Named-competitor attack posts read as insecurity, and two of the four are policy details a prospect experiences as inside baseball. Use them to shape our own offer instead — which is precisely where the sixty-day, no-conditions guarantee earns its keep.
 
 ---
 
-### One Organic Play
+### Three exploitable weaknesses
 
-**r/pmp and r/CompTIA — answer the "I scored 85% on practice and failed" threads.** These post repeatedly and they are the highest-intent, lowest-cynicism audience for our thesis. Reply with genuine diagnostic help: ask what the wrong answers had in common, walk one example, name the pattern. No link unless someone asks. Per the marketing plan, Reddit stays organic and value-first, and this is the thread type where our framing is actually the correct answer rather than a pitch.
+**1. Their scale is a maintenance liability the moment a standard moves.**
+On 2026-07-09 PMI rebalanced the PMP Exam Content Outline: People 42% → 33%, Process 50% → 41%, Business Environment **8% → 26%**. A bank of ~2,450 PMP items built against the old weighting does not re-aim because an explainer was published about the change. Re-weighting toward a domain that just more than tripled is a production programme measured in months, and it competes for the same authoring capacity as twenty other certifications. Their content operation is fast; their *bank* cannot be. The gap between "we published about the change" and "our practice distribution reflects the change" is the real opening, and it is widest right now.
+
+**2. The per-exam SKU is structurally hostile to our best customer.**
+Our buyer is the stacker — PMP now, Security+ for the team next year, maybe SHRM-CP after a move into people leadership. Pocket Prep's model prices each of those as a separate decision, and the cross-device licensing friction lands hardest on exactly the person who has bought more than once. CipherExam is one account across twelve live certifications; Exam Pass is $59 once for ninety days of full access — a window that maps onto a booked sit date rather than a billing calendar — and Pro is $19/month with a seven-day trial and no card. The stacker is the customer where our model is not just cheaper but structurally different, and we have never built a single asset that speaks to them.
+
+**3. Their guarantee sets a low industry bar that we already clear and never mention.**
+Conditioning a refund on scores achieved inside the vendor's own product is the category norm, not an outlier — Brain Sensei's pass guarantee carries a thirty-day window and exam limits; PgMP Simulator's requires two full exams at 80%+ before a real-world fail counts. CipherExam's sixty-day money-back guarantee has no conditions, no proof requirement, and no fine print. That is a genuine competitive advantage available today with zero engineering, and it is absent from every live surface. It is rarer to find an unused advantage than a new one.
+
+*(Carried forward and still binding: the domain-versus-person resolution ceiling, the inability of a single-MCQ format to rehearse CompTIA performance-based questions, and the fact that question volume says nothing about the cognitive level of the questions. Those three were argued in full last month and have not weakened.)*
+
+---
+
+### What they genuinely do better (honest)
+
+This section is what keeps the rest of the report usable.
+
+- **They answer "what do I do in the next eight minutes" better than we do.** That is the question a tired candidate actually asks, and a native app that opens to a question answers it instantly. Our answer requires a browser and a decision. This is not a positioning problem; it is a real difference in the shape of the product.
+- **Trust that took fifteen years to accumulate.** Thousands of app-store reviews and a name the candidate has already heard. A prospect weighing a known quantity against an unknown one is behaving rationally.
+- **Breadth executed at a uniform standard.** Twenty-one certifications held to one bar is an operations achievement. Ours is twelve, and depth is our answer — but breadth is genuinely valuable to a candidate who has not picked their next exam.
+- **Explanations with sourcing.** Expert-written, with textbook references. That is a real quality bar and we should have stopped being surprised by it a month ago.
+- **They show up first when an exam changes.** They own the timely-explainer lane. We have the better argument to make about *what a content change does to how you should study*, and we are slower to make it.
+
+---
+
+### Recommended post hook
+
+> **"In July, Business Environment went from 8% of the PMP to 26%. Open whatever you're practising with and count how many of your last fifty questions were Business Environment."**
+>
+> Most candidates will find a number that looks like the old outline, because a large question bank is a photograph of the exam on the day it was written. The fix is not more questions. It is practising against the exam that exists now.
+
+It names nobody, it hands the reader an action they can complete in ninety seconds inside whatever tool they already own, and the result of that action is the argument. A prospect who counts their own questions has been persuaded by their own data rather than by our copy.
+
+**Before this runs, our own PMP distribution has to survive the same count.** That is the first recommended action below, and it is a hard gate on the hook.
+
+---
+
+### One organic play
+
+**"Count your own bank" — a single-post audit prompt with a follow-through.**
+
+Post the count challenge above. In the same post, say plainly what a candidate should do with the answer, whatever it is: if the distribution is old, the study plan is over-weighted toward People and Process and under-weighted on the fastest-growing domain of the exam, and the correction is to deliberately over-sample Business Environment scenarios for a fortnight. Give that away with no gate — it is useful to someone who never buys anything from us, which is what makes it credible from someone who sells prep.
+
+The offer line goes in the body, one call to action, signup only. If the body promises a teardown of a specific question, the teardown ships in the first comment within a minute, in one comment, carrying the link — not as a separate comment later.
+
+Why it works against Pocket Prep specifically: they cannot run this post. Any large-bank vendor that invites its own users to audit their question distribution against a two-month-old outline is running a risk we do not have. The play is only available to the smaller, newer, faster product — which is the one advantage of being smaller, newer and faster, and we should spend it.
 
 ---
 
 ## Recommended Actions
 
-1. **Beat them to the SHRM BASK 2026 change.** SHRM has updated the BASK with expanded AI content and a refined Inclusive Mindset competency. Pocket Prep has already published on it. Our `shrm-cp-competency-map.pdf` lead magnet is live and returning 200 — update it against the refreshed BASK and ship one SHRM-CP post this month while search intent is elevated. This is the single most time-sensitive item in this refresh.
-2. **Decide the mobile posture explicitly.** They win on phone experience and that gap is widening. Either commit to a mobile-web polish pass on the study flow, or accept it and stop competing for the commute-study use case in copy. Drifting between the two is the expensive option. Recommend: polish mobile web, don't build an app.
-3. **Instrument the multi-cert wedge.** One-login-across-11-certs is our clearest structural advantage over a per-exam purchase model, and we have zero data on how many candidates actually plan a second certification. Add a single question to the lead-magnet capture — how many certifications in the next 24 months — and let the answer decide whether this belongs in the headline or the footnotes.
+1. **Count our own PMP distribution against the 2026 outline this month, and record the number.** Everything above — the post hook, the organic play, and the first battlecard point — depends on our own bank matching the exam we are telling candidates to check theirs against. Measure the share of live PMP items in each of the three domains, write it into the campaign state, and hold the hook until Business Environment is defensibly near 26%. If it is short, the item work is the campaign for this month and the copy waits.
+
+2. **Build one asset for the certification stacker.** It is the audience where our model is structurally different rather than incrementally cheaper, and it has never been addressed directly — one account, twelve live certifications, one login, no second purchase decision. One landing-page section or one post, not a programme. This is the customer Pocket Prep's per-exam SKU cannot serve well no matter how many questions they add.
+
+3. **Answer the mobile objection in writing, once, and reuse it.** Their native app is a genuine advantage and prospects will raise it. Decide the standing answer — whether that is what the web app looks like on a phone, or a stated position on why diagnostic work wants a bigger screen — and put it where Brad can reach it. This was raised last month and is still open; an unanswered objection is more expensive than an unflattering answer.
