@@ -35,6 +35,7 @@ Extracted from `cipher-exam-context` skill on 2026-05-25. When voice rules chang
 - Named-competitor comparisons in **ads or LP copy** (mentioning them in Reddit value-posts or in the brief itself is fine; ads stay clear-not-clever)
 - Lifted phrases from competitor copy (borrow structure only — see `cipher-exam-context` → "Competitor counter-tactics")
 - First-person exam-taking voice ("when I sat for the PMP…") — Dave didn't, don't fake it
+- **British spelling.** US spelling everywhere, no exceptions (Dave, 2026-08-31). `memorized` not `memorised`; also recognize, organize, prioritize, summarize, analyze, minimize; `practice` for both noun and verb (never `practise`); behavior/favor/honor; canceled, modeling, labeled; defense, license; toward/backward (no trailing `s`). The audience is US-based PMP and Security+ candidates and PMI's own material is US-spelled — a British spelling reads as not-from-here, which is fatal in a comment whose whole job is to sound like a peer in that room. It slips in most easily in long reasoning sentences, which is exactly the register the LinkedIn comment drafts use.
 
 ---
 

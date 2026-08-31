@@ -43,6 +43,33 @@ const doc = JSON.parse(readFileSync(file, "utf8"));
 const MAX_HOST_COMMENTS = 20;
 const MAX_HOST_AGE_DAYS = 5;
 
+// US spelling, no exceptions (Dave, 2026-08-31 — he flagged "memorised").
+// The audience is US-based PMP and Security+ candidates and PMI's own material
+// is US-spelled, so a British spelling reads as not-from-here in a comment
+// whose entire job is to sound like a peer in that room. Four slipped into one
+// draft on the day the rule was set, all inside long reasoning sentences,
+// which is exactly the register these comments are written in — so this is a
+// gate, not a style note. Also recorded in site/data/brand-voice.md.
+//
+// Deliberately an explicit list rather than a blanket /ise$/: surprise,
+// exercise, advise, revise, supervise, compromise, promise and franchise are
+// all correct US spellings, and "analysis" and "emphasis" are correct nouns.
+const BRITISH = [
+  /\b(?:memoris|recognis|organis|prioritis|summaris|minimis|maximis|categoris|realis|apologis|specialis|standardis|optimis|utilis|normalis|generalis|penalis|formalis|criticis|emphasis|analys|practis)(?:e|es|ed|ing|ation)\b/gi,
+  /\b(?:behaviour|favour|labour|honour|colour|rumour|neighbour)(?:s|ed|ing|al|ally)?\b/gi,
+  /\b(?:defence|licence|offence|pretence)s?\b/gi,
+  /\b(?:towards|backwards|forwards|upwards|downwards|afterwards)\b/gi,
+  /\b(?:cancelled|cancelling|modelling|labelled|labelling|travelled|travelling|fuelled|marvellous)\b/gi,
+  /\b(?:centre|theatre|metre|litre|programme)s?\b/gi,
+  /\b(?:whilst|amongst)\b/gi,
+];
+
+function britishSpellings(text) {
+  const hits = new Set();
+  for (const rx of BRITISH) for (const m of String(text).matchAll(rx)) hits.add(m[0]);
+  return [...hits];
+}
+
 // A LinkedIn activity id has the post's creation time in its top 42 bits, so a
 // permalink is self-dating. Returns null when the url carries no activity urn.
 function postedAtFromUrn(url) {
@@ -91,6 +118,10 @@ function check(d) {
       fail(`comment for ${who} reads as a pitch or carries a link — rewrite it`);
     if (/^(great post|love this|so true|well said|thanks for sharing)/i.test(it.comment.trim()))
       fail(`comment for ${who} opens with filler`);
+
+    const brit = britishSpellings(it.comment);
+    if (brit.length)
+      fail(`comment for ${who} uses British spelling: ${brit.join(", ")} — US spelling only`);
 
     if (typeof it.comments === "number" && it.comments > MAX_HOST_COMMENTS)
       fail(`${who}: host post already has ${it.comments} comments — buried on arrival`);
