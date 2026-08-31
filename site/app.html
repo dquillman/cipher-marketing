@@ -6630,6 +6630,18 @@ document.addEventListener('cipher:state-updated', function () {
     });
   }
 
+  // Date AND time, in Dave's local zone. The date alone was not enough to tell
+  // two comments posted on the same morning apart, and the baseline re-read is
+  // scheduled off this stamp.
+  function cqStamp(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return String(iso).slice(0, 16).replace('T', ' ');
+    return d.toLocaleString(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+  }
+
   // Each item carries the host post's numbers so the decay is visible: these
   // go stale fast, and a comment on a dead post is wasted effort.
   function renderCommentQueue(doc) {
@@ -6682,11 +6694,18 @@ document.addEventListener('cipher:state-updated', function () {
       '</div>';
     }
 
+    // `commentedAt` is when DAVE posted his comment. Do NOT read `postedAt`
+    // here: on a queue item that field is when the HOST published, derived from
+    // the activity urn by push-comment-queue.mjs for the 5-day age check, and
+    // it is set on EVERY item. Reading it marked every card done on arrival,
+    // hid the Posted button, and left the commentedOn ledger permanently empty
+    // — so the scan re-queued threads Dave had already answered (found
+    // 2026-08-31, three days after the age guard started deriving postedAt).
     var itemsHtml = items.map(function (it, i) {
-      var done = !!it.postedAt;
+      var done = !!it.commentedAt;
       var urgent = !done && /now|today|asap/i.test(it.when || '');
       var whenLabel = done
-        ? 'Posted ' + esc(String(it.postedAt).slice(0, 10))
+        ? 'Posted ' + esc(cqStamp(it.commentedAt))
         : esc(it.when || 'unscheduled');
       return '<div class="cq-item' + (done ? ' done' : '') + '">' +
         '<div class="cq-head">' +
@@ -6707,7 +6726,7 @@ document.addEventListener('cipher:state-updated', function () {
           (it.url ? '<a class="btn-secondary" href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">Open the post \u2197</a>' : '') +
           (done
             ? ''
-            : '<button type="button" class="btn-secondary" data-cq-posted="' + esc(it.url || String(i)) + '">Mark posted</button>') +
+            : '<button type="button" class="btn-secondary" data-cq-posted="' + esc(it.url || String(i)) + '">Posted</button>') +
           '<span class="cq-copied" id="cq-copied-' + i + '">Copied</span>' +
         '</div>' +
       '</div>';
@@ -6719,9 +6738,12 @@ document.addEventListener('cipher:state-updated', function () {
       ? '<div class="cq-baseline"><h3>Write these live — ' + manual.length + '</h3>' +
         '<p>Video host posts. They cannot be drafted without watching them, so the scan ranks the room and leaves the words to you.</p></div>' +
         manual.map(function (m) {
-          return '<div class="cq-item">' +
+          var mDone = !!m.commentedAt;
+          return '<div class="cq-item' + (mDone ? ' done' : '') + '">' +
             '<div class="cq-head">' +
-              '<span class="cq-when now">Watch, then reply</span>' +
+              '<span class="cq-when' + (mDone ? ' done' : ' now') + '">' +
+                (mDone ? 'Posted ' + esc(cqStamp(m.commentedAt)) : 'Watch, then reply') +
+              '</span>' +
               '<span class="cq-author">' + esc(m.author || 'Unknown') + '</span>' +
               '<span class="cq-stats">' +
                 (m.reactions != null ? Number(m.reactions).toLocaleString() + ' reactions' : '') +
@@ -6732,6 +6754,9 @@ document.addEventListener('cipher:state-updated', function () {
             (m.why ? '<div class="cq-why">' + esc(m.why) + '</div>' : '') +
             '<div class="cq-actions">' +
               (m.url ? '<a class="btn-primary" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">Open the post ↗</a>' : '') +
+              (m.commentedAt
+                ? ''
+                : '<button type="button" class="btn-secondary" data-cq-posted="' + esc(m.url || '') + '">Posted</button>') +
             '</div>' +
           '</div>';
         }).join('')
@@ -6776,18 +6801,45 @@ document.addEventListener('cipher:state-updated', function () {
     await db.runTransaction(async function (tx) {
       var snap = await tx.get(ref);
       var data = snap.data() || {};
-      var items = data.items || [];
       var needle = String(key || '').trim().toLowerCase();
-      var idx = items.findIndex(function (x) { return (x.url || '') === key; });
-      if (idx === -1 && needle) {
-        idx = items.findIndex(function (x) {
-          return String(x.author || '').toLowerCase().indexOf(needle) !== -1;
-        });
+      // Search the drafted queue first, then the write-live list. A video Dave
+      // answered by hand is a comment he posted; leaving `manual` unmarkable
+      // meant those entries could only ever leave the page by ageing out, and
+      // the scan carries them forward by url, so one sat there for three days.
+      function find(list) {
+        if (!Array.isArray(list)) return -1;
+        var i = list.findIndex(function (x) { return (x.url || '') === key; });
+        if (i === -1 && needle) {
+          i = list.findIndex(function (x) {
+            return String(x.author || '').toLowerCase().indexOf(needle) !== -1;
+          });
+        }
+        return i;
       }
-      if (idx === -1) throw new Error('no queued comment matches "' + key + '"');
-      if (items[idx].postedAt) { matched = items[idx].author; return; }
+      var items = data.items || [];
+      var idx = find(items);
+      if (idx === -1) {
+        var mIdx = find(data.manual);
+        if (mIdx === -1) throw new Error('no queued comment matches "' + key + '"');
+        items = data.manual;
+        idx = mIdx;
+      }
+      if (items[idx].commentedAt) { matched = items[idx].author; return; }
       matched = items[idx].author;
-      items[idx].postedAt = new Date().toISOString();
+      // `commentedAt`, never `postedAt` — see the note in renderCommentQueue.
+      // ISO carries the time as well as the date.
+      var now = new Date().toISOString();
+      items[idx].commentedAt = now;
+      // The items array is REPLACED wholesale by the next scan, so a flag on
+      // the item survives less than a day. commentedOn is the durable ledger
+      // the scan reads to skip threads Dave has already answered; without this
+      // write the same host post came back every morning until it aged out.
+      var ledger = Array.isArray(data.commentedOn) ? data.commentedOn : [];
+      var url = items[idx].url || '';
+      if (url && !ledger.some(function (e) { return e && e.url === url; })) {
+        ledger.push({ url: url, author: items[idx].author || '', date: now });
+      }
+      data.commentedOn = ledger;
       tx.set(ref, data);
     });
     return matched;
