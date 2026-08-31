@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-08-30T13:05:43.618Z",
+    "lastUpdatedAt": "2026-08-31T13:10:55.743Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -54,12 +54,12 @@
       }
     },
     "funnel": {
-      "asOf": "2026-08-30T13:05:43.618Z",
+      "asOf": "2026-08-31T13:10:55.743Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
       "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
-        "impressions": 4715,
+        "impressions": 4785,
         "lpVisits": 20,
         "signups": 2,
         "examPicked": 2,
@@ -67,7 +67,7 @@
       },
       "perCluster": {
         "PMP": {
-          "impressions": 4408,
+          "impressions": 4478,
           "lpVisits": 20,
           "signups": 1,
           "examPicked": 1,
