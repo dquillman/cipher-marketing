@@ -1018,6 +1018,26 @@ details[open] summary::before { transform: rotate(90deg); }
   border-radius: 4px; padding: 12px 13px; font-size: 0.9rem; line-height: 1.55;
   font-family: 'General Sans', system-ui, sans-serif;
 }
+.cq-transcript {
+  margin: 0 0 12px;
+  border: 1px solid var(--line, #24304a);
+  border-radius: 8px;
+  padding: 8px 11px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.cq-transcript summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.cq-transcript p {
+  margin: 9px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--fg, inherit);
+}
 .cq-actions { display: flex; gap: 9px; margin-top: 11px; align-items: center; flex-wrap: wrap; }
 .cq-copied { font-size: 0.8rem; color: var(--ok, #4ade80); opacity: 0; transition: opacity 0.2s; }
 .cq-copied.show { opacity: 1; }
@@ -6719,6 +6739,20 @@ document.addEventListener('cipher:state-updated', function () {
         '</div>' +
         (it.hostSummary ? '<p class="cq-hostline">' + esc(it.hostSummary) + '</p>' : '') +
         (it.why ? '<div class="cq-why">' + esc(it.why) + '</div>' : '') +
+        // A video target used to be a dead end: the words existed only in the
+        // audio, so the scan could rank the room but not answer it. The audio
+        // is now transcribed locally by scripts/transcribe-post-video.mjs, and
+        // the transcript rides along on the item so Dave can check the draft
+        // against what was actually said without watching the clip.
+        (it.transcript
+          ? '<details class="cq-transcript">' +
+              '<summary>What they say — transcribed' +
+                (it.transcriptMeta && it.transcriptMeta.durationSec
+                  ? ' (' + Math.round(it.transcriptMeta.durationSec) + 's)' : '') +
+              '</summary>' +
+              '<p>' + esc(it.transcript) + '</p>' +
+            '</details>'
+          : '') +
         '<div class="cq-label">Comment to post</div>' +
         '<textarea class="cq-comment" id="cq-text-' + i + '" spellcheck="false">' + esc(it.comment || '') + '</textarea>' +
         '<div class="cq-actions">' +

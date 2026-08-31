@@ -1,0 +1,45 @@
+{
+  "durationSec": 43.1,
+  "language": "en",
+  "segments": [
+    {
+      "start": 0,
+      "end": 6.4,
+      "text": "Don't do this when studying for your PMP, don't go and memorize a whole bunch of the ITTOs or"
+    },
+    {
+      "start": 6.4,
+      "end": 12.7,
+      "text": "inputs, tools, techniques and outputs. This is where people go crazy studying and they spend too long"
+    },
+    {
+      "start": 12.7,
+      "end": 18.7,
+      "text": "on it and it might even discourage them. The key to passing the exam is not memorizing ITTOs,"
+    },
+    {
+      "start": 18.7,
+      "end": 25.2,
+      "text": "it's about understanding the ITTOs. Don't memorize that this process has this input, this tool and"
+    },
+    {
+      "start": 25.2,
+      "end": 33.4,
+      "text": "this output. No, understand that this input could be used in this process, this tool can help you"
+    },
+    {
+      "start": 33.4,
+      "end": 37.7,
+      "text": "do that process and if you finish this process this could be a potential output. So you're not"
+    },
+    {
+      "start": 37.7,
+      "end": 49.8,
+      "text": "actually memorizing it, you're understanding it and that's the key to passing the PMP exam."
+    }
+  ],
+  "text": "Don't do this when studying for your PMP, don't go and memorize a whole bunch of the ITTOs or inputs, tools, techniques and outputs. This is where people go crazy studying and they spend too long on it and it might even discourage them. The key to passing the exam is not memorizing ITTOs, it's about understanding the ITTOs. Don't memorize that this process has this input, this tool and this output. No, understand that this input could be used in this process, this tool can help you do that process and if you finish this process this could be a potential output. So you're not actually memorizing it, you're understanding it and that's the key to passing the PMP exam.",
+  "source": "https://www.linkedin.com/feed/update/urn:li:activity:7499164552790663169/",
+  "model": "base.en",
+  "transcribedAt": "2026-08-31T19:46:07.549Z"
+}
