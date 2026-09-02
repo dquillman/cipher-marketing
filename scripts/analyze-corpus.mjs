@@ -24,6 +24,7 @@
 // saying so is the honest result.
 
 import { getDb, credentialHelp } from './lib/firestore-access.mjs';
+import { URL_IN_BODY } from './lib/post-links.mjs';
 
 const args = process.argv.slice(2);
 const asJson = args.includes('--json');
@@ -71,9 +72,15 @@ const FEATURES = {
   // li-mon-2026-05-11-launch and li-wed-2026-05-13-trap as having NO body link —
   // both closed on a bare "cipherexam.com/lp/pmp?utm_source=..." with no
   // https://. That mislabelled 2 of the 5 body-link posts and computed the whole
-  // split on the wrong groups. Match a scheme OR any bare domain followed by a
-  // path, which is what a reader and the algorithm both see as a link.
-  urlInBody: (c) => /https?:\/\//.test(c) || /(?:^|[\s(])(?:www\.)?[a-z0-9][a-z0-9-]*\.(?:com|io|app|co|net|org)\//im.test(c),
+  // split on the wrong groups.
+  //
+  // The second version required a trailing PATH, and so scored a bare
+  // "cipherexam.com" as prose — mislabelling li-cognitive-levels and
+  // li-volume-metric, the only two posts in the corpus that close on a bare
+  // domain (found 2026-09-01). LinkedIn autolinks a bare domain, so the reader
+  // and the algorithm both see a link there. Detector now shared with the
+  // deploy gate (scripts/lib/post-links.mjs) so the two cannot drift.
+  urlInBody: (c) => URL_IN_BODY.test(c),
   // Fifth miss of the same shape, found 2026-08-29 by hand-labelling all 15
   // posts blind. This matched a percentage or an explicit "on <Month> <day>",
   // and so read two openers that lead on a date as plain prose:

@@ -23,11 +23,12 @@
     "verify:video": "node scripts/verify-video.mjs",
     "check:sync": "node scripts/check-sync.mjs",
     "check:js": "node scripts/check-html-js.mjs",
-    "predeploy:hosting": "node scripts/check-html-js.mjs && node scripts/check-comment-promise.mjs",
+    "predeploy:hosting": "node scripts/check-html-js.mjs && node scripts/check-comment-promise.mjs && node scripts/check-post-links.mjs",
     "release": "node scripts/release.mjs",
     "card": "node scripts/render-post-card.mjs",
     "cards:drafts": "node scripts/render-post-card.mjs --all-drafts",
-    "check:promise": "node scripts/check-comment-promise.mjs"
+    "check:promise": "node scripts/check-comment-promise.mjs",
+    "check:links": "node scripts/check-post-links.mjs"
   },
   "repository": {
     "type": "git",

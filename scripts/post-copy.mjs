@@ -10,6 +10,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { FIX_HINT, linkProblems } from "./lib/post-links.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const POSTS_FILE = join(HERE, "../site/data/posts.json");
@@ -51,6 +52,18 @@ if (matches.length === 0) {
 
 const LABELS = { linkedin: "LinkedIn", x: "X (Twitter)" };
 const LINE = "─".repeat(62);
+
+// Last gate before the copy reaches the clipboard. A post that breaks the link
+// rule must not be printed as paste-ready — printing it is what shipped
+// li-volume-metric and li-cognitive-levels with a bare cipherexam.com in the
+// body, and both landed in the bottom third of the corpus.
+const blocked = matches.flatMap((p) => linkProblems(p).map((problem) => `${p.id}: ${problem}`));
+if (blocked.length) {
+  console.error("x  not printing — these posts break the link rule:\n");
+  for (const b of blocked) console.error("   - " + b);
+  console.error("\n   " + FIX_HINT.replace(/\n/g, "\n   ") + "\n");
+  process.exit(1);
+}
 
 for (const p of matches) {
   const platform = LABELS[p.channel] || p.channel;
