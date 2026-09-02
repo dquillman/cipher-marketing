@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-09-01T13:08:27.833Z",
+    "lastUpdatedAt": "2026-09-02T13:10:33.881Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -33,8 +33,8 @@
     "activationTarget4wk": 55
   },
   "metrics": {
-    "activatedUsersTotal": 1,
-    "trialSignupsTotal": 2,
+    "activatedUsersTotal": 2,
+    "trialSignupsTotal": 3,
     "paidSpendThisWeek": 0,
     "perCluster": {
       "PMP": {
@@ -54,20 +54,20 @@
       }
     },
     "funnel": {
-      "asOf": "2026-09-01T13:08:27.833Z",
+      "asOf": "2026-09-02T13:10:33.881Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
       "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
-        "impressions": 4832,
+        "impressions": 5185,
         "lpVisits": 20,
-        "signups": 2,
+        "signups": 3,
         "examPicked": 2,
-        "activated": 1
+        "activated": 2
       },
       "perCluster": {
         "PMP": {
-          "impressions": 4525,
+          "impressions": 4759,
           "lpVisits": 20,
           "signups": 1,
           "examPicked": 1,
@@ -627,6 +627,10 @@
     {
       "date": "2026-08-29",
       "entry": "Competitor intel refreshed (monthly automated run, re-verification pass of the rewritten task). All three reports regenerated fresh — not a reword of the earlier run — and written to Firestore competitor_intel/{battlecard,deepdive,landscape} via scripts/write-competitor-intel.mjs (8615 / 10825 / 12091 chars, generated_at 2026-08-29T18:01:26.648Z, verified by reading the three docs back). Battlecard moved to three new axes: a large bank is a snapshot of the exam on the day it was written (PMI rebalanced the PMP outline 2026-07-09, Business Environment 8% -> 26%); CompTIA performance-based questions cannot exist in a single-MCQ drill format; volume answers a supply problem while our buyer has a time problem. Deepdive on Pocket Prep reframes them as selling the eight-minute session and attacks the cost side of their scale — maintenance liability when a standard moves, per-exam SKUs hostile to the cert stacker, and a performance-conditioned refund we already beat with the unused 60-day no-conditions guarantee; organic play is a count-your-own-bank audit prompt, gated on auditing our own PMP distribution first. Landscape re-ranked on who takes OUR current candidate rather than who resembles us: Pocket Prep > Brain Sensei (up from 3rd — PMI specialist, already shipped on the 2026 outline, and 100% of our measured impressions are PMP) > Mindirus (down to 3rd, still unverified after a month) > AI-tutor cohort > Examzify. SHRM-CP flagged open for the third consecutive scan with a ship-or-defer ultimatum. competitors.json unchanged this run, so the campaign/competitors mirror was correctly skipped. Note: this dailyLog entry is a local record only — no safe campaign/state appender exists, so it will not appear on the dashboard."
+    },
+    {
+      "date": "2026-09-01",
+      "entry": "Competitor intel refreshed (monthly automated run). All three reports regenerated and written to Firestore competitor_intel/{battlecard,deepdive,landscape} (10433 / 10588 / 12677 chars, generated_at 2026-09-01T14:16:13.466Z, verified by reading all three docs back and matching length + timestamp). MAJOR RETRACTION: August's lead argument is dead. The battlecard claimed a large question bank could not re-aim after PMI's 2026-07-09 outline change ('ask your prep app how many of its questions moved'). Pocket Prep's own PMP page says 'Our PMP content is updated for the July 9, 2026 Examination Content Outline', and Brain Sensei rebuilt its course for the same outline. The hook never shipped only because August gated it on auditing our own PMP distribution first — the gate worked, the judgement did not. NEW COMPETITOR at threat HIGH, straight in at 2nd: ExamCert (examcert.app, founded 2025) — $4.99-$5.99 ONE-TIME per exam for lifetime access, free tier of 3 sets per exam, AI Tutor with step-by-step reasoning, FSRS spaced repetition, per-domain mastery heatmap, estimated pass chance, and a 60-day no-questions-asked money-back guarantee identical to the one we have called our strongest close for three months and still have not published. Covers PMP and SHRM-CP; runs 'best prep app 2026' comparison content ranking for our buyers' queries. UNVERIFIED — their own surfaces contradict each other (95% vs 98% pass rate, $4.99 vs $5.99, 30+ vs 171+ certs). No number of theirs goes into copy until someone opens the product. PRICE FLOOR COLLAPSED: Pocket Prep's annual is $124.99/yr = $10.99/mo effective, below CipherExam Pro at $19/mo. We are no longer the sensibly-priced option; the stored 'expensive incumbent' framing of Pocket Prep is retired. Their pass guarantee is three extra months of access, not money back. NEW ATTACK AIMED AT US: 'written by humans, not AI' is now a live trust position — Pocket Prep leads with expert authorship under a named PMP-credentialed Director of Education, and an SHRM-CP app (EZ Prep) markets human-not-AI explicitly. Our bank is AI-generated with no reviewer or verified field, so we cannot win an authorship fight; the battlecard moves the argument to Bloom's classification and per-user traps tracking. SHRM-CP 'uncontested lane' RETRACTED after three consecutive scans asserted it — the 2026 market holds at least six shipping products plus Pocket Prep's 1,600-item bank and ExamCert's free 600+ bank. The lane was unexamined, not uncontested. Landscape re-ranked: Pocket Prep > ExamCert (new) > Brain Sensei > Mindirus (unopened for a 2nd month; grew 16->19 exams and ~51k->68k questions, still no published pricing) > AI-tutor cohort. Funnel context at scan time: 4,832 impressions / 20 LP visits / 2 signups / 1 ACTIVATED — the first activated user ever; PMP is 94% of reach, Security+ came off zero at 307 impressions, SHRM-CP still zero on every stage. All three reports now lead with the same first action: confirm on a live account that CipherExam can name a trap on screen, not just a domain. Three content-axis positions weakened this month (price, currency, authorship) and diagnosis is the only ground left where the field is not already standing — and it is the one claim never verified in the product. competitors.json CHANGED this run (added examcert; updated pocket-prep, mindirus, brain-sensei, _meta), so campaign/competitors was mirrored via push-competitors-doc.mjs — 14 competitors. Note: this dailyLog entry is a local record only — no safe campaign/state appender exists, so it will not appear on the dashboard."
     }
   ],
   "boardPriorities": {
