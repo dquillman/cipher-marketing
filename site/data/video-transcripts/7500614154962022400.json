@@ -1,0 +1,60 @@
+{
+  "durationSec": 58.6,
+  "language": "en",
+  "segments": [
+    {
+      "start": 0,
+      "end": 6.2,
+      "text": "If you answer P&P questions like this, you're probably not going to pass and that is by selecting"
+    },
+    {
+      "start": 6.2,
+      "end": 13,
+      "text": "the choice that where you make decisions. For example, let's say you're taking your P&P exam"
+    },
+    {
+      "start": 13,
+      "end": 18.8,
+      "text": "and there's a question about there's a problem on the project and one of the choices says hey"
+    },
+    {
+      "start": 19.4,
+      "end": 25.2,
+      "text": "for you to select the best solution for the problem. That's probably not a good answer."
+    },
+    {
+      "start": 25.3,
+      "end": 31.2,
+      "text": "The P&P exam wants you to be a servant leader. As a servant leader, you support the team. You're not"
+    },
+    {
+      "start": 31.2,
+      "end": 36.2,
+      "text": "the one choosing the solution. You're not the one determining the ways to fix problems. You're"
+    },
+    {
+      "start": 36.2,
+      "end": 41.7,
+      "text": "supporting the team in their ways to fix problems. Keep in mind the project teams are the ones with"
+    },
+    {
+      "start": 41.7,
+      "end": 48.1,
+      "text": "the actual expert knowledge. So what you want to do is select the option that says work with the team"
+    },
+    {
+      "start": 48.1,
+      "end": 54.4,
+      "text": "to find a solution. Support the team in finding a solution. Help the team analyze the solution."
+    },
+    {
+      "start": 54.4,
+      "end": 58.2,
+      "text": "That's the answer to the question do that and I'm pretty sure you're going to pass your test."
+    }
+  ],
+  "text": "If you answer P&P questions like this, you're probably not going to pass and that is by selecting the choice that where you make decisions. For example, let's say you're taking your P&P exam and there's a question about there's a problem on the project and one of the choices says hey for you to select the best solution for the problem. That's probably not a good answer. The P&P exam wants you to be a servant leader. As a servant leader, you support the team. You're not the one choosing the solution. You're not the one determining the ways to fix problems. You're supporting the team in their ways to fix problems. Keep in mind the project teams are the ones with the actual expert knowledge. So what you want to do is select the option that says work with the team to find a solution. Support the team in finding a solution. Help the team analyze the solution. That's the answer to the question do that and I'm pretty sure you're going to pass your test.",
+  "source": "https://www.linkedin.com/feed/update/urn:li:activity:7500614154962022400/",
+  "model": "base.en",
+  "transcribedAt": "2026-09-03T10:48:19.108Z"
+}

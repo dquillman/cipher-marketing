@@ -25,7 +25,7 @@ if (window.location.protocol === 'file:') {
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,800,900&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/shared.css">
-<link rel="stylesheet" href="assets/outreach.css?v=1.30.21">
+<link rel="stylesheet" href="assets/outreach.css?v=1.31.0">
 <!--INLINE-ASSETS-->
 <style>
 /* CipherExam campaign site — shared styles */
@@ -1843,6 +1843,7 @@ function cipherHelp() {
       <button class="nav-link" type="button" data-route="schedule" onclick="cipherShow('schedule')" title="Publish posts and record live URLs">Publish</button>
       <button class="nav-link" type="button" data-route="dashboard" onclick="cipherShow('dashboard')" title="Campaign performance and blockers">Results</button>
       <button class="nav-link" type="button" data-route="comments" onclick="cipherShow('comments')" title="Drafted comments on other people's high-performing posts">Comments</button>
+      <button class="nav-link" type="button" data-route="seo" onclick="cipherShow('seo')" title="SEO review of cipherexam.com — prioritized fix list">SEO</button>
     </div>
     <div class="nav-utilities">
       <span class="sync-health" id="sync-health" role="status" aria-live="polite">Connecting…</span>
@@ -1850,6 +1851,7 @@ function cipherHelp() {
         <summary>Resources</summary>
         <div class="resource-panel">
           <button type="button" onclick="cipherShow('competitors');this.closest('details').open=false">Competitor research</button>
+          <button type="button" onclick="cipherShow('seo');this.closest('details').open=false">SEO review</button>
           <button type="button" onclick="cipherShow('testimonials');this.closest('details').open=false">Testimonials</button>
           <button type="button" onclick="cipherShow('strategy');this.closest('details').open=false">Campaign strategy</button>
           <a href="funnel.html">Funnel diagnostic ↗</a>
@@ -1868,7 +1870,7 @@ function cipherHelp() {
       </details>
       <a class="nav-rollup" href="#" onclick="cipherHelp();return false;" title="Open the quick guide">Help</a>
       <button class="nav-rollup" id="fx-toggle" type="button" title="Toggle ambient visual effects">FX</button>
-      <span class="version-bar" title="Dashboard version">v1.30.21</span>
+      <span class="version-bar" title="Dashboard version">v1.31.0</span>
     </div>
   </div>
 </nav>
@@ -2320,6 +2322,7 @@ function cipherHelp() {
     <a href="#" onclick="cipherShow('engineering');return false;"><span class="qlabel">Engineering</span><span class="qdesc">Handoff + pre-launch checklist</span></a>
     <a href="#" onclick="cipherShow('voice');return false;"><span class="qlabel">Voice</span><span class="qdesc">Brand voice review</span></a>
     <a href="#" onclick="cipherShow('competitors');return false;"><span class="qlabel">Competitor Intel</span><span class="qdesc">Landscape · deep dive · battlecard (live)</span></a>
+    <a href="#" onclick="cipherShow('seo');return false;"><span class="qlabel">SEO Review</span><span class="qdesc">cipherexam.com audit · findings · 90-day plan</span></a>
     <a href="funnel.html"><span class="qlabel">Funnel</span><span class="qdesc">5-arrow funnel + bottleneck detection</span></a>
     <a href="sprint.html"><span class="qlabel">Sprint</span><span class="qdesc">Activation sprint tracker</span></a>
   </div>
@@ -5344,6 +5347,1219 @@ If it didn't click, that's fine too — you'll drop to the free tier automatical
   })();
   </script>
 </section>
+<section class="route-section" data-route="seo">
+<!--SEO-SECTION-->
+
+  <style>
+  .seo-pq-head { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; border-color: rgba(125,211,252,.35); }
+  .seo-pq-score { flex: 0 0 220px; }
+  .seo-pq-now { font-family: 'Satoshi', system-ui, sans-serif; font-size: 3rem; font-weight: 800; line-height: 1; color: var(--cyan); }
+  .seo-pq-now em { font-style: normal; font-size: 1rem; color: var(--dim); font-weight: 600; }
+  .seo-pq-track { position: relative; height: 8px; border-radius: 4px; background: var(--surface-2); margin: 10px 0 6px; overflow: visible; }
+  .seo-pq-track span { display: block; height: 100%; border-radius: 4px; background: var(--cyan); transition: width .25s ease; }
+  .seo-pq-track i { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--good); }
+  .seo-pq-legend { display: flex; justify-content: space-between; font-size: .72rem; color: var(--dim); gap: 8px; }
+  .seo-pq-copy { flex: 1 1 340px; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+  .seo-pq { display: flex; flex-direction: column; gap: 18px; margin: 18px 0 26px; }
+  .seo-pq-tier-head { display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 8px; }
+  .seo-pq-tier-head h3 { margin: 0; font-size: .82rem; text-transform: uppercase; letter-spacing: .1em; color: var(--purple); font-family: 'Satoshi', system-ui, sans-serif; }
+  .seo-pq-tier-head span { margin-left: auto; font-size: .74rem; color: var(--dim); }
+  details.seo-act { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; overflow: hidden; }
+  details.seo-act.is-done { opacity: .5; }
+  details.seo-act.is-shipped { border-left: 3px solid var(--good); opacity: .75; }
+  details.seo-act.is-shipped .seo-act-title { text-decoration: line-through; color: var(--muted); }
+  .seo-act-shipped { font-size: .72rem; font-weight: 700; color: var(--good); background: rgba(74,222,128,.10); border: 1px solid rgba(74,222,128,.25); border-radius: 5px; padding: 2px 8px; }
+  details.seo-finding.is-resolved { opacity: .7; border-left: 3px solid var(--good) !important; }
+  .seo-resolution { color: var(--good); }
+  details.seo-act.is-done .seo-act-title { text-decoration: line-through; }
+  details.seo-act > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 11px 14px; font-family: 'Satoshi', system-ui, sans-serif; }
+  details.seo-act > summary::-webkit-details-marker { display: none; }
+  .seo-act-box { width: 16px; height: 16px; accent-color: var(--cyan); cursor: pointer; flex: none; }
+  .seo-act-rank { font-size: .74rem; font-weight: 800; color: var(--dim); width: 18px; text-align: center; flex: none; }
+  .seo-act-title { font-weight: 700; font-size: .93rem; flex: 1 1 300px; }
+  .seo-act-pts { font-size: .74rem; font-weight: 800; color: var(--good); background: rgba(74,222,128,.12); border: 1px solid rgba(74,222,128,.3); border-radius: 5px; padding: 2px 8px; }
+  .seo-act-pts.zero { color: var(--dim); background: var(--surface-2); border-color: var(--border); }
+  .seo-act-effort { font-size: .74rem; color: var(--muted); min-width: 60px; text-align: right; }
+  .seo-act-body { padding: 4px 16px 14px 44px; font-size: .89rem; line-height: 1.6; }
+  .seo-act-dim { margin: 0 0 8px; font-size: .74rem; color: var(--cyan); text-transform: uppercase; letter-spacing: .06em; }
+  ol.seo-act-steps { margin: 0 0 10px; padding-left: 1.2em; }
+  ol.seo-act-steps li { margin-bottom: 4px; }
+  .seo-act-why { margin: 0 0 6px; color: var(--muted); }
+  .seo-act-ref { margin: 0; font-size: .76rem; color: var(--dim); }
+  details.seo-detail { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 10px; }
+  details.seo-detail > summary { list-style: none; cursor: pointer; padding: 12px 16px; background: var(--surface-2); font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700; font-size: .9rem; color: var(--cyan); }
+  details.seo-detail > summary::-webkit-details-marker { display: none; }
+  details.seo-detail > summary::before { content: '▸'; margin-right: 8px; display: inline-block; transition: transform .15s ease; }
+  details.seo-detail[open] > summary::before { transform: rotate(90deg); }
+  .seo-detail-body { padding: 4px 18px 18px; }
+  .seo-detail-body > h2:first-child { margin-top: 12px; }
+  .seo-method { border-color: rgba(125,211,252,.35); font-size: .92rem; line-height: 1.6; }
+  .seo-method ul { margin-bottom: 10px; padding-left: 1.2em; }
+  .seo-count { font-size: .78rem; font-weight: 500; color: var(--dim); letter-spacing: 0; text-transform: none; margin-left: 8px; }
+  .seo-overall { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; border-color: rgba(125,211,252,.35); }
+  .seo-overall-num { font-family: 'Satoshi', system-ui, sans-serif; font-size: 3.4rem; font-weight: 800; line-height: 1; }
+  .seo-overall-num span { font-size: 1.1rem; color: var(--dim); font-weight: 600; }
+  .seo-overall-body { flex: 1 1 320px; }
+  .seo-grade { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700; color: var(--cyan); font-size: .82rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+  .seo-overall-body p { margin: 0; line-height: 1.6; }
+  .seo-dim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0 8px; }
+  .seo-dim { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .seo-dim-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .seo-dim-name { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 700; font-size: .92rem; }
+  .seo-dim-score { font-family: 'Satoshi', system-ui, sans-serif; font-weight: 800; font-size: 1.25rem; }
+  .seo-dim-score em { font-style: normal; font-size: .72rem; color: var(--dim); }
+  .seo-meter { height: 5px; border-radius: 3px; background: var(--surface-2); margin: 8px 0 10px; overflow: hidden; }
+  .seo-meter span { display: block; height: 100%; border-radius: 3px; }
+  .seo-dim p { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.55; }
+  .seo-findings { display: flex; flex-direction: column; gap: 8px; }
+  details.seo-finding { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  details.seo-finding[data-sev="critical"] { border-left: 3px solid var(--bad); }
+  details.seo-finding[data-sev="high"] { border-left: 3px solid var(--warn); }
+  details.seo-finding[open] { border-color: rgba(125,211,252,.4); }
+  details.seo-finding > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 16px; background: var(--surface-2); font-family: 'Satoshi', system-ui, sans-serif; }
+  details.seo-finding > summary::-webkit-details-marker { display: none; }
+  .seo-sev { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #06121f; padding: 2px 7px; border-radius: 4px; }
+  .seo-fid { font-size: .74rem; color: var(--dim); font-weight: 700; }
+  .seo-ftitle { font-weight: 700; font-size: .93rem; flex: 1 1 320px; }
+  .seo-fmeta { font-size: .74rem; color: var(--muted); margin-left: auto; }
+  .seo-finding-body { padding: 14px 18px; font-size: .9rem; line-height: 1.65; }
+  .seo-finding-body p { margin: 0 0 10px; }
+  .seo-fbadges { display: flex; gap: 8px; margin-bottom: 0 !important; }
+  .seo-fbadges span { font-size: .72rem; color: var(--muted); background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 8px; }
+  .seo-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  table.seo-table { border-collapse: collapse; width: 100%; font-size: .82rem; }
+  table.seo-table th { text-align: left; padding: 9px 10px; background: var(--surface-2); color: var(--dim); font-family: 'Satoshi', system-ui, sans-serif; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; position: sticky; top: 0; }
+  table.seo-table td { padding: 8px 10px; border-top: 1px solid var(--border); vertical-align: top; }
+  table.seo-table td.seo-path { white-space: nowrap; }
+  table.seo-table td.seo-path a { color: var(--cyan); text-decoration: none; }
+  table.seo-table td.seo-path a:hover { text-decoration: underline; }
+  td.seo-bad { color: var(--bad); font-weight: 700; }
+  td.seo-warn { color: var(--warn); }
+  table.seo-table-wide td { white-space: normal; min-width: 120px; }
+  table.seo-table-wide td:last-child { min-width: 260px; color: var(--muted); }
+  tr.seo-row-missing { background: rgba(248,113,113,.06); }
+  .seo-missing { color: var(--bad); font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+  .seo-wave-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .seo-wave { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .seo-wave h3 { margin: 0 0 8px; font-size: .92rem; color: var(--cyan); }
+  .seo-wave ul { margin: 0; padding-left: 1.15em; font-size: .86rem; line-height: 1.6; }
+  .seo-wave li { margin-bottom: 6px; }
+  .seo-aeo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+  .seo-aeo { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+  .seo-aeo-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: .9rem; }
+  .seo-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .seo-aeo-status { margin-left: auto; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); }
+  .seo-aeo p { margin: 0; font-size: .84rem; color: var(--muted); line-height: 1.55; }
+  .seo-serp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .seo-serp { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .seo-serp-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .seo-serp-head code { background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 8px; font-size: .82rem; color: var(--text); }
+  .seo-serp-flag { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--bad); font-weight: 700; }
+  .seo-serp p { margin: 0 0 8px; font-size: .86rem; line-height: 1.6; color: var(--muted); }
+  .seo-serp p:last-child { margin-bottom: 0; }
+  ul.seo-intel { font-size: .88rem; line-height: 1.65; padding-left: 1.15em; }
+  ul.seo-intel li { margin-bottom: 8px; }
+  .seo-plan { display: flex; flex-direction: column; gap: 12px; }
+  .seo-plan-window { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; }
+  .seo-plan-head { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px; }
+  .seo-plan-head h3 { margin: 0; font-size: .95rem; color: var(--cyan); }
+  .seo-plan-head span { font-size: .82rem; color: var(--dim); }
+  .seo-plan-window ol { margin: 0; padding-left: 1.3em; font-size: .88rem; line-height: 1.65; }
+  .seo-plan-window li { margin-bottom: 5px; }
+  .seo-blind { border-color: rgba(250,204,21,.35); }
+  .seo-blind ol { margin: 0; padding-left: 1.3em; font-size: .92rem; line-height: 1.7; }
+  .seo-blind li { margin-bottom: 10px; }
+  @media (max-width: 700px) { .seo-overall-num { font-size: 2.6rem; } .seo-fmeta { margin-left: 0; } }
+  </style>
+
+  <div class="hero">
+    <h1>SEO &amp; Answer-Engine Review</h1>
+    <p class="sub">https://cipherexam.com · crawled 2026-09-03 (baseline) · re-crawled 2026-09-03 after deploy · 23 pages, 15 probe URLs. <span style="color:var(--dim)">Re-crawl monthly, alongside the competitor-intel refresh.</span></p>
+  </div>
+
+  <div class="card seo-method">
+    <p style="margin-top:0"><strong>How this was measured.</strong> Live first-party crawl of all 23 sitemap URLs plus 15 probe URLs, executed in Chrome against the production origin. Every number below was read off the live HTML, not estimated.</p>
+    <p style="margin-bottom:6px"><strong>What is deliberately absent.</strong></p>
+    <ul style="margin-top:0"><li>Google Search Console — not connected to this audit. No impressions, clicks, average position or query data exists in this report. Nothing here claims a ranking.</li><li>Core Web Vitals — the PageSpeed Insights API rate-limited (HTTP 429) during this run, twice. No performance score is stated. Run it before acting on anything perf-related.</li><li>Keyword volumes — no keyword tool was used. The keyword map assigns intent and priority, never volume.</li></ul>
+    <p style="margin-bottom:0;color:var(--dim);font-size:.86rem">The operator dashboard (this app) is correctly noindex/nofollow via a firebase.json X-Robots-Tag header and a Disallow-all robots.txt. It is deliberately excluded. Everything below concerns the public product site only.</p>
+  </div>
+
+  <div class="seo-pq-head card">
+    <div class="seo-pq-score">
+      <div class="seo-pq-now"><span id="seo-live-score">73</span><em>/100</em></div>
+      <div class="seo-pq-track"><span id="seo-live-bar" style="width:73%"></span><i style="left:95%"></i></div>
+      <div class="seo-pq-legend"><span>now 73</span><span id="seo-live-note">tick items to project</span><span>ceiling 95</span></div>
+    </div>
+    <div class="seo-pq-copy">
+      <h2 style="margin:0 0 6px">Do these in this order</h2>
+      <p style="margin:0 0 8px">Points are from the same six-dimension rubric that produced the baseline 63. Each dimension is worth 10; the overall score is the sum of the six divided by 60. One dimension point is worth 1.7 overall points. These are my rubric, not Google's — they measure whether the site is built correctly, not whether it ranks. Ranking is decided by links and content, which is why the highest-traffic items on this list are worth zero points. Items marked shipped were verified live by re-crawl and are already in the score.</p>
+      <p style="margin:0;color:var(--dim);font-size:.85rem">95 is the realistic ceiling from on-site work alone. The last 5 points are links and published content compounding over months — you cannot patch your way there in a sprint.</p>
+    </div>
+  </div>
+
+  <div class="seo-pq">
+    
+    <div class="seo-pq-tier">
+      <div class="seo-pq-tier-head"><h3>Prerequisite</h3><span>0.0 pts open · 1 item</span></div>
+      
+      <details class="seo-act" data-points="0" data-rank="0">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="0" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">0</span>
+          <span class="seo-act-title">Verify cipherexam.com in Google Search Console and submit the sitemap</span>
+          <span class="seo-act-pts zero">0 pts</span>
+          <span class="seo-act-effort">20 min</span>
+        </summary>
+        <div class="seo-act-body">
+          
+          <ol class="seo-act-steps"><li>search.google.com/search-console → add property → Domain → cipherexam.com</li><li>Add the TXT record at your DNS provider, verify</li><li>Sitemaps → submit sitemap.xml</li><li>Set a calendar reminder for 28 days out to export Queries and Pages</li></ol>
+          <p class="seo-act-why">Worth zero rubric points and still the first thing to do. Every other item on this list is a hypothesis about what search wants. In 28 days this tells you which pages are already at position 11 and one push from page one — and those deserve everything ahead of new work. Twenty minutes buys the right to be confident about the rest of the quarter.</p>
+          <p class="seo-act-ref">Detail: finding F5 below</p>
+        </div>
+      </details>
+    </div>
+    <div class="seo-pq-tier">
+      <div class="seo-pq-tier-head"><h3>Week 1</h3><span>1.7 pts open · 3 shipped · 4 items</span></div>
+      
+      <details class="seo-act is-shipped" data-points="0" data-rank="1">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="1" onclick="event.stopPropagation()" aria-label="Mark done" checked disabled>
+          <span class="seo-act-rank">1</span>
+          <span class="seo-act-title">Un-orphan the two /compare pages and /about</span>
+          <span class="seo-act-shipped">shipped 2026-09-03 · +3.3 banked</span>
+          <span class="seo-act-effort">1 hr</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Internal linking 4 → 6</p>
+          <ol class="seo-act-steps"><li>Add a Compare item to the primary nav or footer linking both /compare pages</li><li>Link /compare/best-pmp-exam-simulator-2026 from /lp/pmp and from both PMP blog posts</li><li>Link /compare/pocketprep-alternative from /pricing and /exam-lens</li><li>Link /about from the footer and from every post byline</li></ol>
+          <p class="seo-act-why">Best points-per-hour on the list. /compare/best-pmp-exam-simulator-2026 is 2,107 words with FAQ schema and zero internal links; orphan status is one of the clearest low-priority signals you can send Google about your own page.</p>
+          <p class="seo-act-ref">Detail: finding F1 below</p>
+        </div>
+      </details>
+      <details class="seo-act is-shipped" data-points="0" data-rank="2">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="2" onclick="event.stopPropagation()" aria-label="Mark done" checked disabled>
+          <span class="seo-act-rank">2</span>
+          <span class="seo-act-title">Add FAQPage schema to the four landing pages</span>
+          <span class="seo-act-shipped">shipped 2026-09-03 · +3.3 banked</span>
+          <span class="seo-act-effort">1 hr</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Structured data 7 → 9</p>
+          <ol class="seo-act-steps"><li>Copy the FAQPage emitter already working on /pricing</li><li>Emit it from the same data that renders the visible Frequently asked block</li><li>Apply to /lp/pmp, /lp/security-plus, /lp/network-plus, /lp/a-plus-core-2</li><li>Validate all four at search.google.com/test/rich-results</li></ol>
+          <p class="seo-act-why">The answers are already written and rendered on the page. Only the markup is missing, and question-answer pairs are what AI Overviews, ChatGPT and Perplexity extract most reliably. Pure upside for an hour.</p>
+          <p class="seo-act-ref">Detail: finding F4 below</p>
+        </div>
+      </details>
+      <details class="seo-act is-shipped" data-points="0" data-rank="3">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="3" onclick="event.stopPropagation()" aria-label="Mark done" checked disabled>
+          <span class="seo-act-rank">3</span>
+          <span class="seo-act-title">Give /terms and /privacy their own canonical and metadata</span>
+          <span class="seo-act-shipped">shipped 2026-09-03 · +3.3 banked</span>
+          <span class="seo-act-effort">30 min</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Indexability 7 → 8, Metadata 8 → 9</p>
+          <ol class="seo-act-steps"><li>Set rel=canonical to the page's own URL on both routes</li><li>Write a real title and description for each</li><li>Make the missing-metadata fallback throw at build time instead of silently using the homepage's</li></ol>
+          <p class="seo-act-why">Both pages currently canonical to the homepage while sitting in your sitemap — a contradiction Search Console reports as an error the moment you connect it. The build-time throw matters more than the two pages: it stops the next new route repeating the bug.</p>
+          <p class="seo-act-ref">Detail: finding F3 below</p>
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="4">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="4" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">4</span>
+          <span class="seo-act-title">Trim six meta descriptions and three titles to display length</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">1 hr</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Metadata 9 → 10</p>
+          <ol class="seo-act-steps"><li>Descriptions to 150–160 chars: / (206), /compare/best-pmp-exam-simulator-2026 (275), /exam-lens (227), /compare/pocketprep-alternative (218), /lp/a-plus-core-2 (188), /lp/network-plus (187), /blog/pmp-exam-changes-july-2026 (271)</li><li>Titles to 50–60 chars: /compare/best-pmp-exam-simulator-2026 (70), /blog/pmp-exam-changes-july-2026 (70), /lp/a-plus-core-2 (69)</li><li>Front-load the cert name and the free-trial offer</li><li>Add a length assertion to the build so it cannot regress</li></ol>
+          <p class="seo-act-why">Not a ranking penalty — a click-through one. The homepage description loses the free-trial offer, the strongest thing in it, because it sits past character 160.</p>
+          <p class="seo-act-ref">Detail: finding F7 below</p>
+        </div>
+      </details>
+    </div>
+    <div class="seo-pq-tier">
+      <div class="seo-pq-tier-head"><h3>Weeks 2–4</h3><span>13.4 pts open · 6 items</span></div>
+      
+      <details class="seo-act" data-points="3.3" data-rank="5">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="5" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">5</span>
+          <span class="seo-act-title">Build a /certifications hub and link every LP from the blog</span>
+          <span class="seo-act-pts">+3.3</span>
+          <span class="seo-act-effort">3 hrs</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Internal linking 6 → 8</p>
+          <ol class="seo-act-steps"><li>Ship /certifications listing all four certs with 40–60 words of unique context each</li><li>Link the hub from the primary nav</li><li>Add one contextual in-body link from every blog post to the LP for the cert that post uses as its example</li><li>Link the four LPs from /exam-lens, your best-linked non-homepage page</li></ol>
+          <p class="seo-act-why">Security+, Network+ and A+ Core 2 have two inbound links each. Your link graph is reinforcing the same PMP-only concentration your funnel already shows (4,525 of 4,832 impressions) instead of correcting it.</p>
+          <p class="seo-act-ref">Detail: finding F2 below</p>
+        </div>
+      </details>
+      <details class="seo-act" data-points="3.3" data-rank="6">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="6" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">6</span>
+          <span class="seo-act-title">Ship an author page and rebuild /about as a real entity page</span>
+          <span class="seo-act-pts">+3.3</span>
+          <span class="seo-act-effort">4 hrs</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">AEO 6 → 7, Content 6 → 7</p>
+          <ol class="seo-act-steps"><li>Create /author/dave-quillman with credentials, a photo, and what you have actually built</li><li>Link it from every post byline and reference it as the Article author @id</li><li>Rebuild /about: who builds this, how questions are produced, who reviews them, a contact route</li><li>If a credentialed practitioner reviews cert content, name them on the page</li></ol>
+          <p class="seo-act-why">/about is 615 words with zero H2s and zero inbound links — the thinnest page on the site, and it is the page that answers the 'written by humans rather than by AI' attack recorded in your own battlecard. Solo founder plus AI-assisted content is your exposed flank on both search quality and sales.</p>
+          <p class="seo-act-ref">Detail: finding F10 below</p>
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="7">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="7" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">7</span>
+          <span class="seo-act-title">Return real 404s, and fix the stale LP routes in the campaign docs</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">1 hr</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Indexability 8 → 9</p>
+          <ol class="seo-act-steps"><li>Return HTTP 404 for unmatched routes instead of 200 with a noindex shell</li><li>Correct README.md and 00-campaign-brief.md: the live routes are /lp/pmp, /lp/security-plus, /lp/network-plus, /lp/a-plus-core-2</li><li>Grep the repo for /lp/pmp-practice, /lp/security-plus-practice and /lp/shrm-cp and fix every hit</li></ol>
+          <p class="seo-act-why">The noindex header saves you from indexed junk, so this is crawl waste rather than a crisis. The documentation half is the real bug: any post built from the current brief links a dead URL.</p>
+          <p class="seo-act-ref">Detail: finding F6 below</p>
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="8">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="8" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">8</span>
+          <span class="seo-act-title">Make CipherExam a resolvable entity — sameAs and a real logo</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">1 hr</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">AEO 7 → 8</p>
+          <ol class="seo-act-steps"><li>Add sameAs to Organization: LinkedIn company page, X profile, any other owned profile</li><li>Point logo at a dedicated image of at least 112×112px, not favicon.png</li><li>Give the author Person an @id and its own sameAs, referenced from every Article</li></ol>
+          <p class="seo-act-why">Without sameAs you are an unconnected string rather than a known entity. This is how Google and the answer engines learn that the site, the LinkedIn page and the X account are one thing.</p>
+          <p class="seo-act-ref">Detail: finding F9 below</p>
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="9">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="9" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">9</span>
+          <span class="seo-act-title">Make the freshness signals mean something</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">2 hrs</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">AEO 8 → 9</p>
+          <ol class="seo-act-steps"><li>Emit sitemap lastmod from real content-change dates, not the build timestamp</li><li>Update dateModified only when a post is substantively revised</li><li>Revise /blog/pmp-exam-changes-july-2026 now and let both dates move honestly</li></ol>
+          <p class="seo-act-why">Right now every article says dateModified equals datePublished while the sitemap claims all 23 URLs changed today. The two signals contradict each other so neither is trusted. Do not touch dates without a real edit — date-only updates are counterproductive.</p>
+          <p class="seo-act-ref">Detail: finding F8 below</p>
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="10">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="10" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">10</span>
+          <span class="seo-act-title">301 www.cipherexam.com to the apex</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">15 min</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Indexability 9 → 10</p>
+          <ol class="seo-act-steps"><li>Add a permanent redirect from the www host to https://cipherexam.com</li><li>Confirm with a request that does not follow redirects</li></ol>
+          <p class="seo-act-why">The cross-host canonical is doing the job today, so this is cheap insurance rather than a fire. A 301 removes a whole duplicate crawl surface unambiguously.</p>
+          <p class="seo-act-ref">Detail: finding F11 below</p>
+        </div>
+      </details>
+    </div>
+    <div class="seo-pq-tier">
+      <div class="seo-pq-tier-head"><h3>Weeks 5–12</h3><span>6.7 pts open · 3 items</span></div>
+      
+      <details class="seo-act" data-points="3.3" data-rank="11">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="11" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">11</span>
+          <span class="seo-act-title">Ship two free, indexable practice pages</span>
+          <span class="seo-act-pts">+3.3</span>
+          <span class="seo-act-effort">2–3 days</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Content 7 → 9</p>
+          <ol class="seo-act-steps"><li>/practice/pmp-questions — 20+ real questions with the full reasoning shown, free and crawlable</li><li>/practice/security-plus-pbq — a working PBQ demo, free and crawlable</li><li>CTA below the content, never gating it</li><li>Link both from the homepage, the matching LP and /certifications</li></ol>
+          <p class="seo-act-why">Every SERP I checked is won by free-question pages, and you have none. This is also a product decision, not a marketing one: it means putting real questions with real reasoning outside the paywall. If the answer is no, cut this item and accept that top-of-funnel search is closed to you.</p>
+          
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="12">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="12" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">12</span>
+          <span class="seo-act-title">Finish the schema set</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">3 hrs</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">Structured data 9 → 10</p>
+          <ol class="seo-act-steps"><li>BreadcrumbList on the LPs, both /compare pages and /pricing</li><li>Switch /pricing from Product to SoftwareApplication with applicationCategory and the existing Offers</li><li>ItemList on /blog</li></ol>
+          <p class="seo-act-why">Product without review or rating markup gets limited rich-result treatment; SoftwareApplication fits a SaaS app and is valid without inventing reviews. Breadcrumbs already work on your blog — the pattern just is not applied to the commercial pages.</p>
+          
+        </div>
+      </details>
+      <details class="seo-act" data-points="1.7" data-rank="13">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="13" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">13</span>
+          <span class="seo-act-title">Cite primary sources, publish llms.txt and RSS</span>
+          <span class="seo-act-pts">+1.7</span>
+          <span class="seo-act-effort">4 hrs</span>
+        </summary>
+        <div class="seo-act-body">
+          <p class="seo-act-dim">AEO 9 → 10</p>
+          <ol class="seo-act-steps"><li>Name and link the PMI Examination Content Outline and the CompTIA objectives PDFs in every relevant post</li><li>Rewrite each post's opening to lead with the answer, then explain</li><li>Publish /llms.txt listing the homepage, /exam-lens, four LPs, two compare pages and nine posts with one-line descriptions</li><li>Publish /rss.xml for the blog</li></ol>
+          <p class="seo-act-why">Citations are the biggest AEO lever for a cert-prep site — answer engines weight sourced claims heavily — and they double as the defence against the AI-written attack. llms.txt and RSS are an afternoon each.</p>
+          <p class="seo-act-ref">Detail: finding F13 below</p>
+        </div>
+      </details>
+    </div>
+    <div class="seo-pq-tier">
+      <div class="seo-pq-tier-head"><h3>Weeks 5–12 — no rubric points, highest traffic upside</h3><span>0.0 pts open · 1 item</span></div>
+      
+      <details class="seo-act" data-points="0" data-rank="14">
+        <summary>
+          <input type="checkbox" class="seo-act-box" data-rank="14" onclick="event.stopPropagation()" aria-label="Mark done">
+          <span class="seo-act-rank">14</span>
+          <span class="seo-act-title">Content and links: the part the score cannot measure</span>
+          <span class="seo-act-pts zero">0 pts</span>
+          <span class="seo-act-effort">1–2 weeks</span>
+        </summary>
+        <div class="seo-act-body">
+          
+          <ol class="seo-act-steps"><li>/blog/pmp-study-plan-30-days and /blog/security-plus-study-plan-30-days — cert-specific beats your generic study-plan post</li><li>/compare/examcert-alternative — ExamCert is the #2 threat in the September scan and you have no page for it</li><li>Network+ and A+ Core 2 support posts — their first ever</li><li>Repoint the outreach module at roundup editors: rebelsguidetopm, ais-cpa, open-exam-prep, prepforcerts</li><li>Exam-code pages for SY0-701, N10-009, 220-1102</li></ol>
+          <p class="seo-act-why">Zero points and the most valuable block on the list. Two of your four target SERPs are owned by affiliate roundups, so getting listed inside them beats out-ranking them. A perfect 95 with no links still does not rank — which is the honest limit of everything above.</p>
+          
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var KEY = 'cipherSeoDone';
+    var base = 73;
+    function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } }
+    function write(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
+    function paint() {
+      var done = read();
+      var gained = 0, total = 0, count = 0;
+      document.querySelectorAll('.seo-act').forEach(function (el) {
+        var rank = el.getAttribute('data-rank');
+        var pts = parseFloat(el.getAttribute('data-points')) || 0;
+        var box = el.querySelector('.seo-act-box');
+        if (el.classList.contains('is-shipped')) { return; }
+        var on = done.indexOf(rank) !== -1;
+        if (box) box.checked = on;
+        el.classList.toggle('is-done', on);
+        total += pts;
+        if (on) { gained += pts; count++; }
+      });
+      var score = Math.round(base + gained);
+      var s = document.getElementById('seo-live-score');
+      var bar = document.getElementById('seo-live-bar');
+      var note = document.getElementById('seo-live-note');
+      if (s) s.textContent = score;
+      if (bar) bar.style.width = Math.min(100, score) + '%';
+      if (note) note.textContent = count
+        ? count + ' done · ' + (total - gained).toFixed(1) + ' pts left on the table'
+        : 'tick items to project';
+    }
+    document.addEventListener('change', function (e) {
+      if (!e.target.classList || !e.target.classList.contains('seo-act-box')) return;
+      var rank = e.target.getAttribute('data-rank');
+      var done = read();
+      var i = done.indexOf(rank);
+      if (e.target.checked) { if (i === -1) done.push(rank); }
+      else if (i !== -1) { done.splice(i, 1); }
+      write(done);
+      paint();
+    });
+    paint();
+  })();
+  </script>
+
+  <h2>Blind spots, risks and assumptions</h2>
+  <div class="card seo-blind">
+    <ol><li>Timeline. SEO is a 6–12 month channel. Your measured position is 1 activated user with paid capped at $2/day. Nothing in this plan moves activation this quarter, and treating it as if it will is the fastest way to abandon it at month four — which is exactly when it starts working.</li><li>The free-questions decision is a product decision, not a marketing one. Every SERP checked is won by pages giving questions away. Doing this means putting real questions with real reasoning outside the paywall. If you are not willing to, say so now and cut Wave 2 — but then accept that top-of-funnel search is closed to you and the channel is buyer-intent pages only.</li><li>Links are the binding constraint, not on-page work. Two of your four target SERPs are owned by affiliate roundups. You can execute every fix in this report perfectly and still not rank, because the winning pages have domain authority you do not have. Budget real effort for placement in those roundups.</li><li>EEAT is your exposed flank. Solo founder, AI-assisted content, in a category where a competitor is explicitly attacking AI-written material. A named credentialed reviewer is the highest-value hire-or-favour on this list, and it is not a marketing task.</li><li>Every priority here is a hypothesis until Search Console is connected. If one page is already ranking at position 11 for something valuable, that page deserves everything and this list is wrong. Twenty minutes of setup buys the right to be confident. Do it first.</li></ol>
+  </div>
+<h2>Supporting detail</h2>
+<details class="seo-detail"><summary>Scorecard — how the 63 is calculated</summary><div class="seo-detail-body">
+  <h2>Scorecard</h2>
+  <div class="seo-overall card">
+    <div class="seo-overall-num" style="color:var(--warn)">73<span>/100</span></div>
+    <div class="seo-overall-body">
+      <div class="seo-grade">Grade C+ · 63 (2026-09-03) → 73 (2026-09-03)</div>
+      <p>Plumbing is fixed. 63 → 73 on 2026-09-03 by un-orphaning the two compare pages and /about, adding FAQPage schema to the four landing pages, and giving /terms and /privacy their own metadata — all verified live by re-crawl. What is left is structural (a certifications hub, real 404s, entity signals) and then content. Search Console is still not connected, so every priority below is still a hypothesis.</p>
+    </div>
+  </div>
+  <div class="seo-dim-grid">
+    
+    <div class="seo-dim">
+      <div class="seo-dim-head"><span class="seo-dim-name">Indexability &amp; crawl</span><span class="seo-dim-score" style="color:var(--good)">8<em>/10</em></span></div>
+      <div class="seo-meter"><span style="width:80%;background:var(--good)"></span></div>
+      <p>HTTPS, complete sitemap, sane robots.txt, all 23 URLs return 200. /terms and /privacy now self-canonical (shipped 2026-09-03). Soft 404s and the duplicate www host remain.</p>
+    </div>
+    <div class="seo-dim">
+      <div class="seo-dim-head"><span class="seo-dim-name">Metadata</span><span class="seo-dim-score" style="color:var(--good)">9<em>/10</em></span></div>
+      <div class="seo-meter"><span style="width:90%;background:var(--good)"></span></div>
+      <p>All 23 pages now carry their own title, description and canonical (shipped 2026-09-03). Six descriptions and three titles still exceed display length.</p>
+    </div>
+    <div class="seo-dim">
+      <div class="seo-dim-head"><span class="seo-dim-name">Structured data</span><span class="seo-dim-score" style="color:var(--good)">9<em>/10</em></span></div>
+      <div class="seo-meter"><span style="width:90%;background:var(--good)"></span></div>
+      <p>Organization + WebSite sitewide, Article + BreadcrumbList on all 9 posts, Product on /pricing, and FAQPage on /pricing, both /compare pages and — since 2026-09-03 — all four landing pages. Missing: BreadcrumbList on commercial pages, Organization.sameAs.</p>
+    </div>
+    <div class="seo-dim">
+      <div class="seo-dim-head"><span class="seo-dim-name">Internal linking &amp; IA</span><span class="seo-dim-score" style="color:var(--warn)">6<em>/10</em></span></div>
+      <div class="seo-meter"><span style="width:60%;background:var(--warn)"></span></div>
+      <p>No orphans as of 2026-09-03: /compare/best-pmp-exam-simulator-2026 34 inbound (3 in-body), /compare/pocketprep-alternative 18 (3 in-body), /about 15. Three of four LPs still sit at 2 inbound — the /certifications hub is the next lever.</p>
+    </div>
+    <div class="seo-dim">
+      <div class="seo-dim-head"><span class="seo-dim-name">Content &amp; keyword coverage</span><span class="seo-dim-score" style="color:var(--warn)">6<em>/10</em></span></div>
+      <div class="seo-meter"><span style="width:60%;background:var(--warn)"></span></div>
+      <p>Good depth per page (961–2,293 words). Whole query classes are unaddressed — free practice questions, per-cert study plans, exam-code pages.</p>
+    </div>
+    <div class="seo-dim">
+      <div class="seo-dim-head"><span class="seo-dim-name">AEO / EEAT readiness</span><span class="seo-dim-score" style="color:var(--warn)">6<em>/10</em></span></div>
+      <div class="seo-meter"><span style="width:60%;background:var(--warn)"></span></div>
+      <p>Named author, dates, FAQ schema, no AI-crawler blocks. Missing: author page, entity sameAs, primary-source citations, llms.txt, and any dateModified that differs from datePublished.</p>
+    </div>
+  </div></div></details>
+<details class="seo-detail"><summary>Findings — the 13 defects behind the actions</summary><div class="seo-detail-body">
+  <h2>Findings <span class="seo-count">13 — 2 critical · 3 high · 5 medium · 3 low</span></h2>
+  <div class="seo-findings">
+    
+    <details class="seo-finding" data-sev="critical">
+      <summary>
+        <span class="seo-sev" style="background:var(--bad)">Critical</span>
+        <span class="seo-fid">F2</span>
+        <span class="seo-ftitle">Three of four landing pages have two internal links each</span>
+        <span class="seo-fmeta">3 hours</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Inbound internal links: /lp/pmp 8, /lp/security-plus 2, /lp/network-plus 2, /lp/a-plus-core-2 2. Those two are the homepage cert selector and the footer.</p>
+        <p><strong>Why it matters.</strong> Landing pages are the conversion surface for the exact queries you want. At two inbound links they read as leaf pages, not destinations. This mirrors the funnel: the September landscape scan measured 4,525 of 4,832 impressions on PMP and 307 on Security+. The internal link graph is reinforcing the same imbalance rather than correcting it.</p>
+        <p><strong>Fix.</strong> Build a /certifications hub that links all four LPs with 40–60 words of unique context each, link the hub from the nav, and add a contextual in-body link from every blog post to the LP for the cert that post uses as its worked example.</p>
+        
+        <p class="seo-fbadges"><span>Effort 3 hours</span><span>Impact high</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="high">
+      <summary>
+        <span class="seo-sev" style="background:var(--warn)">High</span>
+        <span class="seo-fid">F5</span>
+        <span class="seo-ftitle">No Google Search Console feedback loop</span>
+        <span class="seo-fmeta">20 minutes, then 28 days of waiting</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> No GSC data was available to this audit, and nothing in the repo references a Search Console property or export. The competitor-intel funnel numbers come from GA4 (property 528695114) and graded post impressions — social, not search.</p>
+        <p><strong>Why it matters.</strong> Every recommendation in this report is a hypothesis about what search wants. Without query-level data you cannot tell a page that ranks at position 11 from one that has never been seen, and those need opposite responses. This is the cheapest high-leverage action on the list.</p>
+        <p><strong>Fix.</strong> Verify cipherexam.com in Search Console today. Submit the sitemap. Wait 28 days, then export queries and pages and wire the CSV into this tab the way GA4 clicks already are (scripts/pull-ga4-clicks.mjs is the pattern).</p>
+        
+        <p class="seo-fbadges"><span>Effort 20 minutes, then 28 days of waiting</span><span>Impact high</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="medium">
+      <summary>
+        <span class="seo-sev" style="background:var(--cyan)">Medium</span>
+        <span class="seo-fid">F6</span>
+        <span class="seo-ftitle">Unknown URLs return HTTP 200 instead of 404</span>
+        <span class="seo-fmeta">1 hour</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Probed /this-page-does-not-exist-xyz, /lp/shrm-cp, /lp/pmp-practice, /compare, /llms.txt, /feed.xml, /rss.xml — every one returned status 200 with an HTML shell, 10.7 KB, no H1, 275 words. Mitigating factor found: that shell does emit robots 'noindex,nofollow,noarchive', so the pages will not be indexed.</p>
+        <p><strong>Why it matters.</strong> The noindex saves you from the worst outcome. What remains is crawl waste on an unbounded URL space and a Soft 404 report in Search Console once it is connected. Note that three of those probed paths — /lp/pmp-practice, /lp/security-plus-practice, /lp/shrm-cp — are the LP routes still documented as locked in README.md and 00-campaign-brief.md. The live routes are /lp/pmp, /lp/security-plus, /lp/network-plus, /lp/a-plus-core-2. Any campaign asset built from the old brief points at a dead URL.</p>
+        <p><strong>Fix.</strong> Return a real 404 status for unmatched routes. Separately, correct the LP routes in README.md and the campaign brief so no future post links a dead path.</p>
+        
+        <p class="seo-fbadges"><span>Effort 1 hour</span><span>Impact medium</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="medium">
+      <summary>
+        <span class="seo-sev" style="background:var(--cyan)">Medium</span>
+        <span class="seo-fid">F7</span>
+        <span class="seo-ftitle">Six meta descriptions and three titles are longer than search will display</span>
+        <span class="seo-fmeta">1 hour</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Descriptions over ~160 characters: / 206, /compare/best-pmp-exam-simulator-2026 275, /exam-lens 227, /compare/pocketprep-alternative 218, /lp/a-plus-core-2 188, /lp/network-plus 187, /blog/pmp-exam-changes-july-2026 271. Titles over ~60 characters: /compare/best-pmp-exam-simulator-2026 70, /blog/pmp-exam-changes-july-2026 70, /lp/a-plus-core-2 69.</p>
+        <p><strong>Why it matters.</strong> Truncation is not a ranking penalty, it is a click-through penalty. The homepage description loses the free-trial offer — the strongest thing in it — because it sits past character 160.</p>
+        <p><strong>Fix.</strong> Rewrite to 150–160 characters for descriptions and 50–60 for titles, front-loading the offer and the cert name. Add a build-time length check so this cannot regress.</p>
+        
+        <p class="seo-fbadges"><span>Effort 1 hour</span><span>Impact medium</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="medium">
+      <summary>
+        <span class="seo-sev" style="background:var(--cyan)">Medium</span>
+        <span class="seo-fid">F8</span>
+        <span class="seo-ftitle">Every article declares dateModified equal to datePublished, while the sitemap says all 23 URLs changed today</span>
+        <span class="seo-fmeta">2 hours</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Sampled Article schema on /blog/study-by-blooms-level: datePublished 2026-05-12, dateModified 2026-05-12. sitemap.xml gives lastmod 2026-09-03 for all 23 URLs including posts published in April and May.</p>
+        <p><strong>Why it matters.</strong> The two freshness signals contradict each other, so neither is trusted. A lastmod that is identical across every URL is a generated timestamp, not a change record, and crawlers learn to ignore it. Freshness matters more than usual for you: your best commercial post is about the July 2026 PMP outline change, and that page's credibility depends on looking maintained.</p>
+        <p><strong>Fix.</strong> Emit lastmod from real content-change dates and update dateModified when a post is substantively revised. Do not touch either without an actual edit — date-only updates are counterproductive.</p>
+        
+        <p class="seo-fbadges"><span>Effort 2 hours</span><span>Impact medium</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="medium">
+      <summary>
+        <span class="seo-sev" style="background:var(--cyan)">Medium</span>
+        <span class="seo-fid">F9</span>
+        <span class="seo-ftitle">The Organization entity has no sameAs, and its logo points at favicon.png</span>
+        <span class="seo-fmeta">1 hour</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Organization JSON-LD carries name, url, description and founder Person 'Dave Quillman'. No sameAs array. logo is https://cipherexam.com/favicon.png.</p>
+        <p><strong>Why it matters.</strong> sameAs is how you tell Google and the answer engines that the CipherExam on your site, the LinkedIn page, the X account and the Q-Code brand are one entity. Without it you are an unconnected string. Google's publisher logo guidance also expects a real logo image, not a favicon.</p>
+        <p><strong>Fix.</strong> Add sameAs with your LinkedIn company page, X profile and any other owned profile. Point logo at a dedicated logo image of at least 112x112px. Add an author Person @id with its own sameAs and link it from every Article.</p>
+        
+        <p class="seo-fbadges"><span>Effort 1 hour</span><span>Impact medium</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="medium">
+      <summary>
+        <span class="seo-sev" style="background:var(--cyan)">Medium</span>
+        <span class="seo-fid">F10</span>
+        <span class="seo-ftitle">The EEAT pages are the thinnest pages on the site, and one of them is orphaned</span>
+        <span class="seo-fmeta">4 hours</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> /about — 615 words, zero H2s, 0 inbound internal links, Organization schema only. /story — 641 words, zero H2s. Both are shorter than every blog post.</p>
+        <p><strong>Why it matters.</strong> You are a solo founder shipping AI-assisted content into a category where a direct competitor markets its questions as 'written by humans rather than by AI' — that attack is recorded in your own battlecard, and it lands on the trust axis. About and Story are where that gets answered, and right now they are the least developed pages you have.</p>
+        <p><strong>Fix.</strong> Rebuild /about into a real entity page: who builds this, what the method is, how questions are produced and reviewed, who reviews them, contact route. Add an author page for Dave Quillman with credentials and sameAs, and link it from every post byline. If a credentialed reviewer signs off on cert content, name them — that is the direct counter.</p>
+        
+        <p class="seo-fbadges"><span>Effort 4 hours</span><span>Impact medium</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="low">
+      <summary>
+        <span class="seo-sev" style="background:var(--dim)">Low</span>
+        <span class="seo-fid">F11</span>
+        <span class="seo-ftitle">www.cipherexam.com serves a 200 duplicate instead of redirecting</span>
+        <span class="seo-fmeta">15 minutes</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> https://www.cipherexam.com/ loads the full homepage and declares rel=canonical https://cipherexam.com/. No redirect was returned.</p>
+        <p><strong>Why it matters.</strong> The cross-host canonical does the job, so this is not urgent. A 301 is still the stronger, unambiguous signal and removes a whole duplicate crawl surface.</p>
+        <p><strong>Fix.</strong> 301 the www host to the apex.</p>
+        
+        <p class="seo-fbadges"><span>Effort 15 minutes</span><span>Impact low</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="low">
+      <summary>
+        <span class="seo-sev" style="background:var(--dim)">Low</span>
+        <span class="seo-fid">F12</span>
+        <span class="seo-ftitle">Missing alt text, and every article shares one social image</span>
+        <span class="seo-fmeta">2 hours</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> At least one image without an alt attribute on every crawled page; the homepage has 2 of 4. All nine Article schema blocks set image to https://cipherexam.com/og-default.png.</p>
+        <p><strong>Why it matters.</strong> Accessibility first, image search second. The shared og-default image also means every post shares one link preview, which flattens click-through anywhere your posts are shared — which is your only working channel right now.</p>
+        <p><strong>Fix.</strong> Alt text on all content images. A per-post OG image; the Remotion pipeline in this repo already renders post cards and can produce them.</p>
+        
+        <p class="seo-fbadges"><span>Effort 2 hours</span><span>Impact low</span></p>
+      </div>
+    </details>
+    <details class="seo-finding" data-sev="low">
+      <summary>
+        <span class="seo-sev" style="background:var(--dim)">Low</span>
+        <span class="seo-fid">F13</span>
+        <span class="seo-ftitle">No llms.txt and no RSS feed</span>
+        <span class="seo-fmeta">1 hour</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Probed /llms.txt, /feed.xml, /rss.xml, /blog/rss.xml — all returned the noindex shell, not a feed. robots.txt contains no GPTBot, ClaudeBot, PerplexityBot or Google-Extended directives, so AI crawlers are allowed by default.</p>
+        <p><strong>Why it matters.</strong> Allowing the AI crawlers is the right call for a site that wants to be cited, and you already are. llms.txt is a cheap, low-risk way to hand answer engines a clean map of your best pages. RSS still feeds aggregators and newsletter tools.</p>
+        <p><strong>Fix.</strong> Publish /llms.txt listing the homepage, /exam-lens, the four LPs, both compare pages and the nine posts with one-line descriptions. Add /rss.xml for the blog.</p>
+        
+        <p class="seo-fbadges"><span>Effort 1 hour</span><span>Impact low</span></p>
+      </div>
+    </details>
+    <details class="seo-finding is-resolved" data-sev="critical">
+      <summary>
+        <span class="seo-sev" style="background:var(--good)">Resolved</span>
+        <span class="seo-fid">F1</span>
+        <span class="seo-ftitle">Your two highest-intent pages have zero internal links pointing at them</span>
+        <span class="seo-fmeta">1 hour</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> /compare/pocketprep-alternative — 0 inbound internal links. /compare/best-pmp-exam-simulator-2026 — 0 inbound internal links. /about — 0. Measured by parsing every &lt;a href&gt; on all 23 crawled pages. Both compare pages are in the sitemap, so Google can find them; nothing on the site tells Google they matter.</p>
+        <p><strong>Why it matters.</strong> These are the only two pages you own that target buying-decision queries. An orphan page inherits no authority from the homepage's 189 inbound links, and orphan status is one of the clearest low-priority signals you can send.</p>
+        <p><strong>Fix.</strong> Add a 'Compare' entry to the primary nav or footer linking both pages. Link /compare/best-pmp-exam-simulator-2026 from /lp/pmp and from the two PMP blog posts. Link /compare/pocketprep-alternative from /pricing and from /exam-lens. Link /about from the footer and from every post's author line.</p>
+        <p class="seo-resolution"><strong>Done.</strong> Shipped 2026-09-03. Re-crawl: /compare/best-pmp-exam-simulator-2026 34 inbound, /compare/pocketprep-alternative 18, /about 15. Footer sitewide, mobile nav, and in-body links from /lp/pmp, /lp/security-plus, /pricing, /exam-lens and two articles.</p>
+        <p class="seo-fbadges"><span>Effort 1 hour</span><span>Impact high</span></p>
+      </div>
+    </details>
+    <details class="seo-finding is-resolved" data-sev="high">
+      <summary>
+        <span class="seo-sev" style="background:var(--good)">Resolved</span>
+        <span class="seo-fid">F3</span>
+        <span class="seo-ftitle">/terms and /privacy emit the homepage's title, description and canonical</span>
+        <span class="seo-fmeta">30 minutes</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> Both pages return title 'CipherExam — Learn How Certification Exams Think', the homepage's 206-character description, and rel=canonical pointing at https://cipherexam.com/ — not at themselves. Their H1s are correct ('Terms of Service', 'Privacy Policy'). Both are listed in sitemap.xml.</p>
+        <p><strong>Why it matters.</strong> Two things are wrong at once. The canonical tells Google these pages are the homepage, so they will be dropped from the index while sitting in your sitemap — a direct contradiction Search Console reports as an error. And the fallback proves the page template has a default-meta path that silently applies when a route forgets to set its own. Any future page that forgets will inherit the same bug.</p>
+        <p><strong>Fix.</strong> Set self-referencing canonicals and page-specific title/description on both routes. Then make the default a build-time failure rather than a silent fallback, so the next page cannot repeat it.</p>
+        <p class="seo-resolution"><strong>Done.</strong> Shipped 2026-09-03. Both pages render SeoHead with SEO.terms / SEO.privacy; re-crawl confirms self-canonical and page-specific titles.</p>
+        <p class="seo-fbadges"><span>Effort 30 minutes</span><span>Impact medium</span></p>
+      </div>
+    </details>
+    <details class="seo-finding is-resolved" data-sev="high">
+      <summary>
+        <span class="seo-sev" style="background:var(--good)">Resolved</span>
+        <span class="seo-fid">F4</span>
+        <span class="seo-ftitle">The four landing pages have visible FAQ sections and no FAQPage schema</span>
+        <span class="seo-fmeta">1 hour</span>
+      </summary>
+      <div class="seo-finding-body">
+        <p><strong>Evidence.</strong> All four /lp/ pages render an H2 'Frequently asked'. Their JSON-LD contains only Organization and WebSite. /pricing and both /compare pages do carry FAQPage — so the pattern exists in the codebase and was simply not applied here.</p>
+        <p><strong>Why it matters.</strong> This is the single highest-return schema change available. Question-answer pairs are what AI Overviews, ChatGPT and Perplexity extract most reliably, and the answers are already written. You are leaving the markup off finished content.</p>
+        <p><strong>Fix.</strong> Emit FAQPage JSON-LD from the same data that renders the visible FAQ block, on all four LPs. Reuse the /pricing implementation.</p>
+        <p class="seo-resolution"><strong>Done.</strong> Shipped 2026-09-03. New LpFaq.tsx feeds the visible &lt;dl&gt; and the FAQPage JSON-LD from one array per LP. Re-crawl: all four LPs emit FAQPage; /lp/pmp schema and visible questions identical (6/6), answers free of markup.</p>
+        <p class="seo-fbadges"><span>Effort 1 hour</span><span>Impact high</span></p>
+      </div>
+    </details>
+  </div></div></details>
+<details class="seo-detail"><summary>Crawl snapshot — all 23 URLs, measured</summary><div class="seo-detail-body">
+  <h2>Crawl snapshot <span class="seo-count">23 URLs, all HTTP 200</span></h2>
+  <p style="color:var(--dim);font-size:.86rem;margin-top:-6px">Baseline measured 2026-09-03 from the live HTML; inbound-link, JSON-LD and canonical columns re-measured after the 2026-09-03 deploy. status was 200 for all 23. selfCanonical false means the page canonicals somewhere else.</p>
+  <div class="seo-table-wrap">
+    <table class="seo-table">
+      <thead><tr><th>Page</th><th>Title</th><th>Desc</th><th>Words</th><th>H2</th><th>H3</th><th>Out</th><th>In</th><th>LD</th><th>Canon</th><th>Img</th><th>No alt</th></tr></thead>
+      <tbody>
+      <tr>
+          <td class="seo-path"><a href="https://cipherexam.com/" target="cipherexam" rel="noopener">/</a></td>
+          <td>48</td>
+          <td class="seo-bad">206</td>
+          <td>1666</td>
+          <td>11</td>
+          <td>17</td>
+          <td>19</td>
+          <td>189</td>
+          <td>2</td>
+          <td>self</td>
+          <td>4</td>
+          <td class="seo-warn">2</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/pricing" target="cipherexam" rel="noopener">/pricing</a></td>
+          <td>44</td>
+          <td>140</td>
+          <td>1021</td>
+          <td>3</td>
+          <td>3</td>
+          <td>28</td>
+          <td>46</td>
+          <td>2</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/story" target="cipherexam" rel="noopener">/story</a></td>
+          <td>38</td>
+          <td>128</td>
+          <td class="seo-bad">641</td>
+          <td class="seo-bad">0</td>
+          <td>0</td>
+          <td>25</td>
+          <td>47</td>
+          <td>2</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/about" target="cipherexam" rel="noopener">/about</a></td>
+          <td>46</td>
+          <td>148</td>
+          <td class="seo-bad">615</td>
+          <td class="seo-bad">0</td>
+          <td>7</td>
+          <td>18</td>
+          <td>15</td>
+          <td class="seo-bad">1</td>
+          <td>self</td>
+          <td>2</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/lp/pmp" target="cipherexam" rel="noopener">/lp/pmp</a></td>
+          <td>50</td>
+          <td>139</td>
+          <td>1133</td>
+          <td>4</td>
+          <td>4</td>
+          <td>11</td>
+          <td>8</td>
+          <td>2</td>
+          <td>self</td>
+          <td>1</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/lp/security-plus" target="cipherexam" rel="noopener">/lp/security-plus</a></td>
+          <td>52</td>
+          <td>129</td>
+          <td>1077</td>
+          <td>4</td>
+          <td>4</td>
+          <td>11</td>
+          <td class="seo-warn">2</td>
+          <td>2</td>
+          <td>self</td>
+          <td>1</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/lp/network-plus" target="cipherexam" rel="noopener">/lp/network-plus</a></td>
+          <td>60</td>
+          <td class="seo-bad">187</td>
+          <td>961</td>
+          <td>3</td>
+          <td>3</td>
+          <td>11</td>
+          <td class="seo-warn">2</td>
+          <td>2</td>
+          <td>self</td>
+          <td>1</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/lp/a-plus-core-2" target="cipherexam" rel="noopener">/lp/a-plus-core-2</a></td>
+          <td class="seo-bad">69</td>
+          <td class="seo-bad">188</td>
+          <td>1088</td>
+          <td>3</td>
+          <td>3</td>
+          <td>11</td>
+          <td class="seo-warn">2</td>
+          <td>2</td>
+          <td>self</td>
+          <td>1</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/compare/pocketprep-alternative" target="cipherexam" rel="noopener">/compare/pocketprep-alternative</a></td>
+          <td class="seo-bad">64</td>
+          <td class="seo-bad">218</td>
+          <td>1278</td>
+          <td>6</td>
+          <td>3</td>
+          <td>12</td>
+          <td>18</td>
+          <td>2</td>
+          <td>self</td>
+          <td>1</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/compare/best-pmp-exam-simulator-2026" target="cipherexam" rel="noopener">/compare/best-pmp-exam-simulator-2026</a></td>
+          <td class="seo-bad">70</td>
+          <td class="seo-bad">275</td>
+          <td>2107</td>
+          <td>8</td>
+          <td>3</td>
+          <td>13</td>
+          <td>34</td>
+          <td>2</td>
+          <td>self</td>
+          <td>1</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog" target="cipherexam" rel="noopener">/blog</a></td>
+          <td>49</td>
+          <td>138</td>
+          <td class="seo-bad">673</td>
+          <td>9</td>
+          <td>0</td>
+          <td>35</td>
+          <td>55</td>
+          <td>2</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/exam-lens" target="cipherexam" rel="noopener">/exam-lens</a></td>
+          <td class="seo-bad">63</td>
+          <td class="seo-bad">227</td>
+          <td>1703</td>
+          <td>11</td>
+          <td>1</td>
+          <td>29</td>
+          <td>35</td>
+          <td>2</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/study-by-blooms-level" target="cipherexam" rel="noopener">/blog/study-by-blooms-level</a></td>
+          <td class="seo-bad">61</td>
+          <td>130</td>
+          <td>1557</td>
+          <td>7</td>
+          <td>1</td>
+          <td>32</td>
+          <td>11</td>
+          <td>2</td>
+          <td>self</td>
+          <td>5</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/recall-only-prep-fails" target="cipherexam" rel="noopener">/blog/recall-only-prep-fails</a></td>
+          <td class="seo-bad">62</td>
+          <td>145</td>
+          <td>1401</td>
+          <td>7</td>
+          <td>4</td>
+          <td>32</td>
+          <td>9</td>
+          <td>2</td>
+          <td>self</td>
+          <td>6</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/cognitive-heatmap" target="cipherexam" rel="noopener">/blog/cognitive-heatmap</a></td>
+          <td class="seo-bad">62</td>
+          <td>113</td>
+          <td>1330</td>
+          <td>8</td>
+          <td>1</td>
+          <td>32</td>
+          <td>7</td>
+          <td>2</td>
+          <td>self</td>
+          <td>5</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/how-certification-exams-think" target="cipherexam" rel="noopener">/blog/how-certification-exams-think</a></td>
+          <td>51</td>
+          <td>133</td>
+          <td>1171</td>
+          <td>4</td>
+          <td>1</td>
+          <td>31</td>
+          <td>5</td>
+          <td>2</td>
+          <td>self</td>
+          <td>4</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/why-certification-exam-questions-are-so-confusing" target="cipherexam" rel="noopener">/blog/why-certification-exam-questions-are-so-confusing</a></td>
+          <td class="seo-bad">62</td>
+          <td>123</td>
+          <td>1626</td>
+          <td>6</td>
+          <td>1</td>
+          <td>31</td>
+          <td class="seo-warn">4</td>
+          <td>2</td>
+          <td>self</td>
+          <td>4</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/5-study-mistakes-that-cost-your-certification-exam" target="cipherexam" rel="noopener">/blog/5-study-mistakes-that-cost-your-certification-exam</a></td>
+          <td>52</td>
+          <td>89</td>
+          <td>1176</td>
+          <td>7</td>
+          <td>1</td>
+          <td>32</td>
+          <td>6</td>
+          <td>2</td>
+          <td>self</td>
+          <td>4</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/how-ai-explanations-change-the-way-you-study" target="cipherexam" rel="noopener">/blog/how-ai-explanations-change-the-way-you-study</a></td>
+          <td>57</td>
+          <td>126</td>
+          <td>1253</td>
+          <td>7</td>
+          <td>1</td>
+          <td>31</td>
+          <td class="seo-warn">4</td>
+          <td>2</td>
+          <td>self</td>
+          <td>4</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/first-30-days-certification-study-plan" target="cipherexam" rel="noopener">/blog/first-30-days-certification-study-plan</a></td>
+          <td>60</td>
+          <td>125</td>
+          <td>1250</td>
+          <td>7</td>
+          <td>1</td>
+          <td>32</td>
+          <td>7</td>
+          <td>2</td>
+          <td>self</td>
+          <td>4</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/blog/pmp-exam-changes-july-2026" target="cipherexam" rel="noopener">/blog/pmp-exam-changes-july-2026</a></td>
+          <td class="seo-bad">70</td>
+          <td class="seo-bad">271</td>
+          <td>2293</td>
+          <td>6</td>
+          <td>1</td>
+          <td>31</td>
+          <td class="seo-warn">4</td>
+          <td>2</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/terms" target="cipherexam" rel="noopener">/terms</a></td>
+          <td>48</td>
+          <td class="seo-bad">206</td>
+          <td>972</td>
+          <td>11</td>
+          <td>0</td>
+          <td>27</td>
+          <td>21</td>
+          <td class="seo-bad">1</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr><tr>
+          <td class="seo-path"><a href="https://cipherexam.com/privacy" target="cipherexam" rel="noopener">/privacy</a></td>
+          <td>48</td>
+          <td class="seo-bad">206</td>
+          <td>880</td>
+          <td>11</td>
+          <td>4</td>
+          <td>28</td>
+          <td>21</td>
+          <td class="seo-bad">1</td>
+          <td>self</td>
+          <td>3</td>
+          <td class="seo-warn">1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="color:var(--dim);font-size:.82rem">Red = defect. Amber = worth a look. <strong>In</strong> is inbound internal links from the other 22 crawled pages — the column that explains most of this report.</p></div></details>
+<details class="seo-detail"><summary>Keyword map — page by page</summary><div class="seo-detail-body">
+  <h2>Keyword map</h2>
+  <p style="color:var(--dim);font-size:.86rem;margin-top:-6px">No search volumes — no keyword tool was used and inventing them would be worse than leaving them out. Assign volume once Search Console has 28 days of data.</p>
+  <div class="seo-table-wrap">
+    <table class="seo-table seo-table-wide">
+      <thead><tr><th>Page</th><th>Primary target</th><th>Intent</th><th>Current H1</th><th>Gap</th></tr></thead>
+      <tbody>
+      <tr>
+        <td class="seo-path"><a href="https://cipherexam.com/" target="cipherexam" rel="noopener">/</a></td>
+        <td><strong>certification exam prep that explains answers</strong></td>
+        <td>brand + category</td>
+        <td>Learn How Certification Exams Think</td>
+        <td>H1 is a positioning line, not a query. Keep it — but the first H2 should carry the category phrase.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/lp/pmp" target="cipherexam" rel="noopener">/lp/pmp</a></td>
+        <td><strong>PMP practice exam questions with explanations</strong></td>
+        <td>commercial</td>
+        <td>Practice PMP the way PMI thinks.</td>
+        <td>Title carries the phrase, H1 does not. Add a keyword-bearing H2 above the fold. No FAQ schema.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/lp/security-plus" target="cipherexam" rel="noopener">/lp/security-plus</a></td>
+        <td><strong>Security+ practice questions PBQ</strong></td>
+        <td>commercial</td>
+        <td>Security+ punishes the wrong decision, not the missing fact.</td>
+        <td>PBQ is the differentiator and the SERP for it is owned by Dion, StationX and Udemy. Needs a free PBQ asset to compete, not just an LP.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/lp/network-plus" target="cipherexam" rel="noopener">/lp/network-plus</a></td>
+        <td><strong>Network+ practice questions OSI troubleshooting</strong></td>
+        <td>commercial</td>
+        <td>Troubleshoot Network+ one layer at a time.</td>
+        <td>Weakest LP: 961 words, 3 H2s, 2 inbound links, no supporting blog content at all.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/lp/a-plus-core-2" target="cipherexam" rel="noopener">/lp/a-plus-core-2</a></td>
+        <td><strong>A+ Core 2 practice questions</strong></td>
+        <td>commercial</td>
+        <td>Practice A+ Core 2 the way CompTIA grades it.</td>
+        <td>Same as Network+. Also the longest title on the site at 69 characters — it truncates.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/compare/best-pmp-exam-simulator-2026" target="cipherexam" rel="noopener">/compare/best-pmp-exam-simulator-2026</a></td>
+        <td><strong>best PMP exam simulator 2026</strong></td>
+        <td>buyer</td>
+        <td>Choosing a PMP exam simulator</td>
+        <td>Strongest page you have — 2,107 words, FAQPage schema — and zero internal links. See the competitor section: this SERP is owned by affiliate roundups.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/compare/pocketprep-alternative" target="cipherexam" rel="noopener">/compare/pocketprep-alternative</a></td>
+        <td><strong>Pocket Prep alternative</strong></td>
+        <td>buyer</td>
+        <td>Looking for a Pocket Prep alternative?</td>
+        <td>Orphaned. Also missing the other names buyers compare against — ExamCert, PrepCast, Dion.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/exam-lens" target="cipherexam" rel="noopener">/exam-lens</a></td>
+        <td><strong>certification exam reasoning framework</strong></td>
+        <td>informational + brand</td>
+        <td>Exam Lens</td>
+        <td>Best-linked non-homepage asset at 35 inbound and it carries DefinedTermSet schema. This is your entity hub — link the LPs from it.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/blog/pmp-exam-changes-july-2026" target="cipherexam" rel="noopener">/blog/pmp-exam-changes-july-2026</a></td>
+        <td><strong>PMP exam changes July 2026</strong></td>
+        <td>informational, time-sensitive</td>
+        <td>The PMP Exam Changed in July 2026 — Is Your Prep Current?</td>
+        <td>2,293 words, your longest post, 4 inbound links. Time-sensitive value is decaying now — it should be the most-linked post on the site.</td>
+      </tr><tr>
+        <td class="seo-path"><a href="https://cipherexam.com/pricing" target="cipherexam" rel="noopener">/pricing</a></td>
+        <td><strong>CipherExam pricing</strong></td>
+        <td>brand</td>
+        <td>Pricing</td>
+        <td>Product + FAQPage schema already correct. Consider SoftwareApplication over Product — it fits a SaaS app better and does not need review markup to be valid.</td>
+      </tr><tr class="seo-row-missing">
+        <td class="seo-path"><span class="seo-missing">no page</span></td>
+        <td><strong>free PMP practice questions</strong></td>
+        <td>top-of-funnel, highest volume class</td>
+        <td>—</td>
+        <td>No free-question page exists. This is the single largest content gap and the query class that dominates every SERP checked.</td>
+      </tr><tr class="seo-row-missing">
+        <td class="seo-path"><span class="seo-missing">no page</span></td>
+        <td><strong>Security+ PBQ practice free</strong></td>
+        <td>top-of-funnel</td>
+        <td>—</td>
+        <td>PBQ-native is your Security+ pitch and you have nothing indexable that demonstrates it.</td>
+      </tr><tr class="seo-row-missing">
+        <td class="seo-path"><span class="seo-missing">no page</span></td>
+        <td><strong>PMP study plan 30 days / 60 days</strong></td>
+        <td>informational, high commercial adjacency</td>
+        <td>—</td>
+        <td>/blog/first-30-days-certification-study-plan is generic across certs. Per-cert versions rank; generic ones rarely do.</td>
+      </tr><tr class="seo-row-missing">
+        <td class="seo-path"><span class="seo-missing">no page</span></td>
+        <td><strong>SY0-701 / N10-009 / 220-1102 exam objectives</strong></td>
+        <td>informational, exam-code queries</td>
+        <td>—</td>
+        <td>Exam-code queries are low-competition and high-intent. You cover three CompTIA exams and mention no exam codes anywhere.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div></div></details>
+<details class="seo-detail"><summary>Answer-engine readiness checklist</summary><div class="seo-detail-body">
+  <h2>Answer-engine readiness</h2>
+  <div class="seo-aeo-grid">
+    
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>FAQPage on the four LPs</strong><span class="seo-aeo-status">missing</span></div>
+      <p>Answers already written and rendered. Highest-return AEO action available.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--good)"></span><strong>Article schema with author, dates, publisher</strong><span class="seo-aeo-status">present</span></div>
+      <p>All nine posts. Correctly structured.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--warn)"></span><strong>BreadcrumbList</strong><span class="seo-aeo-status">partial</span></div>
+      <p>Present on the nine posts and /exam-lens. Missing on LPs, compare pages and /pricing.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>Organization sameAs / entity linkage</strong><span class="seo-aeo-status">missing</span></div>
+      <p>No sameAs anywhere. Answer engines cannot resolve CipherExam to a known entity.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>Author page and Person sameAs</strong><span class="seo-aeo-status">missing</span></div>
+      <p>Author name appears in schema; no page exists behind it. Weakest EEAT link.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--good)"></span><strong>AI crawler access</strong><span class="seo-aeo-status">present</span></div>
+      <p>robots.txt sets no GPTBot, ClaudeBot, PerplexityBot or Google-Extended directives, so all are permitted. Correct posture for a site that wants citations — keep it.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>llms.txt</strong><span class="seo-aeo-status">missing</span></div>
+      <p>Probed and absent.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--warn)"></span><strong>Direct-answer openings</strong><span class="seo-aeo-status">partial</span></div>
+      <p>Blog headings are question-shaped and readable, which is right. Most posts open with framing rather than the answer — lead with the answer, then explain.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>Primary-source citations</strong><span class="seo-aeo-status">missing</span></div>
+      <p>Largest AEO weakness for this category. Cite the PMI Examination Content Outline and the CompTIA objectives PDFs by name and link. Answer engines weight sourced claims heavily, and it also defuses the 'written by AI' attack.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>Freshness signals</strong><span class="seo-aeo-status">broken</span></div>
+      <p>dateModified always equals datePublished while sitemap lastmod says today for everything. See F8.</p>
+    </div>
+    <div class="seo-aeo">
+      <div class="seo-aeo-head"><span class="seo-dot" style="background:var(--bad)"></span><strong>Unique per-page OG images</strong><span class="seo-aeo-status">missing</span></div>
+      <p>All nine articles share og-default.png.</p>
+    </div>
+  </div></div></details>
+<details class="seo-detail"><summary>Competitor gap — who owns your four target queries</summary><div class="seo-detail-body">
+  <h2>Competitor gap</h2>
+  <p style="color:var(--dim);font-size:.86rem;margin-top:-6px">SERP checks run 2026-09-03 on four queries the site is built to win. Positions are not reported — only presence or absence, which is what an unauthenticated search can honestly establish.</p>
+  <div class="seo-serp-grid">
+    
+    <div class="seo-serp">
+      <div class="seo-serp-head"><code>best PMP exam simulator 2026</code><span class="seo-serp-flag">not on page 1</span></div>
+      <p><strong>Who owns it.</strong> Affiliate and review roundups — rebelsguidetopm.com, ais-cpa.com, big4accountingfirms.org, gururo.com — plus vendor pages at pm-exam-simulator.com and pmlearning.org.</p>
+      <p>This is a roundup SERP, not a product SERP. Your /compare page can be excellent and still not rank, because Google is answering with lists. The faster route is getting CipherExam listed inside those roundups. That is outreach work, and the outreach module in this dashboard already does exactly that kind of scoring and sequencing — it is just pointed at social, not at editors.</p>
+    </div>
+    <div class="seo-serp">
+      <div class="seo-serp-head"><code>Pocket Prep alternative</code><span class="seo-serp-flag">not on page 1</span></div>
+      <p><strong>Who owns it.</strong> open-exam-prep.com and prepforcerts.org own the alternatives listicles; Pocket Prep's own pages own the brand terms.</p>
+      <p>Same shape. Your /compare/pocketprep-alternative page is the right asset and it is orphaned — fix that first, then pitch the two listicle sites.</p>
+    </div>
+    <div class="seo-serp">
+      <div class="seo-serp-head"><code>PMP practice questions with explanations free trial</code><span class="seo-serp-flag">not on page 1</span></div>
+      <p><strong>Who owns it.</strong> Free-question pages — projectmanagementacademy.net, oliverlehmann.com, pmppracticeexam.org, trustedinstitute.com, pmlearning.org, examcert.app.</p>
+      <p>The entire first page is free questions. You have no free-question page. This is the clearest gap in the audit and the reason Wave 2 leads with it.</p>
+    </div>
+    <div class="seo-serp">
+      <div class="seo-serp-head"><code>CompTIA Security+ practice questions PBQ simulator</code><span class="seo-serp-flag">not on page 1</span></div>
+      <p><strong>Who owns it.</strong> diontraining.com, StationX, Udemy, cybr.com, certguide.ai, securityplussimulator.com.</p>
+      <p>PBQ-native is the Security+ pitch on your own LP, and there is nothing indexable behind it. A free PBQ page is both the SEO asset and the product demo.</p>
+    </div>
+  </div>
+  <h3>From the September landscape scan</h3>
+  <ul class="seo-intel"><li>ExamCert (ranked #2 threat, landscape scan 2026-09-01) runs a content operation publishing 'best prep app 2026' comparison articles that rank for the exact queries your buyers type. They are beating you on the same play your /compare pages were built for — and theirs are linked.</li><li>Pocket Prep (#1 threat) publishes under a named PMP-credentialed Director of Education and shipped two explainers on the July 2026 outline change, one on 2026-08-13. That is an EEAT advantage no amount of on-page work closes. The counter is a named credentialed reviewer on your cert content plus first-person, experience-led writing that a content team cannot produce.</li><li>The 'written by humans rather than by AI' attack recorded in the battlecard is a search problem as much as a positioning one. Google's quality guidance targets content produced primarily to rank rather than to help. Your defence is the same on both fronts: named author, stated method, cited primary sources, demonstrable first-hand experience.</li></ul></div></details>
+<details class="seo-detail"><summary>Content plan and 90-day schedule</summary><div class="seo-detail-body">
+  <h2>Content plan</h2>
+  <div class="seo-wave-grid">
+    
+    <div class="seo-wave">
+      <h3>Wave 1 — plumbing, before any new content</h3>
+      <ul><li>Un-orphan both /compare pages and /about (F1)</li><li>Build the /certifications hub and link all four LPs (F2)</li><li>FAQPage schema on the four LPs (F4)</li><li>Verify Search Console and submit the sitemap (F5)</li><li>Fix /terms and /privacy canonicals and metadata (F3)</li><li>Trim the six over-length descriptions and three titles (F7)</li></ul>
+    </div>
+    <div class="seo-wave">
+      <h3>Wave 2 — the missing traffic engine</h3>
+      <ul><li>/practice/pmp-questions — free, indexable, 20+ questions with full reasoning shown. Gated CTA below, not above.</li><li>/practice/security-plus-pbq — the PBQ demo, free and indexable. This is the only way to compete on your own differentiator.</li><li>/blog/pmp-study-plan-30-days — cert-specific, replacing the generic study-plan post as the PMP entry point</li><li>/blog/security-plus-study-plan-30-days</li><li>Author page for Dave Quillman with credentials and sameAs, linked from every byline (F10)</li></ul>
+    </div>
+    <div class="seo-wave">
+      <h3>Wave 3 — depth and defence</h3>
+      <ul><li>/compare/examcert-alternative — ExamCert is ranked the #2 threat in the current landscape scan and you have no page for the comparison</li><li>/blog/network-plus-osi-troubleshooting-walkthrough — the first support content Network+ has ever had</li><li>/blog/a-plus-core-2-troubleshooting-order — same for A+ Core 2</li><li>/glossary or exam-code pages for SY0-701, N10-009, 220-1102</li><li>Rebuild /about as a real entity page (F10)</li><li>llms.txt and RSS (F13)</li></ul>
+    </div>
+  </div>
+  <h2>90-day plan</h2>
+  <div class="seo-plan">
+    
+    <div class="seo-plan-window">
+      <div class="seo-plan-head"><h3>Days 1–7 — plumbing</h3><span>Search Console verified and collecting. No orphans. Schema complete on the LPs.</span></div>
+      <ol><li>Verify cipherexam.com in Search Console, submit sitemap.xml (F5)</li><li>Link both /compare pages and /about from nav, footer, LPs and posts (F1)</li><li>FAQPage JSON-LD on all four LPs (F4)</li><li>Self-canonical and real metadata on /terms and /privacy (F3)</li><li>Rewrite the six over-length descriptions and three titles (F7)</li></ol>
+    </div>
+    <div class="seo-plan-window">
+      <div class="seo-plan-head"><h3>Days 8–30 — structure</h3><span>Every LP reachable in one click from a hub. Real 404s. Entity resolvable.</span></div>
+      <ol><li>Ship /certifications and link all four LPs with unique context (F2)</li><li>Return real 404 status on unmatched routes (F6)</li><li>Correct the stale /lp/*-practice routes in README.md and 00-campaign-brief.md (F6)</li><li>Organization sameAs plus a proper logo image; author Person with sameAs (F9)</li><li>Ship the author page and link it from every byline (F10)</li><li>301 www to apex (F11)</li></ol>
+    </div>
+    <div class="seo-plan-window">
+      <div class="seo-plan-head"><h3>Days 31–60 — the traffic engine</h3><span>Two free, indexable practice assets live. First GSC data in hand.</span></div>
+      <ol><li>Ship /practice/pmp-questions and /practice/security-plus-pbq</li><li>Two cert-specific study-plan posts</li><li>Cite the PMI ECO and CompTIA objectives by name and link in every relevant post</li><li>Read the first 28 days of Search Console data and re-prioritise this list against it — do not skip this step</li></ol>
+    </div>
+    <div class="seo-plan-window">
+      <div class="seo-plan-head"><h3>Days 61–90 — depth and links</h3><span>Compare set complete. First roundup placements pitched.</span></div>
+      <ol><li>Ship /compare/examcert-alternative</li><li>Network+ and A+ Core 2 support posts — their first ever</li><li>Repoint the outreach module at roundup and listicle editors: rebelsguidetopm, ais-cpa, open-exam-prep, prepforcerts</li><li>Rebuild /about as an entity page</li><li>llms.txt, RSS, per-post OG images</li><li>Re-crawl and re-score this tab</li></ol>
+    </div>
+  </div></div></details>
+<!--/SEO-SECTION-->
+</section>
+
 <section class="route-section" data-route="settings">
   <h1>Settings</h1>
   <p class="plain-help">Campaign maintenance lives here so it cannot be mistaken for daily work.</p>
@@ -9181,6 +10397,20 @@ document.addEventListener('cipher:state-updated', function () {
         submitBtn.disabled = false;
         return;
       }
+      // Publish instant encoded in a LinkedIn permalink. Null when the url
+      // carries no activity urn or decodes outside a sane window — callers
+      // fall back to the clock. See scripts/lib/linkedin-time.mjs.
+      function postedAtFromUrn(url) {
+        var m = /urn:li:activity:(\d+)/.exec(url || '');
+        if (!m) return null;
+        try {
+          var ms = Number(BigInt(m[1]) >> 22n);
+          if (!isFinite(ms)) return null;
+          if (ms < Date.parse('2010-01-01T00:00:00Z')) return null;
+          if (ms > Date.now() + 86400000) return null;
+          return new Date(ms).toISOString();
+        } catch (err) { return null; }
+      }
       var docRef = db.collection('campaign').doc('posts');
       docRef.get()
         .then(function (snap) {
@@ -9189,8 +10419,14 @@ document.addEventListener('cipher:state-updated', function () {
           var idx = postsList.findIndex(function (p) { return p.id === sid; });
           if (idx === -1) throw new Error('Post "' + sid + '" not found in Firestore');
           var now = new Date().toISOString();
+          // postedAt must be when LINKEDIN published, not when this button was
+          // clicked. Clicking it later stamped postedAt late (measured +1.5 to
+          // +26.8 min), which made the reveal check report on-time reveals as
+          // owed. A LinkedIn activity id carries its creation ms in the top
+          // bits, so the permalink dates itself. Mirrors
+          // scripts/lib/linkedin-time.mjs — keep the two in step.
           postsList[idx].status   = 'posted';
-          postsList[idx].postedAt = now;
+          postsList[idx].postedAt = postedAtFromUrn(postUrl) || now;
           postsList[idx].postUrl  = postUrl;
           data._meta = data._meta || {};
           data._meta.lastUpdatedAt = now;
@@ -10360,10 +11596,10 @@ function escHtml(s) {
 })();
 </script>
 <!--HAL-RAIL-->
-<script src="assets/outreach-data.js?v=1.30.21"></script>
-<script src="assets/outreach.js?v=1.30.21"></script>
-<script src="assets/page-knowledge.js?v=1.30.21"></script>
-<script src="assets/hal-rail.js?v=1.30.21"></script>
+<script src="assets/outreach-data.js?v=1.31.0"></script>
+<script src="assets/outreach.js?v=1.31.0"></script>
+<script src="assets/page-knowledge.js?v=1.31.0"></script>
+<script src="assets/hal-rail.js?v=1.31.0"></script>
 <!--/HAL-RAIL-->
 <script src="assets/campaign-reset.js"></script>
 

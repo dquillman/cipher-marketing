@@ -1,34 +1,87 @@
 {
   "_meta": {
     "purpose": "Canonical competitor list for CipherExam. The competitors.html page currently hardcodes a reference table; this file is the single source of truth going forward. When Brad adds a competitor here, also mirror it into competitors.html until that page is wired to fetch this file.",
-    "lastUpdatedAt": "2026-08-13T00:00:00Z",
+    "lastUpdatedAt": "2026-09-01T00:00:00Z",
     "owner": "Brad (CipherExam marketing orchestrator)",
     "refreshNote_2026_08_01": "Monthly automated refresh. Two material changes: (1) the Pocket Prep entry was STALE — they ship detailed explanations with textbook references, contradicting our 'no explanations' premise; any copy built on it must be rewritten. (2) 'No AI layer' is no longer true of the category — Mindirus and the AI-tutor app cohort are added, both selling AI coaching on our priority certs. 'AI-powered' is now the category description, not a differentiator.",
-    "acquisitionResearch_2026_08_13": "Gauntlet-reviewed acquisition and backlink research is encoded in site/assets/outreach-data.js and operated from app.html#outreach. It separates paid, owned, affiliate, partnership and earned channels; only Kiyoo Networks is an immediate earned-editorial prospect."
+    "acquisitionResearch_2026_08_13": "Gauntlet-reviewed acquisition and backlink research is encoded in site/assets/outreach-data.js and operated from app.html#outreach. It separates paid, owned, affiliate, partnership and earned channels; only Kiyoo Networks is an immediate earned-editorial prospect.",
+    "refreshNote_2026_09_01": "Monthly automated refresh. Four material changes. (1) CORRECTION: the 'large banks cannot re-aim after an exam change' premise behind the August battlecard is FALSE — Pocket Prep's PMP exam page states its content is updated for the July 9 2026 ECO, and Brain Sensei rebuilt its course for the same outline. The currency hook is withdrawn; it never shipped only because it was gated on auditing our own PMP distribution first. (2) NEW COMPETITOR: ExamCert — freemium, $4.99-$5.99 one-time lifetime per exam, AI Tutor, per-domain mastery heatmap, readiness estimate, and a 60-day no-questions-asked money-back guarantee identical to our own unpublished one. Straight in at threat HIGH. (3) The category price floor collapsed: Pocket Prep's annual is $10.99/mo effective, below CipherExam Pro at $19/mo. We are no longer the sensibly-priced option and must stop implying we are. (4) 'Written by humans, not AI' is now a live counter-position aimed at products built the way ours is — Pocket Prep leads with expert authorship under a named byline, and EZ Prep's SHRM-CP app markets human-not-AI explicitly. Our bank is AI-generated with no reviewer or verified field; never claim expert review or a verified answer key.",
+    "shrmCpLaneRetraction_2026_09_01": "RETRACTED: three consecutive scans described SHRM-CP as 'the uncontested lane'. A search of the 2026 SHRM-CP prep market returns at least six shipping products (SHRM Test Prep 2026 ~3,500 questions; KeepPrep SHRM CP & SCP 2026 ~2,100 with AI tracking; Thinkabout SHRM Exam Test Practice 2026; EZ Prep SHRM Exam Prep Practice 2026 marketed as human-written not AI; Mometrix; HRStudyPro) plus Pocket Prep's 1,600-item SHRM-CP bank and ExamCert's free 600+ bank. The lane was unexamined, not uncontested. SHRM-CP is still at zero on every funnel stage since its LP shipped 2026-05-12; the call is ship-one-post-or-defer-with-a-date, not another scan."
   },
   "competitors": [
     {
       "id": "pocket-prep",
       "name": "Pocket Prep",
       "category": "broad-cert mobile question bank",
-      "exams": ["PMP", "Security+", "many"],
+      "exams": [
+        "PMP",
+        "Security+",
+        "many"
+      ],
       "primaryStrength": "Mobile-first native iOS/Android apps. 22,000+ questions across 21 professional certifications (2,450 PMP, 1,600 SHRM-CP, full CompTIA family). Expert-written explanations WITH textbook references. Adaptive practice weighted to demonstrated weak domains. Mock exams. In market since 2011 — large app-store review footprint and real brand trust. Active content operation publishing timely exam-change explainers.",
       "knownWeakness": "Feedback resolves to the DOMAIN, never to the person — explanations are authored once for everyone and adaptivity says 'you're weak in Risk' and stops. No per-user reasoning-pattern tracking. Single-MCQ drill format structurally cannot rehearse performance-based questions (Security+/Network+/A+). Per-exam purchase model penalizes multi-cert candidates. Reported issues: cross-device licensing confusion (iPad purchase not unlocking iPhone), occasional incorrect answers surfaced in review, refund policy conditioned on scores in their own quizzes.",
       "threat": "high",
       "pricing": {
-        "subscription": "$14.99-$29.99/mo",
-        "perExam": "~$9.99-$20 depending on bank size"
+        "subscription": "$20.99/mo · $49.99 per 3 months ($16.99/mo) · $124.99/yr ($10.99/mo effective)",
+        "free": "80 questions free",
+        "note": "Verified 2026-09-01 from pocketprep.com/exams/pmi-pmp/. Their ANNUAL plan is cheaper per month than CipherExam Pro at $19/mo. The older '$14.99-$29.99/mo' range and any copy framing Pocket Prep as the expensive incumbent are superseded."
       },
       "correction_2026_08_01": "PREVIOUS ENTRY WAS STALE AND WRONG. It claimed 'No answer explanations; pure memorization loop.' Pocket Prep ships detailed expert-written explanations with textbook references. Any CipherExam copy asserting competitors don't explain answers is factually false and trivially disprovable by a prospect. The surviving wedge is DIAGNOSIS (per-user reasoning-trap tracking + Bloom's cognitive-level classification), not the existence of explanations. Rewrite any copy built on the old premise.",
       "addedAt": "2026-05-11",
-      "lastVerifiedAt": "2026-08-01",
-      "source": "Monthly automated intel refresh 2026-08-01 — web research pass (app-store listings, review aggregators, pocketprep.com exam pages)"
+      "lastVerifiedAt": "2026-09-01",
+      "source": "Monthly automated intel refresh 2026-08-01 — web research pass (app-store listings, review aggregators, pocketprep.com exam pages)",
+      "guarantee": "'Pass Guarantee' — fail the exam and receive three additional months of access to Premium Prep for free. This is store credit for the product that did not work, NOT money back. CipherExam's unpublished 60-day no-conditions refund beats it outright on shape.",
+      "correction_2026_09_01": "SECOND STALE PREMISE CORRECTED, same failure class as the August 'no explanations' error. The August battlecard argued that a bank this large could not have re-aimed at the 2026 PMP outline. Their exam page states: 'Our PMP content is updated for the July 9, 2026 Examination Content Outline.' They also published two explainers on the change (one dated 2026-08-13) under a named PMP-credentialed Director of Education, Michelle Marlowe. Do not run any 'ask your prep app how many questions moved' copy — it is disproven by one click on their own page. Their editorial operation, not their bank size, is the moat.",
+      "authorshipPosition_2026_09_01": "They lead with 'All of our practice questions are written by industry experts, and each question comes with a detailed explanation,' bylined to a credentialed employee. This is the human-authored trust position and it is aimed at AI-native banks. We cannot win an authorship-provenance argument; move to Bloom's cognitive-level classification and per-user thinking-traps tracking, which are properties of the account rather than the content."
+    },
+    {
+      "id": "examcert",
+      "name": "ExamCert",
+      "category": "freemium ultra-low-price multi-cert bank with AI tutor",
+      "url": "https://www.examcert.app",
+      "founded": "2025",
+      "exams": [
+        "PMP",
+        "CAPM",
+        "CISSP",
+        "SHRM-CP",
+        "AWS",
+        "Azure",
+        "Google Cloud",
+        "Cisco",
+        "CompTIA (extent unclear)"
+      ],
+      "primaryStrength": "Price floor of the whole category: $4.99-$5.99 ONE-TIME per exam for lifetime access with free updates, after a free tier of 3 question sets per exam (no credit card). Written explanation on every option, not just the correct one. An 'AI Tutor' that walks through the reasoning step by step (separate credit purchase). FSRS spaced repetition. Full timed exam simulator. Per-domain mastery heatmap and an estimated pass chance. Content described as 'curated by certified professionals', updated every two weeks. A 60-day no-questions-asked money-back guarantee — the same instrument CipherExam has called its strongest close for three months and still has not published. Runs a comparison-content operation ('Best X prep app 2026') that ranks for the queries our buyers type.",
+      "knownWeakness": "UNVERIFIED — nobody here has signed up or worked a single question. Their own surfaces contradict each other on every headline number: 95% vs 98% first-attempt pass rate, $4.99 vs $5.99, 30+ vs 171+ certifications. All self-reported, none sourced. CompTIA Security+ is not in their primary navigation despite CompTIA appearing in their marketing. No evidence of cognitive-level classification or per-user error-pattern tracking — the heatmap resolves to a domain, like everyone else's.",
+      "threat": "high",
+      "pricing": {
+        "free": "3 question sets per exam (100+ questions), no credit card",
+        "paid": "$4.99-$5.99 one-time per exam, lifetime access, free updates",
+        "aiTutor": "separate credit purchase",
+        "guarantee": "60-day no-questions-asked money-back"
+      },
+      "threatNote": "Enters at second overall on the first scan that found them. The feature list — step-by-step reasoning, mastery heatmap, readiness estimate, no-conditions 60-day refund — is close to the CipherExam pitch at roughly a thirtieth of the four-month price, in the organic-search lane where our free tier competes. They also cover SHRM-CP (600+ questions, free tier of 100+), which is part of why the 'uncontested SHRM-CP lane' framing was retracted this month. DO NOT build a price response and DO NOT put any of their numbers in copy, in either direction, until someone opens the product. August cost this file its lead argument by writing against a competitor we had only read about.",
+      "exploitableAngles": [
+        "Hold until verified. The required next step is a hands-on pass, not a positioning exercise."
+      ],
+      "openQuestions": [
+        "What does one AI Tutor explanation actually say on a PMP scenario question — does it address reasoning or restate the answer?",
+        "Is the mastery heatmap per-domain only, or does anything resolve to a per-user error pattern?",
+        "Real price and real scope: is $5.99 per exam, per month, or lifetime — and is it 30 or 171 certifications?",
+        "Do they cover CompTIA Security+ at all, and do they handle performance-based questions?",
+        "Is the 60-day money-back guarantee honoured, and what is the actual refund flow?"
+      ],
+      "addedAt": "2026-09-01",
+      "lastVerifiedAt": "2026-09-01",
+      "source": "Monthly automated intel refresh 2026-09-01 — surfaced organically in four separate competitor searches; details from examcert.app homepage, /exams/shrm-cp/ and search-result summaries. Site read, product NOT opened."
     },
     {
       "id": "examzify",
       "name": "Examzify",
       "category": "static question bank",
-      "exams": ["IT certs"],
+      "exams": [
+        "IT certs"
+      ],
       "primaryStrength": "Free. Clean UI. Very broad long-tail exam coverage (well beyond IT — health, trades, citizenship, niche professional certs). Flashcards + MCQ with hints and explanations per item. Subdomain-per-exam SEO footprint captures long-tail search.",
       "knownWeakness": "Free-tier economics mean thin, uneven, inconsistently maintained banks. No progress model, no diagnosis, no accountability. Breadth is a mile wide and an inch deep — not a serious PMP/Security+/SHRM-CP preparation path.",
       "threat": "medium",
@@ -41,8 +94,19 @@
       "name": "Mindirus",
       "category": "AI-native multi-cert adaptive platform",
       "url": "https://mindirus.com",
-      "exams": ["CISSP", "AWS", "Azure", "CompTIA (incl. Security+)", "PMP", "NCLEX", "MCAT", "16 total"],
-      "primaryStrength": "AI coaching + adaptive spaced repetition across 16 certification exams on a bank reported at 51,000-54,000 questions. AI-generated explanations, study plans, progress tracking. Free tier to start. Covers CISSP and AWS — #2 and #3 in CipherExam's exam priority order and both still 'coming soon' for us.",
+      "exams": [
+        "CISSP",
+        "AWS",
+        "Azure",
+        "CompTIA (incl. Security+)",
+        "PMP",
+        "NCLEX",
+        "MCAT",
+        "GRE",
+        "CCNA",
+        "19 total"
+      ],
+      "primaryStrength": "AI coaching + adaptive spaced repetition. Their own site now claims 68,000+ practice questions across 19 exams — up from 51,000-54,000 across 16 a month ago. Explanations described as 'AI-generated explanations tailored to your weak areas'. Covers CISSP and AWS — #2 and #3 in CipherExam's exam priority order and both still 'coming soon' for us.",
       "knownWeakness": "UNVERIFIED. We have not signed up or inspected a single question. Unknown whether their AI explanation is metacognitive or merely fluent, whether anything is classified by cognitive level, and whether 'adaptive' means more than spaced repetition on missed items. Bank size claims are self-reported and inconsistent across surfaces (51,000 vs 54,000).",
       "threat": "high",
       "threatNote": "Closest structural analogue to CipherExam that has ever appeared in this file — same audience, same certifications, same claimed mechanism. Do NOT write copy against them from assumptions; we just got burned doing exactly that with Pocket Prep's explanations. A candidate who wants one platform across several certifications can get one from them today and cannot from us.",
@@ -56,15 +120,22 @@
         "Do they handle CompTIA performance-based questions, or MCQ only?"
       ],
       "addedAt": "2026-08-01",
-      "lastVerifiedAt": "2026-08-01",
-      "source": "Monthly automated intel refresh 2026-08-01 — surfaced via web search for AI-native cert prep entrants. Site returned 403 to automated fetch; details from search-result summaries only."
+      "lastVerifiedAt": "2026-09-01",
+      "source": "Monthly automated intel refresh 2026-08-01 — surfaced via web search for AI-native cert prep entrants. Site returned 403 to automated fetch; details from search-result summaries only.",
+      "update_2026_09_01": "Second consecutive month unopened. Bank and exam count grew fast (16->19 exams, ~51k->68k questions). Still NO published pricing and NO free-tier limits on the site. Their page names no cognitive-level classification, no Bloom's taxonomy and no per-user error-pattern tracking, and does not mention CompTIA performance-based questions — but absence from a marketing page is weak evidence and is not a finding. Demoted below ExamCert in the landscape ranking not because they are less dangerous in principle, but because a competitor nobody has opened cannot be ranked on evidence, and ExamCert is cheaper, broader and moving faster in the lane where our organic traffic lives."
     },
     {
       "id": "ai-tutor-app-cohort",
       "name": "AI-tutor app cohort (FlashGenius, 'PMP Exam Prep 2026: AI Tutor', et al.)",
       "category": "AI-wrapper flashcard/simulation apps",
       "url": "https://flashgenius.net",
-      "exams": ["PMP", "CISSP", "AWS", "Security+", "CCNA"],
+      "exams": [
+        "PMP",
+        "CISSP",
+        "AWS",
+        "Security+",
+        "CCNA"
+      ],
       "primaryStrength": "AI flashcards, exam simulations, personalized learning paths, named AI mentor characters. One markets a study mentor that analyzes performance and directs study, claiming 2,000+ PMP questions updated for the 2026 format and top-app positioning in AI-powered PMP practice.",
       "knownWeakness": "Individually thinner than CipherExam — flashcard-and-simulation layers with a conversational wrapper, mostly single-cert or shallow-multi-cert, no evidence of a classification pipeline or per-user pattern tracking underneath.",
       "threat": "high (message) / medium (product)",
@@ -81,7 +152,10 @@
       "id": "kaplan-it",
       "name": "Kaplan IT",
       "category": "incumbent prep brand",
-      "exams": ["Security+", "IT certs"],
+      "exams": [
+        "Security+",
+        "IT certs"
+      ],
       "primaryStrength": "Brand authority, Security+ stronghold",
       "knownWeakness": "Old-school UX, expensive, no AI",
       "threat": "high",
@@ -91,7 +165,9 @@
       "id": "measureup",
       "name": "MeasureUp",
       "category": "official practice tests",
-      "exams": ["many"],
+      "exams": [
+        "many"
+      ],
       "primaryStrength": "Official practice tests, exam-sim feel",
       "knownWeakness": "Expensive, no explanations, purely transactional",
       "threat": "medium",
@@ -101,7 +177,10 @@
       "id": "magoosh",
       "name": "Magoosh",
       "category": "video-led prep",
-      "exams": ["GMAT", "GRE"],
+      "exams": [
+        "GMAT",
+        "GRE"
+      ],
       "primaryStrength": "Video-heavy, GMAT/GRE pedigree",
       "knownWeakness": "Thin on PMI/SHRM; wrong audience",
       "threat": "medium",
@@ -111,7 +190,9 @@
       "id": "whizlabs",
       "name": "Whizlabs",
       "category": "cheap broad-cert bank",
-      "exams": ["many"],
+      "exams": [
+        "many"
+      ],
       "primaryStrength": "Cheap, broad cert coverage",
       "knownWeakness": "Notoriously low question quality; outdated",
       "threat": "low",
@@ -121,7 +202,9 @@
       "id": "pluralsight",
       "name": "Pluralsight",
       "category": "IT video library",
-      "exams": ["IT certs (secondary)"],
+      "exams": [
+        "IT certs (secondary)"
+      ],
       "primaryStrength": "Deep IT video library",
       "knownWeakness": "Cert prep is secondary; no adaptive questioning",
       "threat": "low",
@@ -131,7 +214,9 @@
       "id": "udemy-courses",
       "name": "Udemy courses",
       "category": "marketplace video courses",
-      "exams": ["many"],
+      "exams": [
+        "many"
+      ],
       "primaryStrength": "Huge reach, cheap",
       "knownWeakness": "Passive video; zero practice accountability",
       "threat": "low",
@@ -142,15 +227,25 @@
       "name": "Brain Sensei",
       "category": "broad PMI question bank + adaptive learning",
       "url": "https://brainsensei.com",
-      "exams": ["PMP", "CAPM", "PMI-ACP", "PMI-SP", "PgMP", "PfMP", "PMI-RMP", "PMI-PBA"],
+      "exams": [
+        "PMP",
+        "CAPM",
+        "PMI-ACP",
+        "PMI-SP",
+        "PgMP",
+        "PfMP",
+        "PMI-RMP",
+        "PMI-PBA"
+      ],
       "primaryStrength": "Strongest published pass-rate claim in PMI prep (99.6% first-time pass). Full PMI cert portfolio (8 certs) with consistent UX. Adaptive learning + spaced repetition + private Facebook community. 100% pass guarantee (refund if fail). Auto-updated for 2026 PMP refresh. Free 7-day trial. Story-based content (not passive video).",
       "knownWeakness": "PMI-only — no Security+, SHRM-CP, ITIL, or non-PMI certs, so they can't capture cross-cert candidates. Pricing floor is high: $349.99/year (sale; reg $499.99) or $99/mo. No named founder or instructor — corporate-feel, lacks personality. 'Story-based' pitch is vague — no AI/ML differentiation. Pass guarantee has conditions (30-day window, limited exams).",
       "threat": "medium-high",
       "threatNote": "Direct overlap on PMP + PgMP (our two priority PMI certs). 99.6% pass-rate claim is CipherExam's strongest competitive vulnerability — we need to validate or counter-position (e.g., 'pass rate is a lagging metric; mastery + retention beats luck on test day'). Defensible angle: they can't follow us into Security+/SHRM-CP, so our multi-cert positioning remains intact. On PMP-only ads, they're the credible threat.",
       "pricing": {
-        "annual": "$349.99 (sale, regular $499.99)",
-        "monthly": "$99/mo (cancel anytime)",
-        "trial": "Free 7-day"
+        "annual": "$299.99 (sale) — regular $499.99",
+        "monthly": "$99.99/mo",
+        "trial": "Free 7-day",
+        "refund": "30-day refund window; 100% pass guarantee with conditions"
       },
       "exploitableAngles": [
         "Pass-rate claim is unverifiable — 99.6% with no methodology disclosed. CipherExam can win on 'we'll show you exactly which questions PMI is likely to test you on, and why' (Exam Lens) vs. their generic pass-rate badge.",
@@ -160,7 +255,9 @@
         "$99/mo vs. our $19/mo — they're 5x the price. Comparative ad copy lands cleanly: 'Brain Sensei: $99/mo. CipherExam: $19/mo. Same explanations, broader certs.' (Verify their explanation depth before claiming parity.)"
       ],
       "addedAt": "2026-05-23",
-      "source": "Surfaced via Klara Profka LinkedIn investigation 2026-05-23 — she mentioned '600 questions / 6 mock sets' pattern matching Brain Sensei (and Elite Minds). Research by search-specialist agent."
+      "source": "Surfaced via Klara Profka LinkedIn investigation 2026-05-23 — she mentioned '600 questions / 6 mock sets' pattern matching Brain Sensei (and Elite Minds). Research by search-specialist agent.",
+      "update_2026_09_01": "Course content COMPLETELY REBUILT for the July 9 2026 PMP Exam Content Outline, and they say so publicly — this is half of why the August 'stale bank' premise was retracted. Pricing came down: $299.99/yr on sale against a $499.99 regular price (was $349.99/$499.99), $99.99/mo. Stays high on PMP specifically because 94% of everything CipherExam reaches is PMP and on PMP they are a current specialist. The 99.6% first-time pass claim remains unsourced — do not repeat it, and do not counter it with a number of our own. New pressure on them: they are the premium end of a market whose floor just fell to six dollars.",
+      "lastVerifiedAt": "2026-09-01"
     },
     {
       "id": "elite-minds",
@@ -168,7 +265,14 @@
       "category": "instructor-led PMI prep with simulator add-on",
       "url": "https://eliteminds.co",
       "founder": "Shadi (PMP-certified, 7+ years coaching), Jordan-based",
-      "exams": ["PMP", "PMI-SP", "PMI-RMP", "PfMP", "PgMP", "PMI-PBA"],
+      "exams": [
+        "PMP",
+        "PMI-SP",
+        "PMI-RMP",
+        "PfMP",
+        "PgMP",
+        "PMI-PBA"
+      ],
       "primaryStrength": "Ultra-low entry ($59/yr exam simulator with 1,440 questions). Personal instructor brand (Shadi) builds trust. 6 PMI certs covered including PgMP. 24/7 WhatsApp support (+962797205176) differentiates in non-English markets. '35 contact hours' PMI credential badge. Self-paced boot camp at $199 (35+ hrs video). Money-back guarantee. ~30k students claimed since 2017.",
       "knownWeakness": "No published pass rate (red flag in cert prep market). Single-instructor brand = scale risk. Pricing opaque for multi-cert bundles. No mention of adaptive learning, spaced repetition, or AI — feels like a 2020-era product. No Security+/SHRM-CP/non-PMI certs.",
       "threat": "low-medium",
@@ -197,7 +301,9 @@
       "parentSite": "https://pm-career-os.de",
       "founder": "Markus Kopko (PgMP, CPMAI) — markus@pmcos.de",
       "category": "single-exam judgment simulator",
-      "exams": ["PgMP"],
+      "exams": [
+        "PgMP"
+      ],
       "primaryStrength": "Sharp positioning: 'judgment over knowledge'. 735 scenario-based questions, four practice modes (Learning, Quiz, Weakspot Training, Full Exam 170q/240min), domain analytics + Weakspot Domain Breakdown. EUR 29 entry, prorated upgrades, 100% money-back, access clock starts on first full exam (removes buyer regret), 15-question free try with no signup or credit card.",
       "knownWeakness": "PgMP-only — single-exam product with no expansion story. Pilot tester quote (Tamisha Doublin) is the only social proof and she's instructional-design, not a sat-and-passed-it candidate. Pricing copy ('starting at') buries the actual tier structure. No explanation pedagogy mentioned — heavy on simulation, light on why-you-were-wrong. No metacognitive framework like Exam Lens. No PBQ-style item types (PgMP is MCQ-only so this is moot for them, but it means they can't expand into CompTIA without rebuilding the engine). No AI tutor.",
       "threat": "medium (PgMP-only); low (portfolio-wide)",
@@ -221,17 +327,72 @@
       "featureGap_2026_07_15": {
         "note": "CipherExam vs PgMP-Sim on PgMP specifically. Rating = advantage holder.",
         "rows": [
-          {"dimension": "PgMP question depth", "cipherExam": "~170", "pgmpSim": "1,000+", "edge": "PgMP-Sim"},
-          {"dimension": "Full-length mock sims", "cipherExam": "1 (170q/240min)", "pgmpSim": "2-4 depending on tier", "edge": "PgMP-Sim"},
-          {"dimension": "Money-back guarantee", "cipherExam": "None", "pgmpSim": "100% (conditional)", "edge": "PgMP-Sim"},
-          {"dimension": "AI explanations / coaching", "cipherExam": "AI Coach Breakdown", "pgmpSim": "None (expert-curated only)", "edge": "CipherExam"},
-          {"dimension": "Bloom's cognitive tagging", "cipherExam": "Yes", "pgmpSim": "No", "edge": "CipherExam"},
-          {"dimension": "Adaptive / thinking-traps engine", "cipherExam": "Smart Practice + traps", "pgmpSim": "Weakspot Training (wrong-Qs only)", "edge": "CipherExam"},
-          {"dimension": "Metacognitive framework", "cipherExam": "Exam Lens (Program Governance Lens)", "pgmpSim": "Unnamed 'scenario questions'", "edge": "CipherExam"},
-          {"dimension": "Cert breadth", "cipherExam": "11 certs", "pgmpSim": "1 (PgMP)", "edge": "CipherExam"},
-          {"dimension": "Pricing model", "cipherExam": "$19/mo, 7-day trial, no card", "pgmpSim": "One-time EUR 29/49/79 or EUR 9.99-29.99/mo", "edge": "context-dependent"},
-          {"dimension": "Explanation quality (observed)", "cipherExam": "Exam Lens + references (target)", "pgmpSim": "Per-option rationale + Standard citations (strong)", "edge": "parity"},
-          {"dimension": "Free taste", "cipherExam": "7-day trial + 20q/day", "pgmpSim": "15-25 free questions, no signup", "edge": "PgMP-Sim (lower friction)"}
+          {
+            "dimension": "PgMP question depth",
+            "cipherExam": "~170",
+            "pgmpSim": "1,000+",
+            "edge": "PgMP-Sim"
+          },
+          {
+            "dimension": "Full-length mock sims",
+            "cipherExam": "1 (170q/240min)",
+            "pgmpSim": "2-4 depending on tier",
+            "edge": "PgMP-Sim"
+          },
+          {
+            "dimension": "Money-back guarantee",
+            "cipherExam": "None",
+            "pgmpSim": "100% (conditional)",
+            "edge": "PgMP-Sim"
+          },
+          {
+            "dimension": "AI explanations / coaching",
+            "cipherExam": "AI Coach Breakdown",
+            "pgmpSim": "None (expert-curated only)",
+            "edge": "CipherExam"
+          },
+          {
+            "dimension": "Bloom's cognitive tagging",
+            "cipherExam": "Yes",
+            "pgmpSim": "No",
+            "edge": "CipherExam"
+          },
+          {
+            "dimension": "Adaptive / thinking-traps engine",
+            "cipherExam": "Smart Practice + traps",
+            "pgmpSim": "Weakspot Training (wrong-Qs only)",
+            "edge": "CipherExam"
+          },
+          {
+            "dimension": "Metacognitive framework",
+            "cipherExam": "Exam Lens (Program Governance Lens)",
+            "pgmpSim": "Unnamed 'scenario questions'",
+            "edge": "CipherExam"
+          },
+          {
+            "dimension": "Cert breadth",
+            "cipherExam": "11 certs",
+            "pgmpSim": "1 (PgMP)",
+            "edge": "CipherExam"
+          },
+          {
+            "dimension": "Pricing model",
+            "cipherExam": "$19/mo, 7-day trial, no card",
+            "pgmpSim": "One-time EUR 29/49/79 or EUR 9.99-29.99/mo",
+            "edge": "context-dependent"
+          },
+          {
+            "dimension": "Explanation quality (observed)",
+            "cipherExam": "Exam Lens + references (target)",
+            "pgmpSim": "Per-option rationale + Standard citations (strong)",
+            "edge": "parity"
+          },
+          {
+            "dimension": "Free taste",
+            "cipherExam": "7-day trial + 20q/day",
+            "pgmpSim": "15-25 free questions, no signup",
+            "edge": "PgMP-Sim (lower friction)"
+          }
         ]
       },
       "strategicCall_2026_07_15": "DE-PRIORITIZE PgMP; win on multi-cert + AI. Do not fund a question-depth war on a single maintenance cert where they lead 1,000 to 170 and we spend zero on paid. Building 800+ PgMP items to reach parity is a poor use of scarce production capacity vs PMP/CISSP/AWS. Hold PgMP as coverage, keep the Program Governance Lens as our qualitative differentiator, and let breadth + AI + adaptive be the reason a PgMP candidate who also wants PMP/Sec+ picks us. Revisit only if PgMP unexpectedly drives activations.",
@@ -265,7 +426,10 @@
         "inAppAuditMethod": "Chrome MCP pass — landed on pgmp-sim.pm-career-os.de, walked the 15-question demo end-to-end, hit the post-demo paywall, opened the in-app pricing modal (One-Time + Monthly tabs), inspected signup modal, did NOT sign up and did NOT purchase.",
         "parentSite": "https://pm-career-os.de",
         "simulatorSubdomain": "https://pgmp-sim.pm-career-os.de",
-        "siblings": ["cpmai.pm-career-os.de (CPMAI Exam Simulator)", "coaching.pm-career-os.de (CPMAI Coaching Program)"],
+        "siblings": [
+          "cpmai.pm-career-os.de (CPMAI Exam Simulator)",
+          "coaching.pm-career-os.de (CPMAI Coaching Program)"
+        ],
         "founder": "Markus Kopko (markus@pmcos.de) — PgMP and CPMAI certified; pitches program leadership + AI initiatives",
         "siteArchitecture": "Thin marketing hub (pm-career-os.de) funnels into three JS-only SPAs on subdomains. Parent site is ~110-130 words of body copy, no pricing, no testimonials surfaced at root, just a product list and newsletter capture.",
         "conversionMechanics": {
@@ -311,7 +475,11 @@
           "subhead": "'Certifications, coaching, and practice tools for product managers who want to advance faster.'",
           "audience": "Product managers (singular framing — not 'PMP candidates' or 'program managers'). Notable mismatch: PgMP is a PROGRAM management cert, not product management. Either sloppy copy or intentional broad reach.",
           "tone": "Corporate-European, restrained, GDPR-forward ('GDPR-compliant · Hosted in EU'). Zero personality. Very different from the bold LinkedIn ad voice — strong evidence the ad copy is outsourced or AI-assisted while the site copy is founder-written.",
-          "copyPatterns": ["Newsletter-first funnel", "Verb-of-motion framing ('accelerate', 'advance faster')", "Trust signals lean on GDPR/EU hosting rather than testimonials"]
+          "copyPatterns": [
+            "Newsletter-first funnel",
+            "Verb-of-motion framing ('accelerate', 'advance faster')",
+            "Trust signals lean on GDPR/EU hosting rather than testimonials"
+          ]
         },
         "technicalSEO": {
           "simulatorSubdomain": "Client-rendered SPA. No prerendering. Returns 'Loading session...' to all bots. /pricing, /trial, /sitemap.xml, /robots.txt all 404. This is catastrophic for organic search — Google won't index any product content on the subdomain.",

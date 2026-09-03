@@ -27,6 +27,7 @@ const ROUTES = [
   { file: "competitors.html", route: "competitors", label: "Competitors" },
   { file: "outreach.html",    route: "outreach",    label: "Outreach" },
   { file: "testimonials.html", route: "testimonials", label: "Testimonials" },
+  { file: "seo.html",         route: "seo",          label: "SEO" },
 ];
 
 const FILE_TO_ROUTE = Object.fromEntries(ROUTES.map(r => [r.file, r.route]));

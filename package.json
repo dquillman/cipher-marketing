@@ -1,6 +1,6 @@
 {
   "name": "cipher-marketing",
-  "version": "1.30.21",
+  "version": "1.31.0",
   "private": true,
   "type": "module",
   "description": "Marketing campaign for CipherExam (cipherexam.com) — strategy docs, dashboard site, and Remotion videos for the multi-exam acquisition push.",
@@ -8,7 +8,8 @@
     "serve": "node serve.mjs",
     "test": "node --test",
     "serve:lan": "cross-env-shell HOST=0.0.0.0 node serve.mjs",
-    "build": "cd site && node inline-assets.mjs && node strip-private-state.mjs && node build-app.mjs",
+    "build": "node scripts/build-seo-section.mjs && cd site && node inline-assets.mjs && node strip-private-state.mjs && node build-app.mjs",
+    "seo:build": "node scripts/build-seo-section.mjs",
     "deploy": "node scripts/release.mjs",
     "seed": "node scripts/seed-firestore.mjs",
     "post-copy": "node scripts/post-copy.mjs",

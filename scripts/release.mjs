@@ -107,6 +107,7 @@ if (badge !== to || stale.length) {
 // launch-campaign.html and standalone pages are generated artifacts. Rebuild
 // after the version bump so newly introduced assets carry the release version.
 console.log("\n  rebuilding generated pages…");
+run(process.execPath, [join(HERE, "build-seo-section.mjs")]);
 run(process.execPath, [join(ROOT, "site", "inline-assets.mjs")]);
 run(process.execPath, [join(ROOT, "site", "strip-private-state.mjs")]);
 run(process.execPath, [join(ROOT, "site", "build-app.mjs")]);

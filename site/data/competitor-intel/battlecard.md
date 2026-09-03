@@ -1,87 +1,124 @@
 ## Competitive Intel: Positioning Battlecard
 
-*CipherExam vs. the question-bank category — Pocket Prep · Examzify · MeasureUp*
-*Generated 2026-08-29 (monthly automated refresh)*
+*CipherExam vs. the question-bank category — Pocket Prep · ExamCert · Examzify · MeasureUp*
+*Generated 2026-09-01 (monthly automated refresh)*
 
 ---
 
-> **Two corrections carried forward, both still binding.**
-> 1. The old stored line "no explanations; pure memorization loop" is false about this category. Pocket Prep ships expert-written explanations with textbook references. Examzify ships hints and per-item explanations on a free tier. The MeasureUp "no explanations" entry in `competitors.json` has never been opened and verified by anyone here — treat it as unproven and do not repeat it in copy.
-> 2. "AI-powered" is a category description now, not a claim. It cannot sit in a headline position.
+> **RETRACTION FIRST. Last month's lead argument is dead, and it is better that this file kills it than a prospect does.**
 >
-> The wedge that survives both corrections is **resolution** — their feedback resolves to a domain, ours resolves to a person. That argument was made in full last month and stays in circulation. This month's three points are the axes that moved.
+> The August battlecard opened on the claim that a large question bank is "a photograph of the exam on the day it was written," and invited candidates to ask their prep app how many of its questions moved after PMI rebalanced the PMP outline on 2026-07-09. That premise was checked at the source this month and it does not hold:
+>
+> - Pocket Prep's PMP exam page states plainly: **"Our PMP content is updated for the July 9, 2026 Examination Content Outline."** They also published two explainers on the change, one of them on 2026-08-13, written by their in-house Director of Education.
+> - Brain Sensei's course content has been **completely rebuilt against the same outline**, and they say so.
+>
+> The two banks that matter most on our only cluster with real traffic re-aimed faster than we assumed a bank could. **The currency hook must not run.** It would have been disproven by one click on the competitor's own page.
+>
+> **What saved us was the gate, not the judgement.** August's recommended action made the hook conditional on auditing our own PMP distribution first, that audit never happened, and so the hook never shipped. Keep writing gates like that one.
+>
+> Two older corrections remain binding and are unaffected: this category **does** ship explanations (the August "no explanations" line is false), and **"AI-powered" is a category description, not a claim.**
 
 ---
 
-### Point 1 — Their bank is a snapshot of the exam on the day it was written.
+### Point 1 — The category's price floor collapsed, and we are now the expensive option.
 
-**Their pitch:** Depth as proof. Twenty-two thousand questions across twenty-one certifications; roughly 2,450 on PMP alone. The implied promise is that a bank this large has already covered whatever the exam asks.
+**Their pitch:** Pay once, keep it forever. Or pay a fraction of a subscription and keep it for a year.
 
-**The gap:** Size is the slowest thing in a prep product to re-aim. On 2026-07-09 PMI rebalanced the PMP Exam Content Outline — People dropped from 42% to 33%, Process from 50% to 41%, and **Business Environment went from 8% to 26%**, more than tripling. Every large PMP bank in this category was built against the old weighting, and a bank does not re-weight because a blog post about the change went up. Re-aiming thousands of items at a domain that just tripled is a production programme, not a patch. A candidate practising against the old distribution is under-rehearsed on the fastest-growing quarter of their exam and their practice percentage will not tell them.
+**The gap in our position, stated honestly:** the numbers moved against us this month, and no amount of framing changes them.
 
-**Our angle:**
-> *"A big question bank is a photograph of the exam on the day it was written. Check which year yours was taken."*
+| Offer | Price | Shape |
+|---|---|---|
+| ExamCert | **$4.99–$5.99 one-time per exam** | Lifetime access, free updates |
+| Pocket Prep (12 mo) | **$124.99/yr — $10.99/mo effective** | Subscription |
+| Pocket Prep (1 mo) | $20.99/mo | Subscription |
+| CipherExam Pro | **$19/mo** | Subscription |
+| CipherExam Exam Pass | $59 | One-time, 90 days |
 
-CipherExam carries **PMP Exam v2026 as its own exam entry**, separate from the original PMP, rather than a note appended to a legacy bank. Say what the product does — a separate current-outline path — and let the reader draw the comparison. Do not claim any competitor's bank is stale in a specific number; we have not counted their items, and this file exists because of a claim made that way.
+A candidate who prepares for four months pays CipherExam $76 and Pocket Prep $49.99. The same candidate pays ExamCert about six dollars. **We are no longer the sensibly-priced option in this category and we should stop implying that we are.** The stored line "$99/mo vs our $19/mo" is still true of Brain Sensei and is now unrepresentative of the field.
 
----
+**Our angle:** compete on the unit, not the sticker.
 
-### Point 2 — The hardest item on the CompTIA exams is not in their product at all.
+> *"Six dollars is cheap for questions. It is not cheap for four months of studying the wrong thing."*
 
-**Their pitch:** Practice questions on the full CompTIA family — Security+, Network+, A+ — one at a time, in the gaps of the day, on a phone.
-
-**The gap:** Security+, Network+ and A+ all include **performance-based questions**: drag-and-drop, topology, CLI-style items that ask a candidate to do the task rather than recognise the answer. Candidates routinely name them the hardest and most disorienting part of test day. A single-MCQ drill format cannot rehearse them — not because the vendor lacks items, but because the format has nowhere to put one. This is an engine gap, and it is the one weakness in this category that more content genuinely cannot close.
-
-**Our angle:**
-> *"You can answer every multiple-choice question about a firewall rule and still have never built one under a clock."*
-
-CipherExam supports PBQs natively across the CompTIA family, inside Full Mock simulators built to real length and real timing — Security+ at 90 questions in 90 minutes. This is the sharpest single-exam contrast we own, and the asset for it already exists: the Security+ PBQ walkthrough magnet ships and returns 200.
+The defensible form of our price argument is **Exam Pass at $59 for 90 days**, anchored against the **$425 PMP sit fee**, not against a competitor's subscription. Never write a comparative price line against ExamCert; at their number we lose it.
 
 ---
 
-### Point 3 — Volume answers a supply problem. Our buyer has a time problem.
+### Point 2 — "Written by humans, not AI" is now a live attack, and it is aimed at us.
 
-**Their pitch:** More questions, more certifications, more mock exams. Never run out.
+**Their pitch:** Pocket Prep leads with *"All of our practice questions are written by industry experts, and each question comes with a detailed explanation,"* signed by a named PMP-credentialed Director of Education. In the SHRM-CP lane, at least one app markets its bank explicitly as written by humans rather than by AI. ExamCert says its questions are *"curated by certified professionals."*
 
-**The gap:** Nobody preparing for PMP or Security+ while holding a full-time job has ever failed for want of available questions. They fail because the eight or ten hours they can find in a week get spent uniformly across material they already have, on question types they already answer correctly. A 22,000-item bank is a supply-side answer to a demand-side constraint, and adaptivity that reports "you are weak in Risk" narrows the pile to a domain and then stops — leaving the candidate to allocate the scarce hours themselves, unaided.
+**The gap — and part of it is ours:** the category has split into AI-native and human-authored, and human-authored is being sold as the trust position. CipherExam's bank is **original AI-generated content written against publicly published exam objectives**, with no source field, no reviewer field and no verified flag on any item. That is a documented state of the product. **We cannot win an authorship-provenance argument, and we must never claim a verified answer key or an expert in the loop** — the claim would be false, and a working practitioner would find it.
+
+**Our angle:** decline the fight over who typed the question, and move it to what the system does with the answer.
+
+> *"Ask a prep tool a better question than who wrote the questions. Ask what it knows about you after four hundred of them."*
+
+Every CipherExam item is classified by **Bloom's cognitive level** before it enters the bank, and **thinking-traps tracking** records the question shapes where one specific person goes wrong, per exam. Those are mechanisms, they are in the product, and no amount of expert authorship produces either one. Authorship is a property of the content. Diagnosis is a property of the account. Fight on the axis we are actually on.
+
+---
+
+### Point 3 — Our best unused asset just became table stakes.
+
+**Their pitch:** risk reversal, published, at the price decision.
+
+**The gap:** for three consecutive months this file has called the **60-day, no-conditions money-back guarantee** the strongest close CipherExam owns, and noted that it appears on zero live surfaces. This month a competitor published **the same offer** — ExamCert markets a 60-day no-questions-asked money-back guarantee — while ours remains unshipped.
+
+The shapes on offer elsewhere still differ, and the differences favour us:
+
+- **Pocket Prep:** fail the exam and receive *three additional months of access* — not money back. Store credit for the product that did not work.
+- **Brain Sensei:** 100% pass guarantee, 30-day refund window, conditions attached.
+- **PgMP Simulator:** 100% money back, conditioned on two full mock exams at 80%+ first.
+- **CipherExam:** 60 days, no conditions, no proof of anything, no fine print.
+
+Ours is still the cleanest instrument in the file. It is no longer the only one.
 
 **Our angle:**
-> *"You don't need more questions. You need to know which forty are worth your Saturday."*
 
-Every CipherExam question is classified by Bloom's cognitive level before it enters the bank, so practice can be built for the *kind* of thinking an exam demands rather than the topic it names. Thinking-traps tracking records the question shapes where one specific person goes wrong, per exam. Together those route scarce hours. That is the honest form of the claim — routing attention, not manufacturing more of it.
+> *"Sixty days. No conditions, no proof of anything. Not three more months of the thing that did not work."*
+
+Treat this as a **defensive floor to ship, not a wedge to win with.** The window in which publishing it looked clever has closed. The window in which not publishing it looks negligent is open.
 
 ---
 
 ## Category Creation Angle — "exam reasoning trainer"
 
-The open word is still **diagnostic**, and the category to build is still the **exam reasoning trainer**. The definition set last month holds:
+The category to build is unchanged, and the definition set in July still holds:
 
 > **An exam reasoning trainer finds the pattern in how you get questions wrong and trains against that pattern. A question bank finds the domain you score lowest in and sends you more of it.**
 
-What this month adds is a discipline for keeping it honest. A category claim is only worth owning if we can say what would disprove it, so three tests to run against our own product before the phrase goes any wider:
+What changed is the pressure on it. The authorship attack in Point 2 and the price collapse in Point 1 both push on the *content* axis — who wrote the questions, how many there are, what they cost. A category defined on the content axis is one we now lose. **Define it on the diagnosis axis, where the claim is about the account rather than the bank**, and both attacks miss.
 
-1. **Can a real account produce a named trap?** Not a domain, not a percentage — a named recurring pattern, on screen, from live data. If it cannot, the phrase is a slogan.
-2. **Does the second week of practice look different from the first because of what the first week found?** If the routing does not visibly change, "trainer" is doing no work in the phrase.
-3. **Can a candidate repeat the claim back in one sentence?** The vocabulary only accrues to us if named traps are reusable — that is the whole reason to name them.
+Three tests still gate the phrase, and none has been run:
 
-One thing that has already been decided and should not be re-litigated: **we do not claim a verified answer key or an expert reviewing every item.** The bank is AI-generated against published objectives. Bloom's classification and traps tracking are the defensible claims; provenance of the key is not one, and it would be trivially challenged by a working practitioner.
+1. **Can a real account produce a named trap?** Not a domain, not a percentage — a named recurring pattern, on screen, from live data.
+2. **Does week two of practice look different from week one because of what week one found?** If routing does not visibly change, "trainer" is doing no work in the phrase.
+3. **Can a candidate repeat the claim back in one sentence?**
+
+This month forces a fourth:
+
+4. **Does the claim survive a prospect asking who wrote the questions?** If the answer to our category pitch is "an expert wrote mine," the pitch has to already live somewhere else. Point 2 is that somewhere else.
+
+**Standing constraint, not up for re-litigation:** no claim of a verified answer key, no claim of an expert reviewing every item.
 
 ---
 
 ## Ready-to-Use Ad Hooks
 
-1. *"Business Environment went from 8% of the PMP to 26% in July. Ask your prep app how many of its questions moved."*
-2. *"Nobody fails Security+ because they ran out of multiple-choice questions."*
-3. *"Sixty days, money back, no conditions. If it doesn't change the way you read a question, don't keep it."*
+1. *"Every prep app will tell you who wrote the questions. Ask one what it knows about you after four hundred of them."*
+2. *"You can buy ten thousand questions for six dollars. The scarce thing was never the questions — it was the eight hours you get this week."*
+3. *"Sixty days, money back, no conditions. Not three more months of the thing that did not work."*
 
-All three name no competitor, describe a category failure rather than a brand, and run in the plain founder voice. Hook 1 is time-sensitive and should run first while the outline change is still current-events. Hook 3 leans on the sixty-day guarantee, which remains the strongest close in the file and is still not live on any surface.
+All three name no competitor, describe a category failure rather than a brand, and run in the plain founder voice. **Hook 1 is the month's lead** — it turns the authorship attack into our question. Hook 3 may only run once the guarantee is actually live on the page it points at.
+
+**Do not run** any version of last month's "ask your bank how many questions moved." See the retraction.
 
 ---
 
 ## Recommended Actions
 
-1. **Audit our own PMP bank against the July outline before the exam-change hook runs anywhere.** Point 1 and Hook 1 both invite a prospect to check the domain distribution — which means ours has to survive the same check. Count what share of live PMP items sit in Business Environment, compare it to 26%, and write the number down in `competitors.json` or the campaign state. If it is materially short, the hook waits and the item work goes first. Publishing a "check your bank's weighting" line while our own is unmeasured is the same failure this file spent August correcting, pointed inward.
+1. **Ship the 60-day guarantee onto the three Tier-1 landing pages this month, and treat it as overdue rather than optional.** It has been the top unused asset in three consecutive reports, it needs no engineering, and a competitor now publishes the identical offer. The strategic argument for shipping it is gone; only the defensive one is left, and that one is stronger. Nothing else in this file is this cheap to close.
 
-2. **Put the Security+ PBQ contrast in front of an audience this month.** The magnet PDF already exists and serves; the engine capability is real; Point 2 is the cleanest structural gap we have against the whole category. Pair one post built on the PBQ argument with the existing walkthrough magnet, one call to action, signup only. Security+ has had **zero measured impressions** since its landing page shipped on 2026-05-12 — this is the most defensible reason we have ever had to send some there.
+2. **Write the standing answer to "who wrote your questions," once, and put it where Brad can reach it.** A prospect will ask it, an SHRM-CP competitor is already asking on their behalf, and there is no approved answer today — which means the next person to face it will improvise, and an improvised claim is exactly how a false "no explanations" line lived in this file for months. The answer must be truthful about AI generation against published objectives, must not claim expert review or a verified key, and should pivot to Bloom's classification and traps tracking. One paragraph. This is the highest-risk open gap in the file.
 
-3. **Move the sixty-day, no-conditions guarantee into the close on the three Tier-1 landing pages.** It is the best risk-reversal asset the product owns, it beats every conditioned guarantee in this file, and it appears in zero live surfaces for the second month running. This is a copy change with no engineering dependency; there is no reason it is still open.
+3. **Open ExamCert by hand — one hour — before any pricing or category copy ships.** They enter this file today at the bottom of the price lane with an AI tutor, a domain mastery heatmap, a readiness estimate, our own guarantee, and a comparison-content operation ranking for the queries our buyers type. Their self-reported figures already contradict each other across their own surfaces — two different pass rates, two different prices — so nothing about them goes into copy on search summaries alone. Work five PMP questions, read one AI Tutor explanation end to end, and record what it actually says in `competitors.json`. **The same instruction has sat unexecuted against Mindirus for two months. Doing it for neither is how this file goes stale; doing the newer and cheaper threat first is the right order.**

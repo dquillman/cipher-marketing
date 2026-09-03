@@ -26,6 +26,7 @@
 
 import { readFileSync } from "node:fs";
 import { getDb, credentialHelp } from "./lib/firestore-access.mjs";
+import { postedAtFromUrn } from "./lib/linkedin-time.mjs";
 
 const args = process.argv.slice(2);
 const DRY = args.includes("--dry");
@@ -68,20 +69,6 @@ function britishSpellings(text) {
   const hits = new Set();
   for (const rx of BRITISH) for (const m of String(text).matchAll(rx)) hits.add(m[0]);
   return [...hits];
-}
-
-// A LinkedIn activity id has the post's creation time in its top 42 bits, so a
-// permalink is self-dating. Returns null when the url carries no activity urn.
-function postedAtFromUrn(url) {
-  const m = /urn:li:activity:(\d+)/.exec(url || "");
-  if (!m) return null;
-  try {
-    const ms = Number(BigInt(m[1]) >> 22n);
-    if (!Number.isFinite(ms) || ms <= 0) return null;
-    return new Date(ms).toISOString();
-  } catch {
-    return null;
-  }
 }
 
 function fail(msg) {

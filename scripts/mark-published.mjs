@@ -14,6 +14,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolvePostedAt } from "./lib/linkedin-time.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const POSTS_FILE = join(HERE, "../site/data/posts.json");
@@ -89,9 +90,13 @@ if (post.status === "posted") {
 // NOTE: status must be "posted" (not "published") to match the dashboard
 // filters in app.html / posts.html / schedule.html. "published" would make
 // the post invisible to both the drafts and the awaiting-grading lists.
+// postedAt is when LINKEDIN published, not when Dave got round to recording it.
+// Stamping the clock here ran +1.5 to +26.8 min late and broke the reveal check.
+// See scripts/lib/linkedin-time.mjs.
 const now = new Date().toISOString();
+const { postedAt, source: postedAtSource } = resolvePostedAt(postUrl);
 post.status = "posted";
-post.postedAt = now;
+post.postedAt = postedAt;
 post.postUrl = postUrl;
 data._meta.lastUpdatedAt = now;
 data._meta.lastUpdatedBy = "mark-published";
@@ -102,7 +107,12 @@ console.log(`✓  ${post.id}`);
 console.log(`   channel:   ${post.channel}`);
 console.log(`   scheduled: ${post.scheduledTimeLocal}`);
 console.log(`   status:    posted`);
-console.log(`   postedAt:  ${now}`);
+console.log(
+  `   postedAt:  ${postedAt}` +
+    (postedAtSource === "urn"
+      ? "  (read from the permalink)"
+      : "  (clock — url carried no activity urn, so this may run late)")
+);
 console.log(`   postUrl:   ${postUrl}`);
 console.log();
 console.log("   Local posts.json updated. To reflect in the deployed dashboard:");
