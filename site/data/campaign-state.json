@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-09-02T13:10:33.881Z",
+    "lastUpdatedAt": "2026-09-03T13:12:16.595Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -54,21 +54,21 @@
       }
     },
     "funnel": {
-      "asOf": "2026-09-02T13:10:33.881Z",
+      "asOf": "2026-09-03T13:12:16.595Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
       "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
-        "impressions": 5185,
-        "lpVisits": 20,
+        "impressions": 5329,
+        "lpVisits": 19,
         "signups": 3,
         "examPicked": 2,
         "activated": 2
       },
       "perCluster": {
         "PMP": {
-          "impressions": 4759,
-          "lpVisits": 20,
+          "impressions": 4903,
+          "lpVisits": 19,
           "signups": 1,
           "examPicked": 1,
           "activated": 0
@@ -509,6 +509,11 @@
       "date": "2026-08-22",
       "decision": "Replace the positioning kit 5-call validation with a 3-post public LinkedIn category-frame test (Frames A/B/C).",
       "rationale": "Dave will not run calls or DMs. The frame is testable in the feed at zero outreach cost, and the metric (LP clicks per impression) is measurable where the calls metric was not."
+    },
+    {
+      "date": "2026-09-01",
+      "what": "SHRM-CP PARKED as an active cluster. LP /lp/shrm-cp and the competency-map magnet stay live and served; no SHRM-CP post is drafted or scheduled, and no SHRM-CP work takes a slot from PMP or Security+. Revisit on 2026-11-30, or earlier if PMP clears ~30 signups, Security+ produces its first activated user, or an inbound SHRM-CP signup/lead capture arrives unprompted.",
+      "why": "Decided by Dave off the 2026-09-01 competitor scan, which RETRACTED the 'uncontested lane' premise that three consecutive scans had asserted. The 2026 SHRM-CP field holds at least six shipping products (SHRM Test Prep 2026, KeepPrep, Thinkabout, EZ Prep, Mometrix, HRStudyPro) plus Pocket Prep's 1,600-item bank and ExamCert's free 600+ bank — and EZ Prep markets its content as written by humans rather than AI, the attack we are least equipped to answer. Meanwhile SHRM-CP has produced zero impressions, zero LP visits and zero signups in the sixteen weeks since its LP shipped 2026-05-12, while PMP is 94% of all reach and holds the only activated user we have ever had, and Security+ just came off zero at 307 impressions with a shipped PBQ magnet behind it. Concentration beats a third front in a busier lane with no evidence. Chose park-with-a-trigger over ship-one-post so the lane closes on the record instead of drifting for a fourth cycle."
     }
   ],
   "dailyLog": [
@@ -631,6 +636,10 @@
     {
       "date": "2026-09-01",
       "entry": "Competitor intel refreshed (monthly automated run). All three reports regenerated and written to Firestore competitor_intel/{battlecard,deepdive,landscape} (10433 / 10588 / 12677 chars, generated_at 2026-09-01T14:16:13.466Z, verified by reading all three docs back and matching length + timestamp). MAJOR RETRACTION: August's lead argument is dead. The battlecard claimed a large question bank could not re-aim after PMI's 2026-07-09 outline change ('ask your prep app how many of its questions moved'). Pocket Prep's own PMP page says 'Our PMP content is updated for the July 9, 2026 Examination Content Outline', and Brain Sensei rebuilt its course for the same outline. The hook never shipped only because August gated it on auditing our own PMP distribution first — the gate worked, the judgement did not. NEW COMPETITOR at threat HIGH, straight in at 2nd: ExamCert (examcert.app, founded 2025) — $4.99-$5.99 ONE-TIME per exam for lifetime access, free tier of 3 sets per exam, AI Tutor with step-by-step reasoning, FSRS spaced repetition, per-domain mastery heatmap, estimated pass chance, and a 60-day no-questions-asked money-back guarantee identical to the one we have called our strongest close for three months and still have not published. Covers PMP and SHRM-CP; runs 'best prep app 2026' comparison content ranking for our buyers' queries. UNVERIFIED — their own surfaces contradict each other (95% vs 98% pass rate, $4.99 vs $5.99, 30+ vs 171+ certs). No number of theirs goes into copy until someone opens the product. PRICE FLOOR COLLAPSED: Pocket Prep's annual is $124.99/yr = $10.99/mo effective, below CipherExam Pro at $19/mo. We are no longer the sensibly-priced option; the stored 'expensive incumbent' framing of Pocket Prep is retired. Their pass guarantee is three extra months of access, not money back. NEW ATTACK AIMED AT US: 'written by humans, not AI' is now a live trust position — Pocket Prep leads with expert authorship under a named PMP-credentialed Director of Education, and an SHRM-CP app (EZ Prep) markets human-not-AI explicitly. Our bank is AI-generated with no reviewer or verified field, so we cannot win an authorship fight; the battlecard moves the argument to Bloom's classification and per-user traps tracking. SHRM-CP 'uncontested lane' RETRACTED after three consecutive scans asserted it — the 2026 market holds at least six shipping products plus Pocket Prep's 1,600-item bank and ExamCert's free 600+ bank. The lane was unexamined, not uncontested. Landscape re-ranked: Pocket Prep > ExamCert (new) > Brain Sensei > Mindirus (unopened for a 2nd month; grew 16->19 exams and ~51k->68k questions, still no published pricing) > AI-tutor cohort. Funnel context at scan time: 4,832 impressions / 20 LP visits / 2 signups / 1 ACTIVATED — the first activated user ever; PMP is 94% of reach, Security+ came off zero at 307 impressions, SHRM-CP still zero on every stage. All three reports now lead with the same first action: confirm on a live account that CipherExam can name a trap on screen, not just a domain. Three content-axis positions weakened this month (price, currency, authorship) and diagnosis is the only ground left where the field is not already standing — and it is the one claim never verified in the product. competitors.json CHANGED this run (added examcert; updated pocket-prep, mindirus, brain-sensei, _meta), so campaign/competitors was mirrored via push-competitors-doc.mjs — 14 competitors. Note: this dailyLog entry is a local record only — no safe campaign/state appender exists, so it will not appear on the dashboard."
+    },
+    {
+      "date": "2026-09-01",
+      "entry": "DECISION (Dave): SHRM-CP PARKED, closing three consecutive scans that flagged the lane as open without choosing. Trigger to revisit: 2026-11-30, or earlier if PMP clears ~30 signups, Security+ produces its first activated user, or an inbound SHRM-CP signup/lead capture arrives. LP and competency-map magnet stay live; nothing is torn down. Recorded in decisions[] and in competitor-intel/landscape.md (recommended action 3 rewritten from 'make the call' to the decision itself, plus a standing instruction that the next scan must not re-open it before the trigger); landscape re-pushed to Firestore. LOOSE END, needs a human call: the draft post li-fri-2026-08-28-magnet-03-shrmcp (SHRM-CP magnet #3, status draft, scheduled 2026-10-02 19:20 CT, copy still '[TO DRAFT via /sme-post]') contradicts the park and is still in the queue. Not touched here on purpose — editing posts.json alone never sticks, because seed-firestore treats the remote posted state as authoritative, so a local-only status flip would look done and would not be. Skip or reschedule it deliberately via the proper path before 2026-10-02."
     }
   ],
   "boardPriorities": {
