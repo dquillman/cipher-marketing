@@ -1,0 +1,115 @@
+{
+  "durationSec": 54.1,
+  "language": "en",
+  "segments": [
+    {
+      "start": 0,
+      "end": 3.4,
+      "text": "two formulas to know for your PMP and your CAPM exam."
+    },
+    {
+      "start": 3.4,
+      "end": 4.8,
+      "text": "Number one is the CPI,"
+    },
+    {
+      "start": 4.8,
+      "end": 6.8,
+      "text": "it stands for cost performance index,"
+    },
+    {
+      "start": 6.8,
+      "end": 9.8,
+      "text": "and number two is the SPI schedule performance index."
+    },
+    {
+      "start": 9.8,
+      "end": 11.9,
+      "text": "Let me give you a couple of quick tips on them."
+    },
+    {
+      "start": 11.9,
+      "end": 13.1,
+      "text": "For both of these formulas,"
+    },
+    {
+      "start": 13.1,
+      "end": 15.6,
+      "text": "if the number is one and greater, that's good."
+    },
+    {
+      "start": 15.6,
+      "end": 17.5,
+      "text": "If the number is under one, that's bad."
+    },
+    {
+      "start": 17.5,
+      "end": 19,
+      "text": "And if the number is one,"
+    },
+    {
+      "start": 19,
+      "end": 21.2,
+      "text": "it means it's on budget and on schedule."
+    },
+    {
+      "start": 21.2,
+      "end": 23.4,
+      "text": "For example, if the number is 1.1,"
+    },
+    {
+      "start": 23.4,
+      "end": 26.4,
+      "text": "the project is 10% under budget."
+    },
+    {
+      "start": 26.4,
+      "end": 30.8,
+      "text": "If the number is 0.9, it is 10% over budget, that."
+    },
+    {
+      "start": 30.8,
+      "end": 33.4,
+      "text": "So remember, under one, that, over one, good."
+    },
+    {
+      "start": 33.4,
+      "end": 38.3,
+      "text": "For SPI, if it is 1.1, it's 10% ahead of schedule, good."
+    },
+    {
+      "start": 38.3,
+      "end": 41.8,
+      "text": "If it's 0.9, it's 10% behind schedule."
+    },
+    {
+      "start": 41.8,
+      "end": 44.2,
+      "text": "So for your exam, when you're going through the real exam"
+    },
+    {
+      "start": 44.2,
+      "end": 46.6,
+      "text": "and you see some, anything on the test that says the CPI"
+    },
+    {
+      "start": 46.6,
+      "end": 49.4,
+      "text": "is 1.1 or 1.2, hey, that's good."
+    },
+    {
+      "start": 49.4,
+      "end": 52.2,
+      "text": "The CPI is 0.9, 0.8, you know that's bad."
+    },
+    {
+      "start": 52.2,
+      "end": 54.2,
+      "text": "That's how you read them on the real test."
+    }
+  ],
+  "text": "two formulas to know for your PMP and your CAPM exam. Number one is the CPI, it stands for cost performance index, and number two is the SPI schedule performance index. Let me give you a couple of quick tips on them. For both of these formulas, if the number is one and greater, that's good. If the number is under one, that's bad. And if the number is one, it means it's on budget and on schedule. For example, if the number is 1.1, the project is 10% under budget. If the number is 0.9, it is 10% over budget, that. So remember, under one, that, over one, good. For SPI, if it is 1.1, it's 10% ahead of schedule, good. If it's 0.9, it's 10% behind schedule. So for your exam, when you're going through the real exam and you see some, anything on the test that says the CPI is 1.1 or 1.2, hey, that's good. The CPI is 0.9, 0.8, you know that's bad. That's how you read them on the real test.",
+  "source": "https://www.linkedin.com/feed/update/urn:li:activity:7502788389209788418/",
+  "model": "base.en",
+  "transcribedAt": "2026-09-08T10:39:11.164Z"
+}
