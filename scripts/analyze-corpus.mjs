@@ -40,7 +40,19 @@ const FEATURES = {
   labeledOptions: (c) => (c.match(/^\s*[A-D][.)]\s+\S/gm) || []).length >= 3,
   // Asks for justification, not just an answer. Every substantive comment on the
   // 08-07 post came from this instruction.
-  asksForReason: (c) => /\byour reason\b|\band why\b|\bwhy\?|more importantly, your reason/i.test(c),
+  // Miss found 2026-09-05, fixed 2026-09-08: li-wed-2026-09-02-sme-06 asks in
+  // the words "Pick a letter, then tell me why", which none of the original
+  // arms matched. That single false negative was the ONLY thing separating
+  // asksForReason from labeledOptions/withholdsAnswer in the confound report,
+  // so the corpus looked like it had separated the gate mechanics when nothing
+  // had actually been shipped to separate them.
+  // Deliberately NOT matched: a bare "your reasoning". li-volume-metric says
+  // "Explain your reasoning out loud every time" as STUDY ADVICE to the reader
+  // — it asks nothing of the commenter, and admitting it would put a post with
+  // no gate mechanic at all into the gated arm. Every arm here is an imperative
+  // aimed at the reader's reply.
+  asksForReason: (c) =>
+    /\byour reason\b|\band why\b|\bwhy\?|\btell me why\b|\btell me your reason(?:ing)?\b|\bwhy you (?:picked|chose|would)\b/i.test(c),
   // Answer withheld + reveal promised. This is what makes commenting the way to
   // find out.
   // Third-person reveal promises count too. The first version matched only
