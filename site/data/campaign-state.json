@@ -1,7 +1,7 @@
 {
   "_meta": {
     "lastUpdatedBy": "pull-funnel",
-    "lastUpdatedAt": "2026-11-01T14:11:51.353Z",
+    "lastUpdatedAt": "2026-11-02T14:11:11.919Z",
     "schemaVersion": 1,
     "instructions": "This is the live state file for the CipherExam campaign site. Claude updates it from Claude Code conversations; HTML pages fetch and render it. Bump _meta.lastUpdatedAt on every edit."
   },
@@ -54,13 +54,13 @@
       }
     },
     "funnel": {
-      "asOf": "2026-11-01T14:11:51.353Z",
+      "asOf": "2026-11-02T14:11:11.919Z",
       "windowDays": 30,
       "source": "GA4 property 528695114 (production hostnames only) + graded post impressions",
       "instructions": "Filled automatically by scripts/pull-funnel.mjs — do not hand-edit. impressions come from graded posts in campaign/posts (GA4 cannot see a LinkedIn impression); the other four arrows are GA4 unique users, scoped to cipherexam.com/www.cipherexam.com. perCluster is keyed on the session landing page, so it means \"began on this LP\", not \"bought this exam\".",
       "aggregate": {
         "impressions": 0,
-        "lpVisits": 77,
+        "lpVisits": 78,
         "signups": 0,
         "examPicked": 0,
         "activated": 0
@@ -68,7 +68,7 @@
       "perCluster": {
         "PMP": {
           "impressions": 0,
-          "lpVisits": 35,
+          "lpVisits": 36,
           "signups": 0,
           "examPicked": 0,
           "activated": 0
@@ -644,6 +644,10 @@
     {
       "date": "2026-10-01",
       "entry": "Competitor intel refreshed (monthly automated run). All three reports regenerated and written to Firestore competitor_intel/{battlecard,deepdive,landscape} (10291 / 10188 / 12354 chars, generated_at 2026-10-01T14:19:57.394Z, verified by reading all three docs back and matching timestamp, length and content). RANKING BASIS MOVED WITH THE FUNNEL: 30-day window is 317 impressions / 16 LP visits / 3 signups / 1 activated, and 13 of the 16 visits plus 2 of the 3 signups landed on /lp/security-plus from organic search with zero post impressions behind them (PMP: 214 impressions, 2 visits, 0 signups). The Security+ practice-exam incumbents (Dion Training $29.99 pack w/ simulation items, Professor Messer free course, CompTIA CertMaster Practice, ExamCompass free, Boson) are profiled for the first time and enter the landscape at #2; Pocket Prep holds #1, ExamCert drops to #3, Brain Sensei #4, Mindirus #5 (third month unopened — drop below the line next month if still unopened). CORRECTION CAUGHT BEFORE SHIPPING: the stored Pocket Prep line that a single-MCQ format 'structurally cannot rehearse PBQs' is RETIRED — their platform ships Build List / Drag-and-Drop / Hotspot items for NREMT and NGN items for NCLEX; CompTIA PBQ support unverified (their Security+ page 404'd at the expected URL). Only claim what is true of us: 13 operable PBQs in four formats on /lp/security-plus. WITHDRAWN: Sept's 'ExamCert publishes a 60-day guarantee identical to ours' — their pages now read 30-day no-questions (homepage) and fail-first-attempt refund (PMP page), $5.99 lifetime, pass rate 95/97/98% across pages; they now have a Security+ SY0-701 page and free practice-test page in our converting search lane. NEW ATTACK VECTOR: Brain Sensei's 'Best AI-powered PMP exam simulators' guide (2026-08-15, updated Sept) argues generated banks give unstable answer keys and human review is the core criterion — the authorship attack now in PMP search content; do not engage by name, never claim review. Pocket Prep PMP bank 2,450 -> 2,570, split 684/766/1,120 tracking the new outline; exam page has no byline (it lives on the blog). OUR SIDE (read live): four exams marketed (PMP/Sec+/Net+/A+ Core 2), 14-day trial, 60-day no-conditions guarantee LIVE on /, /pricing and both compare pages (/compare/pocketprep-alternative, /compare/best-pmp-exam-simulator-2026) but ABSENT from /lp/pmp and /lp/security-plus — the two pages that took 15 of 16 visits and every signup; PMP compare page states 567 Bloom's-classified questions vs Pocket Prep's 2,570. All three reports lead with the same first action: paste the guarantee block onto both LPs this week. Then: open ExamCert's free Security+ test + Dion's sample (1 hour, record in competitors.json); build /compare/best-security-plus-practice-exam-2026 in the honest style of the PocketPrep page; named-trap screenshot and mobile objection answer still open (4th month). competitors.json CHANGED (pocket-prep correction_2026_10_01 + update, examcert/mindirus/brain-sensei update_2026_10_01, two new entries: security-plus-practice-exam-incumbents, prepforcerts; 16 total) and was mirrored to campaign/competitors via push-competitors-doc.mjs (16 competitors). SHRM-CP parked decision honored — field reported as intelligence only, nothing re-opened. Note: this dailyLog entry is a local record only — no safe campaign/state appender exists, so it will not appear on the dashboard."
+    },
+    {
+      "date": "2026-11-01",
+      "entry": "Competitor intel refreshed (monthly automated run). Thin research pass (2 web checks + stored record). Written to Firestore competitor_intel/* and read back (generated_at 2026-11-01T15:12:53.908Z). Mindirus dropped below the line (4 months unopened). Funnel: 77 LP visits, 0 signups."
     }
   ],
   "boardPriorities": {
